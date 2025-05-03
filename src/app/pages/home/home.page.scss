@@ -1,0 +1,23 @@
+ion-content {
+    --overflow: hidden auto; /* This keeps vertical scroll but hides horizontal */
+  }
+  
+  ion-content::-webkit-scrollbar {
+    display: none; /* For Chrome, Safari and Edge */
+  }
+  
+  ion-content {
+    scrollbar-width: none; /* For Firefox */
+  }
+
+  ion-card{
+    border-radius: 20px;
+  }
+
+  ion-header {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    overflow: hidden; /* Important to apply radius properly */
+    position: sticky;
+top: 0px;
+  }

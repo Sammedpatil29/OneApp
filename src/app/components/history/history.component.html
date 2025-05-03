@@ -1,0 +1,56 @@
+<ion-header>
+  <ion-toolbar class="pt-4">
+    <ion-title>History</ion-title>
+  </ion-toolbar>
+</ion-header>
+<!-- <ion-content> -->
+  @if (history.length) {
+    <section>
+      <div class="d-flex align-items-center mt-2 mx-3">
+        <!-- Horizontally scrollable chips -->
+        <div class="chips-container me-2">
+          <!-- <ion-chip color="medium">Chip 1</ion-chip>
+          <ion-chip color="medium">Chip 2</ion-chip>
+          <ion-chip color="medium">Chip 3</ion-chip>
+          <ion-chip color="medium">Chip 4</ion-chip>
+          <ion-chip color="medium">Chip 5</ion-chip>
+          <ion-chip color="medium">Chip 6</ion-chip>
+          <ion-chip color="medium">Chip 7</ion-chip>
+          <ion-chip color="medium">Chip 8</ion-chip> -->
+        </div>
+        <!-- Funnel icon -->
+        <div class="ms-auto">
+          <i class="bi bi-funnel-fill"></i>
+        </div>
+      </div>
+      
+      
+      <div class="mt-3">
+        <ion-list [inset]="true">
+          @for (item of history; track $index) {
+            <ion-item [button]="true" detail="false">
+              <div class="unread-indicator-wrapper" slot="start">
+                <!-- <div class="bi bi-pen"></div> -->
+              </div>
+              <ion-label>
+                <strong class="text-uppercase">{{item.type}}</strong>
+                <ion-text>{{item.title}}</ion-text><br />
+                <ion-note color="medium" class="ion-text-wrap">
+                  {{item.status}}
+                  <i [ngClass]="getStatusIcon(item.status)" class="ps-1"></i>
+                </ion-note>
+              </ion-label>
+              <div class="metadata-end-wrapper" slot="end">
+                <ion-note color="medium">{{item.date | date:'dd/MM'}} &bull; {{item.time}}</ion-note>
+                <ion-icon color="medium" name="chevron-forward"></ion-icon>
+              </div>
+            </ion-item>
+          }
+        </ion-list>
+      </div>
+    </section>
+  } @else {
+    <app-nodata></app-nodata>
+  }
+  
+<!-- </ion-content> -->

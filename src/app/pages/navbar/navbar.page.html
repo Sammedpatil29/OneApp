@@ -1,0 +1,41 @@
+<ion-tabs>
+  <ion-tab tab="home">
+<ion-content>
+  <app-home></app-home>
+</ion-content>
+  </ion-tab>
+  <ion-tab tab="search">
+    <ion-content>
+      <app-search></app-search>
+    </ion-content>
+  </ion-tab>
+  <ion-tab tab="support">
+    <ion-content>
+      <app-support></app-support>
+    </ion-content>
+  </ion-tab>
+  <ion-tab tab="history">
+    <ion-content>
+      <app-history></app-history>
+    </ion-content>
+  </ion-tab>
+
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button tab="home">
+      <ion-icon name="home"></ion-icon>
+      Home
+    </ion-tab-button>
+    <ion-tab-button tab="search">
+      <ion-icon name="search"></ion-icon>
+      Search
+    </ion-tab-button>
+    <ion-tab-button tab="support">
+      <ion-icon name="help-circle"></ion-icon>
+      Support
+    </ion-tab-button>
+    <ion-tab-button tab="history">
+      <ion-icon name="time"></ion-icon>
+      History
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>
