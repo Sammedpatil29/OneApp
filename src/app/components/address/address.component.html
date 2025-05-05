@@ -1,0 +1,21 @@
+<ion-searchbar placeholder="Search for a location"></ion-searchbar>
+<ion-grid class="text-center">
+  <ion-row>
+    <ion-col size="6" class="text-primary text-nowrap"><i class="bi bi-geo-alt-fill me-1"></i> <span (click)="getCurrentPosition()">Get current Location</span>
+    </ion-col>
+    <ion-col size="6" class="text-primary text-nowrap"><i class="bi bi-pin-fill me-1"></i>Pin on map</ion-col>
+  </ion-row>
+</ion-grid>
+
+{{coordinates.coords.latitude}}
+{{coordinates.coords.longitude}}
+{{city}}
+{{address}}
+<ion-segment value="default" mode="ios">
+  <ion-segment-button value="default">
+    <ion-label>Default</ion-label>
+  </ion-segment-button>
+  <ion-segment-button value="segment">
+    <ion-label>Segment</ion-label>
+  </ion-segment-button>
+</ion-segment>

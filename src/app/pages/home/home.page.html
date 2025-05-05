@@ -2,13 +2,20 @@
   <ion-header>
     <ion-toolbar class="container pt-4">
       <div class="d-flex justify-content-between align-items-center">
-        <div class="d-flex align-items-center">
+        <div class="d-flex align-items-center w-75">
           <i class="bi bi-geo-alt me-2"></i>
-        <div class="d-flex flex-column me-2" style="line-height: 1.2;">
-          <!-- <h6 class="p-0 fs-6">Location</h6> -->
-          <ion-card-subtitle><span class="">Athani</span> <br>Athani Rhhhhhhhhhhhhhhhhhhural</ion-card-subtitle>  
-        </div>
-        <i class="bi bi-chevron-down me-2"></i>
+        @if (address == '') {
+          <div class="d-flex flex-column me-2" style="line-height: 1.2;">
+            <!-- <h6 class="p-0 fs-6">Location</h6> -->
+            <ion-card-subtitle class="text-truncate" style="max-width: 50vw"><span class="">Location</span> <br><span (click)="openLocation(true)" class="text-primary">Select your location</span></ion-card-subtitle>  
+          </div>
+        } @else {
+          <div class="d-flex flex-column me-2" style="line-height: 1.2;">
+            <!-- <h6 class="p-0 fs-6">Location</h6> -->
+            <ion-card-subtitle class="text-truncate" style="max-width: 50vw"><span>{{city}}</span> <br><span (click)="openLocation(true)">{{address}}</span></ion-card-subtitle>  
+          </div>
+        }
+        <i class="bi bi-chevron-down me-2" (click)="openLocation(true)"></i>
         </div>
         <div class="float-end">
           <i class="bi bi-person-circle fs-3" (click)="goToProfile()"></i>
@@ -24,7 +31,7 @@
         <ion-card-title>Food</ion-card-title>
         <ion-card-subtitle>Order from <strong>ONEKitchen</strong></ion-card-subtitle>
       </ion-card-header>
-    <img style="position: absolute; bottom:-20px; right: -20px; width: 80px" src="../../../assets/icon/vecteezy_fast-food-3d-model_10916886.png" alt="">
+    <img style="position: absolute; bottom:-20px; right: -20px; width: 80px; z-index: -9999999" src="../../../assets/icon/vecteezy_fast-food-3d-model_10916886.png" alt="">
       <!-- <ion-card-content>
         Here's a small text description for the card content. Nothing more, nothing less.
       </ion-card-content> -->
@@ -163,4 +170,21 @@
     </ion-card>
   </div>
   <app-footer></app-footer>
+  <ion-modal [isOpen]="isModalOpen" (didDismiss)="handleModalClose()">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar class="pt-4">
+          <ion-buttons slot="start">
+            <ion-button (click)="goBack()">
+              <ion-icon name="arrow-back"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+          <ion-title>Select Location</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="">
+        <app-address (location)="receiveData($event)"></app-address>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 </ion-content>
