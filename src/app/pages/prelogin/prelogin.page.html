@@ -7,10 +7,17 @@
         </div>
     </div>
     <div class="position-fixed mt-4 d-flex justify-content-center w-100" style="bottom: 10vh">
-      <!-- <ion-button class="ion-padding w-50" color="dark" (click)="Login()">Get Started</ion-button> -->
-      <div (click)="Login()">
-        <ion-spinner  name="crescent"></ion-spinner>
-      </div>
+@if (!isLoading) {
+  <ion-button class="ion-padding w-75 text-nowrap" color="dark" (click)="Login()">Get Started</ion-button>
+} @else {
+  <div (click)="Login()" class="text-center">
+    <ion-spinner  name="crescent"></ion-spinner>
+    <p>fetching location...</p>
+     
+  </div>
+}
+
 </div>
     </div>
+    
   </ion-content>

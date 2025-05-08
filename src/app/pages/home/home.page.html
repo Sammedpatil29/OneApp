@@ -187,4 +187,20 @@
       </ion-content>
     </ng-template>
   </ion-modal>
+  @if (showVideo && video) {
+    <div class="bubble">
+      <div class="video-wrapper">
+        <video
+          [src]="video"
+          autoplay
+          muted
+          loop
+          playsinline
+        ></video>
+        <button class="close-btn" (click)="closeBubble()"><i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+    </div>  
+  }
 </ion-content>
+

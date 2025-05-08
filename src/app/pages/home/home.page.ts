@@ -10,7 +10,7 @@ import {
   IonTabButton,
   IonTabs,
   IonTitle,
-  IonToolbar, IonSearchbar, IonAvatar, IonModal, IonButtons, IonButton, IonBackButton } from '@ionic/angular/standalone';
+  IonToolbar, IonSearchbar, IonAvatar, IonModal, IonButtons, IonButton, IonBackButton, IonSpinner } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
 import { library, playCircle, radio, search, home, cube, bag, receiptOutline, person, personCircle, personCircleOutline, constructOutline, briefcaseOutline, buildOutline, arrowBack } from 'ionicons/icons';
@@ -18,6 +18,7 @@ import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle }
 import { FooterComponent } from "../../components/footer/footer.component";
 import { Router } from '@angular/router';
 import { AddressComponent } from "../../components/address/address.component";
+import { LocationService } from 'src/app/services/location.service';
 
 
 @Component({
@@ -25,18 +26,31 @@ import { AddressComponent } from "../../components/address/address.component";
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   standalone: true,
-  imports: [IonBackButton, IonButton, IonButtons, IonModal, IonAvatar, IonContent, CommonModule, FormsModule, IonContent, IonIcon, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, FooterComponent, IonTitle, IonToolbar, IonHeader, AddressComponent]
+  imports: [IonSpinner, IonBackButton, IonButton, IonButtons, IonModal, IonAvatar, IonContent, CommonModule, FormsModule, IonContent, IonIcon, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, FooterComponent, IonTitle, IonToolbar, IonHeader, AddressComponent]
 })
 export class HomePage implements OnInit {
+
   isModalOpen = false;
   city: any = ''
   address: any = ''
+  showVideo: boolean = true
+  isClicked: boolean = true
+  video = ''
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private locationService: LocationService) {
     addIcons({arrowBack,home,buildOutline,receiptOutline,personCircleOutline,briefcaseOutline,constructOutline,library,personCircle,person,search,bag,cube,radio,playCircle});
   }
 
   ngOnInit() {
+    this.locationService.city$.subscribe((city: any) => {
+      this.city = city;
+      console.log('City received in home:', city);
+    });
+
+    this.locationService.address$.subscribe(address => {
+      this.address = address;
+      console.log('Address received in home:', address);
+    });
   }
 
   goToProfile() {
@@ -60,5 +74,9 @@ export class HomePage implements OnInit {
     this.city = data.city
     this.address = data.address
   }
+
+  closeBubble() {
+    this.showVideo = false
+    }
 
 }

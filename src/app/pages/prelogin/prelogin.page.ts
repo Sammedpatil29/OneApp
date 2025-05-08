@@ -5,6 +5,7 @@ import { IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonSpinner } fr
 import { Router } from '@angular/router';
 import { App } from '@capacitor/app'
 import { information } from 'ionicons/icons';
+import { LocationService } from 'src/app/services/location.service';
 
 @Component({
   selector: 'app-prelogin',
@@ -15,16 +16,23 @@ import { information } from 'ionicons/icons';
 })
 export class PreloginPage implements OnInit {
 info: any;
+isLoading: boolean = true
+coords: any;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private locationService: LocationService) { }
 
   ngOnInit() {
-    const info = App.getInfo()
-    console.log(info)
+    this.getLocation();
   }
 
   Login(){
     this.router.navigate(['/navbar']);
+  }
+
+  async getLocation() {
+    const coords = await this.locationService.getCurrentPosition();
+    this.isLoading = false
+    console.log('Coords from component:', coords.coords.latitude);
   }
 
 }

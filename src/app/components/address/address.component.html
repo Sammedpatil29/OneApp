@@ -1,4 +1,9 @@
-<ion-searchbar placeholder="Search for a location"></ion-searchbar>
+<ion-searchbar 
+    [(ngModel)]="searchQuery" 
+    (ionInput)="searchLocation(searchQuery)" 
+    debounce="500"
+    placeholder="Search for places"></ion-searchbar>
+
 <ion-grid class="text-center">
   <ion-row>
     <ion-col size="6" class="text-primary text-nowrap"><i class="bi bi-geo-alt-fill me-1"></i> <span (click)="getCurrentPosition()">Get current Location</span>
@@ -7,15 +12,23 @@
   </ion-row>
 </ion-grid>
 
-{{coordinates.coords.latitude}}
-{{coordinates.coords.longitude}}
-{{city}}
-{{address}}
-<ion-segment value="default" mode="ios">
-  <ion-segment-button value="default">
-    <ion-label>Default</ion-label>
-  </ion-segment-button>
-  <ion-segment-button value="segment">
-    <ion-label>Segment</ion-label>
-  </ion-segment-button>
-</ion-segment>
+  @if (isLoading == true) {
+<p>loading..</p>
+  } @else {
+    <!-- Display search results -->
+  <ion-list *ngIf="searchResults.length > 0">
+    <ion-item *ngFor="let result of searchResults">
+      <ion-label>
+        <h2>{{ result.name }}</h2>
+        <p>{{ result.formatted_address }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <!-- Show a message when no results are found -->
+  <ion-item *ngIf="searchResults.length === 0">
+    <ion-label>
+      <h2>No results found</h2>
+    </ion-label>
+  </ion-item>
+  }
