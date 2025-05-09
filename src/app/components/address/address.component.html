@@ -26,9 +26,7 @@
   </ion-list>
 
   <!-- Show a message when no results are found -->
-  <ion-item *ngIf="searchResults.length === 0">
-    <ion-label>
-      <h2>No results found</h2>
-    </ion-label>
-  </ion-item>
+  <div *ngIf="searchResults.length === 0">
+    <app-nodata></app-nodata>
+  </div>
   }

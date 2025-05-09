@@ -26,7 +26,7 @@ coords: any;
   }
 
   Login(){
-    this.router.navigate(['/navbar']);
+    this.router.navigate(['/layout']);
   }
 
   async getLocation() {

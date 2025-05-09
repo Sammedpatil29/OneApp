@@ -16,7 +16,7 @@ import { addIcons } from 'ionicons';
 import { library, playCircle, radio, search, home, cube, bag, receiptOutline, person, personCircle, personCircleOutline, constructOutline, briefcaseOutline, buildOutline, arrowBack } from 'ionicons/icons';
 import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle } from '@ionic/angular/standalone';
 import { FooterComponent } from "../../components/footer/footer.component";
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AddressComponent } from "../../components/address/address.component";
 import { LocationService } from 'src/app/services/location.service';
 
@@ -26,7 +26,7 @@ import { LocationService } from 'src/app/services/location.service';
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   standalone: true,
-  imports: [IonSpinner, IonBackButton, IonButton, IonButtons, IonModal, IonAvatar, IonContent, CommonModule, FormsModule, IonContent, IonIcon, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, FooterComponent, IonTitle, IonToolbar, IonHeader, AddressComponent]
+  imports: [IonSpinner, IonBackButton, IonButton, IonButtons, IonModal, IonAvatar, IonContent, CommonModule, FormsModule, IonContent, IonIcon, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, FooterComponent, IonTitle, IonToolbar, IonHeader, AddressComponent, RouterLink]
 })
 export class HomePage implements OnInit {
 
@@ -35,7 +35,7 @@ export class HomePage implements OnInit {
   address: any = ''
   showVideo: boolean = true
   isClicked: boolean = true
-  video = ''
+  video = '../../../assets/Cinematic Lays Commercial Ad _ Alien Bangers.mp4'
 
   constructor(private router: Router, private locationService: LocationService) {
     addIcons({arrowBack,home,buildOutline,receiptOutline,personCircleOutline,briefcaseOutline,constructOutline,library,personCircle,person,search,bag,cube,radio,playCircle});
@@ -54,7 +54,14 @@ export class HomePage implements OnInit {
   }
 
   goToProfile() {
-    this.router.navigate(['/profile']);
+    // this.router.navigate(['/layout/profile']);
+    console.log('Navigating to profile...');
+    this.router.navigate(['/layout/profile'], {
+      replaceUrl: true,         // optionally replace the URL in the browser history
+  skipLocationChange: false
+    }).then(success => {
+      console.log('Navigation success:', success);
+    });
   }
 
   openLocation(isOpen: boolean) {

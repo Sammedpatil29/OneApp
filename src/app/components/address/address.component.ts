@@ -6,12 +6,13 @@ import { LocationService } from 'src/app/services/location.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Http } from '@capacitor-community/http';
+import { NodataComponent } from "../nodata/nodata.component";
 
 @Component({
   selector: 'app-address',
   templateUrl: './address.component.html',
   styleUrls: ['./address.component.scss'],
-  imports: [IonItem, IonList, FormsModule, CommonModule, IonLabel, IonSegmentButton, IonSegment, IonTitle, IonIcon, IonButton, IonButtons, IonToolbar, IonHeader, IonGrid, IonCol, IonRow, IonSearchbar, IonSegment, IonSegmentButton]
+  imports: [IonItem, IonList, FormsModule, CommonModule, IonLabel, IonSegmentButton, IonSegment, IonTitle, IonIcon, IonButton, IonButtons, IonToolbar, IonHeader, IonGrid, IonCol, IonRow, IonSearchbar, IonSegment, IonSegmentButton, NodataComponent]
 })
 export class AddressComponent  implements OnInit {
   @Output() location = new EventEmitter<any>();
@@ -48,6 +49,8 @@ export class AddressComponent  implements OnInit {
       this.searchResults = response.data.results;
     } catch (error) {
       console.error('Error fetching places data:', error);
+      alert('api failed')
+      this.isLoading = false
     } finally {
       console.log('Request completed.');
     }

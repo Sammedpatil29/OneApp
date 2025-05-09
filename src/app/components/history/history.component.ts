@@ -6,6 +6,7 @@ import { HistoryService } from './history.service';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { NodataComponent } from "../nodata/nodata.component";
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-history',
   templateUrl: './history.component.html',
@@ -15,7 +16,7 @@ import { NodataComponent } from "../nodata/nodata.component";
 export class HistoryComponent  implements OnInit {
   history: any;
 
-  constructor(private historyService: HistoryService) {
+  constructor(private historyService: HistoryService, private router: Router) {
       addIcons({homeSharp,searchOutline,helpCircle,time,search,homeOutline,radio,library,person,home,playCircle});
      }
 
@@ -50,6 +51,10 @@ export class HistoryComponent  implements OnInit {
       default:
         return 'bi bi-info-circle text-secondary';
     }
+  }
+
+  navigateto(){
+    this.router.navigate(['/layout/profile'])
   }
   
 

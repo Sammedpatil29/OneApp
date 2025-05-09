@@ -8,13 +8,14 @@ import { HomePage } from "../home/home.page";
 import { HistoryComponent } from "../../components/history/history.component";
 import { SearchComponent } from "../../components/search/search.component";
 import { SupportComponent } from "../../components/support/support.component";
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.page.html',
   styleUrls: ['./navbar.page.scss'],
   standalone: true,
-  imports: [IonIcon, IonTabBar, IonTab, IonTabs, IonTabButton, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, HomePage, HistoryComponent, SearchComponent, SupportComponent]
+  imports: [IonIcon, IonTabBar, IonTab, IonTabs, IonTabButton, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, HomePage, HistoryComponent, SearchComponent, SupportComponent, RouterOutlet]
 })
 export class NavbarPage implements OnInit {
   constructor() {

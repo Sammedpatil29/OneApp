@@ -17,8 +17,8 @@
         }
         <i class="bi bi-chevron-down me-2" (click)="openLocation(true)"></i>
         </div>
-        <div class="float-end">
-          <i class="bi bi-person-circle fs-3" (click)="goToProfile()"></i>
+        <div class="float-end" [routerLink]="['/layout/profile']">
+          <i class="bi bi-person-circle fs-3"></i>
         </div>
       </div>
     </ion-toolbar>

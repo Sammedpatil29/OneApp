@@ -1,13 +1,60 @@
 <ion-header>
   <ion-toolbar class="pt-4">
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
     <ion-title>Profile</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">profile</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div class="profile-container">
+    <ion-avatar class="profile-avatar">
+      <img alt="Avatar" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
+    </ion-avatar>
+    <ion-label class="profile-name">Sammed Patil</ion-label>
+    <ion-label>9878648654</ion-label>
+  </div>
+  <hr>
+  <div class="mt-3">
+    <ion-item button detail="true" lines="none">
+      <ion-label>
+        <h3 class="fs-6"><i class="bi bi-person-circle bi-icon me-2"></i>        Personal Details</h3>
+      </ion-label>
+    </ion-item>
+    <ion-item button detail="true" lines="none">
+      <ion-label>
+        <h3 class="fs-6"><i class="bi bi-geo-alt bi-icon me-2"></i>Saved Addresses</h3>
+      </ion-label>
+    </ion-item>
+    <ion-item button detail="true" lines="none">
+      <ion-label>
+        <h3 class="fs-6"><i class="bi bi-heart bi-icon me-2"></i>Favourites</h3>
+      </ion-label>
+    </ion-item>
+    <ion-item button detail="true" lines="none">
+      <ion-label>
+        <h3 class="fs-6"><i class="bi bi-translate bi-icon me-2"></i>Languages</h3>
+      </ion-label>
+    </ion-item>
+    <ion-item button detail="true" lines="none">
+      <ion-label>
+        <h3 class="fs-6"><i class="bi bi-gear me-2 bi-icon"></i>Preferences</h3>
+      </ion-label>
+    </ion-item>
+    <ion-item button detail="true" lines="none">
+      <ion-label>
+        <h3 class="fs-6"><i class="bi bi-info-circle me-2"></i>About OneApp</h3>
+      </ion-label>
+    </ion-item>
+    <hr>
+    <ion-item button detail="false" lines="none">
+      <ion-label>
+        <h3 class="text-danger text-center fs-6" (click)="logOut()"><i class="bi bi-box-arrow-right me-2"></i>Logout</h3>
+      </ion-label>
+    </ion-item>
+  </div>
 </ion-content>
+
