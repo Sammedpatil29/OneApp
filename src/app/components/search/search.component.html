@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar class="pt-4">
-    <ion-title>
+    <ion-title class="mt-2">
       Search
     </ion-title>
     <ion-searchbar [placeholder]="placeholder" [value]="searchTerm" (ionInput)="filterServices($event)" class="mb-2"></ion-searchbar>
@@ -43,7 +43,7 @@
   <ion-row>
     @for (item of filteredServices; track $index) {
       <ion-col class="p-0" [size]="item.width === '100%' ? '6' : '6'">
-        <ion-card style="position: relative; cursor: pointer">
+        <ion-card style="position: relative; cursor: pointer" (click)="navigateTo(item.route)">
           <ion-card-header>
             <div>
               <ion-card-title class="text-truncate">{{ item.title }}</ion-card-title>
@@ -59,7 +59,8 @@
 
           <!-- Optional Image -->
           <img
-            style="position: absolute; bottom:-20px; right: -20px; width: 80px; z-index: -1"
+            [ngStyle]="item.className"
+            [attr.loading]="'lazy'"
             [src]="item.img"
             alt="{{ item.title }}"
           />

@@ -46,6 +46,6 @@ export class LocationService {
   }
 
   getData(){
-    return this.http.get('https://oneapp-backend.onrender.com/api/services/')
+    return this.http.get('https://oneapp-backend.onrender.com/api/services/active/')
   }
 }

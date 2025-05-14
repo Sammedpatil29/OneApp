@@ -120,5 +120,10 @@ shuffleArray(array: any[]) {
   return array;
 }
 
+navigateTo(route:any){
+    console.log(`/layout/${route}`)
+    this.router.navigate([`/layout/${route}`])
+  }
+
 
 }

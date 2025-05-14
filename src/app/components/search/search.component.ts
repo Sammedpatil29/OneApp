@@ -6,6 +6,7 @@ import { NodataComponent } from "../nodata/nodata.component";
 import { LocationService } from 'src/app/services/location.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-search',
@@ -28,11 +29,12 @@ export class SearchComponent  implements OnInit {
         "route": "food",
         "category": "Essential Services",
         "city": ["Athani"],
-        "status": "active"
+        "status": "active",
+        "className": {}
     }
   ]
 
-  constructor(private locationService: LocationService) { 
+  constructor(private locationService: LocationService, private router: Router) { 
         addIcons({home,buildOutline,receiptOutline,personCircleOutline,briefcaseOutline,constructOutline,library,personCircle,person,search,bag,cube,radio,playCircle});
         this.getServices()
   }
@@ -58,6 +60,11 @@ export class SearchComponent  implements OnInit {
 
   dummy(event:any){
 console.log(event.title)
+  }
+
+  navigateTo(route:any){
+    console.log(`/layout/${route}`)
+    this.router.navigate([`/layout/${route}`])
   }
 
 }

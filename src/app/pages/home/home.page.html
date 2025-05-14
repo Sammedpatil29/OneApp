@@ -49,7 +49,7 @@
           *ngFor="let item of group.value"
           [size]="item.width === '100%' ? '12' : '6'"
         >
-          <ion-card style="position: relative; cursor: pointer">
+          <ion-card style="position: relative; cursor: pointer" (click)="navigateTo(item.route)">
             <ion-card-header>
               <div>
                 <ion-card-title>{{ item.title }}</ion-card-title>
@@ -66,7 +66,8 @@
             </ion-card-header>
 
             <img
-              style="position: absolute; bottom:-20px; right: -20px; width: 80px; z-index: -1"
+              [ngStyle]="item.className"
+              [attr.loading]="'lazy'"
               [src]="item.img"
               alt="{{ item.title }}"
             />

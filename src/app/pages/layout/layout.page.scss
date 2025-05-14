@@ -1,0 +1,36 @@
+// .orderBubble {
+//     position: fixed;
+//     cursor: pointer;
+//     bottom: 25vh;
+//     color: white;
+//     border: 3px solid green;
+//     border-radius: 25px;
+//     background-color: rgb(86, 240, 86);
+//     padding: 10px 20px;
+//     div {
+//         margin-bottom: 0;
+//     }
+// }
+
+.orderBubble {
+  position: absolute;
+  cursor: pointer;
+  z-index: 1000;
+  background-color: white;
+  padding: 10px;
+  border: 3px solid green;
+  border-radius: 25px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  color: white;
+}
+
+.orderBubble:active {
+  cursor: grabbing;
+}
+
+.spinner-grow {
+    --bs-spinner-vertical-align: -0.070em;
+    --bs-spinner-animation-speed: 0.75s;
+}
