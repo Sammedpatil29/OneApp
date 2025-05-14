@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { IonContent, IonCardSubtitle, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonButton, IonIcon, IonHeader, IonToolbar, IonTitle, IonNote, IonList, IonItem, IonLabel, IonText, IonChip } from "@ionic/angular/standalone";
+import { IonContent, IonCardSubtitle, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonButton, IonIcon, IonHeader, IonToolbar, IonTitle, IonNote, IonList, IonItem, IonLabel, IonText, IonChip, IonSelect, IonSelectOption } from "@ionic/angular/standalone";
 import { addIcons } from 'ionicons';
-import { library, playCircle, radio, search, person, home, homeOutline, time, helpCircle, homeSharp, searchOutline } from 'ionicons/icons';
+import { library, playCircle, radio, search, person, home, homeOutline, time, helpCircle, homeSharp, searchOutline, funnel, funnelOutline } from 'ionicons/icons';
 import { HistoryService } from './history.service';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -11,24 +11,28 @@ import { Router } from '@angular/router';
   selector: 'app-history',
   templateUrl: './history.component.html',
   styleUrls: ['./history.component.scss'],
-  imports: [IonChip, IonText, IonLabel, IonItem, IonList, IonNote, IonTitle, IonToolbar, IonHeader, IonIcon, IonButton, IonCardContent, IonCardTitle, IonCardHeader, IonCard, IonContent, IonCardSubtitle, CommonModule, NodataComponent]
+  imports: [IonChip, IonText, IonLabel, IonItem, IonList, IonNote, IonTitle, IonToolbar, IonHeader, IonIcon, IonButton, IonCardContent, IonCardTitle, IonCardHeader, IonCard, IonContent, IonCardSubtitle, CommonModule, NodataComponent, IonSelect, IonSelectOption]
 })
 export class HistoryComponent  implements OnInit {
-  history: any;
+  history: any[] = []
+  category: any[] = ['All', 'doctor']
+  filteredHistory: any[] = this.history
 
   constructor(private historyService: HistoryService, private router: Router) {
-      addIcons({homeSharp,searchOutline,helpCircle,time,search,homeOutline,radio,library,person,home,playCircle});
+      addIcons({homeSharp,searchOutline,helpCircle,time,search,homeOutline,radio,library,person,home,playCircle, funnel, funnelOutline});
      }
 
   ngOnInit() {
-    console.log('called')
+    console.log('called history')
     this.getHistory()
   }
 
   getHistory(){
   this.historyService.getHistory().subscribe(res => {
     this.history = res
-    console.log(this.history)
+    this.filteredHistory = this.history
+    let uniqueCategory = Array.from(new Set(this.history.map(item => item.type)));
+    this.category = ['All', ...uniqueCategory]
   })
   }
 
@@ -56,6 +60,16 @@ export class HistoryComponent  implements OnInit {
   navigateto(){
     this.router.navigate(['/layout/profile'])
   }
+
+onCategoryChange(category: any){
+  let selectedCategory = category.detail.value
+  if(selectedCategory == 'All'){
+    this.filteredHistory = this.history
+  } else {
+this.filteredHistory = this.history.filter((item) => item.type.toLowerCase() == selectedCategory.toLowerCase())
+  console.log(this.filteredHistory)
+  }
+}
   
 
 }

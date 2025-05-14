@@ -18,8 +18,14 @@ export class PreloginPage implements OnInit {
 info: any;
 isLoading: boolean = true
 coords: any;
+apiData: any;
 
-  constructor(private router: Router, private locationService: LocationService) { }
+  constructor(private router: Router, private locationService: LocationService) {
+    this.locationService.getData().subscribe((res) => {
+      this.apiData = res
+      console.log(this.apiData)
+    })
+   }
 
   ngOnInit() {
     this.getLocation();

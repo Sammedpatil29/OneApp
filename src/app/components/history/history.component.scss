@@ -62,3 +62,11 @@ top: 0px;
   overflow-x: auto; /* Enable horizontal scrolling */
   white-space: nowrap; /* Prevent text from wrapping */
 }
+
+::ng-deep.item-radio-checked.sc-ion-select-popover-md {
+    --background: rgba(var(--ion-color-dark), 0.08);
+    --background-focused: var(--ion-color-dark);
+    --background-focused-opacity: 0.2;
+    --background-hover: var(--ion-color-dark);
+    --background-hover-opacity: 0.12;
+}

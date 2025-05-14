@@ -20,14 +20,31 @@
         </div>
         <!-- Funnel icon -->
         <div class="ms-auto">
-          <i class="bi bi-funnel-fill"></i>
+          <!-- <i class="bi bi-funnel-fill"></i> -->
+          <ion-list lines="none">
+            <ion-item >
+              <ion-select
+                interface="popover"
+                toggleIcon="funnel"
+                color="dark"
+                expandedIcon="funnel-outline"
+                aria-label="fruit"
+                placeholder="All"
+                (ionChange)="onCategoryChange($event)"
+              >
+              @for (item of category; track $index) {
+              <ion-select-option [value]="item">{{item | uppercase}}</ion-select-option>
+              }
+              </ion-select>
+            </ion-item>
+          </ion-list>
         </div>
       </div>
       
       
-      <div class="mt-3">
+      <div>
         <ion-list [inset]="true">
-          @for (item of history; track $index) {
+          @for (item of filteredHistory; track $index) {
             <ion-item [button]="true" detail="false">
               <div class="unread-indicator-wrapper" slot="start">
                 <!-- <div class="bi bi-pen"></div> -->

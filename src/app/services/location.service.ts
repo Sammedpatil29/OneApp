@@ -44,4 +44,8 @@ export class LocationService {
       console.log('Full Address:', this.address);
     });
   }
+
+  getData(){
+    return this.http.get('https://oneapp-backend.onrender.com/api/services/')
+  }
 }

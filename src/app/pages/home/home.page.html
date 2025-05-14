@@ -1,5 +1,6 @@
 <ion-content >
-  <ion-header>
+  @if (!isLoading) {
+    <ion-header>
     <ion-toolbar class="container pt-4">
       <div class="d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center w-75">
@@ -23,152 +24,66 @@
       </div>
     </ion-toolbar>
   </ion-header>
+  <ion-refresher slot="fixed" class="my-refresher" (ionRefresh)="getServicesData()">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
   <!-- <ion-searchbar style="position:sticky; top:0px; z-index: 999"></ion-searchbar> -->
-  <ion-card-subtitle class="ps-3 mt-4">ESSENTIAL SERVICES </ion-card-subtitle>
-  <div class="d-flex w-100">
-    <ion-card class="w-50" style="position: relative;">
-      <ion-card-header>
-        <ion-card-title>Food</ion-card-title>
-        <ion-card-subtitle>Order from <strong>ONEKitchen</strong></ion-card-subtitle>
-      </ion-card-header>
-    <img style="position: absolute; bottom:-20px; right: -20px; width: 80px; z-index: -9999999" src="../../../assets/icon/vecteezy_fast-food-3d-model_10916886.png" alt="">
-      <!-- <ion-card-content>
-        Here's a small text description for the card content. Nothing more, nothing less.
-      </ion-card-content> -->
-    </ion-card>
-    <ion-card class="w-50" style="position: relative;">
-      <ion-card-header>
-        <ion-card-title>Laundry</ion-card-title>
-        <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-      </ion-card-header>
-      <img style="position: absolute; bottom:-20px; right: -20px; width: 100px" src="../../../assets/icon/vecteezy_ai-generated-towel-basket-clarity-cutout-ensuring-precise_41305444.png" alt="">
+  <!-- <swiper-container>
+  <swiper-slide>Slide 1</swiper-slide>
+  <swiper-slide>Slide 2</swiper-slide>
+  <swiper-slide>Slide 3</swiper-slide>
+</swiper-container>  -->
 
-      <!-- <ion-card-content>
-        Here's a small text description for the card content. Nothing more, nothing less.
-      </ion-card-content> -->
-    </ion-card>
-  </div>
-  <ion-card-subtitle class="ps-3 mt-2">HEALTH SERVICES</ion-card-subtitle>
-
-  <ion-card style="position: relative;">
-    <ion-card-header>
-      <ion-card-title>Doctor Appointment</ion-card-title>
-      <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-    </ion-card-header>
-    <img style="position: absolute; bottom:-20px; right: -20px; width: 100px" src="../../../assets/icon/vecteezy_3d-doctor-character-working-with-a-tablet-suitable-for_36485028.png" alt="">
-
-    <!-- <ion-card-content>
-      Here's a small text description for the card content. Nothing more, nothing less.
-    </ion-card-content> -->
-  </ion-card>
-  <div class="d-flex w-100">
-    <ion-card class="w-50" style="position: relative;">
-      <ion-card-header>
-        <ion-card-title>Medicine</ion-card-title>
-        <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-      </ion-card-header>
-    <img style="position: absolute; bottom:-15px; right: -20px; width: 130px" src="../../../assets/icon/vecteezy_red-and-green-medicine-pills-tiny-pills-spill-out-of-big_22923924.png" alt="">
-      <!-- <ion-card-content>
-        Here's a small text description for the card content. Nothing more, nothing less.
-      </ion-card-content> -->
-    </ion-card>
-    <ion-card class="w-50" style="position: relative;">
-      <ion-card-header>
-        <ion-card-title>Lab Test</ion-card-title>
-        <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-      </ion-card-header>
-      <img style="position: absolute; bottom:-20px; right: -20px; width: 100px" src="../../../assets/icon/vecteezy_serene-artistic-3d-illustration-scientist-lab-research-genuine_57141771.png" alt="">
-
-      <!-- <ion-card-content>
-        Here's a small text description for the card content. Nothing more, nothing less.
-      </ion-card-content> -->
-    </ion-card>
-  </div>
-
-  <ion-card-subtitle class="ps-3 mt-2">DAILY NEEDS</ion-card-subtitle>
-  <div class="d-flex w-100">
-    <ion-card class="w-50" style="position: relative;">
-      <ion-card-header>
-        <ion-card-title>Grocery</ion-card-title>
-        <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-      </ion-card-header>
-    <img style="position: absolute; bottom:-15px; right: -20px; width: 85px" src="../../../assets/icon/vecteezy_stunning-abstract-a-shopping-cart-full-of-groceries-original_59932658.png" alt="">
-      <!-- <ion-card-content>
-        Here's a small text description for the card content. Nothing more, nothing less.
-      </ion-card-content> -->
-    </ion-card>
-    <ion-card class="w-50" style="position: relative;">
-      <ion-card-header>
-        <ion-card-title>Vegitables</ion-card-title>
-        <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-      </ion-card-header>
-      <img style="position: absolute; bottom:-20px; right: -20px; width: 100px" src="../../../assets/icon/vecteezy_cartoonish-shopping-bag-filled-with-groceries_54199244.png" alt="">
-
-      <!-- <ion-card-content>
-        Here's a small text description for the card content. Nothing more, nothing less.
-      </ion-card-content> -->
-    </ion-card>
-  </div>
-  <ion-card class="" style="position: relative;">
-    <ion-card-header>
-      <ion-card-title>Fresh Milk and Products</ion-card-title>
-      <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-    </ion-card-header>
+  <div class="mt-3">
+    <div *ngFor="let group of groupedData | keyvalue">
     
-    <img style="position: absolute; bottom:-20px; right: -20px; width: 100px" src="../../../assets/icon/vecteezy_milk-package-3d-rendering-icon-illustration_28233958.png" alt="">
-    <img style="position: absolute; bottom:-25px; right: 20px; width: 100px" src="../../../assets/icon/vecteezy_a-dynamic-milk-splash-captured-in-bright-isolation-on-a_57172766.png" alt="">
-    <!-- <ion-card-content>
-      Here's a small text description for the card content. Nothing more, nothing less.
-    </ion-card-content> -->
-  </ion-card>
+    <!-- Category Title -->
+    <ion-card-subtitle class="ps-3 text-uppercase">
+      {{ group.key }}
+    </ion-card-subtitle>
+
+    <!-- Cards under the category -->
+    <ion-grid class="p-0">
+      <ion-row>
+        <ion-col class="p-0"
+          *ngFor="let item of group.value"
+          [size]="item.width === '100%' ? '12' : '6'"
+        >
+          <ion-card style="position: relative; cursor: pointer">
+            <ion-card-header>
+              <div>
+                <ion-card-title>{{ item.title }}</ion-card-title>
+                <!-- Offer span (optional) -->
+                <!-- <span class="offer">{{ item.offers }}</span> -->
+              </div>
+              <ion-card-subtitle>
+              @if (item.offers != 'Nothing') {
+                <strong class="offer"><i class="bi bi-tags-fill me-1"></i>{{ item.offers }}</strong>
+              } @else {
+                <strong>{{ item.subtitle }}</strong>
+              }
+            </ion-card-subtitle>
+            </ion-card-header>
+
+            <img
+              style="position: absolute; bottom:-20px; right: -20px; width: 80px; z-index: -1"
+              [src]="item.img"
+              alt="{{ item.title }}"
+            />
+
+            <!-- Optional content -->
+            <!-- <ion-card-content>
+              Additional description here if needed
+            </ion-card-content> -->
+
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+  </div>
+  </div>
   
-  <ion-card-subtitle class="ps-3 mt-2">BOOK A VEHICLE</ion-card-subtitle>
-  <div class="d-flex w-100">
-    <ion-card class="w-50" style="position: relative;">
-      <ion-card-header>
-        <ion-card-title>CAB/AUTO</ion-card-title>
-        <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-      </ion-card-header>
-    <img style="position: absolute; bottom:0px; right: -10px; width: 85px; transform:scaleX(-1)" src="../../../assets/icon/vecteezy_thailand-car-isolated-on-background-3d-rendering_35175313.png" alt="">
-      <!-- <ion-card-content>
-        Here's a small text description for the card content. Nothing more, nothing less.
-      </ion-card-content> -->
-    </ion-card>
-    <ion-card class="w-50" style="position: relative;">
-      <ion-card-header>
-        <ion-card-title>Out Station</ion-card-title>
-        <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-      </ion-card-header>
-      <img style="position: absolute; bottom:-10px; right: -15px; width: 100px" src="../../../assets/icon/vecteezy_white-hatchback-car-3d-render-isolated-on-black-background_58265336.png" alt="">
-
-      <!-- <ion-card-content>
-        Here's a small text description for the card content. Nothing more, nothing less.
-      </ion-card-content> -->
-    </ion-card>
-  </div>
-  <div class="d-flex w-100">
-    <ion-card class="w-50" style="position: relative;">
-      <ion-card-header>
-        <ion-card-title>Goods</ion-card-title>
-        <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-      </ion-card-header>
-    <img style="position: absolute; bottom:-15px; right: -10px; width: 85px" src="../../../assets/icon/vecteezy_3d-delivery-truck-3d-delivery-truck-icon-3d-delivery-symbol_47492113.png" alt="">
-      <!-- <ion-card-content>
-        Here's a small text description for the card content. Nothing more, nothing less.
-      </ion-card-content> -->
-    </ion-card>
-    <ion-card class="w-50" style="position: relative;">
-      <ion-card-header>
-        <ion-card-title>Small Parcel</ion-card-title>
-        <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-      </ion-card-header>
-      <img style="position: absolute; bottom:-20px; right: -20px; width: 100px" src="../../../assets/icon/vecteezy_3d-delivery-man-character-deivering-package-with-a-scooter_36876830.png" alt="">
-
-      <!-- <ion-card-content>
-        Here's a small text description for the card content. Nothing more, nothing less.
-      </ion-card-content> -->
-    </ion-card>
-  </div>
   <app-footer></app-footer>
   <ion-modal [isOpen]="isModalOpen" (didDismiss)="handleModalClose()">
     <ng-template>
@@ -201,6 +116,12 @@
         </button>
       </div>
     </div>  
+  }
+  }
+  @else {
+      <div class="d-flex justify-content-center align-items-center h-100">
+        <ion-spinner  name="crescent"></ion-spinner>
+      </div>
   }
 </ion-content>
 

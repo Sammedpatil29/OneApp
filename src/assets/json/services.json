@@ -1,0 +1,134 @@
+[
+    {
+        "title": "Food",
+        "subtitle": "Order Now",
+        "img": "https://example.com/img.jpg",
+        "offers": "Flat 20%",
+        "width": "50%",
+        "route": "food",
+        "category": "Essential Services",
+        "city": ["Athani"],
+        "status": "active"
+    },
+    {
+        "title": "Laundry",
+        "subtitle": "Book Now",
+        "img": "https://example.com/img.jpg",
+        "offers": "Flat 20%",
+        "width": "50%",
+        "route": "laundry",
+        "category": "Essential Services",
+        "city": ["Athani"],
+        "status": "active"
+    },
+    {
+        "title": "Doctor Appointment",
+        "subtitle": "Book Now",
+        "img": "https://example.com/img.jpg",
+        "offers": "Flat 20%",
+        "width": "100%",
+        "route": "doctor",
+        "category": "Health Services",
+        "city": ["Athani"],
+        "status": "active"
+    },
+    {
+        "title": "Medicine",
+        "subtitle": "Order Now",
+        "img": "https://example.com/img.jpg",
+        "offers": "Flat 20%",
+        "width": "50%",
+        "route": "medicine",
+        "category": "Health Services",
+        "city": ["Athani"],
+        "status": "active"
+    },
+    {
+        "title": "Lab Test",
+        "subtitle": "Book Now",
+        "img": "https://example.com/img.jpg",
+        "offers": "Flat 20%",
+        "width": "50%",
+        "route": "lab",
+        "category": "Health Services",
+        "city": ["Athani"],
+        "status": "active"
+    },
+    {
+        "title": "Grocery",
+        "subtitle": "Order Now",
+        "img": "https://example.com/img.jpg",
+        "offers": "Flat 20%",
+        "width": "50%",
+        "route": "grocery",
+        "category": "Daily Needs",
+        "city": ["Athani"],
+        "status": "active"
+    },
+    {
+        "title": "Vegitables",
+        "subtitle": "Order Now",
+        "img": "https://example.com/img.jpg",
+        "offers": "Flat 20%",
+        "width": "50%",
+        "route": "vegitables",
+        "category": "Daily Needs",
+        "city": ["Athani"],
+        "status": "active"
+    },
+    {
+        "title": "Fresh Milk and Products",
+        "subtitle": "Order Now",
+        "img": "https://example.com/img.jpg",
+        "offers": "Flat 20%",
+        "width": "100%",
+        "route": "milk",
+        "category": "Daily Needs",
+        "city": ["Athani"],
+        "status": "active"
+    },
+    {
+        "title": "Cab/Auto",
+        "subtitle": "Book Now",
+        "img": "https://example.com/img.jpg",
+        "offers": "Flat 20%",
+        "width": "50%",
+        "route": "cab",
+        "category": "Book a Vehicle",
+        "city": ["Athani"],
+        "status": "active"
+    },
+    {
+        "title": "Out Station",
+        "subtitle": "Book Now",
+        "img": "https://example.com/img.jpg",
+        "offers": "Flat 20%",
+        "width": "50%",
+        "route": "outstation",
+        "category": "Book a Vehicle",
+        "city": ["Athani"],
+        "status": "active"
+    },
+    {
+        "title": "Goods",
+        "subtitle": "Book Now",
+        "img": "https://example.com/img.jpg",
+        "offers": "Flat 20%",
+        "width": "50%",
+        "route": "goods",
+        "category": "Book a Vehicle",
+        "city": ["Athani"],
+        "status": "active"
+    },
+    {
+        "title": "Small Parcel",
+        "subtitle": "Book Now",
+        "img": "https://example.com/img.jpg",
+        "offers": "Flat 20%",
+        "width": "50%",
+        "route": "parcel",
+        "category": "Book a Vehicle",
+        "city": ["Athani"],
+        "status": "active"
+    }
+]

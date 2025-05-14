@@ -18,7 +18,7 @@ export class ProfilePage implements OnInit {
 
 
   constructor(private router: Router, private navCtrl: NavController) { 
-        addIcons({ arrowBack });
+          
 
   }
 
@@ -32,5 +32,11 @@ export class ProfilePage implements OnInit {
   goBack() {
     this.navCtrl.back();
   }
+
+  openDetails(option: any) {
+  this.router.navigate(['/layout/about'], {
+    state: { data: option }
+  });
+}
 
 }

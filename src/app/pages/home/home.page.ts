@@ -10,7 +10,7 @@ import {
   IonTabButton,
   IonTabs,
   IonTitle,
-  IonToolbar, IonSearchbar, IonAvatar, IonModal, IonButtons, IonButton, IonBackButton, IonSpinner } from '@ionic/angular/standalone';
+  IonToolbar, IonSearchbar, IonAvatar, IonModal, IonButtons, IonButton, IonBackButton, IonSpinner, IonCol, IonRow, IonGrid, IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
 import { library, playCircle, radio, search, home, cube, bag, receiptOutline, person, personCircle, personCircleOutline, constructOutline, briefcaseOutline, buildOutline, arrowBack } from 'ionicons/icons';
@@ -26,7 +26,7 @@ import { LocationService } from 'src/app/services/location.service';
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   standalone: true,
-  imports: [IonSpinner, IonBackButton, IonButton, IonButtons, IonModal, IonAvatar, IonContent, CommonModule, FormsModule, IonContent, IonIcon, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, FooterComponent, IonTitle, IonToolbar, IonHeader, AddressComponent, RouterLink]
+  imports: [IonRefresherContent, IonRefresher, IonGrid, IonRow, IonCol, IonSpinner, IonButton, IonButtons, IonModal, IonContent, CommonModule, FormsModule, IonContent, IonIcon, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, FooterComponent, IonTitle, IonToolbar, IonHeader, AddressComponent, RouterLink]
 })
 export class HomePage implements OnInit {
 
@@ -35,10 +35,14 @@ export class HomePage implements OnInit {
   address: any = ''
   showVideo: boolean = true
   isClicked: boolean = true
-  video = '../../../assets/Cinematic Lays Commercial Ad _ Alien Bangers.mp4'
+  video = ''
+  allServices: any;
+  groupedData: { [key: string]: any[] } = {};
+  isLoading: boolean = false
 
   constructor(private router: Router, private locationService: LocationService) {
     addIcons({arrowBack,home,buildOutline,receiptOutline,personCircleOutline,briefcaseOutline,constructOutline,library,personCircle,person,search,bag,cube,radio,playCircle});
+  this.getServicesData()
   }
 
   ngOnInit() {
@@ -85,5 +89,36 @@ export class HomePage implements OnInit {
   closeBubble() {
     this.showVideo = false
     }
+
+    getServicesData(){
+      this.isLoading = true
+      this.locationService.getData().subscribe((res)=> {
+          this.allServices = res
+          this.groupedData = this.groupByCategory(this.allServices);
+          console.log(this.groupedData)
+          this.isLoading = false
+      })
+    }
+
+    groupByCategory(data: any[]) {
+  return data.reduce((acc, item) => {
+    const category = item.category;
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push(item);
+    const shuffledArray = this.shuffleArray(acc)
+    return shuffledArray;
+  }, {} as { [key: string]: any[] });
+}
+
+shuffleArray(array: any[]) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
 
 }

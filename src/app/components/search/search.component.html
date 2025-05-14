@@ -3,10 +3,10 @@
     <ion-title>
       Search
     </ion-title>
-    <ion-searchbar [placeholder]="placeholder" class="mb-2"></ion-searchbar>
+    <ion-searchbar [placeholder]="placeholder" [value]="searchTerm" (ionInput)="filterServices($event)" class="mb-2"></ion-searchbar>
   </ion-toolbar>
 </ion-header>
-@if (searchData.length == 0) {
+@if (searchTerm.length == 0) {
   <ion-card-subtitle class="ps-3 mt-4"> <span class="trending bounce-animation" color="white">Trending <i class="bi bi-arrow-up-right bounce-animation"></i>
 
   </span></ion-card-subtitle>
@@ -33,8 +33,44 @@
         </ion-card-content> -->
       </ion-card>
     </div>
-}
+} @else {
+  @if (filteredServices.length > 0) {
+      <ion-card-subtitle class="ps-3 mt-4"> <span class="trending bounce-animation" color="white">Search Results <i class="bi bi-heart-pulse"></i>
 
-  @else {
-    <app-nodata></app-nodata>
+  </span></ion-card-subtitle>
+
+<ion-grid class="p-0">
+  <ion-row>
+    @for (item of filteredServices; track $index) {
+      <ion-col class="p-0" [size]="item.width === '100%' ? '6' : '6'">
+        <ion-card style="position: relative; cursor: pointer">
+          <ion-card-header>
+            <div>
+              <ion-card-title class="text-truncate">{{ item.title }}</ion-card-title>
+            </div>
+            <ion-card-subtitle>
+              @if (item.offers != 'Nothing') {
+                <strong class="offer"><i class="bi bi-tags-fill me-1"></i>{{ item.offers }}</strong>
+              } @else {
+                <strong>{{ item.subtitle }}</strong>
+              }
+            </ion-card-subtitle>
+          </ion-card-header>
+
+          <!-- Optional Image -->
+          <img
+            style="position: absolute; bottom:-20px; right: -20px; width: 80px; z-index: -1"
+            [src]="item.img"
+            alt="{{ item.title }}"
+          />
+        </ion-card>
+      </ion-col>
+    }
+  </ion-row>
+</ion-grid>
+
+
+  } @else {
+<app-nodata></app-nodata>
+  }
   }

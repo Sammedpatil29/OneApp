@@ -8,7 +8,7 @@
     </div>
     <div class="position-fixed mt-4 d-flex justify-content-center w-100" style="bottom: 10vh">
 @if (!isLoading) {
-  <ion-button class="ion-padding w-75 text-nowrap" color="dark" (click)="Login()">Get Started</ion-button>
+  <ion-button class="ion-padding w-75 text-nowrap" color="dark" (click)="Login()">{{apiData[0].title}}</ion-button>
 } @else {
   <div (click)="Login()" class="text-center">
     <ion-spinner  name="crescent"></ion-spinner>
@@ -16,6 +16,7 @@
      
   </div>
 }
+
 
 </div>
     </div>

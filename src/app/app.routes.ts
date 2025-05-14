@@ -52,10 +52,14 @@ export const routes: Routes = [
           import('./pages/about/about.page').then(m => m.AboutPage),
       },
       {
+    path: 'profile-details',
+    loadComponent: () => import('./pages/profile-details/profile-details.page').then( m => m.ProfileDetailsPage)
+  },
+      {
         path: '',
         redirectTo: 'example/home',
         pathMatch: 'full',
       },
     ],
-  },
+  }
 ];
