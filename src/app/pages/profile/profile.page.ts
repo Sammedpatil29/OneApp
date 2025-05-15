@@ -17,7 +17,8 @@ import { arrowBack } from 'ionicons/icons';
 export class ProfilePage implements OnInit {
 
 
-  constructor(private router: Router, private navCtrl: NavController) { 
+  constructor(private router: Router, private navCtrl: NavController) {
+      addIcons({arrowBack}); 
           
 
   }

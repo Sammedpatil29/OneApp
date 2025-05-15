@@ -8,20 +8,16 @@
     <section>
       <div class="d-flex align-items-center mt-2 mx-3">
         <!-- Horizontally scrollable chips -->
-        <div class="chips-container me-2">
-          <!-- <ion-chip color="medium">Chip 1</ion-chip>
-          <ion-chip color="medium">Chip 2</ion-chip>
-          <ion-chip color="medium">Chip 3</ion-chip>
-          <ion-chip color="medium">Chip 4</ion-chip>
-          <ion-chip color="medium">Chip 5</ion-chip>
-          <ion-chip color="medium">Chip 6</ion-chip>
-          <ion-chip color="medium">Chip 7</ion-chip>
-          <ion-chip color="medium">Chip 8</ion-chip> -->
-        </div>
+        <div class="chip-scroll-container">
+  @for (item of category; track $index) {
+    <ion-chip class="chip-item" [outline]="true" (click)="onCategoryChange($event)">{{item}}</ion-chip>
+  }
+</div>
         <!-- Funnel icon -->
-        <div class="ms-auto">
+        <div class="ms-auto" style="border-radius: 20px">
           <!-- <i class="bi bi-funnel-fill"></i> -->
-          <ion-list lines="none">
+          <!-- <ion-list lines="none">
+
             <ion-item >
               <ion-select
                 interface="popover"
@@ -37,7 +33,8 @@
               }
               </ion-select>
             </ion-item>
-          </ion-list>
+          </ion-list> -->
+        <span class="text-nowrap p-2">Filter by Status</span>
         </div>
       </div>
       

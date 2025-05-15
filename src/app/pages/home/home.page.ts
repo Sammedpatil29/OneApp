@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -19,13 +19,17 @@ import { FooterComponent } from "../../components/footer/footer.component";
 import { Router, RouterLink } from '@angular/router';
 import { AddressComponent } from "../../components/address/address.component";
 import { LocationService } from 'src/app/services/location.service';
-
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { register } from 'swiper/element/bundle';
+register();
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  encapsulation: ViewEncapsulation.None,
   imports: [IonRefresherContent, IonRefresher, IonGrid, IonRow, IonCol, IonSpinner, IonButton, IonButtons, IonModal, IonContent, CommonModule, FormsModule, IonContent, IonIcon, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, FooterComponent, IonTitle, IonToolbar, IonHeader, AddressComponent, RouterLink]
 })
 export class HomePage implements OnInit {
@@ -44,6 +48,8 @@ export class HomePage implements OnInit {
     addIcons({arrowBack,home,buildOutline,receiptOutline,personCircleOutline,briefcaseOutline,constructOutline,library,personCircle,person,search,bag,cube,radio,playCircle});
   this.getServicesData()
   }
+
+  slides: any[] = ['../../../assets/banners-2-oneapp.png','../../../assets/Untitled.png','../../../assets/sliderimages.png', '../../../assets/sliderimages.png','../../../assets/sliderimages.png', '../../../assets/sliderimages.png']
 
   ngOnInit() {
     this.locationService.city$.subscribe((city: any) => {

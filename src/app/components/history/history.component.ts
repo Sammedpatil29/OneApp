@@ -62,7 +62,8 @@ export class HistoryComponent  implements OnInit {
   }
 
 onCategoryChange(category: any){
-  let selectedCategory = category.detail.value
+  let selectedCategory = category.target.innerText
+  console.log(selectedCategory)
   if(selectedCategory == 'All'){
     this.filteredHistory = this.history
   } else {

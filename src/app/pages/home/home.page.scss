@@ -64,4 +64,27 @@ top: 0px;
     // font-size: 16px;
     cursor: pointer;
   }
-  
+
+  .offer-banner{
+  position: fixed;
+  bottom: 0px;
+  display: flex;
+  justify-content: center;
+}
+
+.offer-content {
+padding: 10px;
+background-color: rgb(193, 243, 243);
+// border: 2px solid red;
+border-radius: 20px;
+width: 90%;
+img {
+  position: absolute;
+  top: -25%;
+  right: 10px;
+  width: 100px;    /* or % */
+  height: auto;    /* maintains aspect ratio */
+  // object-fit: contain; /* or cover, fill depending on use case */
+  // z-index: 1;
+}
+}

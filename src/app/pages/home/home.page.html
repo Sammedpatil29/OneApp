@@ -1,6 +1,7 @@
 <ion-content >
   @if (!isLoading) {
-    <ion-header>
+    <!-- <div> -->
+      <ion-header>
     <ion-toolbar class="container pt-4">
       <div class="d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center w-75">
@@ -24,7 +25,8 @@
       </div>
     </ion-toolbar>
   </ion-header>
-  <ion-refresher slot="fixed" class="my-refresher" (ionRefresh)="getServicesData()">
+  <ion-refresher slot="fixed" class="my-refresher mt-5" color="dark" (ionRefresh)="getServicesData()"
+   pullingIcon="arrow-dropdown" refreshingSpinner="crescent">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
   <!-- <ion-searchbar style="position:sticky; top:0px; z-index: 999"></ion-searchbar> -->
@@ -34,6 +36,17 @@
   <swiper-slide>Slide 3</swiper-slide>
 </swiper-container>  -->
 
+
+  <swiper-container [slidesPerView]="1" [spaceBetween]="0" pagination="true" pagination-dynamic-bullets="true"
+   autoplay-delay="2500" autoplay-disable-on-interaction="true">
+@for (item of slides; track $index) {
+    <swiper-slide>
+      <ion-card>
+        <img [src]="item" alt="">
+      </ion-card>
+    </swiper-slide>
+}
+  </swiper-container>
   <div class="mt-3">
     <div *ngFor="let group of groupedData | keyvalue">
     
@@ -118,6 +131,21 @@
       </div>
     </div>  
   }
+
+<!-- flash offers block -->
+  <div class="offer-banner w-100">
+    <div class="offer-content mb-2 position-relative">
+      <div class="p-2">
+        <ion-card-title class="fw-bolder">BUY ONE GET ONE</ion-card-title>
+          <ion-card-subtitle>Only for new Customer</ion-card-subtitle>
+          <button class="btn btn-outline-dark mt-2">Get it Now</button>
+          <img src="../../../assets/icons/3dicons-cup-dynamic-color.png" alt="">
+    <span class="position-absolute" style="top: -18px; right: -8px"><i class="bi bi-x-circle-fill text-secondary"></i></span>
+
+      </div>
+        </div>
+  </div>
+
   }
   @else {
       <div class="d-flex justify-content-center align-items-center h-100">

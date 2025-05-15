@@ -72,3 +72,8 @@ top: 0px;
     // width: 100px;
     // border-left: 2px solid rgb(6, 50, 245);
   }
+
+  .swiper-container .swiper-pagination .swiper-pagination-bullet-active {
+    --background: black !important;
+    opacity: 1 !important;
+}

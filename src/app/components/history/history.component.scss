@@ -70,3 +70,22 @@ top: 0px;
     --background-hover: var(--ion-color-dark);
     --background-hover-opacity: 0.12;
 }
+
+.chip-scroll-container {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  // padding: 0 8px;
+  // gap: 2px; /* spacing between chips */
+  white-space: nowrap;
+  // scrollbar-width: thin; /* Firefox */
+}
+
+.chip-scroll-container::-webkit-scrollbar {
+  height: 6px;
+}
+
+.chip-item {
+  flex-shrink: 0;
+  text-align: center;
+}
