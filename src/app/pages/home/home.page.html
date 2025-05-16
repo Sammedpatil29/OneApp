@@ -133,18 +133,20 @@
   }
 
 <!-- flash offers block -->
-  <div class="offer-banner w-100">
+  @if(isFlashOfferVisible){
+    <div class="offer-banner w-100">
     <div class="offer-content mb-2 position-relative">
       <div class="p-2">
         <ion-card-title class="fw-bolder">BUY ONE GET ONE</ion-card-title>
           <ion-card-subtitle>Only for new Customer</ion-card-subtitle>
           <button class="btn btn-outline-dark mt-2">Get it Now</button>
           <img src="../../../assets/icons/3dicons-cup-dynamic-color.png" alt="">
-    <span class="position-absolute" style="top: -18px; right: -8px"><i class="bi bi-x-circle-fill text-secondary"></i></span>
+    <span class="position-absolute" style="top: -18px; right: -8px"><i (click)="closeFlashOffer()" class="bi bi-x-circle-fill text-secondary"></i></span>
 
       </div>
         </div>
   </div>
+  }
 
   }
   @else {

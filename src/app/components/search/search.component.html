@@ -3,9 +3,9 @@
     <ion-title class="mt-2">
       Search
     </ion-title>
-    <ion-searchbar [placeholder]="placeholder" [value]="searchTerm" (ionInput)="filterServices($event)" class="mb-2"></ion-searchbar>
   </ion-toolbar>
 </ion-header>
+    <ion-searchbar [placeholder]="placeholder" [value]="searchTerm" (ionInput)="filterServices($event)" class="mb-2"></ion-searchbar>
 @if (searchTerm.length == 0) {
   <ion-card-subtitle class="ps-3 mt-4"> <span class="trending bounce-animation" color="white">Trending <i class="bi bi-arrow-up-right bounce-animation"></i>
 

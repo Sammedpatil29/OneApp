@@ -25,6 +25,7 @@
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
+
 /**
  * Ionic Dark Mode
  * -----------------------------------------------------
@@ -40,6 +41,11 @@
     --primary-color: black;
     --secondary-color: white;
     --ion-font-family: 'Roboto', sans-serif;
+    --swiper-theme-color: red !important;
+}
+
+:host {
+   --swiper-theme-color: red !important;
 }
 
 ::ng-deep.ionicon {
@@ -52,6 +58,7 @@ ion-header {
     overflow: hidden; /* Important to apply radius properly */
     position: sticky;
 top: 0px;
+box-shadow: none !important;
   }
 
   ion-card{

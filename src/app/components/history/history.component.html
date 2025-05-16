@@ -1,8 +1,13 @@
-<ion-header>
+@if(!isloading){
+  <ion-header>
   <ion-toolbar class="pt-4">
     <ion-title>History</ion-title>
   </ion-toolbar>
 </ion-header>
+<ion-refresher slot="fixed" class="my-refresher mt-5" color="dark" (ionRefresh)="getHistory()"
+   pullingIcon="arrow-dropdown" refreshingSpinner="crescent">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
 <!-- <ion-content> -->
   @if (history.length) {
     <section>
@@ -66,5 +71,10 @@
   } @else {
     <app-nodata></app-nodata>
   }
+} @else {
+  <div class="d-flex justify-content-center align-items-center h-100">
+        <ion-spinner  name="crescent"></ion-spinner>
+      </div>
+}
   
 <!-- </ion-content> -->

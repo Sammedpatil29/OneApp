@@ -88,3 +88,10 @@ img {
   // z-index: 1;
 }
 }
+
+::ng-deep .swiper-horizontal>.swiper-pagination-bullets.swiper-pagination-bullets-dynamic, .swiper-pagination-horizontal.swiper-pagination-bullets.swiper-pagination-bullets-dynamic {
+    left: 50%;
+    bottom: 0%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+}

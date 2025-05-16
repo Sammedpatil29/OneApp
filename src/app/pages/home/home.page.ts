@@ -43,6 +43,7 @@ export class HomePage implements OnInit {
   allServices: any;
   groupedData: { [key: string]: any[] } = {};
   isLoading: boolean = false
+  isFlashOfferVisible: boolean = false
 
   constructor(private router: Router, private locationService: LocationService) {
     addIcons({arrowBack,home,buildOutline,receiptOutline,personCircleOutline,briefcaseOutline,constructOutline,library,personCircle,person,search,bag,cube,radio,playCircle});
@@ -61,6 +62,10 @@ export class HomePage implements OnInit {
       this.address = address;
       console.log('Address received in home:', address);
     });
+
+    setTimeout(()=>{
+      this.isFlashOfferVisible = true
+    }, 2000)
   }
 
   goToProfile() {
@@ -131,5 +136,7 @@ navigateTo(route:any){
     this.router.navigate([`/layout/${route}`])
   }
 
-
+closeFlashOffer(){
+  this.isFlashOfferVisible = false;
+}
 }
