@@ -1,13 +1,79 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>login</ion-title>
+   <ion-buttons slot="start" class="mt-5 pb-2">
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">login</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  @if (!showRegisterForm) {
+    <div class="body">
+      <div class="w-100 d-flex justify-content-center mt-4">
+              <img style="width: 70px" src="../../../assets/icons/vecteezy_fingerprint-search-secure-biometric-app-icon_56410641 (1).png" alt="">
+      </div>
+    <ion-card-title class="text-center fw-bolder mt-4">Enter your Mobile Number to Start</ion-card-title>
+<div class="number mx-4 mt-4">
+  <ion-input class="custom-input" type="tel" [(ngModel)]="mobileNumber" [maxlength]="10" label-placement="floating" fill="outline" placeholder="">
+  </ion-input>
+</div>
+  </div>
+    @if(!otpSent){
+  <div class="position-fixed button-box">
+    <ion-button class="w-75 ion-padding" [disabled]="isLoading" (click)="sendOtp()" color="dark">GET OTP
+      @if (isLoading) {
+        <ion-spinner class="ms-2"  name="crescent"></ion-spinner>
+}
+    </ion-button>
+
+  </div>
+  } @else {
+    <div class="body">
+    <ion-card-title class="text-center fw-bolder mt-4">OTP Sent! - Please Enter your OTP</ion-card-title>
+<div class="otp mx-4 mt-4">
+  <ion-input class="custom-input" pattern="[0-9]*" type="password" [(ngModel)]="otp" [maxlength]="4" label-placement="floating" fill="outline" placeholder="">
+  </ion-input>
+</div>
+  </div>
+
+  <div class="position-fixed button-box">
+    <ion-button class="w-75 ion-padding" color="dark" [disabled]="isLoading" (click)="verifyOtp()">Verify otp
+@if (isLoading) {
+        <ion-spinner class="ms-2"  name="crescent"></ion-spinner>
+}
+    </ion-button>
+  </div>
+  }
+  } @else {
+<div class="w-100 d-flex justify-content-center mt-4">
+              <img style="width: 90px" src="../../../assets/icons/personal details.png" alt="">
+      </div>
+
+        <!-- <ion-card-title class="text-center fw-bolder mt-4">WELCOME TO <strong>ONE</strong>APP!</ion-card-title> -->
+        <ion-card-title class="text-center fw-bolder mt-4">Please enter your details</ion-card-title>
+    <div class="name mx-4 mt-4">
+  <ion-input class="custom-input fullName" style="text-transform: uppercase;"  type="text" [(ngModel)]="fullName" label-placement="floating" fill="outline" placeholder="Full Name">
+  </ion-input>
+</div>
+    <div class="name mx-4 mt-4">
+  <ion-input class="custom-input email" style="text-transform: lowercase;"  type="text" [(ngModel)]="email" label-placement="floating" fill="outline" placeholder="Email">
+  </ion-input>
+</div>
+<div class="position-fixed button-box">
+    <ion-button class="w-75 ion-padding" color="dark" [disabled]="isLoading" (click)="login()">Submit
+      @if (isLoading) {
+        <ion-spinner class="ms-2 fs-1"  name="crescent"></ion-spinner>
+}
+    </ion-button>
+  </div>
+  }
+
+  <ion-toast
+    [isOpen]="isToastOpen"
+    [message]="toastMessage"
+    [duration]="4000"
+  ></ion-toast>
+  
 </ion-content>

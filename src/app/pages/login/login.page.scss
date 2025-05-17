@@ -1,0 +1,52 @@
+.body{
+    
+}
+
+.custom-input::part(native) {
+  font-size: 18px; // or any size you prefer
+}
+
+::ng-deep.input-fill-outline.input-label-placement-stacked.sc-ion-input-md-h input.sc-ion-input-md, .input-fill-outline.input-label-placement-floating.sc-ion-input-md-h  {
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 6px;
+    margin-bottom: 6px;
+    
+}
+
+::ng-deep .number .sc-ion-input-md{
+font-size: xx-large;
+    text-align: center;
+    letter-spacing: 5px;
+}
+
+::ng-deep .otp .sc-ion-input-md{
+font-size: xx-large;
+    text-align: center;
+    letter-spacing: 50px;
+}
+
+::ng-deep .fullName .sc-ion-input-md{
+font-size: xx-large;
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+::ng-deep .email .sc-ion-input-md{
+font-size: xx-large;
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+.button-box {
+    bottom: 20px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+ion-spinner{
+    width: 10px !important; 
+    height: 10px !important;
+}
+

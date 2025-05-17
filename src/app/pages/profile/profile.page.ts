@@ -6,6 +6,8 @@ import { addIcons } from 'ionicons';
 import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { arrowBack } from 'ionicons/icons';
+import { Preferences } from '@capacitor/preferences';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-profile',
@@ -17,7 +19,7 @@ import { arrowBack } from 'ionicons/icons';
 export class ProfilePage implements OnInit {
 
 
-  constructor(private router: Router, private navCtrl: NavController) {
+  constructor(private router: Router, private navCtrl: NavController, private authService:AuthService) {
       addIcons({arrowBack}); 
           
 
@@ -26,8 +28,8 @@ export class ProfilePage implements OnInit {
   ngOnInit() {
   }
 
-  logOut(){
-    this.router.navigate(['/'])
+  async logOut(){
+    this.authService.logout();
   }
 
   goBack() {
