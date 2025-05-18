@@ -78,4 +78,16 @@
 </ion-item>
     <!-- <app-nodata></app-nodata> -->
   </ion-content>
+} @else if (data == 'suggestion') {
+  <ion-content [fullscreen]="true">
+    <ion-item class="text-area mx-5 mt-4">
+  <ion-textarea
+    placeholder="Add your suggestion or Service here"
+    [autoGrow]="true"
+    [value]=""
+    appearance = "outline"
+  >
+  </ion-textarea>
+</ion-item>
+  </ion-content>
 }

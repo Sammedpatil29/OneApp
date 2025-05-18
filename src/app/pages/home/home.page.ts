@@ -71,12 +71,10 @@ export class HomePage implements OnInit {
   goToProfile() {
     // this.router.navigate(['/layout/profile']);
     console.log('Navigating to profile...');
-    this.router.navigate(['/layout/profile'], {
-      replaceUrl: true,         // optionally replace the URL in the browser history
-  skipLocationChange: false
-    }).then(success => {
-      console.log('Navigation success:', success);
-    });
+    this.router.navigate(['/layout/profile'])
+    setTimeout(()=> {
+      this.router.navigate(['/layout/profile'])
+    }, 2000)
   }
 
   openLocation(isOpen: boolean) {
