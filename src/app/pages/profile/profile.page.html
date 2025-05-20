@@ -10,7 +10,7 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  @if (!isLoading) {
+    @if (!isLoading) {
     <div class="profile-container">
     @if (profileData.profile_image == '') {
       <ion-avatar class="profile-avatar">
@@ -27,8 +27,8 @@
     <ion-label>{{profileData.phone}}</ion-label>
   </div>
   <hr>
-  <div class="mt-3">
-    <ion-item button detail="true" (click)="openDetails('Personal Details')" lines="none">
+  <div class="my-3 mx-3 box">
+    <ion-item button detail="true" style="border-radius: 20px 20px 0px 0px;" (click)="openDetails('Personal Details')" lines="none">
       <ion-label>
         <h3 class="fs-6"><i class="bi bi-person-circle bi-icon me-2"></i>Personal Details</h3>
       </ion-label>
@@ -63,8 +63,8 @@
         <h3 class="fs-6"><i class="bi bi-info-circle me-2"></i>About OneApp</h3>
       </ion-label>
     </ion-item>
-    <hr>
-    <ion-item button detail="false" lines="none">
+    <hr style="margin: 0px !important">
+    <ion-item button detail="false" style="border-radius: 0px 0px 20px 20px" lines="none">
       <ion-label>
         <h3 class="text-danger text-center fs-6" (click)="logOut()"><i class="bi bi-box-arrow-right me-2"></i>Logout</h3>
       </ion-label>

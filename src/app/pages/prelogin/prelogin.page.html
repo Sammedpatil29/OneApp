@@ -10,9 +10,9 @@
 @if (!isLoading) {
   <ion-button class="ion-padding w-75 text-nowrap" color="dark" (click)="openLogin()">Get Started</ion-button>
 } @else {
-  <div (click)="Login()" class="text-center">
+  <div class="text-center">
     <ion-spinner  name="crescent"></ion-spinner>
-    <p>fetching location...</p>
+    <p>{{loadingMessage}}</p>
      
   </div>
 }

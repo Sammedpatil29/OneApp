@@ -5,7 +5,7 @@
         <ion-icon name="arrow-back"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>{{data}}</ion-title>
+    <ion-title>{{data | titlecase }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -67,7 +67,9 @@
 </ion-footer>
 } @else if (data == 'Favourites') {
   <ion-content [fullscreen]="true">
-    <app-nodata></app-nodata>
+    <section>
+      <app-nodata></app-nodata>
+    </section>
   </ion-content>
 } @else if (data == 'Preferences') {
   <ion-content [fullscreen]="true">
@@ -80,14 +82,41 @@
   </ion-content>
 } @else if (data == 'suggestion') {
   <ion-content [fullscreen]="true">
-    <ion-item class="text-area mx-5 mt-4">
+    <ion-list class="text-area mx-4 mt-4">
+  <ion-item class="suggestion" lines="none">
+    <ion-input placeholder="Subject" [(ngModel)]="subject" value=""></ion-input>
+  </ion-item>
+</ion-list>
+    <ion-item class="text-area mx-4 mt-4">
   <ion-textarea
+    class="suggestion"
     placeholder="Add your suggestion or Service here"
     [autoGrow]="true"
-    [value]=""
+    [(ngModel)]="subjectBody"
+    [value] = ''
     appearance = "outline"
   >
   </ion-textarea>
 </ion-item>
+<div class="mx-3">
+  <ion-button class="ion-padding w-100" (click)="submitSuggestion()" color="dark">Submit</ion-button>
+</div>
+  </ion-content>
+} @else if (data == 'Languages') {
+  <ion-content [fullscreen]="true">
+    <section class="mx-4 mt-4">
+      <div class="d-flex flex-row align-items-ceter py-4 language">
+          <ion-title class="fs-1 fw-bolder">
+            English <span class="fw-normal">(default)</span>
+          </ion-title>
+          <i class="bi bi-check-circle-fill text-success mt-1 mx-4 fs-3"></i>
+      </div>
+    </section>
+  </ion-content>
+} @else if (data == 'Saved Addresses') {
+  <ion-content [fullscreen]="true">
+    <section>
+      <app-nodata></app-nodata>
+    </section>
   </ion-content>
 }

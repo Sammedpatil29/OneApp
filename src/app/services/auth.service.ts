@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Preferences } from '@capacitor/preferences';
 import jwt_decode from 'jwt-decode';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -12,11 +13,20 @@ url = 'https://oneapp-backend.onrender.com/api/users/'
 tokenUrl = 'https://oneapp-backend.onrender.com/api/login/'
 token: any;
 
+private apiUrl = 'https://api.msg91.com/api/v5/otp';
+
   constructor(private http: HttpClient, private router: Router) { }
 
   getUsers(){
 return this.http.get(this.url)
   }
+
+  sendOtp(testMobileNumber: string, otp: string): Observable<any> {
+  return this.http.post('http://localhost:3000/send-otp', {
+    mobileNumber: testMobileNumber,
+    otp: otp,
+  });
+}
 
   postNewUser(params:any){
     return this.http.post(this.url, params)

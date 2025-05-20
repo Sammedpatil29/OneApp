@@ -7,6 +7,7 @@ import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { NodataComponent } from "../nodata/nodata.component";
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/services/auth.service';
 @Component({
   selector: 'app-history',
   templateUrl: './history.component.html',
@@ -18,26 +19,39 @@ export class HistoryComponent  implements OnInit {
   category: any[] = ['All', 'doctor']
   filteredHistory: any[] = this.history
   isloading: boolean = false
+  token: any;
 
-  constructor(private historyService: HistoryService, private router: Router) {
+  constructor(private historyService: HistoryService, private router: Router, private authService: AuthService) {
       addIcons({homeSharp,searchOutline,helpCircle,time,search,homeOutline,radio,library,person,home,playCircle, funnel, funnelOutline});
      }
 
-  ngOnInit() {
+  async ngOnInit() {
     console.log('called history')
+    await this.getToken()
     this.getHistory()
   }
 
   getHistory(){
     this.isloading = true
-  this.historyService.getHistory().subscribe(res => {
+    let params = {
+      "token": this.token
+    }
+  this.historyService.getHistory(params).subscribe(res => {
     this.history = res
     this.filteredHistory = this.history
     let uniqueCategory = Array.from(new Set(this.history.map(item => item.type)));
     this.isloading = false
     this.category = ['All', ...uniqueCategory]
+  }, error => {
+    this.isloading = false
   })
   }
+
+  // async getToken(){
+    async getToken(){
+ this.token = await this.authService.getToken()
+// }
+  } 
 
   getStatusIcon(status: string): string {
     switch (status.toLowerCase()) {

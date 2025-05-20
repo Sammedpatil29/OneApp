@@ -19,7 +19,7 @@ import { ProfileService } from 'src/app/services/profile.service';
 })
 export class ProfilePage implements OnInit {
 profileData: any;
-user_id: any;
+token: any;
 isLoading: boolean = false
 showRetry: boolean = false
 nameShort = ''
@@ -29,10 +29,10 @@ nameShort = ''
 
   }
 
- async ngOnInit() {
- await this.getUserId()
+ ngOnInit() {
+    Promise.all([this.getToken()]).then(()=>{
 this.getProfileData()
-
+  })
   }
 
   async logOut(){
@@ -49,14 +49,17 @@ this.getProfileData()
   });
 }
 
-async getUserId(){
-  this.user_id = await Preferences.get({key: 'user_id'})
+async getToken(){
+ this.token = await this.authService.getToken()
 }
 
  getProfileData(){
-  console.log(this.user_id)
+  // console.log(this.user_id)
   this.isLoading = true
- this.profileService.getProfileData(this.user_id).subscribe(res=>{
+  let params = {
+    "token": this.token
+  }
+ this.profileService.getProfileData(params).subscribe(res=>{
 this.profileData = res
 this.isLoading = false
 console.log(this.profileData)
@@ -69,13 +72,12 @@ console.log(this.profileData)
 
 async retry(){
   this.showRetry = false
-await this.getUserId()
+await this.getToken()
 this.getProfileData()
 }
 
 nameShorthand(){
   return this.nameShort = this.profileData.first_name.slice(0,2)
-  
 }
 
 }

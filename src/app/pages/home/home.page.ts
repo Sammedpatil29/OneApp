@@ -50,7 +50,7 @@ export class HomePage implements OnInit {
   this.getServicesData()
   }
 
-  slides: any[] = ['../../../assets/banners-2-oneapp.png','../../../assets/Untitled.png','../../../assets/sliderimages.png', '../../../assets/sliderimages.png','../../../assets/sliderimages.png', '../../../assets/sliderimages.png']
+  slides: any[] = ['../../../assets/banners-2-oneapp.png','../../../assets/Untitled.png']
 
   ngOnInit() {
     this.locationService.city$.subscribe((city: any) => {
@@ -64,7 +64,7 @@ export class HomePage implements OnInit {
     });
 
     setTimeout(()=>{
-      this.isFlashOfferVisible = true
+      this.isFlashOfferVisible = false
     }, 2000)
   }
 

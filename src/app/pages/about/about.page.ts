@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonButtons, IonIcon, IonFooter, IonText, IonItem, IonSelectOption, IonSelect, IonTextarea } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonButtons, IonIcon, IonFooter, IonText, IonItem, IonSelectOption, IonSelect, IonTextarea, IonList, IonInput, IonCard } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { arrowBack } from 'ionicons/icons';
@@ -14,12 +14,14 @@ import { NodataComponent } from "../../components/nodata/nodata.component";
   templateUrl: './about.page.html',
   styleUrls: ['./about.page.scss'],
   standalone: true,
-  imports: [IonTextarea, IonItem, IonText, IonFooter, IonIcon, IonButtons, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, FooterComponent, NodataComponent,IonSelectOption, IonSelect]
+  imports: [IonCard, IonInput, IonList, IonTextarea, IonItem, IonText, IonFooter, IonIcon, IonButtons, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, FooterComponent, NodataComponent,IonSelectOption, IonSelect]
 })
 export class AboutPage implements OnInit {
 
   data: any;
   year: any;
+  subject = ''
+  subjectBody = ''
 
   constructor(private router: Router, private navCtrl: NavController) {
     addIcons({ arrowBack });
@@ -38,6 +40,14 @@ export class AboutPage implements OnInit {
 
   goBack() {
     this.navCtrl.back();
+  }
+
+  submitSuggestion(){
+    if(this.subject.length > 4 && this.subjectBody.length > 5){
+      alert("Submitted")
+    } else {
+      alert("enter atleast 4 characters in both fields")
+    }
   }
 
 }

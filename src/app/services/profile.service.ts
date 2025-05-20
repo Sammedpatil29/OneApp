@@ -13,8 +13,7 @@ user_id: any;
 
 profileUrl = 'https://oneapp-backend.onrender.com/api/users/'
 
-getProfileData(user_id:any){
-  console.log(user_id)
-  return this.http.get(`${this.profileUrl}${user_id.value}/`)
+getProfileData(params:any){
+  return this.http.post(`${this.profileUrl}user-by-token/`, params)
 }
 }

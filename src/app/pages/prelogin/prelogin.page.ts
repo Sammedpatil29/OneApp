@@ -25,6 +25,7 @@ coords: any;
 apiData: any;
 isModalOpen: boolean = false
 tokenDecoded: any;
+loadingMessage = ''
 
   constructor(private navCtrl: NavController,private router: Router, private locationService: LocationService, private authService: AuthService) {
     // this.locationService.getData().subscribe((res) => {
@@ -52,6 +53,8 @@ tokenDecoded: any;
   }
 
   async getLocation() {
+    // this.isLoading = true
+    this.loadingMessage = 'fetching Location...'
     const coords = await this.locationService.getCurrentPosition();
     // this.isLoading = false
     console.log('Coords from component:', coords.coords.latitude);
@@ -59,6 +62,7 @@ tokenDecoded: any;
 
 token:any;
   async verifyToken(){
+    this.loadingMessage = 'verifying user...'
     this.token = await this.authService.getToken()
     // console.log(this.authService.getToken().__zone_symbol__value)
     console.log(this.token)

@@ -37,8 +37,8 @@
 </swiper-container>  -->
 
 
-  <swiper-container [slidesPerView]="1" [spaceBetween]="0" pagination="true" pagination-dynamic-bullets="true"
-   autoplay-delay="2500" autoplay-disable-on-interaction="true">
+  <swiper-container [slidesPerView]="1" [spaceBetween]="0" [loop]="true"
+   autoplay-delay="2500" autoplay-disable-on-interaction="false">
 @for (item of slides; track $index) {
     <swiper-slide>
       <ion-card>

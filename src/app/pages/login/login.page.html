@@ -33,13 +33,13 @@
     <div class="body">
     <ion-card-title class="text-center fw-bolder mt-4">OTP Sent! - Please Enter your OTP</ion-card-title>
 <div class="otp mx-4 mt-4">
-  <ion-input class="custom-input" pattern="[0-9]*" type="password" [(ngModel)]="otp" [maxlength]="4" label-placement="floating" fill="outline" placeholder="">
+  <ion-input class="custom-input" pattern="[0-9]*" type="password" [(ngModel)]="enteredOtp" [maxlength]="4" label-placement="floating" fill="outline" placeholder="">
   </ion-input>
 </div>
   </div>
 
   <div class="position-fixed button-box">
-    <ion-button class="w-75 ion-padding" color="dark" [disabled]="isLoading" (click)="verifyOtp()">Verify otp
+    <ion-button class="w-75 ion-padding" color="dark" [disabled]="isLoading" (click)="veirifyUserOtp()">Verify otp
 @if (isLoading) {
         <ion-spinner class="ms-2"  name="crescent"></ion-spinner>
 }

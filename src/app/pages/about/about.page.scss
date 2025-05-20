@@ -7,5 +7,19 @@
 
 .text-area {
     border-radius: 10px;
-    border: 5px solid black;
+    border: 1px solid black;
+    border-radius: 20px;
+}
+
+::ng-deep.suggestion .sc-ion-textarea-md{
+    font-size: 20px !important;
+}
+
+::ng-deep.suggestion .sc-ion-input-md{
+    font-size: 20px !important;
+}
+
+.language {
+    border: 1px solid var(--ion-color-medium);
+    border-radius: 20px;
 }

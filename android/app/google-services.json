@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "700270095510",
+    "project_id": "oneapp-74b5a",
+    "storage_bucket": "oneapp-74b5a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:700270095510:android:e02cad1b88b582bd9666b7",
+        "android_client_info": {
+          "package_name": "io.ionic.oneapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlqkiETdDG97Fpl9terCygvf4Zk0ICZGI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

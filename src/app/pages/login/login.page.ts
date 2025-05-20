@@ -20,6 +20,7 @@ export class LoginPage implements OnInit {
   otpSent: boolean = false
   mobileNumber = ''
   otp = ''
+  enteredOtp = ''
   users: any;
   showRegisterForm: boolean = false
   fullName = ''
@@ -54,9 +55,19 @@ export class LoginPage implements OnInit {
 this.isToastOpen = false
         },4000)
     } else {
+      this.sendOtpToUser()
         this.otpSent = true
     }
   }
+
+  veirifyUserOtp() {
+  if (this.otp === this.enteredOtp) {
+    console.log('OTP verified successfully');
+    this.verifyOtp()
+  } else {
+    console.error('Invalid OTP');
+  }
+}
 
   verifyOtp() {
   this.isLoading = true;
@@ -128,6 +139,7 @@ this.isLoading = true
     
   }
 response: any;
+
   createToken(){
     let params = {
       "phone": this.mobileNumber
@@ -153,6 +165,26 @@ setTimeout(()=> {
         this.isToastOpen = false
       })
     })
+  }
+
+  generateOtp(): string {
+    return Math.floor(1000 + Math.random() * 9000).toString(); // 6-digit OTP
+  }
+
+  sendOtpToUser() {
+    if (this.mobileNumber.length === 10) {
+      this.otp = '1234'
+      this.authService.sendOtp(this.mobileNumber, this.otp).subscribe(
+        (response) => {
+          console.log('OTP sent successfully', response);
+        },
+        (error) => {
+          console.error('Error sending OTP', error);
+        }
+      );
+    } else {
+      console.error('Invalid mobile number');
+    }
   }
 
 }
