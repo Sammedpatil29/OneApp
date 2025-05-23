@@ -73,7 +73,7 @@
   </ion-content>
 } @else if (data == 'Preferences') {
   <ion-content [fullscreen]="true">
-    <ion-item class="mt-2" lines="none"> 
+    <ion-item class="mt-2 mx-3" style="border-radius: 10px;" lines="none"> 
   <ion-select label="App theme" placeholder="Device default theme">
     <!-- <ion-select-option value="">No Game Console</ion-select-option> -->
   </ion-select>
@@ -87,7 +87,7 @@
     <ion-input placeholder="Subject" [(ngModel)]="subject" value=""></ion-input>
   </ion-item>
 </ion-list>
-    <ion-item class="text-area mx-4 mt-4">
+    <ion-item class="text-area mx-4 mt-4" lines="none">
   <ion-textarea
     class="suggestion"
     placeholder="Add your suggestion or Service here"
@@ -99,7 +99,7 @@
   </ion-textarea>
 </ion-item>
 <div class="mx-3">
-  <ion-button class="ion-padding w-100" (click)="submitSuggestion()" color="dark">Submit</ion-button>
+  <ion-button class="ion-padding w-100" (click)="postSuggestion()" color="dark">Submit</ion-button>
 </div>
   </ion-content>
 } @else if (data == 'Languages') {
@@ -111,12 +111,43 @@
           </ion-title>
           <i class="bi bi-check-circle-fill text-success mt-1 mx-4 fs-3"></i>
       </div>
+      <div class="d-flex flex-row align-items-ceter py-4 language mt-2">
+          <ion-title class="fs-1 fw-bolder">
+            ಜವಾರಿ ಕನ್ನಡ  <span class="fw-normal"></span>
+          </ion-title>
+          <i class="bi bi-circle text-success mt-1 mx-4 fs-3"></i>
+      </div>
     </section>
   </ion-content>
 } @else if (data == 'Saved Addresses') {
   <ion-content [fullscreen]="true">
-    <section>
-      <app-nodata></app-nodata>
+    <button (click)="getAddressList()">click</button>
+    @if (addresses) {
+      <section>
+      @for (item of addresses; track $index) {
+        
+        <ion-list class="border mt-2 mx-3" style="border-radius: 20px;">
+      <ion-item lines="none" >
+      <div class="unread-indicator-wrapper" slot="start"></div>
+      <ion-label>
+        <small class="border py-1 px-2" style="border-radius: 10px">{{item.label | uppercase}}</small>&nbsp;
+        <ion-text>{{item['house_no']}}&nbsp;{{item['building_name']}}</ion-text><br />
+        <ion-note color="medium" class="ion-text-wrap text-truncate">{{item['landmark']}}&nbsp;{{item['address']}}</ion-note>
+      </ion-label>
+      <div class="metadata-end-wrapper me-2" slot="end">
+        <i class="bi bi-pencil me-4" color="dark"></i>
+        <i class="bi bi-trash" color="dark"></i>
+        <!-- <i class="bi bi-check-circle-fill fs-5" color="dark"></i> -->
+      </div>
+    </ion-item>
+    </ion-list>
+      }
     </section>
+    } @else {
+      <app-nodata></app-nodata>
+    }
+    <footer class="position-fixed bottom-0 w-100">
+      <ion-button class="ion-padding w-100" [routerLink]="['/layout/map']" routerLinkActive="router-link-active"  color="dark">add New Address</ion-button>
+    </footer>
   </ion-content>
 }

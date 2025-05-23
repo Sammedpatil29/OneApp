@@ -9,15 +9,15 @@
         @if (address == '') {
           <div class="d-flex flex-column me-2" style="line-height: 1.2;">
             <!-- <h6 class="p-0 fs-6">Location</h6> -->
-            <ion-card-subtitle class="text-truncate" style="max-width: 50vw"><span class="">Location</span> <br><span (click)="openLocation(true)" class="text-primary">Select your location</span></ion-card-subtitle>  
+            <ion-card-subtitle class="text-truncate" style="max-width: 50vw"><span class="">Location</span> <br><span [routerLink]="['/layout/map']" class="text-primary">Select your location</span></ion-card-subtitle>  
           </div>
         } @else {
           <div class="d-flex flex-column me-2" style="line-height: 1.2;">
             <!-- <h6 class="p-0 fs-6">Location</h6> -->
-            <ion-card-subtitle class="text-truncate" style="max-width: 50vw"><span>{{city}}</span> <br><span (click)="openLocation(true)">{{address}}</span></ion-card-subtitle>  
+            <ion-card-subtitle class="text-truncate" style="max-width: 50vw"><span>Location</span> <br><span [routerLink]="['/layout/map']">{{address}}</span></ion-card-subtitle>  
           </div>
         }
-        <i class="bi bi-chevron-down me-2" (click)="openLocation(true)"></i>
+        <i class="bi bi-chevron-down me-2" [routerLink]="['/layout/map']"></i>
         </div>
         <div class="float-end" [routerLink]="['/layout/profile']">
           <i class="bi bi-person-circle fs-3"></i>

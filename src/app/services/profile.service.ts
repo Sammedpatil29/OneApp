@@ -12,8 +12,13 @@ user_id: any;
   
 
 profileUrl = 'https://oneapp-backend.onrender.com/api/users/'
+suggestion = 'https://oneapp-backend.onrender.com/api/suggestions/'
 
 getProfileData(params:any){
   return this.http.post(`${this.profileUrl}user-by-token/`, params)
+}
+
+postSuggestion(params:any){
+  return this.http.post(`${this.suggestion}`, params)
 }
 }

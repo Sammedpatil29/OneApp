@@ -1,0 +1,39 @@
+.location-pin {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -100%); /* Center horizontally, tip at center vertically */
+  pointer-events: none;
+}
+
+.refresh-button{
+    // border: 1px solid red;
+    // padding: 10px;
+    border-radius: 10px;
+    background-color: var(--ion-background-color);
+}
+
+.header-wrapper {
+  position: relative;
+}
+
+::ng-deep.searchbar-input.sc-ion-searchbar-md{
+    border-radius: 20px !important;
+  }
+
+  .addressField {
+    border-radius: 20px;
+  }
+
+  ion-item{
+    border: 1px solid gray;
+  }
+
+  ion-spinner{
+    width: 10px !important;
+    height: 10px !important;
+}
+
+.chipStyle{
+    background-color: var(--ion-color-light-shade, white);
+}

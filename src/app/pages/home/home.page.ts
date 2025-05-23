@@ -44,6 +44,7 @@ export class HomePage implements OnInit {
   groupedData: { [key: string]: any[] } = {};
   isLoading: boolean = false
   isFlashOfferVisible: boolean = false
+  locationData: any
 
   constructor(private router: Router, private locationService: LocationService) {
     addIcons({arrowBack,home,buildOutline,receiptOutline,personCircleOutline,briefcaseOutline,constructOutline,library,personCircle,person,search,bag,cube,radio,playCircle});
@@ -59,13 +60,21 @@ export class HomePage implements OnInit {
     });
 
     this.locationService.address$.subscribe(address => {
-      this.address = address;
+      // this.address = address;
       console.log('Address received in home:', address);
     });
 
     setTimeout(()=>{
       this.isFlashOfferVisible = false
     }, 2000)
+  }
+  
+  ionViewWillEnter() {
+    const locationData = localStorage.getItem('location');
+    if (locationData) {
+      const location = JSON.parse(locationData);
+      this.address = location.address;
+    }
   }
 
   goToProfile() {
@@ -78,7 +87,8 @@ export class HomePage implements OnInit {
   }
 
   openLocation(isOpen: boolean) {
-    this.isModalOpen = isOpen;
+    // this.isModalOpen = isOpen;
+    this.router.navigate(['/layout/map'])
   }
 
   handleModalClose(){

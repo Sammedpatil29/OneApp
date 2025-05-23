@@ -47,6 +47,7 @@ return this.http.get(this.url)
   async logout(){
     await Preferences.remove({key: 'auth-token'})
     await Preferences.remove({key: 'user_id'})
+    localStorage.removeItem('location')
     this.router.navigate(['/'])
   }
 

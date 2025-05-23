@@ -40,6 +40,10 @@ loadingMessage = ''
     this.verifyToken()
   }
 
+  ionViewWillEnter(){
+    this.verifyToken()
+  }
+
   Login(){
     this.router.navigate(['/layout']);
   }

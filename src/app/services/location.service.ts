@@ -17,7 +17,7 @@ export class LocationService {
   coordinates: any = []
   city: any = ''
   address: any = ''
-  
+  addresslistUrl = "https://oneapp-backend.onrender.com/api/address/"
 
   constructor(private http: HttpClient) { }
 
@@ -47,5 +47,13 @@ export class LocationService {
 
   getData(){
     return this.http.get('https://oneapp-backend.onrender.com/api/services/active/')
+  }
+
+  saveAddress(params:any){
+    return this.http.post(this.addresslistUrl, params)
+  }
+
+  getAddressesList(params:any){
+    return this.http.get(this.addresslistUrl, {params})
   }
 }
