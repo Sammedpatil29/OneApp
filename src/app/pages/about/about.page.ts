@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonButtons, IonIcon, IonFooter, IonText, IonItem, IonSelectOption, IonSelect, IonTextarea, IonList, IonInput, IonCard, IonLabel, IonNote } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonButtons, IonIcon, IonFooter, IonText, IonItem, IonSelectOption, IonSelect, IonTextarea, IonList, IonInput, IonCard, IonLabel, IonNote, IonSpinner, IonToast, IonAvatar, IonAlert } from '@ionic/angular/standalone';
 import { Router, RouterLink } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { arrowBack, chevronForward } from 'ionicons/icons';
@@ -17,7 +17,7 @@ import { ProfileService } from 'src/app/services/profile.service';
   templateUrl: './about.page.html',
   styleUrls: ['./about.page.scss'],
   standalone: true,
-  imports: [IonNote, IonLabel, IonCard,RouterLink, IonInput, IonList, IonTextarea, IonItem, IonText, IonFooter, IonIcon, IonButtons, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, FooterComponent, NodataComponent,IonSelectOption, IonSelect]
+  imports: [IonAlert, IonAvatar,IonButton, IonToast, IonSpinner, IonNote, IonLabel, IonCard,RouterLink, IonInput, IonList, IonTextarea, IonItem, IonText, IonFooter, IonIcon, IonButtons, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, FooterComponent, NodataComponent,IonSelectOption, IonSelect]
 })
 export class AboutPage implements OnInit {
 
@@ -27,7 +27,31 @@ export class AboutPage implements OnInit {
   subjectBody = ''
   token:any
   addresses: any
+  name: any = ''
+  phone: any = ''
+  email: any = ''
   isLoading: boolean = false
+  isToastOpen: boolean = false
+  toastMessage = ''
+  isNameEditable: boolean = false
+  isEmailEditable: boolean = false
+  isPhoneEditable: boolean = false
+  alertButtons = [
+    {
+    text: 'CONFIRM DELETE',
+    cssClass: 'confirm-button',
+    handler: () => {
+      console.log('OK clicked');
+      this.deleteProfilePermanently();
+    },
+  },
+  ];
+  profileData: any = {
+    first_name: "",
+    profile_image: "",
+    email: "",
+    phone: ""
+  }
 
   constructor(private router: Router, private navCtrl: NavController, private authService: AuthService, private locationService: LocationService, private profileService: ProfileService ) {
     addIcons({arrowBack,chevronForward});
@@ -38,6 +62,9 @@ export class AboutPage implements OnInit {
     console.log('Passed Data:', this.data);
     this.getYear()
     this.token = await this.authService.getToken()
+    if(this.data == 'Personal Details'){
+      this.getProfileData()
+    }
     // this.getAddressList()
   }
 selectedAddress:any
@@ -56,6 +83,17 @@ selectedAddress:any
 
   goBack() {
     this.navCtrl.back();
+  }
+
+  deleteProfilePermanently(){
+    console.log(this.token)
+    let params = {
+      "token": this.token
+    }
+    this.profileService.deleteProfilePermanently(params).subscribe(res=> {
+      console.log(res)
+      this.authService.logout()
+    })
   }
 
   getAddressList(){
@@ -82,17 +120,73 @@ selectedAddress:any
     if(this.subject.length > 4 && this.subjectBody.length > 5){
       this.isLoading = true
       this.profileService.postSuggestion(params).subscribe(res => {
-      alert('suggestion submitted')
+      this.isToastOpen = true
+      this.toastMessage = 'Thanks for the suggestion, we will consider it very siriously!❤️'
+      setTimeout(()=> {
+        this.isToastOpen = false
+      }, 3000)
       this.isLoading = false
       this.subject = ''
       this.subjectBody = ''
     }, error => {
-      alert('error while posting suggestion')
+            this.isToastOpen = true
+      this.toastMessage = 'error while posting suggestion'
+      setTimeout(()=> {
+        this.isToastOpen = false
+      }, 3000)
       this.isLoading = false
     })
     } else {
-      alert("enter atleast 4 characters in both fields")
+      this.isToastOpen = true
+      this.toastMessage = 'Atleat 4 charactrs needed in each field'
+      setTimeout(()=> {
+        this.isToastOpen = false
+      }, 3000)
     }
   }
+
+  openLocation(){
+    this.router.navigate(['/layout/map'], {
+      state: {data : 'addAddress'}
+    })
+  }
+
+  nameShort: any;
+  nameShorthand(){
+  return this.nameShort = this.profileData.first_name.slice(0,2)
+}
+
+update(event:any){
+  if(event == 'name'){
+  this.isNameEditable = false
+} else if (event == 'phone'){
+  this.isPhoneEditable = false
+} else {
+  this.isEmailEditable = false
+}
+}
+
+getProfileData(){
+  console.log('triggered')
+  this.isLoading = true
+  let params = {
+    "token": this.token
+  }
+ this.profileService.getProfileData(params).subscribe({
+  next: (res) => {
+    this.profileData = res;
+    this.isLoading = false;
+    this.name = this.profileData.first_name
+    this.phone = this.profileData.phone
+    this.email = this.profileData.email
+    console.log(this.profileData);
+  },
+  error: (error) => {
+    this.isLoading = false;
+    alert('Error while fetching data');
+    console.error(error);
+  }
+});
+}
 
 }

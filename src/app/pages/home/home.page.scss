@@ -95,3 +95,11 @@ img {
     transform: translateX(-50%);
     white-space: nowrap;
 }
+
+ion-refresher.refresher-native ion-spinner{
+  color: black !important;
+}
+
+ion-refresher.refresher-native .arrow-container ion-icon {
+  color: black !important;
+}

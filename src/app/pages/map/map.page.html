@@ -17,7 +17,7 @@
 </ion-header>
   <div #map id="map" style="height: 100%;"></div>
 
-  <div class="location-pin">
+  <div class="location-pin m-0 p-0">
     <!-- <img style="width: 30px" src="../../../assets/icons/vecteezy_a-3d-render-of-a-glossy-light-blue-location-marker-pin-icon_58664621.png" /> -->
   <i class="bi bi-geo-alt-fill fs-1 text-dark"></i>
   </div>
@@ -25,7 +25,13 @@
   <ion-footer class="position-fixed bottom-0 w-100" style="border-radius: 20px; position: relative">
     <ion-toolbar class="">
       <ion-title class="mt-3 text-truncate" size="small">{{ currentAddress || 'Move map to select location' }}</ion-title>
-      <ion-button class="ion-padding w-100" color="dark" (click)="confirmLocation()">Confirm Location</ion-button>
+      <ion-button class="ion-padding w-100" color="dark" (click)="confirmLocation()" [disabled]="!inside">
+        @if (!inside) {
+          We are not Serviceable here😒
+        } @else {
+          Confirm Location
+        }
+      </ion-button>
     </ion-toolbar>
     <div class="position-absolute" style="top: -40%; right: 20px; z-index: 10">
         <div (click)="backtoServiceArea()" class="refresh-button px-2 pt-1"><i class="bi bi-arrow-counterclockwise fs-2"></i></div>

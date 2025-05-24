@@ -19,8 +19,8 @@ export class LayoutPage implements OnInit {
     const orderBubble = document.querySelector('.orderBubble') as HTMLElement;
 
     // Set the initial position (you can dynamically adjust this)
-    orderBubble.style.left = '20px';  // Set initial left position
-    orderBubble.style.top = '150px';
+    // orderBubble.style.left = '20px';  // Set initial left position
+    // orderBubble.style.top = '150px';
   }
 
   constructor() { }

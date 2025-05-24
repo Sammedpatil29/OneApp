@@ -11,6 +11,7 @@ import { Preferences } from '@capacitor/preferences';
 import { LocationService } from 'src/app/services/location.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { NodataComponent } from "../../components/nodata/nodata.component";
+import { Route, Router } from '@angular/router';
 
 declare const google: { maps: {
   places: any;
@@ -49,6 +50,8 @@ autocompleteService = new google.maps.places.AutocompleteService();
   searchedAddresses: any
   suggestions: any[] = []
   zoom: any = 14
+  routeData = ''
+  inside: any = true
   cityCenter = new google.maps.LatLng(16.715316578418758, 75.05882421691895);
   polygonCoords: google.maps.LatLngLiteral[] = [
     { lat: 16.721820, lng: 75.041123 }, 
@@ -63,17 +66,22 @@ autocompleteService = new google.maps.places.AutocompleteService();
   ];
   mapImgUrl: any;
 
-  constructor(private navCtrl: NavController, private locationService: LocationService, private authService: AuthService){
+  constructor(private navCtrl: NavController, private router: Router, private locationService: LocationService, private authService: AuthService){
     addIcons({arrowBack});
   }
 
 async ngOnInit() {
+  this.routeData = this.router.getCurrentNavigation()?.extras.state?.['data'];
+    console.log('Passed Data:', this.routeData);
     this.token = await this.authService.getToken()
 }  
 
   ngAfterViewInit() {
     this.getLocationFromLocalStorage()
     this.loadMap();
+    setTimeout(()=> {
+      this.loadMap()
+    }, 200)
   }
 
   handleModalClose(){
@@ -173,6 +181,7 @@ serviceArea.setMap(this.map);
       }
     });
   }
+
 locationData:any;
   confirmLocation() {
     console.log('Selected location:', {
@@ -191,9 +200,13 @@ this.locationData = localStorage.getItem('location');
 const location = JSON.parse(this.locationData)
 console.log(location.address)
 // this.goBack()
-this.mapImgUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${this.centerCoords.lat()},${this.centerCoords.lng()}&zoom=17&size=600x200&markers=color:red%7C${this.centerCoords.lat()},${this.centerCoords.lng()}&key=AIzaSyA85HFedGjgP12MG_dvR-MVgooWTcJNIb0`
+if(this.routeData == 'addAddress'){
+  this.mapImgUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${this.centerCoords.lat()},${this.centerCoords.lng()}&zoom=17&size=600x200&markers=color:red%7C${this.centerCoords.lat()},${this.centerCoords.lng()}&key=AIzaSyA85HFedGjgP12MG_dvR-MVgooWTcJNIb0`
 this.isModalOpen = true
     // Pass data to parent or store
+} else {
+  this.goBack()
+}
   }
 
   checkIfInsideServiceArea(lat: number, lng: number) {
@@ -203,8 +216,10 @@ this.isModalOpen = true
   const inside = google.maps.geometry.poly.containsLocation(point, polygon);
 
   if (inside) {
+    this.inside = true
     console.log('✅ Location is inside service area');
   } else {
+    this.inside = false
     console.warn('❌ Location is outside service area');
   }
 
@@ -249,5 +264,4 @@ this.isModalOpen = true
       }
     );
   }
-
 }

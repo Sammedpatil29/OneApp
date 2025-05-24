@@ -23,3 +23,88 @@
     border: 1px solid var(--ion-color-medium);
     border-radius: 20px;
 }
+
+.addressField {
+    border-radius: 20px;
+  }
+
+  ion-item{
+    border: 1px solid gray;
+  }
+
+  .profile-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+  
+  .profile-avatar {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .profile-name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--ion-text-color, #000); // Automatically adapts to dark/light mode
+  }
+
+  .bi-icon {
+    color: var(--ion-text-color, #000);
+  }
+
+  .avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: pink;
+    font-size: x-large;
+    padding-left: 24px;
+  }
+
+  .box {
+    border: 1px solid gray;
+    border-radius: 20px;
+    z-index:  999;
+  }
+
+  ::ng-deep .confirm-button{ 
+    color: white !important;
+    border: 1px solid red !important;
+    padding: 10px !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    background-color: red !important;
+    width: 100% !important;
+    text-align: center !important;
+    border-radius: 10px !important;
+  }
+
+  ::ng-deep .custom-alert .alert-wrapper {
+  width: 90%;
+  max-width: 400px;
+  display: flex !important;
+  justify-content: center !important;
+  box-shadow: 0px 0px 10px red !important;
+  border-radius: 20px !important;
+  padding: 10px !important;
+}
+
+::ng-deep.alert-button-inner.sc-ion-alert-md {
+    -ms-flex-pack: end;
+    justify-content: center;
+}
+
+::ng-deep .alert-head.sc-ion-alert-md {
+    text-align: center !important;
+}
+
+::ng-deep ion-backdrop.sc-ion-alert-md.md{
+    background-color: red !important;
+}

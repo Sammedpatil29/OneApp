@@ -18,6 +18,10 @@ getProfileData(params:any){
   return this.http.post(`${this.profileUrl}user-by-token/`, params)
 }
 
+deleteProfilePermanently(params:any){
+  return this.http.delete(`${this.profileUrl}user-by-token/`, params)
+}
+
 postSuggestion(params:any){
   return this.http.post(`${this.suggestion}`, params)
 }

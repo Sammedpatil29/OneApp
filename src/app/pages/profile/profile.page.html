@@ -10,6 +10,7 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  <section>
     @if (!isLoading) {
     <div class="profile-container">
     @if (profileData.profile_image == '') {
@@ -24,7 +25,7 @@
     </ion-avatar>
     }
     <ion-label class="profile-name">{{profileData.first_name | uppercase}}</ion-label>
-    <ion-label>{{profileData.phone}}</ion-label>
+    <ion-label>{{profileData.phone}} &bull; Since {{profileData.date_joined | date: 'dd-MMM-YYYY'}}</ion-label>
   </div>
   <hr>
   <div class="my-3 mx-3 box">
@@ -80,5 +81,6 @@
       </div>
 
   }
+  </section>
 </ion-content>
 

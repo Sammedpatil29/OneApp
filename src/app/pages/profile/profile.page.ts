@@ -10,6 +10,12 @@ import { Preferences } from '@capacitor/preferences';
 import { AuthService } from 'src/app/services/auth.service';
 import { ProfileService } from 'src/app/services/profile.service';
 
+interface Profile {
+  profile_image : string,
+  first_name: string,
+  phone: string
+}
+
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
@@ -18,7 +24,11 @@ import { ProfileService } from 'src/app/services/profile.service';
   imports: [IonSpinner, IonButtons, IonButton, IonIcon, IonItem, IonLabel, IonAvatar, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
 export class ProfilePage implements OnInit {
-profileData: any;
+profileData: any = {
+  "profile_image" : "",
+  "first_name": "",
+  "phone": ""
+}
 token: any;
 isLoading: boolean = false
 showRetry: boolean = false
@@ -29,18 +39,26 @@ nameShort = ''
 
   }
 
- ngOnInit() {
-    Promise.all([this.getToken()]).then(()=>{
-this.getProfileData()
-  })
+ async ngOnInit() {
+  try {
+    this.token = await this.authService.getToken();
+
+    if (this.token) {
+      this.getProfileData();
+    } else {
+      console.error('Token is null or invalid');
+    }
+  } catch (err) {
+    console.error('Error getting token:', err);
   }
+}
 
   async logOut(){
     this.authService.logout();
   }
 
   goBack() {
-    this.navCtrl.back();
+    this.navCtrl.navigateBack('/layout/example/home')
   }
 
   openDetails(option: any) {
@@ -49,30 +67,30 @@ this.getProfileData()
   });
 }
 
-async getToken(){
- this.token = await this.authService.getToken()
-}
-
  getProfileData(){
-  // console.log(this.user_id)
+  console.log('triggered')
   this.isLoading = true
   let params = {
     "token": this.token
   }
- this.profileService.getProfileData(params).subscribe(res=>{
-this.profileData = res
-this.isLoading = false
-console.log(this.profileData)
-  }, error => {
-    this.isLoading = false
-    this.showRetry = true
-    alert('error while fetching data')
-  })
+ this.profileService.getProfileData(params).subscribe({
+  next: (res) => {
+    this.profileData = res;
+    this.isLoading = false;
+    console.log(this.profileData);
+  },
+  error: (error) => {
+    this.isLoading = false;
+    this.showRetry = true;
+    alert('Error while fetching data');
+    console.error(error);
+  }
+});
 }
 
 async retry(){
   this.showRetry = false
-await this.getToken()
+this.token = await this.authService.getToken()
 this.getProfileData()
 }
 

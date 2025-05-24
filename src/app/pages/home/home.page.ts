@@ -21,6 +21,9 @@ import { AddressComponent } from "../../components/address/address.component";
 import { LocationService } from 'src/app/services/location.service';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { register } from 'swiper/element/bundle';
+import { Platform } from '@ionic/angular';
+import { Location } from '@angular/common';
+import { NavController } from '@ionic/angular';
 register();
 
 @Component({
@@ -35,6 +38,7 @@ register();
 export class HomePage implements OnInit {
 
   isModalOpen = false;
+  backButtonSubscription: any;
   city: any = ''
   address: any = ''
   showVideo: boolean = true
@@ -45,8 +49,9 @@ export class HomePage implements OnInit {
   isLoading: boolean = false
   isFlashOfferVisible: boolean = false
   locationData: any
+  disableProfileClick: boolean = false
 
-  constructor(private router: Router, private locationService: LocationService) {
+  constructor(private router: Router, private locationService: LocationService, private platform: Platform, private location: Location, private navCtrl: NavController) {
     addIcons({arrowBack,home,buildOutline,receiptOutline,personCircleOutline,briefcaseOutline,constructOutline,library,personCircle,person,search,bag,cube,radio,playCircle});
   this.getServicesData()
   }
@@ -67,28 +72,26 @@ export class HomePage implements OnInit {
     setTimeout(()=>{
       this.isFlashOfferVisible = false
     }, 2000)
-  }
-  
-  ionViewWillEnter() {
-    const locationData = localStorage.getItem('location');
+
+    setInterval(()=> {
+      const locationData = localStorage.getItem('location');
     if (locationData) {
       const location = JSON.parse(locationData);
       this.address = location.address;
     }
+    }, 500)
   }
 
   goToProfile() {
-    // this.router.navigate(['/layout/profile']);
     console.log('Navigating to profile...');
-    this.router.navigate(['/layout/profile'])
-    setTimeout(()=> {
-      this.router.navigate(['/layout/profile'])
-    }, 2000)
+    this.router.navigateByUrl('/layout/profile');
+
   }
 
-  openLocation(isOpen: boolean) {
-    // this.isModalOpen = isOpen;
-    this.router.navigate(['/layout/map'])
+  openLocation() {
+    this.router.navigate(['/layout/map'], {
+      state: {data : 'home'}
+    })
   }
 
   handleModalClose(){

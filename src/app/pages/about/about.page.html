@@ -99,8 +99,19 @@
   </ion-textarea>
 </ion-item>
 <div class="mx-3">
-  <ion-button class="ion-padding w-100" (click)="postSuggestion()" color="dark">Submit</ion-button>
+  <ion-button class="ion-padding w-100" (click)="postSuggestion()" color="dark">Submit
+    @if (isLoading) {
+        <ion-spinner class="button ms-2"  name="crescent"></ion-spinner>
+}
+  </ion-button>
 </div>
+
+<ion-toast
+    [isOpen]="isToastOpen"
+    [message]="toastMessage"
+    [duration]="3000"
+  ></ion-toast>
+
   </ion-content>
 } @else if (data == 'Languages') {
   <ion-content [fullscreen]="true">
@@ -147,7 +158,90 @@
       <app-nodata></app-nodata>
     }
     <footer class="position-fixed bottom-0 w-100">
-      <ion-button class="ion-padding w-100" [routerLink]="['/layout/map']" routerLinkActive="router-link-active"  color="dark">add New Address</ion-button>
+      <ion-button class="ion-padding w-100" (click)="openLocation()" color="dark">add New Address</ion-button>
     </footer>
+  </ion-content>
+}  @else if (data == 'Personal Details') {
+  <ion-content [fullscreen]="true">
+    @if (!isLoading) {
+      <div class="profile-container">
+    @if (profileData.profile_image == '') {
+      <ion-avatar class="profile-avatar">
+      <!-- <img alt="Avatar" src="https://ionicframework.com/docs/img/demos/avatar.svg" /> -->
+      <ion-title class="avatar">{{nameShorthand() | uppercase}}</ion-title>
+    </ion-avatar>
+    } @else {
+      <ion-avatar class="profile-avatar">
+      <img alt="Avatar" [src]="profileData.profile_image"/>
+      <!-- <ion-title class="avatar">{{nameShorthand() | uppercase}}</ion-title> -->
+    </ion-avatar>
+    }
+    <ion-label class="profile-name">{{profileData.first_name | uppercase}}</ion-label>
+    <ion-label>{{profileData.phone}} &bull; Since {{profileData.date_joined | date: 'dd-MMM-YYYY'}}</ion-label>
+  </div>
+  <hr>
+    <div class="mx-3 mt-4">
+      <ion-item class="addressField mt-2" lines="none">
+    <ion-input [disabled]="!isNameEditable" [(ngModel)]="name" placeholder="Full Name" [value]="name"></ion-input>
+    @if (isNameEditable) {
+      <i class="bi bi-arrow-up-circle-fill text-primary" (click)="update('name')"></i>
+    } @else {
+      <i class="bi bi-pencil" (click)="isNameEditable = true" color="dark"></i>
+    }
+  </ion-item>
+
+  <ion-item class="addressField mt-2" lines="none">
+    <ion-input [disabled]="!isPhoneEditable" [(ngModel)]="phone" placeholder="Mobile Number" [value]="profileData.phone"></ion-input>
+    @if (isPhoneEditable) {
+      <i class="bi bi-arrow-up-circle-fill text-primary" (click)="update('phone')"></i>
+    } @else {
+      <i class="bi bi-pencil" (click)="isPhoneEditable = true" color="dark"></i>
+    }
+  </ion-item>
+
+  <ion-item class="addressField mt-2" lines="none">
+    <ion-input [disabled]="!isEmailEditable" [(ngModel)]="email" placeholder="Email Id" [value]="profileData.email"></ion-input>
+    @if (isEmailEditable) {
+      <i class="bi bi-arrow-up-circle-fill text-primary" (click)="update('email')"></i>
+    } @else {
+      <i class="bi bi-pencil" (click)="isEmailEditable = true" color="dark"></i>
+    }
+  </ion-item>
+
+  <!-- <ion-item class="addressField mt-2" lines="none">
+    <ion-select aria-label="Fruit"  placeholder="Select Gender" [disabled]="!isEmailEditable" [multiple]="false">
+      <ion-select-option value="apples">Apples</ion-select-option>
+      <ion-select-option value="oranges">Oranges</ion-select-option>
+      <ion-select-option value="bananas">Bananas</ion-select-option>
+    </ion-select>
+    @if (isEmailEditable) {
+      <i class="bi bi-arrow-up-circle-fill text-primary" (click)="update('email')"></i>
+    } @else {
+      <i class="bi bi-pencil" (click)="isEmailEditable = true" color="dark"></i>
+    }
+  </ion-item> -->
+
+  
+    </div>
+    <div class="position-fixed w-100 bottom-0 p-1">
+    <ion-button class="w-100 ion-padding text-nowrap" id="present-alert" color="danger" fill="outline">
+DELETE ACCOUNT PERMANENTLY
+    </ion-button>
+  </div>
+
+  <ion-alert
+  trigger="present-alert"
+  cssClass="custom-alert"
+  subHeader="Once account is DELETED, all your data will be deleted permanently!!."
+  header="Sure you want to delete account?"
+  message=""
+  [buttons]="alertButtons"
+></ion-alert>
+
+    } @else {
+<div class="d-flex justify-content-center align-items-center h-100">
+        <ion-spinner  name="crescent"></ion-spinner>
+      </div>
+    }
   </ion-content>
 }

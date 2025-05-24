@@ -77,10 +77,10 @@ token:any;
       this.tokenDecoded = res
       console.log(res)
       if(this.tokenDecoded.valid == true){
-        this.router.navigate(['/layout/example/home'])
+        // this.router.navigate(['/layout/example/home'])
         setTimeout(()=> {
-            this.router.navigate(['/layout/example/home'])
-        }, 3000)
+            this.navCtrl.navigateRoot('/layout')
+        }, 1000)
 
       } else {
 this.isLoading = false
