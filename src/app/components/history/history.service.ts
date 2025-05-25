@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class HistoryService {
-  url = 'https://oneapp-backend.onrender.com/api/orders/user-orders/'
+  url = 'https://oneapp-459013.uc.r.appspot.com/api/orders/user-orders/'
 
   constructor(private http: HttpClient) {}
 

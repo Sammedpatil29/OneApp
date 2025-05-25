@@ -54,6 +54,7 @@ nameShort = ''
 }
 
   async logOut(){
+    this.profileData = {}
     this.authService.logout();
   }
 

@@ -15,14 +15,13 @@
     <div class="profile-container">
     @if (profileData.profile_image == '') {
       <ion-avatar class="profile-avatar">
-      <!-- <img alt="Avatar" src="https://ionicframework.com/docs/img/demos/avatar.svg" /> -->
+        <!-- <img alt="Avatar" src="https://ionicframework.com/docs/img/demos/avatar.svg" /> -->
       <ion-title class="avatar">{{nameShorthand() | uppercase}}</ion-title>
     </ion-avatar>
     } @else {
       <ion-avatar class="profile-avatar">
       <img alt="Avatar" [src]="profileData.profile_image"/>
-      <!-- <ion-title class="avatar">{{nameShorthand() | uppercase}}</ion-title> -->
-    </ion-avatar>
+      <!-- <ion-title class="avatar">{{nameShorthand() | uppercase}}</ion-title> -->    </ion-avatar>
     }
     <ion-label class="profile-name">{{profileData.first_name | uppercase}}</ion-label>
     <ion-label>{{profileData.phone}} &bull; Since {{profileData.date_joined | date: 'dd-MMM-YYYY'}}</ion-label>

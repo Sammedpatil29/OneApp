@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonFooter, IonButton, IonButtons, IonIcon, IonSearchbar, IonModal, IonList, IonItem, IonLabel, IonNote, IonText, IonInput, IonChip, IonSpinner } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonFooter, IonButton, IonButtons, IonIcon, IonSearchbar, IonModal, IonList, IonItem, IonLabel, IonNote, IonText, IonInput, IonChip, IonSpinner, IonToast } from '@ionic/angular/standalone';
 import { AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { arrowBack } from 'ionicons/icons';
@@ -23,7 +23,7 @@ declare const google: { maps: {
   templateUrl: './map.page.html',
   styleUrls: ['./map.page.scss'],
   standalone: true,
-  imports: [IonSpinner, CommonModule, IonChip, IonInput, IonText, IonNote, IonLabel, IonItem, IonList, IonModal, IonSearchbar, IonIcon, IonButtons, IonButton, IonFooter, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, NodataComponent]
+  imports: [IonToast, IonSpinner, CommonModule, IonChip, IonInput, IonText, IonNote, IonLabel, IonItem, IonList, IonModal, IonSearchbar, IonIcon, IonButtons, IonButton, IonFooter, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, NodataComponent]
 })
 export class MapPage implements AfterViewInit, OnInit {
 
@@ -52,6 +52,8 @@ autocompleteService = new google.maps.places.AutocompleteService();
   zoom: any = 14
   routeData = ''
   inside: any = true
+  toastMessage = ''
+  isToastOpen: boolean = false
   cityCenter = new google.maps.LatLng(16.715316578418758, 75.05882421691895);
   polygonCoords: google.maps.LatLngLiteral[] = [
     { lat: 16.721820, lng: 75.041123 }, 
@@ -81,7 +83,7 @@ async ngOnInit() {
     this.loadMap();
     setTimeout(()=> {
       this.loadMap()
-    }, 200)
+    }, 1000)
   }
 
   handleModalClose(){
@@ -103,16 +105,26 @@ async ngOnInit() {
         "house_no": this.houseNo,
         "building_name": this.HouseName,
         "receiver_name": this.receiverName,
-        "receiver_conatact": this.receiverContact,
+        "receiver_contact": this.receiverContact,
         "token": this.token
     }
     this.isLoading = true
     this.locationService.saveAddress(params).subscribe(res=> {
       console.log(res)
       this.isLoading = false
+      this.isToastOpen = true
+      this.toastMessage = 'Address added successfully🥳'
+      setTimeout(()=> {
+        this.isToastOpen = false
+      },3000)
       this.isModalOpen = false
       this.goBack()
     }, error => {
+      this.isToastOpen = true
+      this.toastMessage = 'Error while adding address❗'
+      setTimeout(()=> {
+        this.isToastOpen = false
+      },3000)
       this.isLoading = false
     })
   }
@@ -138,6 +150,8 @@ this.loadMap()
       const location = JSON.parse(locationData);
       // this.ad = location.address;
       this.latLng = new google.maps.LatLng(location.lat, location.lng)
+    } else {
+      this.backtoServiceArea()
     }
   }
 
@@ -193,7 +207,9 @@ locationData:any;
     let LocationObject = {
     lat: this.centerCoords.lat(),
     lng: this.centerCoords.lng(),
-    address: this.currentAddress
+    address: this.currentAddress,
+    id: "",
+    label: ""
 }
     localStorage.setItem('location', JSON.stringify(LocationObject))
 this.locationData = localStorage.getItem('location');

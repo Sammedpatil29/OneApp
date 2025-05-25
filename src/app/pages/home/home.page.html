@@ -14,7 +14,13 @@
         } @else {
           <div class="d-flex flex-column me-2" style="line-height: 1.2;">
             <!-- <h6 class="p-0 fs-6">Location</h6> -->
-            <ion-card-subtitle class="text-truncate" style="max-width: 50vw"><span>Location</span> <br><span (click)="openLocation()">{{address}}</span></ion-card-subtitle>  
+            <ion-card-subtitle class="text-truncate" style="max-width: 50vw">
+              @if(label == ""){
+                <span>Location</span>
+              } @else {
+                <span>{{label}}</span>
+              }
+              <br><span (click)="openLocation()">{{address}}</span></ion-card-subtitle>  
           </div>
         }
         <i class="bi bi-chevron-down me-2" (click)="openLocation()"></i>

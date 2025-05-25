@@ -49,6 +49,8 @@ export class HomePage implements OnInit {
   isLoading: boolean = false
   isFlashOfferVisible: boolean = false
   locationData: any
+  label: any = ''
+  currentCoords: any;
   disableProfileClick: boolean = false
 
   constructor(private router: Router, private locationService: LocationService, private platform: Platform, private location: Location, private navCtrl: NavController) {
@@ -58,7 +60,20 @@ export class HomePage implements OnInit {
 
   slides: any[] = ['../../../assets/banners-2-oneapp.png','../../../assets/Untitled.png']
 
-  ngOnInit() {
+  async ngOnInit() {
+    const locationData = localStorage.getItem('location')
+    try{
+      if(!locationData){
+        this.currentCoords = await this.locationService.getCurrentPosition()
+        this.locationService.address$.subscribe(address => {
+      // this.address = address;
+      console.log('Address received in home:', address);
+    });
+      }
+    } catch {
+
+    }
+    
     this.locationService.city$.subscribe((city: any) => {
       this.city = city;
       console.log('City received in home:', city);
@@ -78,6 +93,7 @@ export class HomePage implements OnInit {
     if (locationData) {
       const location = JSON.parse(locationData);
       this.address = location.address;
+      this.label = location.label
     }
     }, 500)
   }

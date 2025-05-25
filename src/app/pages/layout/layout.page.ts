@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonApp, IonRouterOutlet, IonText, IonCardTitle } from '@ionic/angular/standalone';
+import { LocationService } from 'src/app/services/location.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-layout',
@@ -14,16 +16,51 @@ export class LayoutPage implements OnInit {
   isDragging = false;
   offsetX = 0;
   offsetY = 0;
+  token: any
+  addresses: any = []
+  params: any
 
-  ngOnInit() {
+   constructor(private locationService: LocationService, private authService: AuthService) {}
+
+ async ngOnInit() {
+  const current = await this.locationService.getCurrentPosition()
+  console.log(current)
     const orderBubble = document.querySelector('.orderBubble') as HTMLElement;
-
+    this.token = await this.authService.getToken().then((res:any)=> {
+      console.log(res)
+        this.token = res
+        this.params = {"token": this.token}
+        const locationData = localStorage.getItem('location')
+    console.log(locationData)
+    if(locationData == null){
+      setTimeout(()=>{
+        let params = {
+        "token": this.token
+      }
+      console.log(params)
+      this.locationService.getAddressesList(this.params).subscribe((res)=> {
+          this.addresses = res;
+          if(this.addresses){
+            let data = {
+              lat: this.addresses[0].lat,
+              lng: this.addresses[0].lng,
+              address: this.addresses[0].address,
+              id: this.addresses[0].id,
+              label: this.addresses[0].label
+            }
+            console.log(data)
+            localStorage.setItem('location', JSON.stringify(data))
+          } 
+      })
+      },500)
+    }
+        console.log(this.token)
+    })
     // Set the initial position (you can dynamically adjust this)
     // orderBubble.style.left = '20px';  // Set initial left position
     // orderBubble.style.top = '150px';
   }
 
-  constructor() { }
   startDrag(event: MouseEvent | TouchEvent, element: HTMLElement) {
     // Check if the event is touch or mouse and get the appropriate coordinates
     if (event instanceof MouseEvent) {

@@ -9,6 +9,12 @@
   </ion-toolbar>
 </ion-header>
 
+<ion-toast
+    [isOpen]="isToastOpen"
+    [message]="toastMessage"
+    [duration]="3000"
+  ></ion-toast>
+
 @if (data == 'About OneApp') {
   <ion-content [fullscreen]="true">
     
@@ -106,12 +112,6 @@
   </ion-button>
 </div>
 
-<ion-toast
-    [isOpen]="isToastOpen"
-    [message]="toastMessage"
-    [duration]="3000"
-  ></ion-toast>
-
   </ion-content>
 } @else if (data == 'Languages') {
   <ion-content [fullscreen]="true">
@@ -122,18 +122,18 @@
           </ion-title>
           <i class="bi bi-check-circle-fill text-success mt-1 mx-4 fs-3"></i>
       </div>
-      <div class="d-flex flex-row align-items-ceter py-4 language mt-2">
+      <!-- <div class="d-flex flex-row align-items-ceter py-4 language mt-2">
           <ion-title class="fs-1 fw-bolder">
             ಜವಾರಿ ಕನ್ನಡ  <span class="fw-normal"></span>
           </ion-title>
           <i class="bi bi-circle text-success mt-1 mx-4 fs-3"></i>
-      </div>
+      </div> -->
     </section>
   </ion-content>
 } @else if (data == 'Saved Addresses') {
   <ion-content [fullscreen]="true">
-    <button (click)="getAddressList()">click</button>
-    @if (addresses) {
+    @if (!isSpinnerLoading) {
+      @if (addresses) {
       <section>
       @for (item of addresses; track $index) {
         
@@ -147,12 +147,13 @@
       </ion-label>
       <div class="metadata-end-wrapper me-2" slot="end">
         <i class="bi bi-pencil me-4" color="dark"></i>
-        <i class="bi bi-trash" color="dark"></i>
+        <i class="bi bi-trash" color="dark" (click)="deleteAddress(item.id)"></i>
         <!-- <i class="bi bi-check-circle-fill fs-5" color="dark"></i> -->
       </div>
     </ion-item>
     </ion-list>
       }
+      <div style="height: 200px"></div>
     </section>
     } @else {
       <app-nodata></app-nodata>
@@ -160,6 +161,11 @@
     <footer class="position-fixed bottom-0 w-100">
       <ion-button class="ion-padding w-100" (click)="openLocation()" color="dark">add New Address</ion-button>
     </footer>
+    } @else {
+      <div class="d-flex justify-content-center align-items-center h-100">
+<ion-spinner name="crescent"></ion-spinner>
+      </div>
+    }
   </ion-content>
 }  @else if (data == 'Personal Details') {
   <ion-content [fullscreen]="true">
@@ -237,7 +243,6 @@ DELETE ACCOUNT PERMANENTLY
   message=""
   [buttons]="alertButtons"
 ></ion-alert>
-
     } @else {
 <div class="d-flex justify-content-center align-items-center h-100">
         <ion-spinner  name="crescent"></ion-spinner>

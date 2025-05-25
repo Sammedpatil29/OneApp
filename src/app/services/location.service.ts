@@ -17,7 +17,9 @@ export class LocationService {
   coordinates: any = []
   city: any = ''
   address: any = ''
-  addresslistUrl = "https://oneapp-backend.onrender.com/api/address/"
+  addresslistUrl = "https://oneapp-459013.uc.r.appspot.com/api/address/create/"
+  addresslistByUser = "https://oneapp-459013.uc.r.appspot.com/api/address/user-address/"
+  deleteAddresses = "https://oneapp-459013.uc.r.appspot.com/api/address/delete-address/"
 
   constructor(private http: HttpClient) { }
 
@@ -25,7 +27,11 @@ export class LocationService {
     this.coordinates = await Geolocation.getCurrentPosition();
     this.getAddress(this.coordinates.coords.latitude, this.coordinates.coords.longitude)
     console.log('Current position:', this.coordinates);
-    return this.coordinates;
+    let finalData = {
+      coords: this.coordinates,
+      address: this.address
+    }
+    return finalData;
   }
 
   getAddress(lat: number, lng: number) {
@@ -39,6 +45,7 @@ export class LocationService {
 
        this.citySource.next(this.city);
       this.addressSource.next(this.address);
+      return this.address
        
       console.log('City:', this.city);
       console.log('Full Address:', this.address);
@@ -46,14 +53,18 @@ export class LocationService {
   }
 
   getData(){
-    return this.http.get('https://oneapp-backend.onrender.com/api/services/active/')
+    return this.http.get('https://oneapp-459013.uc.r.appspot.com/api/services/active/')
   }
 
   saveAddress(params:any){
     return this.http.post(this.addresslistUrl, params)
   }
 
+  deleteAddress(params:any, id:any){
+    return this.http.post(`${this.deleteAddresses}${id}/`, params)
+  }
+
   getAddressesList(params:any){
-    return this.http.get(this.addresslistUrl, {params})
+    return this.http.post(this.addresslistByUser, params)
   }
 }

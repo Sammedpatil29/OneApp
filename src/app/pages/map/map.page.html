@@ -108,6 +108,13 @@
       </ion-button>
         </div>
         </ion-footer>
+
+        <ion-toast
+    [isOpen]="isToastOpen"
+    [message]="toastMessage"
+    [duration]="3000"
+  ></ion-toast>
+
     </ng-template>
 
   </ion-modal>

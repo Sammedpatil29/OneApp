@@ -26,11 +26,25 @@ export class AboutPage implements OnInit {
   subject = ''
   subjectBody = ''
   token:any
-  addresses: any
+  addresses: any = [
+    {
+        "lat": "",
+        "lng": "",
+        "address": "",
+        "landmark": "",
+        "label": "",
+        "house_no": "",
+        "building_name": "",
+        "receiver_name": "",
+        "receiver_contact": "",
+        "user": 18
+    }
+  ]
   name: any = ''
   phone: any = ''
   email: any = ''
   isLoading: boolean = false
+  isSpinnerLoading: boolean = false
   isToastOpen: boolean = false
   toastMessage = ''
   isNameEditable: boolean = false
@@ -67,12 +81,17 @@ export class AboutPage implements OnInit {
     }
     // this.getAddressList()
   }
+  
 selectedAddress:any
   ionViewWillEnter() {
     const locationData = localStorage.getItem('location');
     if (locationData) {
       const location = JSON.parse(locationData);
       this.selectedAddress = location.address;
+    }
+
+    if(this.data == 'Saved Addresses'){
+      this.getAddressList()
     }
   }
 
@@ -87,10 +106,11 @@ selectedAddress:any
 
   deleteProfilePermanently(){
     console.log(this.token)
+    const id = this.profileData.id
     let params = {
       "token": this.token
     }
-    this.profileService.deleteProfilePermanently(params).subscribe(res=> {
+    this.profileService.deleteProfilePermanently(params, id).subscribe(res=> {
       console.log(res)
       this.authService.logout()
     })
@@ -99,14 +119,46 @@ selectedAddress:any
   getAddressList(){
     console.log(this.token)
     let params = {
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxNiwicGhvbmUiOiI5NTkxNDIwMDY4IiwiaWF0IjoxNzQ3NzQzNDI3fQ.0UHfpATSf_fxUIEwXDLQPf7S3n2dGdqgnmjkMo5zdkQ"
+  "token": this.token
 }
+this.isSpinnerLoading = true
     this.locationService.getAddressesList(params).subscribe(res => {
         let address = res
+        this.isSpinnerLoading = false
         this.addresses = address
+        this.addresses = [...this.addresses]
         console.log(this.addresses)
+        
     }, error => {
-      alert("error")
+      this.addresses = []
+      this.isSpinnerLoading = false
+      // this.isToastOpen = true
+      // this.toastMessage = `No Data `;
+      // setTimeout(()=>{
+      //   this.isToastOpen = false
+      // },3000)
+    })
+  }
+
+  deleteAddress(id:any){
+    let params = {
+      "token": this.token
+    }
+    this.isSpinnerLoading = true
+    this.locationService.deleteAddress(params, id).subscribe(res => {
+      // alert("deleted successfully")
+      this.isSpinnerLoading = false
+      setTimeout(()=>{
+        this.getAddressList()
+      })
+      this.isToastOpen = true
+      this.toastMessage = "deleted successfully";
+      setTimeout(()=>{
+        this.isToastOpen = false
+      },3000)
+      
+      this.addresses = [...this.addresses]
+      console.log(this.addresses)
     })
   }
 

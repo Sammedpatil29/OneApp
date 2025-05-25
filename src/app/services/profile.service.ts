@@ -11,15 +11,15 @@ user_id: any;
 
   
 
-profileUrl = 'https://oneapp-backend.onrender.com/api/users/'
-suggestion = 'https://oneapp-backend.onrender.com/api/suggestions/'
+profileUrl = 'https://oneapp-459013.uc.r.appspot.com/api/users/'
+suggestion = 'https://oneapp-459013.uc.r.appspot.com/api/suggestions/'
 
 getProfileData(params:any){
   return this.http.post(`${this.profileUrl}user-by-token/`, params)
 }
 
-deleteProfilePermanently(params:any){
-  return this.http.delete(`${this.profileUrl}user-by-token/`, params)
+deleteProfilePermanently(params:any, id:any){
+  return this.http.post(`${this.profileUrl}delete-user/`, params)
 }
 
 postSuggestion(params:any){
