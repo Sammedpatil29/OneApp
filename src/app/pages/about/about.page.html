@@ -62,6 +62,7 @@
       Download Now 📲
     </ion-button> -->
   </section>
+ <p class="text-center"> Version | {{appVersion}}</p>
   
 </ion-content>
 <ion-footer>
@@ -137,7 +138,7 @@
       <section>
       @for (item of addresses; track $index) {
         
-        <ion-list class="border mt-2 mx-3" style="border-radius: 20px;">
+        <ion-list class="border mt-2 mx-3" [ngClass]="item.id == Addressid.id? 'border-color': ''" style="border-radius: 20px;">
       <ion-item lines="none" >
       <div class="unread-indicator-wrapper" slot="start"></div>
       <ion-label>
@@ -146,8 +147,14 @@
         <ion-note color="medium" class="ion-text-wrap text-truncate">{{item['landmark']}}&nbsp;{{item['address']}}</ion-note>
       </ion-label>
       <div class="metadata-end-wrapper me-2" slot="end">
-        <i class="bi bi-pencil me-4" color="dark"></i>
-        <i class="bi bi-trash" color="dark" (click)="deleteAddress(item.id)"></i>
+        
+        @if(item.id == Addressid.id ){
+          <i class="bi bi-check-circle-fill me-4 text-success" color="dark"></i>
+        } @else {
+          <i class="bi bi-circle me-4 text-success" color="dark" (click)="setAddressAsDefault(item)"></i>
+        }
+        <!-- <i class="bi bi-pencil me-4" color="dark"></i> -->
+        <i class="bi bi-trash text-danger" color="dark" (click)="deleteAddress(item.id)"></i>
         <!-- <i class="bi bi-check-circle-fill fs-5" color="dark"></i> -->
       </div>
     </ion-item>
@@ -190,7 +197,7 @@
       <ion-item class="addressField mt-2" lines="none">
     <ion-input [disabled]="!isNameEditable" [(ngModel)]="name" placeholder="Full Name" [value]="name"></ion-input>
     @if (isNameEditable) {
-      <i class="bi bi-arrow-up-circle-fill text-primary" (click)="update('name')"></i>
+      <i class="bi bi-arrow-up-circle-fill text-primary" (click)="updateAddress('name')"></i>
     } @else {
       <i class="bi bi-pencil" (click)="isNameEditable = true" color="dark"></i>
     }
@@ -201,14 +208,16 @@
     @if (isPhoneEditable) {
       <i class="bi bi-arrow-up-circle-fill text-primary" (click)="update('phone')"></i>
     } @else {
-      <i class="bi bi-pencil" (click)="isPhoneEditable = true" color="dark"></i>
+      <div hidden>
+              <i class="bi bi-pencil" (click)="isPhoneEditable = true" color="dark" ></i>
+      </div>
     }
   </ion-item>
 
   <ion-item class="addressField mt-2" lines="none">
     <ion-input [disabled]="!isEmailEditable" [(ngModel)]="email" placeholder="Email Id" [value]="profileData.email"></ion-input>
     @if (isEmailEditable) {
-      <i class="bi bi-arrow-up-circle-fill text-primary" (click)="update('email')"></i>
+      <i class="bi bi-arrow-up-circle-fill text-primary" (click)="updateAddress('email')"></i>
     } @else {
       <i class="bi bi-pencil" (click)="isEmailEditable = true" color="dark"></i>
     }

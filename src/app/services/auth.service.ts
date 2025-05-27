@@ -9,8 +9,8 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
-url = 'https://oneapp-459013.uc.r.appspot.com/api/users/'
-tokenUrl = 'https://oneapp-459013.uc.r.appspot.com/api/login/'
+url = 'https://oneapp-backend.onrender.com/api/users/'
+tokenUrl = 'https://oneapp-backend.onrender.com/api/login/'
 token: any;
 
 private apiUrl = 'https://api.msg91.com/api/v5/otp';

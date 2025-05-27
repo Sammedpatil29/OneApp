@@ -24,6 +24,9 @@ import { register } from 'swiper/element/bundle';
 import { Platform } from '@ionic/angular';
 import { Location } from '@angular/common';
 import { NavController } from '@ionic/angular';
+import { CommonService } from 'src/app/services/common.service';
+import { ProfileService } from 'src/app/services/profile.service';
+
 register();
 
 @Component({
@@ -52,15 +55,23 @@ export class HomePage implements OnInit {
   label: any = ''
   currentCoords: any;
   disableProfileClick: boolean = false
+  metaData:any
+  isOld: any;
+  appVersion: any;
+  latestVersion = '';
+fileName = ''
+fileUrl = ''
 
-  constructor(private router: Router, private locationService: LocationService, private platform: Platform, private location: Location, private navCtrl: NavController) {
+  constructor(private router: Router, private locationService: LocationService,private profileService: ProfileService, private platform: Platform, private location: Location, private navCtrl: NavController, private commonService: CommonService) {
     addIcons({arrowBack,home,buildOutline,receiptOutline,personCircleOutline,briefcaseOutline,constructOutline,library,personCircle,person,search,bag,cube,radio,playCircle});
   this.getServicesData()
+  this.getMetaData()
   }
 
   slides: any[] = ['../../../assets/banners-2-oneapp.png','../../../assets/Untitled.png']
 
   async ngOnInit() {
+    await this.getAppVersion()
     const locationData = localStorage.getItem('location')
     try{
       if(!locationData){
@@ -96,6 +107,46 @@ export class HomePage implements OnInit {
       this.label = location.label
     }
     }, 500)
+  }
+
+  ionViewWillEnter(){
+    this.isOld = this.compareVersions(this.appVersion, this.latestVersion)
+  }
+
+  async getAppVersion(){
+const version = await this.profileService.getAppVersion()
+      this.appVersion = version
+      console.log(this.appVersion)
+     }
+
+  getMetaData(){
+    this.isLoading = true
+    this.commonService.getMetaData().subscribe((res)=> {
+      this.metaData = res
+      console.log(res)
+      this.isLoading = false
+      this.latestVersion = this.metaData[0].latest_version
+      this.fileName = `OneApp-${this.latestVersion}`
+      this.fileUrl = this.metaData[0].download_link
+      console.log(this.latestVersion)
+    })
+  }
+
+  compareVersions(versionA: string, versionB: string): number {
+    const aParts = versionA.trim().split('.').map(Number);
+    const bParts = versionB.trim().split('.').map(Number);
+
+    const maxLen = Math.max(aParts.length, bParts.length);
+
+    for (let i = 0; i < maxLen; i++) {
+      const a = aParts[i] || 0;
+      const b = bParts[i] || 0;
+
+      if (a > b) return -1;
+      if (a < b) return 1;
+    }
+
+    return 0; // Versions are equal
   }
 
   goToProfile() {

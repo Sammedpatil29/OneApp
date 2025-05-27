@@ -18,7 +18,7 @@
               @if(label == ""){
                 <span>Location</span>
               } @else {
-                <span>{{label}}</span>
+                <span>{{label | titlecase}}</span>
               }
               <br><span (click)="openLocation()">{{address}}</span></ion-card-subtitle>  
           </div>
@@ -42,6 +42,19 @@
   <swiper-slide>Slide 3</swiper-slide>
 </swiper-container>  -->
 
+@if (appVersion != latestVersion) {
+  <div class="w-100 mt-2">
+  <div class="update d-flex justify-content-center align-items-center py-2 mx-2 gap-2">
+    <div class="p-0 fs-5 text-success">
+      <img style="width: 40px" class="" src="../../../assets/icons/icons8-warning.gif" alt="">
+    New update available!
+</div>
+<a [href]="fileUrl" [download]="fileName" target="_blank" rel="noopener noreferrer">
+  <ion-button shape="round" fill="outline" color="success">Update</ion-button>
+</a>
+</div>
+</div>
+}
 
   <swiper-container [slidesPerView]="1" [spaceBetween]="0" [loop]="true"
    autoplay-delay="2500" autoplay-disable-on-interaction="false">

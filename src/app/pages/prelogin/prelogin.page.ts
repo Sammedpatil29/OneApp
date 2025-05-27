@@ -38,6 +38,17 @@ loadingMessage = ''
   ngOnInit() {
     this.getLocation();
     this.verifyToken()
+    this.getAppVersion()
+  }
+appVersion:string = ''
+  async getAppVersion() {
+    try {
+      const appInfo = await App.getInfo();
+      this.appVersion = appInfo.version; // app version
+      console.log('App Version:', this.appVersion);
+    } catch (error) {
+      console.error('Error retrieving app version', error);
+    }
   }
 
   ionViewWillEnter(){

@@ -1,3 +1,13 @@
 <ion-app>
-  <ion-router-outlet></ion-router-outlet>
+  @if (isOnline) {
+    <ion-router-outlet></ion-router-outlet>
+  } @else {
+    <div class="no-internet h-100 d-flex flex-column justify-content-center align-items-center">
+        <img (click)="onRefreshClick()" class="p-0" style="width: 200px" src="../assets/icons/no_connecion.png" alt="">
+        <p class="p-0"><strong>ಸ್ವಲ್ಪ ನೆಟ್ವರ್ಕ್ ಚೆಕ್ ಮಾಡ್ಕೋರಿ ಬರ್ತತಿ!</strong></p>
+        <!-- <div>
+                  <ion-button color="dark" (click)="onRefreshClick()">Retry</ion-button>
+        </div> -->
+    </div>
+  }
 </ion-app>

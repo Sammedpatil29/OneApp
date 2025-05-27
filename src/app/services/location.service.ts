@@ -17,9 +17,9 @@ export class LocationService {
   coordinates: any = []
   city: any = ''
   address: any = ''
-  addresslistUrl = "https://oneapp-459013.uc.r.appspot.com/api/address/create/"
-  addresslistByUser = "https://oneapp-459013.uc.r.appspot.com/api/address/user-address/"
-  deleteAddresses = "https://oneapp-459013.uc.r.appspot.com/api/address/delete-address/"
+  addresslistUrl = "https://oneapp-backend.onrender.com/api/address/create/"
+  addresslistByUser = "https://oneapp-backend.onrender.com/api/address/user-address/"
+  deleteAddresses = "https://oneapp-backend.onrender.com/api/address/delete-address/"
 
   constructor(private http: HttpClient) { }
 
@@ -53,7 +53,7 @@ export class LocationService {
   }
 
   getData(){
-    return this.http.get('https://oneapp-459013.uc.r.appspot.com/api/services/active/')
+    return this.http.get('https://oneapp-backend.onrender.com/api/services/active/')
   }
 
   saveAddress(params:any){

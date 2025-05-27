@@ -50,6 +50,7 @@ export class AboutPage implements OnInit {
   isNameEditable: boolean = false
   isEmailEditable: boolean = false
   isPhoneEditable: boolean = false
+  appVersion: any
   alertButtons = [
     {
     text: 'CONFIRM DELETE',
@@ -74,15 +75,23 @@ export class AboutPage implements OnInit {
   async ngOnInit() {
     this.data = this.router.getCurrentNavigation()?.extras.state?.['data'];
     console.log('Passed Data:', this.data);
+    this.Addressid = []
+    this.Addressid = JSON.parse(localStorage.getItem('location') || '{}');
+      console.log(this.Addressid)
     this.getYear()
     this.token = await this.authService.getToken()
     if(this.data == 'Personal Details'){
       this.getProfileData()
     }
+    if(this.data == 'About OneApp'){
+      const version = await this.profileService.getAppVersion()
+      this.appVersion = version
+    }
     // this.getAddressList()
   }
   
 selectedAddress:any
+Addressid:any
   ionViewWillEnter() {
     const locationData = localStorage.getItem('location');
     if (locationData) {
@@ -93,6 +102,20 @@ selectedAddress:any
     if(this.data == 'Saved Addresses'){
       this.getAddressList()
     }
+  }
+
+  setAddressAsDefault(item:any){
+    let data = {
+      lat: item.lat,
+      lng: item.lng,
+      id: item.id,
+      label: item.label,
+      address: item.address
+    }
+    localStorage.setItem('location', JSON.stringify(data))
+    // this.getAddressList()
+    this.Addressid = JSON.parse(localStorage.getItem('location') || '{}');
+    console.log(this.Addressid)
   }
 
   getYear(){
@@ -113,6 +136,31 @@ selectedAddress:any
     this.profileService.deleteProfilePermanently(params, id).subscribe(res=> {
       console.log(res)
       this.authService.logout()
+    })
+  }
+params: any
+  updateAddress(type:any){
+    if(type == 'name'){
+      let params = {
+        "token": this.token,
+        "first_name": this.name
+      }
+      this.params = params
+    } else if(type == 'email'){
+      let params = {
+        "token": this.token,
+        "email": this.email
+    }
+    this.params = params
+    }
+    this.profileService.updateAddress(this.params, this.profileData.id).subscribe((res)=>{
+      this.getProfileData()
+      if(type == 'name'){
+          this.isNameEditable = false
+      } else if(type == 'email'){
+          this.isEmailEditable = false
+      }
+        
     })
   }
 
