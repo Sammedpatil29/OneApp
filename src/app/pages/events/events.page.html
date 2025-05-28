@@ -1,0 +1,69 @@
+
+
+<ion-content [fullscreen]="true">
+  <div class="position-fixed d-flex justify-content-between px-3 pt-4 w-100" style="top: 0; z-index:999">
+    <ion-buttons slot="start" style="background-color: rgba(196, 193, 193, 0.322); border-radius: 50px">
+      <ion-button (click)="back()">
+        <ion-icon name="arrow-back" class="text-white"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end" class="me-3">
+          <ion-button fill="outline" shape="round" color="success" size="small">help</ion-button>
+    </ion-buttons>
+  </div>
+
+  <div class="mainHeader pt-5">
+      <h3 class="text-center pt-4 text-white"> <strong>Local Events</strong> </h3>
+      <div class="d-flex mt-4 justify-content-evenly align-items-center pb-3">
+<div class="d-flex flex-column align-items-center">
+  <img style="width: 50px;" src="../../../assets/icons/wired-flat-19-magnifier-zoom-search-hover-spin.gif" alt="">
+  <p class="text-center text-white">Explore</p>
+</div>
+<div class="d-flex flex-column align-items-center">
+   <img style="width: 50px;" src="../../../assets/icons/wired-flat-400-bookmark-hover-flutter.gif" alt="">
+  <p class="text-center text-white">book</p>
+</div>
+<div class="d-flex flex-column align-items-center">
+   <img style="width: 50px;" src="../../../assets/icons/wired-flat-2237-champagne-flutes-hover-cheers.gif" alt="">
+  <p class="text-center text-white">Enjoy</p>
+</div>
+      </div>
+  </div>
+<ion-card-subtitle class="ps-3 my-2 text-uppercase">Explore Events</ion-card-subtitle>
+ 
+      <div class="container">
+  <div class="row">
+    <div class="col-6 mb-4 m-0 position-relative" *ngFor="let card of events">
+      <ion-card class="m-0" (click)="openEventDetails(card)">
+        <img [src]="card.imageUrl" [alt]="card.title" />
+        <div class="d-flex justify-content-between mx-2 mt-1">
+          <div class="text-primary"><strong>{{card.time}}</strong></div>
+          @if (card.isFree == true) {
+            <div class="text-success"><strong>FREE</strong></div>
+          } @else {
+            <div><strong>&#8377;{{card.ticketPrice}}</strong>/person</div>
+          }
+        </div>
+        <ion-card-header class="pt-1 px-2">
+          <ion-card-title class="text-truncate fs-6">{{ card.title }}</ion-card-title>
+          <!-- <ion-card-subtitle>{{ card.subtitle }}</ion-card-subtitle> -->
+        </ion-card-header>
+        <!-- <ion-buttons class="w-100 d-flex justify-content-center pb-2">
+          <ion-button class="w-75" fill="solid" color="dark">
+            Book Now
+          </ion-button>
+        </ion-buttons> -->
+        
+      </ion-card>
+      @if (saved == false) {
+                  <i class="bi bi-heart position-absolute fs-5 text-danger" (click)="saved = true" style="top:5px; right:20px; z-index: 9999; cursor: pointer"></i>
+        } @else {
+                  <i class="bi bi-heart-fill position-absolute fs-5 text-danger" (click)="saved = true" style="top:5px; right:20px; z-index: 9999; cursor: pointer"></i>
+        }
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>
+  
+</ion-content>

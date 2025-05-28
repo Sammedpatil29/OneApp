@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonSpinner, IonModal, IonButtons, IonIcon } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonSpinner, IonModal, IonButtons, IonIcon, IonImg } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { App } from '@capacitor/app'
 import { information, arrowBack } from 'ionicons/icons';
@@ -16,7 +16,7 @@ import { Preferences } from '@capacitor/preferences';
   templateUrl: './prelogin.page.html',
   styleUrls: ['./prelogin.page.scss'],
   standalone: true,
-  imports: [IonIcon, IonButtons, IonModal, IonSpinner, IonButton, IonContent, IonTitle, IonToolbar, IonHeader,  CommonModule, FormsModule]
+  imports: [IonImg, IonIcon, IonButtons, IonModal, IonSpinner, IonButton, IonContent, IonTitle, IonToolbar, IonHeader,  CommonModule, FormsModule]
 })
 export class PreloginPage implements OnInit {
 info: any;
@@ -81,6 +81,9 @@ token:any;
     this.token = await this.authService.getToken()
     // console.log(this.authService.getToken().__zone_symbol__value)
     console.log(this.token)
+    if(this.token){
+      this.navCtrl.navigateRoot('/layout')
+    }
     let params = {
       "token": this.token
     }
@@ -90,13 +93,14 @@ token:any;
       if(this.tokenDecoded.valid == true){
         // this.router.navigate(['/layout/example/home'])
         setTimeout(()=> {
-            this.navCtrl.navigateRoot('/layout')
-        }, 1000)
+            // this.navCtrl.navigateRoot('/layout')
+        }, 500)
 
       } else {
 this.isLoading = false
       }
     }, error => {
+      this.navCtrl.navigateBack('/login')
       this.isLoading = false
     })
   }

@@ -100,7 +100,7 @@
     placeholder="Add your suggestion or Service here"
     [autoGrow]="true"
     [(ngModel)]="subjectBody"
-    [value] = ''
+    [value]="subjectBody"
     appearance = "outline"
   >
   </ion-textarea>
@@ -245,6 +245,7 @@ DELETE ACCOUNT PERMANENTLY
   </div>
 
   <ion-alert
+  class=""
   trigger="present-alert"
   cssClass="custom-alert"
   subHeader="Once account is DELETED, all your data will be deleted permanently!!."

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IonApp, IonRouterOutlet, IonButton, IonHeader, IonTitle } from '@ionic/angular/standalone';
+import { IonApp, IonRouterOutlet, IonButton, IonHeader, IonTitle, IonContent } from '@ionic/angular/standalone';
 import { ScreenOrientation } from '@capacitor/screen-orientation';
 import { Network } from '@capacitor/network';
 import { Platform } from '@ionic/angular';
@@ -7,7 +7,7 @@ import { Platform } from '@ionic/angular';
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
-  imports: [IonTitle, IonHeader, IonButton, IonApp, IonRouterOutlet],
+  imports: [IonContent, IonTitle, IonHeader, IonButton, IonApp, IonRouterOutlet],
 })
 export class AppComponent implements OnInit{
   isOnline: boolean = true
