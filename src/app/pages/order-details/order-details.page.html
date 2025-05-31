@@ -1,0 +1,85 @@
+@if (!isOrderPlaced) {
+  <ion-header>
+  <ion-toolbar class="pt-4">
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Order Preview</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="mx-2">
+    <div class=" p-2 mt-2 text-center" style="border-radius: 10px; background-color: rgba(145, 241, 193, 0.733)">
+        Please enter all your details to proceed booking
+    </div>
+    <!-- order details -->
+     <ion-card-subtitle class="ms-2 mt-2"> Order Details</ion-card-subtitle>
+    <div class="orderDetails border mt-1 p-2 d-flex justify-content-between align-items-center" style="border-radius: 15px">
+        <div>
+          {{order.data.title | titlecase}}
+        </div>
+        <div class="d-flex align-items-center">
+          <ion-button fill="outline" color="dark" shape="round" (click)="count('-')"><span class="fs-4">-</span></ion-button>
+          <span class="mx-2">{{ticketCount}}</span>
+          <ion-button fill="outline" color="dark" shape="round" (click)="count('+')"><span class="fs-4">+</span></ion-button>
+        </div>
+    </div>
+
+    <!-- customer details  -->
+     <ion-card-subtitle class="ms-2 mt-2"> Personal Details</ion-card-subtitle>
+       
+          <ion-item class="addressField mt-2" lines="none">
+    <ion-input placeholder="Full Name" [value]=""></ion-input>
+  </ion-item>
+          <ion-item class="addressField mt-2" lines="none">
+    <ion-input placeholder="Phone" [value]=""></ion-input>
+  </ion-item>
+          <ion-item class="addressField mt-2" lines="none">
+    <ion-input placeholder="Email" [value]=""></ion-input>
+  </ion-item>
+    
+    <!-- price breakup  -->
+          <ion-card-subtitle class="ms-2 mt-2"> Price breakup</ion-card-subtitle>
+     <div class="border mt-2" style="border-radius: 15px">
+      <div class="price-breakup mt-1 p-2 d-flex justify-content-between align-items-center">   
+          <div>Base ticket price x {{ticketCount}}</div>
+          <div>&#8377;{{price}}</div>
+     </div>
+     <div class="price-breakup px-2 pb-2 d-flex justify-content-between align-items-center">   
+          <div>Platform charges</div>
+          <div>&#8377;{{charges | number:'1.2-2'}}</div>
+     </div>
+     <hr style="border-style: dashed">
+     <div class="price-breakup px-2 pb-2 d-flex justify-content-between align-items-center">   
+          <div><strong>Total</strong></div>
+          <div><strong>&#8377;{{finalCost}}</strong></div>
+     </div>
+     </div>
+
+     <div style="height: 300px;"></div>
+      
+  </div>
+
+  <div class="w-100 px-2 d-flex align-items-center justify-content-between position-fixed bottom-0" style="background-color: var(--ion-color-light);">
+    <h3 class="m-0"><strong class="ms-3">&#8377;{{finalCost}}</strong></h3>
+    <ion-button color="dark" class="w-75 ion-padding" slot="end" (click)="placeOrder()">
+PAY NOW
+    </ion-button>
+  </div>
+</ion-content>
+
+} @else {
+  <ion-content>
+    <div class="h-75 d-flex flex-column justify-content-center align-items-center">
+      <img class="image" src="../../../assets/gif/system-solid-31-check-in-check.gif" alt="">
+      <div>Order Placed Successfully!</div>
+      <ion-button  fill="outline" size="small" color="dark" (click)="trackOrder()">
+        Track order
+      </ion-button>
+
+  </div>
+  </ion-content>
+}

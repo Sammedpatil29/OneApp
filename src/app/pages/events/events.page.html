@@ -1,19 +1,20 @@
 
 
 <ion-content [fullscreen]="true">
-  <div class="position-fixed d-flex justify-content-between px-3 pt-4 w-100" style="top: 0; z-index:999">
+  <div>
+    <div class="position-fixed d-flex justify-content-between px-3 pt-5 w-100" style="top: 0; z-index:999">
     <ion-buttons slot="start" style="background-color: rgba(196, 193, 193, 0.322); border-radius: 50px">
       <ion-button (click)="back()">
         <ion-icon name="arrow-back" class="text-white"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-buttons slot="end" class="me-3">
+    <ion-buttons slot="end">
           <ion-button fill="outline" shape="round" color="success" size="small">help</ion-button>
     </ion-buttons>
   </div>
 
   <div class="mainHeader pt-5">
-      <h3 class="text-center pt-4 text-white"> <strong>Local Events</strong> </h3>
+      <h3 class="text-center pt-5 text-white"> <strong>Local Events</strong> </h3>
       <div class="d-flex mt-4 justify-content-evenly align-items-center pb-3">
 <div class="d-flex flex-column align-items-center">
   <img style="width: 50px;" src="../../../assets/icons/wired-flat-19-magnifier-zoom-search-hover-spin.gif" alt="">
@@ -37,9 +38,9 @@
       <ion-card class="m-0" (click)="openEventDetails(card)">
         <img [src]="card.imageUrl" [alt]="card.title" />
         <div class="d-flex justify-content-between mx-2 mt-1">
-          <div class="text-primary"><strong>{{card.time}}</strong></div>
+          <div class="text-primary"><strong>{{card.date | date: 'dd/MM/yy'}}</strong></div>
           @if (card.isFree == true) {
-            <div class="text-success"><strong>FREE</strong></div>
+            <div class="text-success"><strong>Free</strong></div>
           } @else {
             <div><strong>&#8377;{{card.ticketPrice}}</strong>/person</div>
           }
@@ -56,14 +57,68 @@
         
       </ion-card>
       @if (saved == false) {
-                  <i class="bi bi-heart position-absolute fs-5 text-danger" (click)="saved = true" style="top:5px; right:20px; z-index: 9999; cursor: pointer"></i>
+                  <i class="bi bi-heart position-absolute fs-5 text-danger" (click)="saved = true" style="top:5px; right:20px; z-index: 1; cursor: pointer"></i>
         } @else {
-                  <i class="bi bi-heart-fill position-absolute fs-5 text-danger" (click)="saved = true" style="top:5px; right:20px; z-index: 9999; cursor: pointer"></i>
+                  <i class="bi bi-heart-fill position-absolute fs-5 text-danger" (click)="saved = true" style="top:5px; right:20px; z-index: 1; cursor: pointer"></i>
         }
     </div>
   </div>
 </div>
 
 <app-footer></app-footer>
+
+<div class="w-100 position-fixed d-flex justify-content-center" style="bottom: 30px; z-index: 2">
+<div class="w-auto">
+  <ion-button class="ion-padding shadow-button" color="dark" shape="round">Bookings</ion-button>
+</div>
+</div>
+  </div>
   
 </ion-content>
+
+<ion-modal class="custom-modal" style="z-index: 999;" [isOpen]="isModalOpen" (didDismiss)="isModalOpen = false" [initialBreakpoint]="1" [breakpoints]="[0, 1]">
+    <ng-template>
+      <div class="px-3 pt-3">
+        <img class="" style="border-radius: 20px !important; width: 100%; height: 200px" [src]="eventDetails.imageUrl">
+      <div class="d-flex justify-content-between px-2 mt-2 align-items-center border" style="border-radius:10px;">
+        <p class="m-0 p-1"><i class="bi bi-calendar me-1 text-warning"></i>{{eventDetails.date}}</p>
+        <p class="m-0 p-1"><i class="bi bi-alarm me-1 text-primary"></i>{{eventDetails.time}}</p>
+        <p class="m-0 p-1"><i class="bi bi-clock me-1 text-success"></i>{{eventDetails.duration}}</p>
+      </div>
+        <div class="border mt-2 px-2" style="border-radius: 10px">
+          <ion-title class="block p-0">{{eventDetails.title}}</ion-title>
+        <div class="block">{{eventDetails.description}}</div>
+        </div>
+
+        <div class="border mt-2 px-2 py-2 d-flex align-items-center justify-content-between" style="border-radius: 10px">
+        <div class="d-flex align-items-center">
+            <div><i class="bi bi-geo-alt me-2"></i></div>
+            <div style="line-height: normal;">
+              <div>{{eventDetails.location.name}}</div>
+            <div>{{eventDetails.location.address}}</div>
+            </div>
+          </div>
+          <div>
+            @if(eventDetails.phone){
+                <i class="bi bi-telephone me-3"></i>
+            }
+            @if(eventDetails.email){
+                <i class="bi bi-envelope me-3"></i>
+            }
+            @if(eventDetails.location){
+                <i class="bi bi-geo-alt-fill text-primary"></i>
+            }
+          </div>
+        </div>
+
+      <div class="d-flex flex-center my-2" style="width: 100%">
+        @if (!eventDetails.isFree) {
+        <ion-title class="w-50 fs-2">&#8377;{{eventDetails.ticketPrice}}<span class="fw-lighter">/person</span></ion-title>
+        } @else {
+        <ion-title class="w-50 text-success fs-2">Free Entry</ion-title>
+        }
+        <ion-button color="dark ion-padding" class="w-50" (click)="bookNow(eventDetails)">Book Now</ion-button>
+      </div>
+      </div>
+    </ng-template>
+  </ion-modal>

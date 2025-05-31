@@ -5,3 +5,43 @@
   background-size: cover;
   border-radius: 0px 0px 50px 50px;
 }
+
+ion-modal {
+  --height: auto;
+}
+
+ion-button .modal {
+ --border-radius: 8px;
+}
+
+ion-img {
+    --border-radius: 20px;
+}
+
+.custom-modal::part(content) {
+//   border: 2px solid #007bff;
+  border-radius: 20px 20px 0px 0px;
+//   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.ion-padding {
+    // --padding-start: var(--ion-padding, 16px);
+    // --padding-end: var(--ion-padding, 16px);
+    // --padding-top: var(--ion-padding, 16px);
+    // --padding-bottom: var(--ion-padding, 16px);
+     -webkit-padding-start: var(--ion-padding, 0px); 
+     padding-inline-start: var(--ion-padding, 0px); 
+    -webkit-padding-end: var(--ion-padding, 0px); 
+     padding-inline-end: var(--ion-padding, 0px); 
+     padding-top: var(--ion-padding, 0px); 
+     padding-bottom: var(--ion-padding, 0px);
+}
+
+::ng-deep .button-native{
+  box-shadow:  0px 0px 10px red !important;
+}
+
+ion-button.shadow-button {
+  --box-shadow: 2px 2px 8px var(--ion-color, black);
+
+}

@@ -67,6 +67,18 @@ export const routes: Routes = [
     path: 'events',
     loadComponent: () => import('./pages/events/events.page').then( m => m.EventsPage)
   },
+  {
+    path: 'payment',
+    loadComponent: () => import('./pages/payment/payment.page').then( m => m.PaymentPage)
+  },
+  {
+    path: 'order-details',
+    loadComponent: () => import('./pages/order-details/order-details.page').then( m => m.OrderDetailsPage)
+  },
+  {
+    path: 'track-order',
+    loadComponent: () => import('./pages/track-order/track-order.page').then( m => m.TrackOrderPage)
+  },
       {
         path: '',
         redirectTo: 'example/home',
@@ -74,4 +86,6 @@ export const routes: Routes = [
       },
     ],
   },
+  
+
 ];
