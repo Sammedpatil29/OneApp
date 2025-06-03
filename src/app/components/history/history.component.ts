@@ -8,11 +8,13 @@ import { CommonModule } from '@angular/common';
 import { NodataComponent } from "../nodata/nodata.component";
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
+import { NavController } from '@ionic/angular';
+
 @Component({
   selector: 'app-history',
   templateUrl: './history.component.html',
   styleUrls: ['./history.component.scss'],
-  imports: [IonSpinner, IonRefresherContent, IonRefresher, IonChip, IonText, IonLabel, IonItem, IonList, IonNote, IonTitle, IonToolbar, IonHeader, IonIcon, IonButton, IonCardContent, IonCardTitle, IonCardHeader, IonCard, IonContent, IonCardSubtitle, CommonModule, NodataComponent, IonSelect, IonSelectOption]
+  imports: [IonSpinner,CommonModule, IonRefresherContent, IonRefresher, IonChip, IonText, IonLabel, IonItem, IonList, IonNote, IonTitle, IonToolbar, IonHeader, IonIcon, IonButton, IonCardContent, IonCardTitle, IonCardHeader, IonCard, IonContent, IonCardSubtitle, CommonModule, NodataComponent, IonSelect, IonSelectOption]
 })
 export class HistoryComponent  implements OnInit {
   history: any[] = []
@@ -21,7 +23,7 @@ export class HistoryComponent  implements OnInit {
   isloading: boolean = false
   token: any;
 
-  constructor(private historyService: HistoryService, private router: Router, private authService: AuthService) {
+  constructor(private historyService: HistoryService, private router: Router, private authService: AuthService, private navCtrl:NavController ) {
       addIcons({homeSharp,searchOutline,helpCircle,time,search,homeOutline,radio,library,person,home,playCircle, funnel, funnelOutline});
      }
 
@@ -87,6 +89,14 @@ onCategoryChange(category: any){
 this.filteredHistory = this.history.filter((item) => item.type.toLowerCase() == selectedCategory.toLowerCase())
   console.log(this.filteredHistory)
   }
+}
+
+openDetails(orderDetails:any){
+ this.navCtrl.navigateRoot('/layout/track-order', {
+            state: {
+              orderDetails: orderDetails
+            }
+          });
 }
   
 

@@ -68,10 +68,11 @@ fileUrl = ''
   this.getMetaData()
   }
 
-  slides: any[] = ['../../../assets/banners-2-oneapp.png','../../../assets/Untitled.png']
+  slides: any = []
 
   async ngOnInit() {
     await this.getAppVersion()
+    this.getBanners()
     const locationData = localStorage.getItem('location')
     try{
       if(!locationData){
@@ -213,6 +214,17 @@ navigateTo(route:any){
     console.log(`/layout/${route}`)
     this.router.navigate([`/layout/${route}`])
   }
+
+getBanners(){
+  this.profileService.getBanners().subscribe((res)=>{
+      this.slides = res 
+      console.log(this.slides)
+  })
+}
+
+navigateFromSlide(route:any){
+  this.navCtrl.navigateForward(`${route}`)
+}
 
 closeFlashOffer(){
   this.isFlashOfferVisible = false;

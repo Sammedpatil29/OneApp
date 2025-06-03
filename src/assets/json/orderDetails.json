@@ -1,0 +1,40 @@
+{
+    "ticketCount": 2,
+    "charges": 2.1,
+    "finalCost": 32.1,
+    "customerName": "",
+    "mobileNumber": "",
+    "email": "",
+    "eventId": 4,
+    "eventDetails": {
+        "data": {
+            "id": 4,
+            "title": "Art & Craft Workshop",
+            "description": "A fun and creative workshop for kids and adults to explore painting and DIY crafts.",
+            "location": {
+                "name": "Springfield Community Center",
+                "address": "456 Art Lane, Springfield",
+                "latitude": 40.7128,
+                "longitude": -74.006
+            },
+            "date": "2025-06-15",
+            "time": "14:00:00",
+            "duration": "2h",
+            "category": "Workshops",
+            "tags": [
+                "art",
+                "craft",
+                "family"
+            ],
+            "organizer": "Springfield Arts Council",
+            "contact": "info@springfieldarts.org",
+            "isFree": false,
+            "ticketPrice": "15.00",
+            "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR9SRRmhH4X5N2e4QalcoxVbzYsD44C-sQv-w&s",
+            "registrationUrl": "https://springfieldarts.org/register",
+            "recurrence": "none",
+            "user": 6
+        },
+        "value": "event"
+    }
+}

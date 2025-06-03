@@ -3,6 +3,8 @@ import { IonApp, IonRouterOutlet, IonButton, IonHeader, IonTitle, IonContent } f
 import { ScreenOrientation } from '@capacitor/screen-orientation';
 import { Network } from '@capacitor/network';
 import { Platform } from '@ionic/angular';
+import { LocalNotifications } from '@capacitor/local-notifications';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-root',
@@ -11,13 +13,16 @@ import { Platform } from '@ionic/angular';
 })
 export class AppComponent implements OnInit{
   isOnline: boolean = true
-  constructor(private platform: Platform) {
+  constructor(private platform: Platform, private navCtrl: NavController) {
      this.initializeApp();
   }
 
   ngOnInit() {
     this.lockOrientation();
+    this.listenToNotificationClicks();
   }
+
+  
 
    async initializeApp() {
     await this.platform.ready();
@@ -43,4 +48,25 @@ export class AppComponent implements OnInit{
    async lockOrientation() {
     await ScreenOrientation.lock({ orientation: 'portrait-primary' });
   }
+
+  async requestPermission() {
+  const permission = await LocalNotifications.requestPermissions();
+  if (permission.display !== 'granted') {
+    console.log('Notification permission not granted');
+  }
 }
+
+listenToNotificationClicks() {
+  LocalNotifications.addListener('localNotificationActionPerformed', (notification) => {
+    const orderId = notification.notification.extra?.orderId;
+    if (orderId) {
+      // Navigate to your order tracking or details page
+      this.navCtrl.navigateRoot('/layout/track-order', {
+        state: {
+          fromNotification: true,
+          orderId: orderId
+        }
+      });
+    }
+  });
+}}

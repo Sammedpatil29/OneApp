@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonButtons, IonIcon, IonCardSubtitle, IonCardContent, IonCardTitle, IonCardHeader, IonCard, IonModal, IonImg } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonButtons, IonIcon, IonCardSubtitle, IonCardContent, IonCardTitle, IonCardHeader, IonCard, IonModal, IonImg, IonSpinner } from '@ionic/angular/standalone';
 import { arrowBack } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { NavController } from '@ionic/angular';
@@ -14,14 +14,16 @@ import { AuthService } from 'src/app/services/auth.service';
   templateUrl: './events.page.html',
   styleUrls: ['./events.page.scss'],
   standalone: true,
-  imports: [IonImg, IonModal, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCardSubtitle, IonIcon, IonButtons, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, FooterComponent]
+  imports: [IonSpinner, IonImg, IonModal, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCardSubtitle, IonIcon, IonButtons, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, FooterComponent]
 })
 export class EventsPage implements OnInit {
 
   events: any = [];
   saved: boolean = false
   isModalOpen: boolean = false
+  isLoading: boolean = false
   eventDetails: any
+  token: any;
   @ViewChild(IonModal, { static: false }) modal: IonModal | undefined;
 presentingEl: any;
 
@@ -29,16 +31,36 @@ presentingEl: any;
           addIcons({arrowBack}); 
   }
 
-  ngOnInit() {
-    this.getEvents()
-    this.authService.getToken().then()
-  }
+ngOnInit() {
+  this.authService.getToken().then(token => {
+    this.token = token;
+    console.log('Token:', this.token);
+    this.getEvents();
+  }).catch(error => {
+    console.error('Failed to get token:', error);
+  });
+}
 
   getEvents(){
-      this.eventsService.getServices().subscribe((res)=>{
+    let params = {
+      "token": this.token
+    }
+    this.isLoading = true
+      this.eventsService.getEvents(params).subscribe((res)=>{
         this.events = res
         console.log(this.events)
+        this.isLoading = false
+      }, error => {
+        this.isLoading = false
       })
+  }
+
+  openHelp(){
+    this.navCtrl.navigateForward('/layout/example/support')
+  }
+
+  openBookings(){
+    this.navCtrl.navigateForward('/layout/example/history')
   }
 
   createOrder(){

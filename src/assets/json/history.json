@@ -217,17 +217,14 @@
     "date": "2025-03-28",
     "time": "07:00 AM",
     "status": "Report Ready",
-    "details": {
-      "lab": "MedLife Diagnostics",
-      "location": "Koramangala, Bangalore",
-      "amount": 350
-    }
+    "details": "gguoggugfufguef"
   },
   {
     "type": "support",
     "title": "Food Item Missing",
     "date": "2025-03-27",
     "time": "04:00 PM",
+    "user": "1",
     "status": "Resolved",
     "details": {
       "issue": "One item missing from order",

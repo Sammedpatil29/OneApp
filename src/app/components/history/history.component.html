@@ -47,7 +47,7 @@
       <div>
         <ion-list [inset]="true">
           @for (item of filteredHistory; track $index) {
-            <ion-item [button]="true" detail="false">
+            <ion-item [button]="true" detail="false" (click)="openDetails(item)">
               <div class="unread-indicator-wrapper" slot="start">
                 <!-- <div class="bi bi-pen"></div> -->
               </div>
@@ -60,7 +60,7 @@
                 </ion-note>
               </ion-label>
               <div class="metadata-end-wrapper" slot="end">
-                <ion-note color="medium">{{item.date | date:'dd/MM'}} &bull; {{item.time}}</ion-note>
+                <ion-note color="medium">{{item.created_at | date:'dd/MM'}} &bull; {{item.created_at | date: 'HH:mm'}}</ion-note>
                 <ion-icon color="medium" name="chevron-forward"></ion-icon>
               </div>
             </ion-item>

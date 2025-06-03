@@ -1,0 +1,38 @@
+.border{
+    border-radius: 10px;
+    border: 1px solid green !important
+}
+
+.ticket {
+  max-width: 500px;
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+//   border: 1px solid gray;
+//   background-color: #fff;
+}
+
+/* Semi-circular ticket cutouts */
+// .ticket::before,
+// .ticket::after {
+//   content: "";
+//   position: absolute;
+//   width: 30px;
+//   height: 30px;
+//   background: var(--ion-color-light);
+//   box-shadow: inset 0px 0px 1px black;
+//   border-radius: 50%;
+//   z-index: 10;
+// }
+
+.ticket::before {
+  left: -15px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.ticket::after {
+  right: -15px;
+  top: 50%;
+  transform: translateY(-50%);
+}

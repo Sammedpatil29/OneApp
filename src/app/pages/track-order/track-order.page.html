@@ -9,10 +9,82 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">track-order</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding" [fullscreen]="true">
+    <section class="mx-2">
+      <div class="d-flex justify-content-center">
+        <ion-button shape="round" color="dark" (click)="shareTicket()">
+  <ion-icon slot="icon-only" name="share"></ion-icon>
+</ion-button>
+      <ion-button shape="round" color="dark" (click)="openInGoogleMaps()">
+  <ion-icon slot="icon-only" name="location"></ion-icon>
+</ion-button>
+      </div>
+      <ion-card class="container d-flex justify-content-center" class="">
+    <div class="ticket shadow p-4">
+      <img class="mb-3" style="border-radius: 20px; height: 200px; width: 100%" [src]="eventDetails.imageUrl" alt="">
+      <div id="ticket-card">
+        <div class="ticket-header d-flex justify-content-between align-items-center">
+        <div>
+          <h4 class="fw-bold mb-0">{{orderDetails.title}}</h4>
+          <small class="text-secondary">Entry Ticket</small>
+        </div>
+        <img style="border-radius: 50%" src="../../../assets/icons/icon-48.webp" alt="Logo" height="50" />
+      </div>
+
+      <hr>
+
+      <div class="mb-3">
+        <strong>Guest Name:</strong> <span class="ms-2">{{moreDetails.customerName}}</span><br>
+        <strong>Ticket ID:</strong> <span class="ms-2">{{orderDetails.id}}</span><br>
+        <strong>Count:</strong> <span class="ms-2">{{moreDetails.ticketCount}} Nos.</span>
+      </div>
+
+      <div class="mb-3">
+        <strong>Date:</strong> <span class="ms-2">{{eventDetails.date | date: 'dd/MM/yyyy'}}</span><br>
+        <strong>Time:</strong> <span class="ms-2">{{eventDetails.time}}</span><br>
+        <strong>Duration:</strong> <span class="ms-2">{{eventDetails.duration}}</span><br>
+        <strong>Location:</strong> <span class="ms-2">{{eventDetails.location.name}}</span>
+      </div>
+
+      <hr>
+      <div class="d-flex justify-content-between">
+        <small>Total Amount</small>
+        <small>&#8377; {{moreDetails.finalCost}}</small>
+      </div>
+      <span class="text-secondary">
+        <div class="d-flex justify-content-between">
+        <small>Ticket Price x {{moreDetails.ticketCount}}</small> 
+        <small>&#8377; {{moreDetails.totalPrice}}</small>
+      </div>
+      <div class="d-flex justify-content-between">
+        <small>Charges (7%)</small>
+        <small>&#8377; {{moreDetails.charges | number:'1.2-2'}}</small>
+      </div>
+      <div class="d-flex justify-content-between">
+        <small>Discount</small>
+        <small>- &#8377; 0</small>
+      </div>
+      </span>
+      <hr>
+
+      <div class="text-center">
+        <small class="text-secondary">🎆 Celebrate and enjoy the every moments!<br>Show this ticket at the entry gate.</small>
+      </div>
+      </div>
+    </div>
+  </ion-card>
+    </section>
+
+    <!-- <div class="d-flex justify-content-center">
+      <ion-button (click)="openInGoogleMaps()" class="mt-2 w-75 text-cenetr" fill="outline" color="dark">
+      location <i class="bi bi-geo-alt"></i>
+    </ion-button>
+    </div>
+
+    <ion-button expand="block" color="primary" (click)="downloadTicket()">Download</ion-button>
+<ion-button expand="block" color="secondary" (click)="shareTicket()">Share</ion-button>
+<div class="position-fixed" style="top: 0px; z-index: 20">
+  <img src="../../../assets/waves.svg" alt="">
+</div> -->
 </ion-content>
+

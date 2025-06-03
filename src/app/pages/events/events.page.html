@@ -1,4 +1,5 @@
-
+@if (!isLoading) {
+  
 
 <ion-content [fullscreen]="true">
   <div>
@@ -9,7 +10,7 @@
       </ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
-          <ion-button fill="outline" shape="round" color="success" size="small">help</ion-button>
+          <ion-button fill="outline" shape="round" color="success" size="small" (click)="openHelp()">help</ion-button>
     </ion-buttons>
   </div>
 
@@ -69,7 +70,7 @@
 
 <div class="w-100 position-fixed d-flex justify-content-center" style="bottom: 30px; z-index: 2">
 <div class="w-auto">
-  <ion-button class="ion-padding shadow-button" color="dark" shape="round">Bookings</ion-button>
+  <ion-button class="ion-padding shadow-button" color="dark" shape="round" (click)="openBookings()">Bookings</ion-button>
 </div>
 </div>
   </div>
@@ -122,3 +123,10 @@
       </div>
     </ng-template>
   </ion-modal>
+} @else {
+  <ion-content>
+    <div class="d-flex justify-content-center align-items-center h-100">
+        <ion-spinner  name="crescent"></ion-spinner>
+      </div>
+  </ion-content>
+}

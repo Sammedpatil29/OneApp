@@ -26,7 +26,8 @@
         <i class="bi bi-chevron-down me-2" (click)="openLocation()"></i>
         </div>
         <div class="float-end" (click)="goToProfile()">
-          <i class="bi bi-person-circle fs-3"></i>
+          <img style="width: 30px;" src="../../../assets/gif/system-solid-8-account-hover-account.gif">
+          <!-- <i class="bi bi-person-circle fs-3"></i> -->
         </div>
       </div>
     </ion-toolbar>
@@ -56,16 +57,18 @@
 </div>
 }
 
-  <swiper-container [slidesPerView]="1" [spaceBetween]="0" [loop]="true"
+  @if (slides.length != 0) {
+    <swiper-container [slidesPerView]="1" [spaceBetween]="0" [loop]="true"
    autoplay-delay="2500" autoplay-disable-on-interaction="false">
 @for (item of slides; track $index) {
     <swiper-slide>
-      <ion-card>
-        <img [src]="item" alt="">
+      <ion-card (click)="navigateFromSlide(item.route)">
+        <img [src]="item.img" alt="">
       </ion-card>
     </swiper-slide>
 }
   </swiper-container>
+  }
   <div class="mt-3">
     <div *ngFor="let group of groupedData | keyvalue">
     
