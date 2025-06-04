@@ -56,17 +56,19 @@ autocompleteService = new google.maps.places.AutocompleteService();
   isToastOpen: boolean = false
   cityCenter = new google.maps.LatLng(16.715316578418758, 75.05882421691895);
   polygonCoords: google.maps.LatLngLiteral[] = [
-    { lat: 16.721820, lng: 75.041123 }, 
-    { lat: 16.731534, lng: 75.044394 },
-    { lat: 16.733517, lng: 75.050348},
-    { lat: 16.736431, lng: 75.062371},
-    { lat: 16.727415, lng: 75.075158},
-    { lat: 16.716180, lng: 75.073141},
-    { lat: 16.704540, lng: 75.067789},
-    { lat: 16.709470, lng: 75.055160},
-    { lat: 16.714950, lng: 75.044911},
+    // { lat: 16.721820, lng: 75.041123 }, 
+    // { lat: 16.731534, lng: 75.044394 },
+    // { lat: 16.733517, lng: 75.050348},
+    // { lat: 16.736431, lng: 75.062371},
+    // { lat: 16.727415, lng: 75.075158},
+    // { lat: 16.716180, lng: 75.073141},
+    // { lat: 16.704540, lng: 75.067789},
+    // { lat: 16.709470, lng: 75.055160},
+    // { lat: 16.714950, lng: 75.044911},
   ];
   mapImgUrl: any;
+  areaColor = ''
+  strokeColor = ''
 
   constructor(private navCtrl: NavController, private router: Router, private locationService: LocationService, private authService: AuthService){
     addIcons({arrowBack});
@@ -76,6 +78,7 @@ async ngOnInit() {
   this.routeData = this.router.getCurrentNavigation()?.extras.state?.['data'];
     console.log('Passed Data:', this.routeData);
     this.token = await this.authService.getToken()
+    this.getPolygon()
 }  
 
   ngAfterViewInit() {
@@ -88,6 +91,14 @@ async ngOnInit() {
 
   handleModalClose(){
     this.isModalOpen = false
+  }
+
+  getPolygon(){
+    this.locationService.getPolygonData().subscribe((res:any)=>{
+      this.polygonCoords = res.polygon
+      this.areaColor = res.inside_color
+      this.strokeColor = res.border_color
+    })
   }
 
   chipSelected(event:any){
@@ -168,10 +179,10 @@ this.loadMap()
 
     const serviceArea = new google.maps.Polygon({
   paths: this.polygonCoords,
-  strokeColor: 'black',
+  strokeColor: this.strokeColor,
   strokeOpacity: 0.8,
   strokeWeight: 1,
-  fillColor: 'orange',
+  fillColor: this.areaColor,
   fillOpacity: 0.35,
 });
 

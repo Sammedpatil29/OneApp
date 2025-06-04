@@ -37,3 +37,10 @@
 .chipStyle{
     background-color: var(--ion-color-light-shade, white);
 }
+
+.marker-icon {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  pointer-events: none;
+  z-index: 999;
+}

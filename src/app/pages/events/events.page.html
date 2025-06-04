@@ -114,7 +114,7 @@
 
       <div class="d-flex flex-center my-2" style="width: 100%">
         @if (!eventDetails.isFree) {
-        <ion-title class="w-50 fs-2">&#8377;{{eventDetails.ticketPrice}}<span class="fw-lighter">/person</span></ion-title>
+        <ion-title class="w-50 fs-2">{{eventDetails.ticketPrice | currency:'INR':'symbol':'1.0-0' }}<small class="fw-lighter">/person</small></ion-title>
         } @else {
         <ion-title class="w-50 text-success fs-2">Free Entry</ion-title>
         }

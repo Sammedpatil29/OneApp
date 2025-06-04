@@ -20,6 +20,7 @@ export class LocationService {
   addresslistUrl = "https://oneapp-backend.onrender.com/api/address/create/"
   addresslistByUser = "https://oneapp-backend.onrender.com/api/address/user-address/"
   deleteAddresses = "https://oneapp-backend.onrender.com/api/address/delete-address/"
+  polygonUrl = 'https://oneapp-backend.onrender.com/api/polygon/6/'
 
   constructor(private http: HttpClient) { }
 
@@ -66,5 +67,9 @@ export class LocationService {
 
   getAddressesList(params:any){
     return this.http.post(this.addresslistByUser, params)
+  }
+
+  getPolygonData(){
+    return this.http.get(this.polygonUrl)
   }
 }

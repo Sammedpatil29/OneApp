@@ -216,8 +216,8 @@ navigateTo(route:any){
   }
 
 getBanners(){
-  this.profileService.getBanners().subscribe((res)=>{
-      this.slides = res 
+  this.profileService.getBanners().subscribe((res:any)=>{
+this.slides = res.filter((item: { is_active: any; }) => item.is_active);
       console.log(this.slides)
   })
 }
