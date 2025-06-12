@@ -69,6 +69,7 @@ autocompleteService = new google.maps.places.AutocompleteService();
   mapImgUrl: any;
   areaColor = ''
   strokeColor = ''
+  isPolygonLoading: boolean = true
 
   constructor(private navCtrl: NavController, private router: Router, private locationService: LocationService, private authService: AuthService){
     addIcons({arrowBack});
@@ -84,9 +85,9 @@ async ngOnInit() {
   ngAfterViewInit() {
     this.getLocationFromLocalStorage()
     this.loadMap();
-    setTimeout(()=> {
-      this.loadMap()
-    }, 1000)
+    // setTimeout(()=> {
+      
+    // }, 3000)
   }
 
   handleModalClose(){
@@ -94,10 +95,15 @@ async ngOnInit() {
   }
 
   getPolygon(){
+    this.isPolygonLoading = true
     this.locationService.getPolygonData().subscribe((res:any)=>{
       this.polygonCoords = res.polygon
       this.areaColor = res.inside_color
       this.strokeColor = res.border_color
+      this.isPolygonLoading = false
+      this.loadMap()
+    }, error => {
+      this.isPolygonLoading = false
     })
   }
 

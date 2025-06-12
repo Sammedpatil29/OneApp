@@ -45,3 +45,18 @@ ion-button.shadow-button {
   --box-shadow: 2px 2px 8px var(--ion-color, black);
 
 }
+
+.border-date{
+  // border: 1px solid gray;
+  margin-top: 4px;
+  border-radius: 10px;
+}
+
+.event-title{
+  // margin-top: 4px
+}
+
+.border-description{
+  border: 1px solid gray;
+  border-radius: 15px;
+}
