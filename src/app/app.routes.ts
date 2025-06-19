@@ -68,6 +68,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/events/events.page').then( m => m.EventsPage)
   },
   {
+    path: 'grocery',
+    loadComponent: () => import('./grocery/grocery.page').then( m => m.GroceryPage)
+  },
+  {
     path: 'payment',
     loadComponent: () => import('./pages/payment/payment.page').then( m => m.PaymentPage)
   },
@@ -79,13 +83,19 @@ export const routes: Routes = [
     path: 'track-order',
     loadComponent: () => import('./pages/track-order/track-order.page').then( m => m.TrackOrderPage)
   },
+  {
+    path: 'cart',
+    loadComponent: () => import('./pages/cart/cart.page').then( m => m.CartPage)
+  },
+  {
+    path: 'grocery-item-details',
+    loadComponent: () => import('./pages/grocery-item-details/grocery-item-details.page').then( m => m.GroceryItemDetailsPage)
+  },
       {
         path: '',
         redirectTo: 'example/home',
         pathMatch: 'full',
       },
     ],
-  },
-  
-
+  }
 ];

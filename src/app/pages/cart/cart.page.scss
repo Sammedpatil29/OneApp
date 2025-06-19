@@ -1,0 +1,27 @@
+.quantity-button {
+    // width: 100px;
+    // width: auto !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-right: 5px;
+
+    .bttn {
+        font-size: 15px;
+        font-weight: lighter;
+        cursor: pointer;
+    }
+}
+
+ion-button::part(native) {
+  padding-inline-end: 0 !important;
+  padding-inline-start: 0 !important;
+}
+
+.truncate-2-lines {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;         /* Limit to 2 lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

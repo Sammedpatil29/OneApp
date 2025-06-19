@@ -39,6 +39,7 @@
     "@ionic/angular": "^8.0.0",
     "@types/googlemaps": "^3.43.3",
     "bootstrap": "^5.3.3",
+    "capacitor-razorpay": "^1.2.0",
     "html2canvas": "^1.4.1",
     "ionicons": "^7.0.0",
     "jwt-decode": "^4.0.0",

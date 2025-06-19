@@ -1,0 +1,179 @@
+<!-- <ion-header [translucent]="true">
+  <ion-toolbar class="mt-4 px-2">
+    <h5 class="mb-0 mt-3"><strong>Delivery Location</strong></h5>
+    <small><strong>Home</strong>- Sammed Patil</small>
+    <ion-searchbar 
+    class="my-2"
+    debounce="500"
+    placeholder="Search for items"></ion-searchbar>
+  </ion-toolbar>
+</ion-header> -->
+
+
+
+<ion-content [fullscreen]="true">
+  
+  <span style="width: 100%; overflow-x: hidden">
+    @if(!isLoading){
+    <div class="header-grocery pt-4">
+  <div>
+    <div class="px-2 pt-2 d-flex align-items-center justify-content-between">
+      <div class="w-75 text-truncate">
+        <h5 class="mb-0 mt-3"><strong>Delivery Location</strong></h5>
+    <small (click)="openMap()"> <span class="text-truncate" style="max-height: 75%">{{address}}</span></small>
+      </div>
+      <div>
+        <ion-button shape="round" color="dark" fill="outline" (click)="backToHome()"><i class="bi bi-house-door-fill"></i></ion-button>
+      </div>
+    </div>
+    <ion-searchbar 
+    class="my-2"
+    debounce="500"
+    (ionFocus)="startSearch()"
+    placeholder="Search for items"></ion-searchbar>
+</div>
+</div>
+<!-- <div class="border free-cash-box">
+<h1 class="text-center mb-0 py-5 cash-text">&#8377;100 FREE CASH <br> <small style="font-size: 20px;">On all orders</small></h1>
+
+</div> -->
+
+  <ion-title class="mt-2">Select by categories</ion-title>
+  <div class="row p-2 g-2">
+    <div class="col-3">
+          <img style="border-radius: 15px" src="../../assets/icons/5.png" alt="">
+        <div class="mx-2 text-center">
+         <small style="line-height: 0.1 !important;">Vegetables & Fruits</small>
+        </div>
+    </div>
+    <div class="col-3">
+          <img style="border-radius: 15px" src="../../assets/icons/4.png" alt="">
+        <div class="mx-2 text-center">
+         <small>Atta, Rice & Dal</small>
+        </div>
+    </div>
+    <div class="col-3">
+          <img style="border-radius: 15px" src="../../assets/icons/6.png" alt="">
+        <div class="mx-2 text-center">
+         <small>Oil, Ghee & Masala</small>
+        </div>
+    </div>
+    <div class="col-3">
+          <img style="border-radius: 15px" src="../../assets/icons/7.png" alt="">
+        <div class="mx-2 text-center">
+         <small>Bakery and Biscuits</small>
+        </div>
+    </div>
+    <div class="col-3">
+          <img style="border-radius: 15px" src="../../assets/icons/6.png" alt="">
+        <div class="mx-2 text-center">
+         <small>Oil, Ghee & Masala</small>
+        </div>
+    </div>
+    <div class="col-3">
+          <img style="border-radius: 15px" src="../../assets/icons/7.png" alt="">
+        <div class="mx-2 text-center">
+         <small>Bakery and Biscuits</small>
+        </div>
+    </div>
+  </div>
+    <ion-title class="mt-2">Recommended for you</ion-title>
+    <div class="row p-2 g-2">
+      @for (item of filteredGroceryList; track $index) {
+      <div class="col-4 rounded">
+        <div class="position-relative">
+          <img style="border-radius: 15px;" [src]="item.image_url" alt="">
+          <!-- <ion-button class="position-absolute bottom-0" color="dark" shape="round" style="right: 5px;">add</ion-button> -->
+           <!-- <div class="px-3"> -->
+  <ion-button shape="round" size="small" color="dark" fill="outline" class="quantity-button position-absolute bottom-0" style="right: 5px;">
+    <div class="d-flex align-items-center justify-content-center">
+      <span class="bttn px-2" (click)="decrement()">&#8722;</span>
+      <span class="bttn px-2">4</span>
+      <span class="bttn px-2" (click)="increment()">&#43;</span>
+    </div>
+  </ion-button>
+<!-- </div> -->
+        </div>
+        <div class="px-1">
+          <div><small
+              style="font-size: 10px !important; color: rgb(111, 111, 241)">{{item.quantity.amount}}&nbsp;{{item.quantity.unit}}</small>
+          </div>
+          <span>
+            <small>
+              <strong>{{item.name}}</strong></small>
+        </span>
+        <div class="">
+          <small style="font-size: 10px;" class="mb-0 d-block text-success">10% OFF</small>
+          <small><strong class="me-1">&#8377;{{item.price.ourPrice}}</strong> <span class="text-decoration-line-through">&#8377;{{item.price.mrp}}</span></small>
+        </div>
+        </div>
+      </div>
+      }
+      <ion-infinite-scroll (ionInfinite)="onIonInfinite($event)">
+    <ion-infinite-scroll-content></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+    </div>
+  } @else {
+    <div class="d-flex justify-content-center align-items-center h-100">
+        <ion-spinner  name="crescent"></ion-spinner>
+      </div>
+  }
+
+<!-- modal for search starts -->
+   <ion-modal [isOpen]="isModalOpen" (didDismiss)="handleModalClose()" style="z-index: -1;">
+    <ng-template>
+      <ion-content class="">
+        <div class="header-grocery pt-4">
+          <div>
+            <div class="px-2 pt-2 d-flex align-items-baseline justify-content-between">
+              <!-- <div class="w-75text-truncate"> -->
+                <h5 class="mb-0 mt-3"><strong>Search Item</strong></h5>
+                <button class="p-0" style="background-color: transparent;" (click)="isModalOpen = false">Close</button>
+              <!-- </div> -->
+            </div>
+            <ion-searchbar class="my-2" debounce="500" [(ngModel)]="searchTerm" (ionInput)="searchResult()"
+              placeholder="Search for items"></ion-searchbar>
+          </div>
+        </div>
+
+        <div class="row p-2 g-2">
+      @if(searchedItems.length == 0){
+        <app-nodata></app-nodata>
+      } @else {
+        @for (item of searchedItems; track $index) {
+      <div class="col-4 rounded">
+        <div class="position-relative">
+          <img style="border-radius: 15px;" [src]="item.image_url" alt="">
+          <ion-button class="position-absolute bottom-0" color="dark" shape="round" style="right: 5px;">add</ion-button>
+        </div>
+        <div class="px-1">
+          <div><small
+              style="font-size: 10px !important; color: rgb(111, 111, 241)">{{item.quantity.amount}}&nbsp;{{item.quantity.unit}}</small>
+          </div>
+          <span>
+            <small>
+              <strong>{{item.name}}</strong></small>
+        </span>
+        <div class="">
+          <small style="font-size: 10px;" class="mb-0 d-block text-success">10% OFF</small>
+          <small><strong class="me-1">&#8377;{{item.price.ourPrice}}</strong> <span class="text-decoration-line-through">&#8377;{{item.price.mrp}}</span></small>
+        </div>
+        </div>
+      </div>
+      }
+      }
+      </div> 
+
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+  <!-- modal for search ends -->
+
+  <div class=" d-flex justify-content-center position-fixed bottom-0 w-100 pb-3 text-center" style="z-index: 999 !important;">
+      <div class="bg-success w-auto p-3" style="border-radius: 30px; box-shadow: 0px 0px 1px black; cursor: pointer" (click)="openCart()">
+          <h5 class="mb-0 text-white px-4"><i class="bi bi-cart-fill me-2"></i> 5 Items</h5>
+      </div>
+  </div>
+</span>
+
+</ion-content>

@@ -9,7 +9,10 @@ import { Router } from '@angular/router';
 import { EventsService } from 'src/app/services/events.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { LocalNotifications } from '@capacitor/local-notifications';
+import { Checkout } from 'capacitor-razorpay';
+import { Platform } from '@ionic/angular';
 
+declare var Razorpay: any;
 
 @Component({
   selector: 'app-order-details',
@@ -30,7 +33,7 @@ export class OrderDetailsPage implements OnInit {
   email = ''
   token: any
 
-  constructor(private navCtrl: NavController, private authService: AuthService, private router: Router, private eventService: EventsService) {
+  constructor(private navCtrl: NavController, private platform: Platform, private authService: AuthService, private router: Router, private eventService: EventsService) {
     addIcons({arrowBack});
    }
    price: number | undefined;
@@ -148,7 +151,36 @@ isValidEmail(email: string): boolean {
   return emailRegex.test(email);
 }
 
- 
+  payWithRazorpay() {
+  const options = {
+    key: 'rzp_live_p6MXH1oq4BBYPk',
+    amount: 10000,
+    currency: 'INR',
+    name: 'Your App',
+    description: 'Payment for Order',
+    flow: 'intent',
+    method: {
+      upi: true
+    },
+    intent_app: 'com.google.android.apps.nbu.paisa.user',
+    handler: (response: any) => {
+      console.log('Payment Success:', response);
+      // call your backend to verify payment
+    },
+    prefill: {
+      email: 'customer@example.com',
+      contact: '9876543210'
+    },
+    theme: {
+      color: 'black'
+    }
+  };
+
+  this.platform.ready().then(() => {
+    const rzp = new Razorpay(options); // ✅ use Razorpay directly
+    rzp.open(); // ✅ call open() on the Razorpay instance
+  });
+}
 
   goBack(){
 this.navCtrl.back()
