@@ -66,9 +66,12 @@ export class GroceryPage implements OnInit {
   filteredGroceryList: any;
   isModalOpen: boolean = false;
   isLoading: boolean = false;
+  showCart: boolean = false;
   clickedItem: any;
   searchedItems: any = [];
   searchTerm = '';
+  cartItems: any;
+  cartItemCount:any;
   constructor(
     private navCtrl: NavController,
     private router: Router,
@@ -89,6 +92,7 @@ export class GroceryPage implements OnInit {
         this.token = token;
         console.log('Token:', this.token);
         this.getGroceryList();
+        this.getcartItems();
       })
       .catch((error) => {
         console.error('Failed to get token:', error);
@@ -158,11 +162,72 @@ export class GroceryPage implements OnInit {
     this.navCtrl.navigateForward('/layout/cart')
   }
 
-  increment(){
-    alert('+')
+  increment(id:any){
+    let quantity = this.cartItems.items[id].quantity
+    this.cartItems.items[id].quantity = quantity + 1
+    this.countItemsInCart()
   }
 
-  decrement(){
-    alert('-')
+  decrement(id:any){
+    let quantity = this.cartItems.items[id].quantity
+    if(quantity === 1){
+      this.cartItems.items.splice(id, 1);
+      console.log(this.cartItems.items)
+      this.countItemsInCart()
+    }
+    if(quantity != 0){
+      this.cartItems.items[id].quantity = quantity - 1
+      this.countItemsInCart()
+    }
   }
+
+  getcartItems(){
+  let params = {
+      "token": this.token
+  }
+  this.cartItems = []
+  this.groceryService.getCartItems(params).subscribe((res:any)=> {
+    console.log(res.length)
+    if(res.length == 0){
+      this.cartItems = []
+      this.showCart = false
+    } else {
+      this.showCart = true
+      this.cartItems = res[0]
+      this.countItemsInCart()
+    console.log(this.cartItems)
+    }
+  })
+}
+
+cartIncludes(itemId: string): boolean {
+  return this.cartItems?.items?.some((cartItem:any) => cartItem?.item_details?.id === itemId) ?? false;
+}
+
+totalItems = 0
+countItemsInCart(){
+  let temp: any[] = []
+  this.totalItems = 0
+  this.cartItems.items.forEach((item:any) => {
+    temp.push(item.quantity)
+  });
+  for(let i = 0; i < temp.length; i++){
+    this.totalItems = this.totalItems + temp[i]
+  }
+  console.log(this.totalItems)
+}
+
+addItemToCart(id:any){
+  let newItem = {
+    id: 5,
+    item: 5,
+    status: 'Available',
+    available: '',
+    quantity: 1,
+    item_details: this.filteredGroceryList[id]
+  }
+  this.cartItems.items.push(newItem)
+  this.countItemsInCart()
+  console.log(this.cartItems.items)
+}
 }

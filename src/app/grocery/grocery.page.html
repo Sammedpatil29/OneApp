@@ -12,8 +12,7 @@
 
 
 <ion-content [fullscreen]="true">
-  
-  <span style="width: 100%; overflow-x: hidden">
+  <div style="width: 100%; height:100%; overflow-x: hidden">
     @if(!isLoading){
     <div class="header-grocery pt-4">
   <div>
@@ -77,21 +76,37 @@
         </div>
     </div>
   </div>
+
     <ion-title class="mt-2">Recommended for you</ion-title>
     <div class="row p-2 g-2">
       @for (item of filteredGroceryList; track $index) {
       <div class="col-4 rounded">
         <div class="position-relative">
+
           <img style="border-radius: 15px;" [src]="item.image_url" alt="">
-          <!-- <ion-button class="position-absolute bottom-0" color="dark" shape="round" style="right: 5px;">add</ion-button> -->
+            @if (!cartIncludes(item.id) || cartItems == []) {
+              <ion-button class="position-absolute bottom-0" color="dark" size="small" style="right: 5px;" (click)="addItemToCart($index)">Add</ion-button>
+            } @else {
+                @for (cartItem of cartItems.items; track $index) {
+                  @if (cartItem.item_details.id === item.id) {
+                    <ion-button size="small" color="dark" class="quantity-button position-absolute bottom-0" style="right: 5px;">
+    <div class="d-flex align-items-center justify-content-center">
+      <span class="bttn px-2" (click)="decrement($index)">&#8722;</span>
+      <span class="bttn px-2">{{cartItem.quantity}}</span>
+      <span class="bttn px-2" (click)="increment($index)">&#43;</span>
+    </div>
+  </ion-button>
+                  }
+                }
+            }
            <!-- <div class="px-3"> -->
-  <ion-button shape="round" size="small" color="dark" fill="outline" class="quantity-button position-absolute bottom-0" style="right: 5px;">
+  <!-- <ion-button size="small" color="dark" class="quantity-button position-absolute bottom-0" style="right: 5px;">
     <div class="d-flex align-items-center justify-content-center">
       <span class="bttn px-2" (click)="decrement()">&#8722;</span>
       <span class="bttn px-2">4</span>
       <span class="bttn px-2" (click)="increment()">&#43;</span>
     </div>
-  </ion-button>
+  </ion-button> -->
 <!-- </div> -->
         </div>
         <div class="px-1">
@@ -163,17 +178,46 @@
       }
       }
       </div> 
-
+      @if (showCart && totalItems > 0) {
+    <div class="w-100 position-fixed bottom-0 px-2 pb-2 slide-top-normal">
+      <div class="background-cart w-100 d-flex justify-content-between align-items-center p-3 text-center" style="z-index: 999 !important; border-radius: 15px" (click)="openCart()">
+      <h5 class="mb-0">{{totalItems}}
+        @if (totalItems !== 1) {
+          <span>Items</span>
+        } @else {
+          <span>Item</span>
+        }
+        in cart</h5>
+      <div class="d-flex align-items-center">
+        <h5 class="mb-0 me-1">View cart</h5>
+        <i class="bi bi-arrow-right-short fs-3"></i>
+      </div>
+  </div>
+    </div>
+ }
       </ion-content>
     </ng-template>
   </ion-modal>
   <!-- modal for search ends -->
 
-  <div class=" d-flex justify-content-center position-fixed bottom-0 w-100 pb-3 text-center" style="z-index: 999 !important;">
-      <div class="bg-success w-auto p-3" style="border-radius: 30px; box-shadow: 0px 0px 1px black; cursor: pointer" (click)="openCart()">
-          <h5 class="mb-0 text-white px-4"><i class="bi bi-cart-fill me-2"></i> 5 Items</h5>
-      </div>
-  </div>
-</span>
+ 
+</div>
 
 </ion-content>
+@if (showCart && totalItems > 0) {
+    <div class="w-100 position-fixed bottom-0 px-2 pb-2 slide-top-normal">
+      <div class="background-cart w-100 d-flex justify-content-between align-items-center p-3 text-center" style="z-index: 999 !important; border-radius: 15px" (click)="openCart()">
+      <h5 class="mb-0">{{totalItems}} 
+        @if (totalItems !== 1) {
+          <span>Items</span>
+        } @else {
+          <span>Item</span>
+        }
+        in cart</h5>
+      <div class="d-flex align-items-center">
+        <h5 class="mb-0 me-1">View cart</h5>
+        <i class="bi bi-arrow-right-short fs-3"></i>
+      </div>
+  </div>
+    </div>
+ }

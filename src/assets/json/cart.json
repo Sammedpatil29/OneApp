@@ -1,0 +1,112 @@
+{
+        "id": 4,
+        "user": 1,
+        "items": [
+            {
+                "id": 1,
+                "item": 1,
+                "item_details": {
+                    "id": 1,
+                    "name": "Banana",
+                    "category": "Fruits",
+                    "description": "Fresh organic bananas",
+                    "brand": "Dole",
+                    "quantity": {
+                        "unit": "piece",
+                        "amount": 6
+                    },
+                    "price": {
+                        "mrp": 199,
+                        "ourPrice": "148"
+                    },
+                    "discount": {
+                        "type": "",
+                        "amount": 0.5
+                    },
+                    "stock": 150,
+                    "image_url": "https://res.cloudinary.com/dvwggnqnw/image/upload/v1750090230/8_nkw7rl.png",
+                    "is_available": true,
+                    "rating": 4.6,
+                    "created_at": "2025-06-14T22:25:51.242142+05:30",
+                    "updated_at": "2025-06-16T21:41:13.488350+05:30",
+                    "tags": [
+                        "grocery"
+                    ]
+                },
+                "quantity": 2,
+                "available": true,
+                "status": "Available"
+            },
+            {
+                "id": 2,
+                "item": 2,
+                "item_details": {
+                    "id": 2,
+                    "name": "Banana",
+                    "category": "Fruits",
+                    "description": "Fresh organic bananas",
+                    "brand": "Dole",
+                    "quantity": {
+                        "unit": "pieces",
+                        "amount": 6
+                    },
+                    "price": {
+                        "mrp": 199,
+                        "ourPrice": 148
+                    },
+                    "discount": {
+                        "type": "",
+                        "amount": 0.5
+                    },
+                    "stock": 150,
+                    "image_url": "https://res.cloudinary.com/dvwggnqnw/image/upload/v1750090230/8_nkw7rl.png",
+                    "is_available": true,
+                    "rating": 4.6,
+                    "created_at": "2025-06-14T23:03:46.147308+05:30",
+                    "updated_at": "2025-06-16T21:41:26.473544+05:30",
+                    "tags": [
+                        "grocery"
+                    ]
+                },
+                "quantity": 1,
+                "available": true,
+                "status": "Available"
+            },
+            {
+                "id": 3,
+                "item": 3,
+                "item_details": {
+                    "id": 3,
+                    "name": "Whole Wheat Bread",
+                    "category": "Bakery",
+                    "description": "Soft whole wheat sandwich bread",
+                    "brand": "Harvest Gold",
+                    "quantity": {
+                        "unit": "grams",
+                        "amount": "400"
+                    },
+                    "price": {
+                        "mrp": 45,
+                        "ourPrice": 40
+                    },
+                    "discount": {
+                        "type": "",
+                        "amount": 5
+                    },
+                    "stock": 85,
+                    "image_url": "https://res.cloudinary.com/dvwggnqnw/image/upload/v1750090231/9_nwgqfh.png",
+                    "is_available": true,
+                    "rating": 4.6,
+                    "created_at": "2025-06-14T23:04:24.884888+05:30",
+                    "updated_at": "2025-06-24T18:15:27.943045+05:30",
+                    "tags": [
+                        "grocery"
+                    ]
+                },
+                "quantity": 3,
+                "available": true,
+                "status": "Available"
+            }
+        ],
+        "created_at": "2025-06-22T23:46:16.935178+05:30"
+    }

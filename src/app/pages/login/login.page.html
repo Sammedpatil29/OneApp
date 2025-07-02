@@ -11,13 +11,14 @@
 <ion-content [fullscreen]="true">
   @if (!showRegisterForm) {
     <div class="body">
-      <div class="w-100 d-flex justify-content-center mt-4">
-              <img style="width: 70px" src="../../../assets/icons/vecteezy_fingerprint-search-secure-biometric-app-icon_56410641 (1).png" alt="">
+      <div class="w-100 d-flex justify-content-center mt-3">
+              <img style="width: 50px" src="../../../assets/icons/vecteezy_fingerprint-search-secure-biometric-app-icon_56410641 (1).png" alt="">
       </div>
-    <ion-card-title class="text-center fw-bolder mt-4">Enter your Mobile Number to Start</ion-card-title>
-<div class="number mx-4 mt-4">
-  <ion-input class="custom-input" type="tel" [(ngModel)]="mobileNumber" [maxlength]="10" label-placement="floating" fill="outline" placeholder="">
-  </ion-input>
+    <ion-card-subtitle class="text-center fw-bolder mt-4">Enter your Mobile Number to Start</ion-card-subtitle>
+<div class="px-5 mt-2">
+  <!-- <ion-input class="custom-input" type="tel" [(ngModel)]="mobileNumber" [maxlength]="10" label-placement="floating" fill="outline" placeholder="">
+  </ion-input> -->
+  <ion-input label="Mobile Number" type="tel" label-placement="floating" [(ngModel)]="mobileNumber" [maxlength]="10" fill="outline" placeholder="Mobile Number"></ion-input>
 </div>
   </div>
     @if(!otpSent){
@@ -31,10 +32,11 @@
   </div>
   } @else {
     <div class="body">
-    <ion-card-title class="text-center fw-bolder mt-4">OTP Sent! - Please Enter your OTP</ion-card-title>
-<div class="otp mx-4 mt-4">
-  <ion-input class="custom-input" pattern="[0-9]*" type="password" [(ngModel)]="enteredOtp" [maxlength]="4" label-placement="floating" fill="outline" placeholder="">
-  </ion-input>
+    <ion-card-subtitle class="text-center fw-bolder mt-4">OTP Sent! - Please Enter your OTP</ion-card-subtitle>
+<div class="px-5 mt-2">
+  <!-- <ion-input class="custom-input" pattern="[0-9]*" type="password" [(ngModel)]="enteredOtp" [maxlength]="4" label-placement="floating" fill="outline" placeholder="">
+  </ion-input> -->
+    <ion-input label="Enter OTP" type="password" label-placement="floating" [(ngModel)]="enteredOtp" [maxlength]="4" fill="outline" placeholder="Enter Otp"></ion-input>
 </div>
   </div>
 
@@ -48,18 +50,20 @@
   }
   } @else {
 <div class="w-100 d-flex justify-content-center mt-4">
-              <img style="width: 90px" src="../../../assets/icons/personal details.png" alt="">
+              <img style="width: 60px" src="../../../assets/icons/personal details.png" alt="">
       </div>
 
         <!-- <ion-card-title class="text-center fw-bolder mt-4">WELCOME TO <strong>ONE</strong>APP!</ion-card-title> -->
         <ion-card-title class="text-center fw-bolder mt-4">Please enter your details</ion-card-title>
-    <div class="name mx-4 mt-4">
-  <ion-input class="custom-input fullName" style="text-transform: uppercase;"  type="text" [(ngModel)]="fullName" label-placement="floating" fill="outline" placeholder="Full Name">
-  </ion-input>
+    <div class="px-5 mt-4">
+  <!-- <ion-input class="custom-input fullName" style="text-transform: uppercase;"  type="text" [(ngModel)]="fullName" label-placement="floating" fill="outline" placeholder="Full Name">
+  </ion-input> -->
+      <ion-input label="Enter Your full name" type="text" label-placement="floating" [(ngModel)]="fullName" fill="outline" placeholder="Enter Your Full Name"></ion-input>
 </div>
-    <div class="name mx-4 mt-4">
-  <ion-input class="custom-input email" style="text-transform: lowercase;"  type="text" [(ngModel)]="email" label-placement="floating" fill="outline" placeholder="Email">
-  </ion-input>
+    <div class="px-5 mt-4">
+  <!-- <ion-input class="custom-input email" style="text-transform: lowercase;"  type="text" [(ngModel)]="email" label-placement="floating" fill="outline" placeholder="Email">
+  </ion-input> -->
+        <ion-input label="Enter Your Email" type="text" label-placement="floating" [(ngModel)]="email" fill="outline" placeholder="Enter Your Email"></ion-input>
 </div>
 <div class="position-fixed button-box">
     <ion-button class="w-75 ion-padding" color="dark" [disabled]="isLoading" (click)="login()">Submit

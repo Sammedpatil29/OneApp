@@ -10,50 +10,44 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  <div class="p-2 mx-2 mt-3 text-center" style="border-radius: 10px; background-color: rgba(145, 241, 193, 0.733)">
+        Check the details before proceed
+    </div>
   <div class="border mx-2 mt-2" style="border-radius: 10px;">
-    <div class="row">
+    @if(!isLoading){
+      @for (item of cartItems?.items; track $index) {
+      <div class="row">
       <div class="col-3">
-        <img class="p-2" style="border-radius: 18px;" src="../../../assets/icons/1.png" alt="">
+        <img class="p-2" style="border-radius: 18px;" [src]="item.item_details.image_url" alt="">
       </div>
       <div class="col-6 d-flex flex-column align-items-start justify-content-center">
-        <h6 class="mb-1 truncate-2-lines w-100">maggi noodles 12N 1000ghg</h6>
-        <small style="font-size: 12px; color: rgba(112, 60, 233, 0.76)">100 g</small>
+        <h6 class="mb-1 truncate-2-lines w-100">{{item.item_details.name}}</h6>
+        <small style="font-size: 12px; color: rgba(112, 60, 233, 0.76)">{{item.item_details.quantity.amount}}&nbsp;{{item.item_details.quantity.unit}}</small>
       </div>
       <div class="col-3 d-flex align-items-center flex-column justify-content-center">
-        <ion-button shape="round" size="small" color="dark" class="quantity-button" style="right: 5px;">
+        <ion-button size="small" color="dark" class="quantity-button" style="right: 5px;">
           <div class="d-flex align-items-center justify-content-center">
             <span class="bttn px-2">&#8722;</span>
-            <span class="bttn px-2">4</span>
+            <span class="bttn px-2">{{item.quantity}}</span>
             <span class="bttn px-2">&#43;</span>
           </div>
         </ion-button>
-        <small class="float-end me-2 fs-6">&#8377;199</small>
+        <small class="float-end me-2 fs-6">&#8377;{{getNewItemPrice(item.quantity, item.item_details.price.ourPrice)}}</small>
       </div>
     </div>
-    <div class="row">
-      <div class="col-3">
-        <img class="p-2" style="border-radius: 18px;" src="../../../assets/icons/2.png" alt="">
+    }
+    } @else {
+      <div class="text-center">
+        Loading...
       </div>
-      <div class="col-6 d-flex flex-column align-items-start justify-content-center">
-        <h6 class="mb-1 truncate-2-lines w-100">maggi noodles 12N 1000ghg</h6>
-        <small style="font-size: 12px; color: rgba(112, 60, 233, 0.76)">100 g</small>
-      </div>
-      <div class="col-3 d-flex align-items-center flex-column justify-content-center">
-        <ion-button shape="round" size="small" color="dark" class="quantity-button" style="right: 5px;">
-          <div class="d-flex align-items-center justify-content-center">
-            <span class="bttn px-2">&#8722;</span>
-            <span class="bttn px-2">4</span>
-            <span class="bttn px-2">&#43;</span>
-          </div>
-        </ion-button>
-        <small class="float-end me-2 fs-6">&#8377;199</small>
-      </div>
-    </div>
+    }
   </div>
   <!-- <div class="border mx-2 mt-2 p-2" style="border-radius: 10px;"> -->
   <!-- <ion-card-subtitle class="ms-2 mt-2"> Price breakup</ion-card-subtitle> -->
   <div class="border mx-2 mt-2" style="border-radius: 15px">
-    <div class="price-breakup mt-1 p-2 d-flex justify-content-between align-items-center">
+    @if (!isLoading) {
+      <section>
+      <div class="price-breakup mt-1 p-2 d-flex justify-content-between align-items-center">
       <div>Item total x 2</div>
       <div>&#8377;199</div>
     </div>
@@ -63,13 +57,19 @@
     </div>
     <div class="price-breakup px-2 pb-2 d-flex justify-content-between align-items-center">
       <div>Delivery charges</div>
-      <div>&#8377;33</div>
+      <div>&#8377;{{setDeliveryCharge()}}</div>
     </div>
     <hr style="border-style: dashed">
     <div class="price-breakup px-2 pb-2 d-flex justify-content-between align-items-center">
       <div><strong>Total</strong></div>
       <div><strong>&#8377;234</strong></div>
     </div>
+    </section>
+    } @else {
+      <div class="text-center">
+        Loading...
+      </div>
+    }
   </div>
   <!-- </div> -->
   <div class="border mx-2 mt-2 p-2" style="border-radius: 10px;">
@@ -77,6 +77,7 @@
     <small>Orders cannot be cancelled once packed for delivery. In case of unexpected delays, a refund will be provided,
       if applicable</small>
   </div>
+  <div style="height: 150px;"></div>
   <ion-footer class="position-fixed bottom-0 px-2">
 
     <div class="row">
@@ -84,7 +85,7 @@
         <h1 class="m-0">&#8377;199</h1>
       </div>
       <div class="col-7">
-        <ion-button class="w-100 ion-padding" color="dark">Place Order</ion-button>
+        <ion-button class="w-100 ion-padding" color="dark" (click)="payWithUPI()">Place Order</ion-button>
       </div>
     </div>
   </ion-footer>

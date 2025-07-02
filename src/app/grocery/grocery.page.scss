@@ -43,3 +43,13 @@
 //     background-color: red;
 //     margin: 0 !important;
 // }
+
+//  @keyframes slide-top {0% { transform: translateY(0); } 100% { transform: translateY(-0px);} }
+
+// .slide-top-normal { 
+//     animation: slide-top 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) 0s 1 normal both; 
+// }
+
+.background-cart {
+background-image: linear-gradient(to top, #0ba360 0%, #3cba92 100%);
+}

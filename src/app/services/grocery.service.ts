@@ -2,15 +2,20 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, OnInit } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-export class GroceryService{
+export class GroceryService {
+  getGroceryUrl =
+    'https://oneapp-backend.onrender.com/api/grocery/grocery-list/';
+  getCartItemsUrl = 'https://oneapp-backend.onrender.com/api/cart/view/';
 
-  getGroceryUrl = 'https://oneapp-backend.onrender.com/api/grocery/grocery-list/'
+  constructor(private http: HttpClient) {}
 
-  constructor(private http: HttpClient) { }
+  getGroceryList(params: any) {
+    return this.http.post(this.getGroceryUrl, params);
+  }
 
-  getGroceryList(params:any){
-    return this.http.post(this.getGroceryUrl, params)
-}
+  getCartItems(params: any) {
+    return this.http.post(this.getCartItemsUrl, params)
+  }
 }
