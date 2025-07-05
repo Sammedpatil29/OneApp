@@ -39,7 +39,7 @@
 
   <ion-title class="mt-2">Select by categories</ion-title>
   <div class="row p-2 g-2">
-    <div class="col-3">
+    <div class="col-3" (click)="goToGrocerybyCategory()">
           <img style="border-radius: 15px" src="../../assets/icons/5.png" alt="">
         <div class="mx-2 text-center">
          <small style="line-height: 0.1 !important;">Vegetables & Fruits</small>
@@ -85,7 +85,7 @@
 
           <img style="border-radius: 15px;" [src]="item.image_url" alt="">
             @if (!cartIncludes(item.id) || cartItems == []) {
-              <ion-button class="position-absolute bottom-0" color="dark" size="small" style="right: 5px;" (click)="addItemToCart($index)">Add</ion-button>
+              <ion-button class="position-absolute bottom-0" color="dark" size="small" style="right: 5px;" (click)="addItemToCart(item.id)">Add</ion-button>
             } @else {
                 @for (cartItem of cartItems.items; track $index) {
                   @if (cartItem.item_details.id === item.id) {

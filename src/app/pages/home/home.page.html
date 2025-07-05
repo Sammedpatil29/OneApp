@@ -48,7 +48,7 @@
   <div class="update d-flex justify-content-center align-items-center py-2 mx-2 gap-2">
     <div class="p-0 fs-5 text-success">
       <img style="width: 40px" class="" src="../../../assets/icons/icons8-warning.gif" alt="">
-    New update available!
+    {{appVersion}} < {{latestVersion}}
 </div>
 <a [href]="fileUrl" [download]="fileName" target="_blank" rel="noopener noreferrer">
   <ion-button shape="round" fill="outline" color="success">Update</ion-button>

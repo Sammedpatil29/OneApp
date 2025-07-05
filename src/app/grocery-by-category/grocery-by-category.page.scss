@@ -1,0 +1,70 @@
+.list-side {
+    margin: 0;
+    list-style-type: none;
+    padding: 20px;
+    text-align: center;
+    background-color: white !important;
+    margin-bottom: 3px;
+}
+
+ul {
+    text-decoration: none;
+    margin-bottom: 0px;
+    padding: 0px;
+    margin-top: 10px;
+    gap: 0px;
+}
+
+.bubble {
+    bottom: 15px !important;
+    right: 15px;
+}
+
+.floating-button {
+    background-color: black;
+    padding: 10px;
+    color: white;
+    border-radius: 10px;
+    // box-shadow: 0px 0px 8px black;
+}
+
+.quantity-button {
+    background-color: white;
+    padding: 3px;
+    color: black;
+    border-radius: 8px;
+    border: 3px solid green;
+    bottom: 5px !important;
+    font-weight: 700;
+}
+
+.background-cart {
+background-image: linear-gradient(to top, #0ba360 0%, #3cba92 100%);
+}
+
+ion-modal#example-modal {
+  --width: fit-content;
+  --min-width: 250px;
+  --height: fit-content;
+  --border-radius: 6px;
+  --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
+}
+
+ion-modal#example-modal h1 {
+  margin: 20px 20px 10px 20px;
+}
+
+ion-modal#example-modal ion-icon {
+  margin-right: 6px;
+
+  width: 48px;
+  height: 48px;
+
+  padding: 4px 0;
+
+  color: #aaaaaa;
+}
+
+ion-modal#example-modal .wrapper {
+  margin-bottom: 10px;
+}

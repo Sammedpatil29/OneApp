@@ -163,9 +163,11 @@ export class GroceryPage implements OnInit {
   }
 
   increment(id:any){
+    console.log( this.cartItems.items[id].item_details.stock)
     let quantity = this.cartItems.items[id].quantity
     this.cartItems.items[id].quantity = quantity + 1
     this.countItemsInCart()
+    this.updateCartItems()
   }
 
   decrement(id:any){
@@ -174,10 +176,12 @@ export class GroceryPage implements OnInit {
       this.cartItems.items.splice(id, 1);
       console.log(this.cartItems.items)
       this.countItemsInCart()
+      this.updateCartItems()
     }
-    if(quantity != 0){
+    if(quantity != 1){
       this.cartItems.items[id].quantity = quantity - 1
       this.countItemsInCart()
+      this.updateCartItems()
     }
   }
 
@@ -218,16 +222,30 @@ countItemsInCart(){
 }
 
 addItemToCart(id:any){
+  let itemsInCart = this.cartItems.items[-1]
+  console.log(itemsInCart)
   let newItem = {
-    id: 5,
-    item: 5,
-    status: 'Available',
-    available: '',
-    quantity: 1,
-    item_details: this.filteredGroceryList[id]
+    item: id,
+    quantity: 1
   }
   this.cartItems.items.push(newItem)
   this.countItemsInCart()
+  this.updateCartItems()
   console.log(this.cartItems.items)
+}
+
+goToGrocerybyCategory(){
+  this.navCtrl.navigateForward('layout/grocery-by-category')
+}
+
+updateCartItems(){
+  let params = {
+    "token": this.token,
+    "items": this.cartItems.items
+  }
+  console.log(params)
+  this.groceryService.updateCartItems(params).subscribe((res)=>{
+    console.log('items updated in cart')
+  })
 }
 }

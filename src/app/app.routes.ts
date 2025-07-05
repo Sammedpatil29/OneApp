@@ -91,11 +91,17 @@ export const routes: Routes = [
     path: 'grocery-item-details',
     loadComponent: () => import('./pages/grocery-item-details/grocery-item-details.page').then( m => m.GroceryItemDetailsPage)
   },
+  {
+    path: 'grocery-by-category',
+    loadComponent: () => import('./grocery-by-category/grocery-by-category.page').then( m => m.GroceryByCategoryPage)
+  },
       {
         path: '',
         redirectTo: 'example/home',
         pathMatch: 'full',
       },
     ],
-  }
+  },
+  
+
 ];

@@ -1,0 +1,134 @@
+<ion-header>
+  <ion-toolbar class="pt-4">
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Explore by Category</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+    <!-- category items start -->
+     <ion-title class="text-center">Fruits and Vegitables</ion-title>
+    <div>
+      <div class="row p-2 g-2">
+      @for (item of filteredGroceryList; track $index) {
+      <div class="col-4 rounded">
+        <div class="position-relative">
+
+          <img style="border-radius: 15px;" [src]="item.image_url" alt="">
+            @if (!cartIncludes(item.id) || cartItems == []) {
+              <ion-button class="position-absolute bottom-0" color="dark" size="small" style="right: 5px;" (click)="addItemToCart($index)">Add</ion-button>
+            } @else {
+                @for (cartItem of cartItems.items; track $index) {
+                  @if (cartItem.item_details.id === item.id) {
+                    <div class="quantity-button position-absolute bottom-0" style="right: 5px;">
+    <div class="d-flex align-items-center justify-content-center">
+      <span class="bttn px-2" (click)="decrement($index)">&#8722;</span>
+      <span class="bttn px-2">{{cartItem.quantity}}</span>
+      <span class="bttn px-2" (click)="increment($index)">&#43;</span>
+    </div>
+  </div>
+                  }
+                }
+            }
+           <!-- <div class="px-3"> -->
+  <!-- <ion-button size="small" color="dark" class="quantity-button position-absolute bottom-0" style="right: 5px;">
+    <div class="d-flex align-items-center justify-content-center">
+      <span class="bttn px-2" (click)="decrement()">&#8722;</span>
+      <span class="bttn px-2">4</span>
+      <span class="bttn px-2" (click)="increment()">&#43;</span>
+    </div>
+  </ion-button> -->
+<!-- </div> -->
+        </div>
+        <div class="px-1">
+          <div><small
+              style="font-size: 10px !important; color: rgb(111, 111, 241)">{{item.quantity.amount}}&nbsp;{{item.quantity.unit}}</small>
+          </div>
+          <span>
+            <small>
+              <strong>{{item.name}}</strong></small>
+        </span>
+        <div class="">
+          <small style="font-size: 10px;" class="mb-0 d-block text-success">10% OFF</small>
+          <small><strong class="me-1">&#8377;{{item.price.ourPrice}}</strong> <span class="text-decoration-line-through">&#8377;{{item.price.mrp}}</span></small>
+        </div>
+        </div>
+      </div>
+      }
+    </div>
+    <div class="text-center my-3">End of the List</div>
+    </div>
+  
+
+
+ <ion-modal id="example-modal" #modal trigger="open-custom-dialog">
+    <ng-template>
+      <ion-title class="text-center my-3">Select Categories</ion-title>
+      <div class="row p-2 g-2">
+    <div class="col-3">
+          <img style="border-radius: 15px" src="../../assets/icons/5.png" alt="">
+        <div class="mx-2 text-center">
+         <small style="line-height: 0.1 !important;">Vegetables & Fruits</small>
+        </div>
+    </div>
+    <div class="col-3">
+          <img style="border-radius: 15px" src="../../assets/icons/4.png" alt="">
+        <div class="mx-2 text-center">
+         <small>Atta, Rice & Dal</small>
+        </div>
+    </div>
+    <div class="col-3">
+          <img style="border-radius: 15px" src="../../assets/icons/6.png" alt="">
+        <div class="mx-2 text-center">
+         <small>Oil, Ghee & Masala</small>
+        </div>
+    </div>
+    <div class="col-3">
+          <img style="border-radius: 15px" src="../../assets/icons/7.png" alt="">
+        <div class="mx-2 text-center">
+         <small>Bakery and Biscuits</small>
+        </div>
+    </div>
+    <div class="col-3">
+          <img style="border-radius: 15px" src="../../assets/icons/6.png" alt="">
+        <div class="mx-2 text-center">
+         <small>Oil, Ghee & Masala</small>
+        </div>
+    </div>
+    <div class="col-3">
+          <img style="border-radius: 15px" src="../../assets/icons/7.png" alt="">
+        <div class="mx-2 text-center">
+         <small>Bakery and Biscuits</small>
+        </div>
+    </div>
+  </div>
+    </ng-template>
+  </ion-modal>
+
+    <div class="w-100 position-fixed bottom-0 px-2 pb-2 slide-top-normal">
+      <div class="bubble mb-1 w-25 float-end">
+ <div class="floating-button position-relative text-center" id="open-custom-dialog" expand="block">Categories</div>
+ </div>
+      @if (showCart && totalItems > 0) {
+      <div class="background-cart w-100 d-flex justify-content-between align-items-center p-3 text-center" style="z-index: 999 !important; border-radius: 15px" (click)="openCart()">
+      <h5 class="mb-0">{{totalItems}} 
+        @if (totalItems !== 1) {
+          <span>Items</span>
+        } @else {
+          <span>Item</span>
+        }
+        in cart</h5>
+      <div class="d-flex align-items-center">
+        <h5 class="mb-0 me-1">View cart</h5>
+        <i class="bi bi-arrow-right-short fs-3"></i>
+      </div>
+  </div>
+}
+    </div>
+ 
+</ion-content>
