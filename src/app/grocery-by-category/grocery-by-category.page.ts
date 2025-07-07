@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonInfiniteScroll, IonLabel, IonItem, IonList, IonModal } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonInfiniteScroll, IonLabel, IonItem, IonList, IonModal, IonSpinner } from '@ionic/angular/standalone';
 import { arrowBack, personCircle } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { NavController } from '@ionic/angular';
@@ -13,7 +13,7 @@ import { GroceryService } from '../services/grocery.service';
   templateUrl: './grocery-by-category.page.html',
   styleUrls: ['./grocery-by-category.page.scss'],
   standalone: true,
-  imports: [IonModal, IonList, IonItem, IonLabel, IonInfiniteScroll, IonIcon, IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonSpinner, IonModal, IonList, IonItem, IonLabel, IonInfiniteScroll, IonIcon, IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
 export class GroceryByCategoryPage implements OnInit {
 token: any

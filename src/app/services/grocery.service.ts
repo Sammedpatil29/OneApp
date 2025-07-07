@@ -8,6 +8,7 @@ export class GroceryService {
   getGroceryUrl = 'https://oneapp-backend.onrender.com/api/grocery/grocery-list/';
   getCartItemsUrl = 'https://oneapp-backend.onrender.com/api/cart/view/';
   updateCartItemsUrl = 'https://oneapp-backend.onrender.com/api/cart/update/';
+  createCartUrl = 'https://oneapp-backend.onrender.com/api/cart/view/';
 
   constructor(private http: HttpClient) {}
 
@@ -21,5 +22,9 @@ export class GroceryService {
 
   updateCartItems(params:any){
     return this.http.post(this.updateCartItemsUrl, params)
+  }
+
+  createCart(params:any){
+    return this.http.post(this.createCartUrl, params)
   }
 }

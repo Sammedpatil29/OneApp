@@ -16,7 +16,8 @@
   <div class="border mx-2 mt-2" style="border-radius: 10px;">
     @if(!isLoading){
       @for (item of cartItems?.items; track $index) {
-      <div class="row">
+      @if (item.quantity != 0) {
+        <div class="row">
       <div class="col-3">
         <img class="p-2" style="border-radius: 18px;" [src]="item.item_details.image_url" alt="">
       </div>
@@ -25,16 +26,17 @@
         <small style="font-size: 12px; color: rgba(112, 60, 233, 0.76)">{{item.item_details.quantity.amount}}&nbsp;{{item.item_details.quantity.unit}}</small>
       </div>
       <div class="col-3 d-flex align-items-center flex-column justify-content-center">
-        <ion-button size="small" color="dark" class="quantity-button" style="right: 5px;">
+        <div class="quantity-button" style="right: 5px;">
           <div class="d-flex align-items-center justify-content-center">
             <span class="bttn px-2">&#8722;</span>
             <span class="bttn px-2">{{item.quantity}}</span>
             <span class="bttn px-2">&#43;</span>
           </div>
-        </ion-button>
+        </div>
         <small class="float-end me-2 fs-6">&#8377;{{getNewItemPrice(item.quantity, item.item_details.price.ourPrice)}}</small>
       </div>
     </div>
+      }
     }
     } @else {
       <div class="text-center">
@@ -85,7 +87,7 @@
         <h1 class="m-0">&#8377;199</h1>
       </div>
       <div class="col-7">
-        <ion-button class="w-100" color="dark" (click)="payWithUPI()">Place Order</ion-button>
+        <ion-button class="w-100" color="dark" (click)="openUpiApp()">Place Order</ion-button>
       </div>
     </div>
   </ion-footer>

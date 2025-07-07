@@ -163,26 +163,45 @@ export class GroceryPage implements OnInit {
   }
 
   increment(id:any){
-    console.log( this.cartItems.items[id].item_details.stock)
-    let quantity = this.cartItems.items[id].quantity
-    this.cartItems.items[id].quantity = quantity + 1
+    console.log(id)
+    const index = this.cartItems.items.findIndex((item: any) => item.id === id);
+    if (index !== -1) {
+      // if(this.cartItems.items[index].stock > this.cartItems.items[index].quantity){
+          let updateItem = {
+      item: this.cartItems.items[index].item_details.id,
+    quantity: this.cartItems.items[index].quantity += 1
+    }
+    if(this.cartItems.items[index].quantity == 0){
+      this.cartItems.items.splice(index, 1);
+    }
     this.countItemsInCart()
-    this.updateCartItems()
+    this.updateCartItems(updateItem)
+      // } else {
+      //   console.log('stock not available')
+      // }
+} else {
+  console.log('Item not found');
+}
   }
 
   decrement(id:any){
-    let quantity = this.cartItems.items[id].quantity
-    if(quantity === 1){
-      this.cartItems.items.splice(id, 1);
-      console.log(this.cartItems.items)
-      this.countItemsInCart()
-      this.updateCartItems()
+    console.log(id)
+    const index = this.cartItems.items.findIndex((item: any) => item.id === id);
+    if (index !== -1) {
+  
+    let updateItem = {
+      item: this.cartItems.items[index].item_details.id,
+    quantity: this.cartItems.items[index].quantity -= 1
     }
-    if(quantity != 1){
-      this.cartItems.items[id].quantity = quantity - 1
-      this.countItemsInCart()
-      this.updateCartItems()
+    if(this.cartItems.items[index].quantity == 0){
+      this.cartItems.items.splice(index, 1);
     }
+    this.countItemsInCart()
+    this.updateCartItems(updateItem)
+} else {
+  console.log('Item not found');
+}
+    
   }
 
   getcartItems(){
@@ -194,6 +213,14 @@ export class GroceryPage implements OnInit {
     console.log(res.length)
     if(res.length == 0){
       this.cartItems = []
+      let params = {
+        "token" : this.token
+      }
+      this.groceryService.createCart(params).subscribe((res)=>{
+        console.log('cart created')
+      }, error => {
+        console.log('error creating cart')
+      })
       this.showCart = false
     } else {
       this.showCart = true
@@ -205,7 +232,7 @@ export class GroceryPage implements OnInit {
 }
 
 cartIncludes(itemId: string): boolean {
-  return this.cartItems?.items?.some((cartItem:any) => cartItem?.item_details?.id === itemId) ?? false;
+  return this.cartItems?.items?.some((cartItem:any) => cartItem?.item_details?.id === itemId && cartItem?.quantity !== 0) ?? false;
 }
 
 totalItems = 0
@@ -221,16 +248,36 @@ countItemsInCart(){
   console.log(this.totalItems)
 }
 
-addItemToCart(id:any){
-  let itemsInCart = this.cartItems.items[-1]
+addItemToCart(id:any, item:any){
+  let itemsInCart = this.cartItems.items.length
   console.log(itemsInCart)
-  let newItem = {
+  let temp: any[] = []
+  this.cartItems.items.forEach((item:any) => {
+    temp.push(item.id)
+  });
+  const max = Math.max(...temp);
+  let newItemforLocal = {
+    id: max + 1,
+    item: max + 1,
+    item_details: item,
+    quantity: 1
+  }
+  console.log(newItemforLocal.id)
+  this.cartItems.items.push(newItemforLocal)
+   let newItem = {
     item: id,
     quantity: 1
   }
-  this.cartItems.items.push(newItem)
+  let params = {
+    "token": this.token,
+    "items": [newItem]
+  }
+  this.groceryService.updateCartItems(params).subscribe((res)=>{
+    console.log('items updated in cart')
+  })
+  // this.cartItems.items.push(newItem)
+  // this.cartItemsApi = this.cartItems
   this.countItemsInCart()
-  this.updateCartItems()
   console.log(this.cartItems.items)
 }
 
@@ -238,14 +285,21 @@ goToGrocerybyCategory(){
   this.navCtrl.navigateForward('layout/grocery-by-category')
 }
 
-updateCartItems(){
+updateCartItems(updateItem:any){
+  let result = this.cartItems.items.filter((item: any) => {
+  console.log(item);
+  return item.quantity === 0;
+});
+  console.log(result)
   let params = {
     "token": this.token,
-    "items": this.cartItems.items
+    "items": [updateItem]
   }
   console.log(params)
-  this.groceryService.updateCartItems(params).subscribe((res)=>{
+  this.groceryService.updateCartItems(params).subscribe((res:any)=>{
     console.log('items updated in cart')
+    // this.cartItems = res
+    // console.log(this.cartItems)
   })
 }
 }

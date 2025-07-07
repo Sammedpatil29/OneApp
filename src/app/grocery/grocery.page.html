@@ -84,18 +84,18 @@
         <div class="position-relative">
 
           <img style="border-radius: 15px;" [src]="item.image_url" alt="">
-            @if (!cartIncludes(item.id) || cartItems == []) {
-              <ion-button class="position-absolute bottom-0" color="dark" size="small" style="right: 5px;" (click)="addItemToCart(item.id)">Add</ion-button>
+            @if (!cartIncludes(item.id) || cartItems == [] || cartItems.quantity == 0) {
+              <div class="quantity-add-button position-absolute" style="right: 5px;" (click)="addItemToCart(item.id, item)">Add</div>
             } @else {
                 @for (cartItem of cartItems.items; track $index) {
                   @if (cartItem.item_details.id === item.id) {
-                    <ion-button size="small" color="dark" class="quantity-button position-absolute bottom-0" style="right: 5px;">
+                    <div class="quantity-button position-absolute" style="right: 5px;">
     <div class="d-flex align-items-center justify-content-center">
-      <span class="bttn px-2" (click)="decrement($index)">&#8722;</span>
+      <span class="bttn px-2" (click)="decrement(cartItem.id)">&#8722;</span>
       <span class="bttn px-2">{{cartItem.quantity}}</span>
-      <span class="bttn px-2" (click)="increment($index)">&#43;</span>
+      <span class="bttn px-2" (click)="increment(cartItem.id)">&#43;</span>
     </div>
-  </ion-button>
+  </div>
                   }
                 }
             }

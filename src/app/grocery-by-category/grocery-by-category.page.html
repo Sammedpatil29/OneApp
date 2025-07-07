@@ -11,8 +11,21 @@
 
 <ion-content [fullscreen]="true">
 
-    <div class="row g-0">
-      <div class="col-2 border" style="height: 88vh; overflow-y: scroll; scrollbar-width: none; -ms-overflow-style: none;"></div>
+    @if (!isLoading) {
+      <div class="row g-0">
+      <div class="col-2 border" style="height: 88vh; overflow-y: scroll; scrollbar-width: none; -ms-overflow-style: none;">
+        <ul>
+          <li class="text-center py-3">
+            <i class="bi bi-person text-center fs-3"></i>
+          </li>
+          <li>
+            sammed
+          </li>
+          <li>
+            sammed
+          </li>
+        </ul>
+      </div>
 
       <div class="col-10" style="height: 88vh; overflow-y: scroll; scrollbar-width: none; -ms-overflow-style: none;">
         <div>
@@ -23,14 +36,14 @@
 
           <img style="border-radius: 15px;" [src]="item.image_url" alt="">
             @if (!cartIncludes(item.id) || cartItems == []) {
-              <ion-button class="position-absolute bottom-0" color="dark" size="small" style="right: 5px;" (click)="addItemToCart($index)">Add</ion-button>
+              <div class="quantity-add-button position-absolute" style="right: 5px;" (click)="addItemToCart($index)">Add</div>
             } @else {
                 @for (cartItem of cartItems.items; track $index) {
                   @if (cartItem.item_details.id === item.id) {
                     <div class="quantity-button position-absolute" style="bottom: 5px; right: 2px">
   <div class="d-flex align-items-center justify-content-center">
     <span class="bttn px-2" (click)="decrement($index)">&#8722;</span>
-    <span class="bttn px-2">{{cartItem.quantity}}</span>
+    <span class="bttn">{{cartItem.quantity}}</span>
     <span class="bttn px-2" (click)="increment($index)">&#43;</span>
   </div>
 </div>
@@ -77,5 +90,10 @@
   </div>
 }
     </div>
+    } @else {
+      <div class="d-flex justify-content-center align-items-center h-100">
+        <ion-spinner  name="crescent"></ion-spinner>
+      </div>
+    }
  
 </ion-content>

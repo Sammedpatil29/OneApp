@@ -1,17 +1,3 @@
-.quantity-button {
-    // width: 100px;
-    // width: auto !important;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding-right: 5px;
-
-    .bttn {
-        font-size: 15px;
-        font-weight: lighter;
-        cursor: pointer;
-    }
-}
 
 ion-button::part(native) {
   padding-inline-end: 0 !important;

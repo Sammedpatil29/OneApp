@@ -132,7 +132,7 @@ loadCashfreeSDK(): Promise<void> {
     document.body.appendChild(script);
   });
 }
-
+filtereditem:any
 getcartItems(){
   let params = {
       "token": this.token
@@ -140,6 +140,9 @@ getcartItems(){
   this.isLoading = true
   this.groceryService.getCartItems(params).subscribe((res:any)=> {
     this.cartItems = res[0]
+    // console.log(this.cartItems)
+    //  this.filtereditem = res[0].items.filter((item:any)=> item.quantity != 0)
+    // this.cartItems = items
     console.log(this.cartItems)
     this.isLoading = false
   }, error => {
@@ -154,6 +157,18 @@ getNewItemPrice(quantity:any, price:any){
 setDeliveryCharge(){
   return this.deliveryCharge
 }
+
+ openUpiApp() {
+    const upiIntentLink = 'intent://pay' +
+      '?pa=9591420068kbl@ybl' +            // Replace with your UPI ID
+      '&pn=Sammed Patil' +            // Replace with your name
+      '&tn=Payment%20for%20order' +
+      '&am=10.00' +
+      '&cu=INR' +
+      '#Intent;scheme=upi;end;';
+
+    window.location.href = upiIntentLink;
+  }
 
 // totalProductCost() {
 //   const prices = this.cartItems.items.map((cartItem: any) => {
