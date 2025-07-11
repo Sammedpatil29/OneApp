@@ -265,10 +265,10 @@ countItemsInCart(){
 }
 
 addItemToCart(id:any, item:any){
-  let itemsInCart = this.cartItems.items.length
+  let itemsInCart = this.cartItems?.items.length
   console.log(itemsInCart)
   let temp: any[] = []
-  this.cartItems.items.forEach((item:any) => {
+  this.cartItems?.items.forEach((item:any) => {
     temp.push(item.id)
   });
   const max = Math.max(...temp);

@@ -162,8 +162,8 @@ finalPayableAmount(){
   console.log(id);
   if(this.totalItems == 0){
       this.navCtrl.navigateBack('layout/grocery')
-  }
-  const index = this.cartItems.items.findIndex((item: any) => item.id === id);
+  } else {
+    const index = this.cartItems.items.findIndex((item: any) => item.id === id);
   if (index !== -1) {
     const currentItem = this.cartItems.items[index];
 
@@ -188,6 +188,8 @@ finalPayableAmount(){
   } else {
     console.log('❌ Item not found');
   }
+  }
+  
 }
 
 updateCartItems(updateItem:any){
