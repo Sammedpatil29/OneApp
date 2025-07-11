@@ -28,9 +28,9 @@
       <div class="col-3 d-flex align-items-center flex-column justify-content-center">
         <div class="quantity-button" style="right: 5px;">
           <div class="d-flex align-items-center justify-content-center">
-            <span class="bttn px-2">&#8722;</span>
+            <span class="bttn px-2" (click)="decrement(item.id)">&#8722;</span>
             <span class="bttn px-2">{{item.quantity}}</span>
-            <span class="bttn px-2">&#43;</span>
+            <span class="bttn px-2" (click)="increment(item.id)">&#43;</span>
           </div>
         </div>
         <small class="float-end me-2 fs-6">&#8377;{{getNewItemPrice(item.quantity, item.item_details.price.ourPrice)}}</small>
