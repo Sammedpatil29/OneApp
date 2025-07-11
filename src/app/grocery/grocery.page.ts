@@ -162,47 +162,63 @@ export class GroceryPage implements OnInit {
     this.navCtrl.navigateForward('/layout/cart')
   }
 
-  increment(id:any){
-    console.log(id)
-    const index = this.cartItems.items.findIndex((item: any) => item.id === id);
-    if (index !== -1) {
-      // if(this.cartItems.items[index].stock > this.cartItems.items[index].quantity){
-          let updateItem = {
-      item: this.cartItems.items[index].item_details.id,
-    quantity: this.cartItems.items[index].quantity += 1
-    }
-    if(this.cartItems.items[index].quantity == 0){
-      this.cartItems.items.splice(index, 1);
-    }
-    this.countItemsInCart()
-    this.updateCartItems(updateItem)
-      // } else {
-      //   console.log('stock not available')
-      // }
-} else {
-  console.log('Item not found');
-}
-  }
+  increment(id: any) {
+  console.log(id);
+  const index = this.cartItems.items.findIndex((item: any) => item.id === id);
+  if (index !== -1) {
+    const currentItem = this.cartItems.items[index];
+    const availableStock = currentItem.item_details.stock;
+    const currentQty = currentItem.quantity;
 
-  decrement(id:any){
-    console.log(id)
-    const index = this.cartItems.items.findIndex((item: any) => item.id === id);
-    if (index !== -1) {
-  
-    let updateItem = {
-      item: this.cartItems.items[index].item_details.id,
-    quantity: this.cartItems.items[index].quantity -= 1
+    if (currentQty < availableStock) {
+      currentItem.quantity += 1;
+
+      const updateItem = {
+        item: currentItem.item_details.id,
+        quantity: currentItem.quantity
+      };
+
+      this.countItemsInCart();
+      this.updateCartItems(updateItem);
+    } else {
+      console.log('⚠️ Cannot add more. Stock limit reached.');
+      // Optionally show toast or alert to user
     }
-    if(this.cartItems.items[index].quantity == 0){
-      this.cartItems.items.splice(index, 1);
-    }
-    this.countItemsInCart()
-    this.updateCartItems(updateItem)
-} else {
-  console.log('Item not found');
-}
-    
+  } else {
+    console.log('❌ Item not found');
   }
+}
+
+
+  decrement(id: any) {
+  console.log(id);
+  const index = this.cartItems.items.findIndex((item: any) => item.id === id);
+  if (index !== -1) {
+    const currentItem = this.cartItems.items[index];
+
+    if (currentItem.quantity > 0) {
+      currentItem.quantity -= 1;
+
+      const updateItem = {
+        item: currentItem.item_details.id,
+        quantity: currentItem.quantity
+      };
+
+      // Remove item from cart if quantity is now 0
+      if (currentItem.quantity === 0) {
+        this.cartItems.items.splice(index, 1);
+      }
+
+      this.countItemsInCart();
+      this.updateCartItems(updateItem);
+    } else {
+      console.log('⚠️ Quantity is already zero');
+    }
+  } else {
+    console.log('❌ Item not found');
+  }
+}
+
 
   getcartItems(){
   let params = {

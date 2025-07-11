@@ -15,6 +15,15 @@ ul {
     gap: 0px;
 }
 
+.list-active {
+border-radius: 10px 0px 0px 10px;
+  background-color: rgb(255, 255, 255);
+}
+
+.side-box {
+  background-color: rgb(217, 250, 217);
+}
+
 .bubble {
     bottom: 15px !important;
     right: 15px;

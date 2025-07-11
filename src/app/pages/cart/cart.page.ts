@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonFooter, IonCardSubtitle } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonFooter, IonCardSubtitle, IonSpinner } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
@@ -22,7 +22,7 @@ declare global {
   templateUrl: './cart.page.html',
   styleUrls: ['./cart.page.scss'],
   standalone: true,
-  imports: [IonCardSubtitle, IonFooter, IonIcon, IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonSpinner, IonCardSubtitle, IonFooter, IonIcon, IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
 export class CartPage implements OnInit {
 
@@ -52,86 +52,6 @@ export class CartPage implements OnInit {
     this.navCtrl.back()
   }
 
-   async payWithUPI() {
-  // Wait for CashfreePay SDK to load
-  await this.loadCashfreeSDK();
-  await this.waitForCashfreeSDK();
-
-  const res = await fetch('http://localhost:3000/generate-token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      order_id: 'ORDER123_' + Date.now(),
-      order_amount: 10.00,
-      customer_phone: '9999999999',
-      customer_email: 'test@example.com'
-    })
-  });
-
-  const data = await res.json();
-  if (!data.success) {
-    alert('Token generation failed');
-    return;
-  }
-
-  const cashfree = new window.CashfreePay.Checkout();
-
-  cashfree.init({
-    paymentSessionId: data.payment_session_id,
-    mode: 'upi',
-    upiIntent: true
-  });
-
-  cashfree.pay();
-}
-
-waitForCashfreeSDK(): Promise<void> {
-  return new Promise((resolve, reject) => {
-    if (window.CashfreePay) {
-      resolve();
-    } else {
-      const interval = setInterval(() => {
-        if (window.CashfreePay) {
-          clearInterval(interval);
-          resolve();
-        }
-      }, 50);
-
-      setTimeout(() => {
-        clearInterval(interval);
-        reject('CashfreePay SDK failed to load');
-      }, 5000);
-    }
-  });
-}
-
-loadCashfreeSDK(): Promise<void> {
-  return new Promise((resolve, reject) => {
-    if (window.CashfreePay && window.CashfreePay.Checkout) {
-      return resolve();
-    }
-
-    const scriptId = 'cashfree-pay-sdk';
-
-    // Avoid loading twice
-    if (document.getElementById(scriptId)) {
-      return resolve();
-    }
-
-    const script = document.createElement('script');
-    script.id = scriptId;
-    script.src = 'https://sdk.cashfree.com/js/v1/cashfree.pay.js';
-    script.onload = () => {
-      if (window.CashfreePay && window.CashfreePay.Checkout) {
-        resolve();
-      } else {
-        reject('CashfreePay SDK loaded but Checkout not found');
-      }
-    };
-    script.onerror = () => reject('Failed to load CashfreePay SDK');
-    document.body.appendChild(script);
-  });
-}
 filtereditem:any
 getcartItems(){
   let params = {
@@ -145,41 +65,69 @@ getcartItems(){
     // this.cartItems = items
     console.log(this.cartItems)
     this.isLoading = false
+    this.countItemsInCart()
   }, error => {
     this.isLoading = false
   })
+  
 }
 
 getNewItemPrice(quantity:any, price:any){
   return Number(quantity)*Number(price)
 }
 
-setDeliveryCharge(){
-  return this.deliveryCharge
+totalItemPrice:any;
+totalCartItemsPrice(){
+  let temp: number[] = []
+  this.cartItems?.items.forEach((item:any) => {
+    let price = Number(item.quantity) * Number(item.item_details.price.ourPrice)
+    temp.push(price)
+  })
+  this.totalItemPrice = 0
+  for(let i=0; i< temp.length; i++){
+    this.totalItemPrice = this.totalItemPrice + temp[i]
+  }
+  return this.totalItemPrice
 }
 
- openUpiApp() {
-    const upiIntentLink = 'intent://pay' +
-      '?pa=9591420068kbl@ybl' +            // Replace with your UPI ID
-      '&pn=Sammed Patil' +            // Replace with your name
-      '&tn=Payment%20for%20order' +
-      '&am=10.00' +
-      '&cu=INR' +
-      '#Intent;scheme=upi;end;';
+finalHandlingCharges = 0
+handlingCharges = 0
+calculateHandlingCharges(){
+ this.handlingCharges = Number(this.totalItems) * 3
+ this.finalHandlingCharges = this.handlingCharges
+ if(this.handlingCharges > 10){
+  return this.finalHandlingCharges = 10
+ } else {
+  return this.finalHandlingCharges
+ }
+ 
+}
 
-    window.location.href = upiIntentLink;
+setDeliveryCharge(){
+  if(this.totalItemPrice > 199) {
+    this.deliveryCharge = 0
+    return this.deliveryCharge
+  } else {
+    return this.deliveryCharge = 30
   }
+}
 
-// totalProductCost() {
-//   const prices = this.cartItems.items.map((cartItem: any) => {
-//     const unitPrice = cartItem.item_details.price.amount;
-//     const quantity = cartItem.quantity;
-//     this.getNewItemPrice(unitPrice, quantity);
-    
-//   })
-//   const total = prices.reduce((sum: any, val: any) => sum + val, 0);
-//   console.log('Total Cost:', Number(total));
-//   return total;
-// }
+  totalItems = 0
+countItemsInCart(){
+  let temp: any[] = []
+  this.totalItems = 0
+  console.log(this.cartItems.items)
+  this.cartItems.items.forEach((item:any) => {
+    temp.push(item.quantity)
+  });
+  for(let i = 0; i < temp.length; i++){
+    this.totalItems = this.totalItems + temp[i]
+  }
+  console.log(this.totalItems)
+}
+
+finalPayableAmount(){
+  return this.totalCartItemsPrice() + this.calculateHandlingCharges() + this.setDeliveryCharge()
+}
 
 }

@@ -95,16 +95,35 @@ countItemsInCart(){
   console.log(this.totalItems)
 }
 
-addItemToCart(id:any){
-  let newItem = {
-    id: 5,
-    item: 5,
-    status: 'Available',
-    available: '',
-    quantity: 1,
-    item_details: this.filteredGroceryList[id]
+addItemToCart(id:any, item:any){
+  let itemsInCart = this.cartItems.items.length
+  console.log(itemsInCart)
+  let temp: any[] = []
+  this.cartItems.items.forEach((item:any) => {
+    temp.push(item.id)
+  });
+  const max = Math.max(...temp);
+  let newItemforLocal = {
+    id: max + 1,
+    item: max + 1,
+    item_details: item,
+    quantity: 1
   }
-  this.cartItems.items.push(newItem)
+  console.log(newItemforLocal.id)
+  this.cartItems.items.push(newItemforLocal)
+   let newItem = {
+    item: id,
+    quantity: 1
+  }
+  let params = {
+    "token": this.token,
+    "items": [newItem]
+  }
+  this.groceryService.updateCartItems(params).subscribe((res)=>{
+    console.log('items updated in cart')
+  })
+  // this.cartItems.items.push(newItem)
+  // this.cartItemsApi = this.cartItems
   this.countItemsInCart()
   console.log(this.cartItems.items)
 }
@@ -117,23 +136,78 @@ openCart() {
     this.navCtrl.navigateForward('/layout/cart')
   }
 
-  increment(id:any){
-    let quantity = this.cartItems.items[id].quantity
-    this.cartItems.items[id].quantity = quantity + 1
-    this.countItemsInCart()
-  }
+  increment(id: any) {
+  console.log(id);
+  const index = this.cartItems.items.findIndex((item: any) => item.id === id);
+  if (index !== -1) {
+    const currentItem = this.cartItems.items[index];
+    const availableStock = currentItem.item_details.stock;
+    const currentQty = currentItem.quantity;
 
-  decrement(id:any){
-    let quantity = this.cartItems.items[id].quantity
-    if(quantity === 1){
-      this.cartItems.items.splice(id, 1);
-      console.log(this.cartItems.items)
-      this.countItemsInCart()
+    if (currentQty < availableStock) {
+      currentItem.quantity += 1;
+
+      const updateItem = {
+        item: currentItem.item_details.id,
+        quantity: currentItem.quantity
+      };
+
+      this.countItemsInCart();
+      this.updateCartItems(updateItem);
+    } else {
+      console.log('⚠️ Cannot add more. Stock limit reached.');
+      // Optionally show toast or alert to user
     }
-    if(quantity != 0){
-      this.cartItems.items[id].quantity = quantity - 1
-      this.countItemsInCart()
-    }
+  } else {
+    console.log('❌ Item not found');
   }
+}
+
+  decrement(id: any) {
+  console.log(id);
+  const index = this.cartItems.items.findIndex((item: any) => item.id === id);
+  if (index !== -1) {
+    const currentItem = this.cartItems.items[index];
+
+    if (currentItem.quantity > 0) {
+      currentItem.quantity -= 1;
+
+      const updateItem = {
+        item: currentItem.item_details.id,
+        quantity: currentItem.quantity
+      };
+
+      // Remove item from cart if quantity is now 0
+      if (currentItem.quantity === 0) {
+        this.cartItems.items.splice(index, 1);
+      }
+
+      this.countItemsInCart();
+      this.updateCartItems(updateItem);
+    } else {
+      console.log('⚠️ Quantity is already zero');
+    }
+  } else {
+    console.log('❌ Item not found');
+  }
+}
+
+updateCartItems(updateItem:any){
+  let result = this.cartItems.items.filter((item: any) => {
+  console.log(item);
+  return item.quantity === 0;
+});
+  console.log(result)
+  let params = {
+    "token": this.token,
+    "items": [updateItem]
+  }
+  console.log(params)
+  this.groceryService.updateCartItems(params).subscribe((res:any)=>{
+    console.log('items updated in cart')
+    // this.cartItems = res
+    // console.log(this.cartItems)
+  })
+}
 
 }

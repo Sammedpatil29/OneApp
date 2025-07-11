@@ -39,8 +39,8 @@
       }
     }
     } @else {
-      <div class="text-center">
-        Loading...
+      <div class="d-flex justify-content-center align-items-center h-100">
+        <ion-spinner  name="crescent"></ion-spinner>
       </div>
     }
   </div>
@@ -50,26 +50,34 @@
     @if (!isLoading) {
       <section>
       <div class="price-breakup mt-1 p-2 d-flex justify-content-between align-items-center">
-      <div>Item total x 2</div>
-      <div>&#8377;199</div>
+      <div>Item total x {{totalItems}}</div>
+      <div>&#8377;{{totalCartItemsPrice() }}</div>
     </div>
     <div class="price-breakup px-2 pb-2 d-flex justify-content-between align-items-center">
       <div>Handling charges</div>
-      <div>&#8377;33</div>
+      <div>&#8377;{{calculateHandlingCharges()}}
+        @if (handlingCharges != finalHandlingCharges) {
+          <span class="text-decoration-line-through">&#8377;{{handlingCharges}}</span>
+        }
+      </div>
     </div>
     <div class="price-breakup px-2 pb-2 d-flex justify-content-between align-items-center">
       <div>Delivery charges</div>
-      <div>&#8377;{{setDeliveryCharge()}}</div>
+      @if(setDeliveryCharge() == 0){
+        <span class="text-success">FREE</span>
+      } @else {
+        <div>&#8377;{{setDeliveryCharge()}}</div>
+      }
     </div>
     <hr style="border-style: dashed">
     <div class="price-breakup px-2 pb-2 d-flex justify-content-between align-items-center">
       <div><strong>Total</strong></div>
-      <div><strong>&#8377;234</strong></div>
+      <div><strong>&#8377;{{finalPayableAmount()}}</strong></div>
     </div>
     </section>
     } @else {
-      <div class="text-center">
-        Loading...
+      <div class="d-flex justify-content-center align-items-center h-100">
+        <ion-spinner  name="crescent"></ion-spinner>
       </div>
     }
   </div>
@@ -84,12 +92,11 @@
 
     <div class="row bg-white py-2">
       <div class="col-5 d-flex align-items-center justify-content-center">
-        <h1 class="m-0">&#8377;199</h1>
+        <h1 class="m-0">&#8377;{{finalPayableAmount()}}</h1>
       </div>
       <div class="col-7">
-        <ion-button class="w-100" color="dark" (click)="openUpiApp()">Place Order</ion-button>
+        <ion-button class="w-100 ion-padding" color="dark">Place Order</ion-button>
       </div>
     </div>
   </ion-footer>
-
 </ion-content>
