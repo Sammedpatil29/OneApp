@@ -15,18 +15,23 @@
       <div class="row g-0">
       <div class="col-2 side-box" style="height: 88vh; overflow-y: scroll; scrollbar-width: none; -ms-overflow-style: none;">
         <ul style="margin-bottom: 100px;">
-          <li class="text-center py-1 mb-1 ms-1" >
+          <li class="text-center py-1 mb-1 ms-1" [ngClass]="currentCategory == 'All'? 'list-active':''" (click)="currentCategory = 'All'">
             <img style="width: 40px; border-radius: 50%" src="../../assets/icons/5.png" alt=""><br>
-            <small style="font-size: 12px">Best Sellers</small>
+            <small style="font-size: 12px; line-height: 1.2; display: inline-block;">All</small>
           </li>
-          <li class=" list-active text-center py-1 mb-1 ms-1">
+          <li class="text-center py-1 mb-1 ms-1" [ngClass]="currentCategory == 'Best Sellers'? 'list-active':''" (click)="currentCategory = 'Best Sellers'">
             <img style="width: 40px; border-radius: 50%" src="../../assets/icons/5.png" alt=""><br>
-            <small style="font-size: 12px;">Price Droffs</small>
+            <small style="font-size: 12px; line-height: 1.2; display: inline-block;">Best Sellers</small>
+          </li>
+          <li class=" text-center py-1 mb-1 ms-1" [ngClass]="currentCategory == 'Price Droffs'? 'list-active':''" (click)="currentCategory = 'Price Droffs'">
+            <img style="width: 40px; border-radius: 50%" src="../../assets/icons/5.png" alt=""><br>
+            <small style="font-size: 12px; line-height: 1.2; display: inline-block;">Price Droffs</small>
           </li>
         </ul>
       </div>
 
       <div class="col-10" style="height: 88vh; overflow-y: scroll; scrollbar-width: none; -ms-overflow-style: none;">
+        <!-- <ion-searchbar></ion-searchbar> -->
         <div>
       <div class="row p-2 g-2">
       @for (item of filteredGroceryList; track $index) {

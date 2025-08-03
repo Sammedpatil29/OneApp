@@ -18,6 +18,9 @@ ul {
 .list-active {
 border-radius: 10px 0px 0px 10px;
   background-color: rgb(255, 255, 255);
+  small {
+    font-weight: 700;
+  }
 }
 
 .side-box {
