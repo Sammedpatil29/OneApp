@@ -1,83 +1,105 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-   <ion-buttons slot="start" class="mt-5 pb-2">
+<ion-content>
+  @if (!showRegisterForm) {
+  <div>
+  
+  <ion-header>
+  <ion-toolbar class="pt-4">
+    <ion-buttons slot="start">
       <ion-button (click)="goBack()">
         <ion-icon name="arrow-back"></ion-icon>
       </ion-button>
     </ion-buttons>
+    <ion-title>Login</ion-title>
+  </ion-toolbar>
+</ion-header>
+  
+
+
+<!-- Phone number input with +91 -->
+@if (!otpSent) {
+  <ion-card-title class="mx-3 mt-4">
+  Login with Phone Number
+</ion-card-title>
+  <ion-item class="custom-input mt-4 mx-3 d-flex align-items-center">
+  <ion-label class="country-code text-muted" position="start">+91</ion-label>
+  <ion-input
+    [(ngModel)]="phoneNumber"
+    type="tel"
+    inputmode="numeric"
+    maxlength="10"
+    placeholder="Enter mobile number"
+  ></ion-input>
+</ion-item>
+}
+<div class="w-100 px-4 position-fixed bottom-0">
+  @if (!otpSent) {
+    <ion-button class="w-100 ion-padding" color="dark" (click)="sendVerification()">Send OTP</ion-button>
+  } @else {
+    <ion-button class="w-100 ion-padding" color="dark" (click)="verifyOTP()">Verify OTP</ion-button>
+  }
+</div>
+
+
+
+@if (otpSent) {
+  <ion-card-title class="mx-3 mt-4 text-center">
+  Enter OTP Sent to +91 {{phoneNumber}}
+</ion-card-title>
+  <div class="w-100 d-flex justify-content-center mt-3">
+  <ng-otp-input class="custom-input" (onInputChange)="onOtpChange($event)" [config]="otpConfig"></ng-otp-input>
+</div>
+<div class="mx-5 mt-3 text-center">
+  <p>Didn't get otp? <i class="text-primary resend" (click)="sendVerification()">Resend</i></p>
+</div>
+}
+
+
+<!-- OTP input -->
+<!-- <ion-item class="custom-input otp-input mx-4">
+  <ion-label position="floating">OTP</ion-label>
+  <ion-input
+    [(ngModel)]="verificationCode"
+    type="number"
+    inputmode="numeric"
+    maxlength="6"
+    placeholder="123456"
+  ></ion-input>
+</ion-item> -->
+
+
+</div>
+} @else {
+ <div>
+      <ion-header>
+  <ion-toolbar class="pt-4">
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>New User Registration</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  @if (!showRegisterForm) {
-    <div class="body">
-      <div class="w-100 d-flex justify-content-center mt-3">
-              <img style="width: 50px" src="../../../assets/icons/vecteezy_fingerprint-search-secure-biometric-app-icon_56410641 (1).png" alt="">
-      </div>
-    <ion-card-subtitle class="text-center fw-bolder mt-4">Enter your Mobile Number to Start</ion-card-subtitle>
-<div class="px-5 mt-2">
-  <!-- <ion-input class="custom-input" type="tel" [(ngModel)]="mobileNumber" [maxlength]="10" label-placement="floating" fill="outline" placeholder="">
-  </ion-input> -->
-  <ion-input label="Mobile Number" type="tel" label-placement="floating" [(ngModel)]="mobileNumber" [maxlength]="10" fill="outline" placeholder="Mobile Number"></ion-input>
-</div>
-  </div>
-    @if(!otpSent){
-  <div class="position-fixed button-box">
-    <ion-button class="w-75 ion-padding" [disabled]="isLoading" (click)="sendOtp()" color="dark">GET OTP
-      @if (isLoading) {
-        <ion-spinner class="ms-2"  name="crescent"></ion-spinner>
-}
-    </ion-button>
+<ion-card-title class="mx-3 mt-4">
+  Welcome to OneApp. Please enter your details
+</ion-card-title>
 
-  </div>
-  } @else {
-    <div class="body">
-    <ion-card-subtitle class="text-center fw-bolder mt-4">OTP Sent! - Please Enter your OTP</ion-card-subtitle>
-<div class="px-5 mt-2">
-  <!-- <ion-input class="custom-input" pattern="[0-9]*" type="password" [(ngModel)]="enteredOtp" [maxlength]="4" label-placement="floating" fill="outline" placeholder="">
-  </ion-input> -->
-    <ion-input label="Enter OTP" type="password" label-placement="floating" [(ngModel)]="enteredOtp" [maxlength]="4" fill="outline" placeholder="Enter Otp"></ion-input>
+<div class="mx-3 mt-3">
+  <ion-input class="mt-3" label="Full name" label-placement="floating" [(ngModel)]="fullName" fill="outline" placeholder="Enter your full name"></ion-input>
+  <ion-input class="mt-3" label="Email" label-placement="floating" [(ngModel)]="email" fill="outline" placeholder="Enter your email"></ion-input>
 </div>
-  </div>
 
-  <div class="position-fixed button-box">
-    <ion-button class="w-75 ion-padding" color="dark" [disabled]="isLoading" (click)="veirifyUserOtp()">Verify otp
-@if (isLoading) {
-        <ion-spinner class="ms-2"  name="crescent"></ion-spinner>
-}
-    </ion-button>
-  </div>
-  }
-  } @else {
-<div class="w-100 d-flex justify-content-center mt-4">
-              <img style="width: 60px" src="../../../assets/icons/personal details.png" alt="">
-      </div>
-
-        <!-- <ion-card-title class="text-center fw-bolder mt-4">WELCOME TO <strong>ONE</strong>APP!</ion-card-title> -->
-        <ion-card-title class="text-center fw-bolder mt-4">Please enter your details</ion-card-title>
-    <div class="px-5 mt-4">
-  <!-- <ion-input class="custom-input fullName" style="text-transform: uppercase;"  type="text" [(ngModel)]="fullName" label-placement="floating" fill="outline" placeholder="Full Name">
-  </ion-input> -->
-      <ion-input label="Enter Your full name" type="text" label-placement="floating" [(ngModel)]="fullName" fill="outline" placeholder="Enter Your Full Name"></ion-input>
-</div>
-    <div class="px-5 mt-4">
-  <!-- <ion-input class="custom-input email" style="text-transform: lowercase;"  type="text" [(ngModel)]="email" label-placement="floating" fill="outline" placeholder="Email">
-  </ion-input> -->
-        <ion-input label="Enter Your Email" type="text" label-placement="floating" [(ngModel)]="email" fill="outline" placeholder="Enter Your Email"></ion-input>
-</div>
-<div class="position-fixed button-box">
-    <ion-button class="w-75 ion-padding" color="dark" [disabled]="isLoading" (click)="login()">Submit
+<div class="w-100 px-4 position-fixed bottom-0">
+    <ion-button class="w-100 ion-padding" color="dark" [disabled]="isLoading" (click)="login()">Submit
       @if (isLoading) {
         <ion-spinner class="ms-2 fs-1"  name="crescent"></ion-spinner>
 }
     </ion-button>
   </div>
-  }
 
-  <ion-toast
-    [isOpen]="isToastOpen"
-    [message]="toastMessage"
-    [duration]="4000"
-  ></ion-toast>
   
+ </div>
+}
+
 </ion-content>

@@ -1,22 +1,31 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EmailValidator, FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonCardTitle, IonInput, IonText, IonLabel, IonItem, IonImg, IonSpinner, IonToast, IonCardSubtitle } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonCardTitle, IonInput, IonText, IonLabel, IonItem, IonImg, IonSpinner, IonToast, IonCardSubtitle, IonApp, IonCard, IonCardContent, IonCardHeader } from '@ionic/angular/standalone';
 import { NavController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { arrowBack } from 'ionicons/icons';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
 import { Preferences } from '@capacitor/preferences';
+import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
+import { NgOtpInputModule } from 'ng-otp-input';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
   standalone: true,
-  imports: [IonCardSubtitle, IonToast, IonSpinner, IonImg, IonItem, IonLabel, IonText, IonInput, IonCardTitle, IonIcon, IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonCardHeader,NgOtpInputModule, IonCardContent, IonCard, IonApp, IonCardSubtitle, IonToast, IonSpinner, IonImg, IonItem, IonLabel, IonText, IonInput, IonCardTitle, IonIcon, IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
 export class LoginPage implements OnInit {
+
+   phoneNumber = '';
+  verificationCode = '';
+  verificationId: string = '';
+  codeSent = false;
+  user: any = null;
+
   otpSent: boolean = false
   mobileNumber = ''
   otp = ''
@@ -29,12 +38,94 @@ export class LoginPage implements OnInit {
   toastMessage = ''
   isToastOpen: boolean = false
 
+  otpConfig = {
+  length: 6,
+  inputStyles: {
+    width: '45px',
+    height: '50px',
+    'font-size': '18px',
+    'margin': '0 6px',
+    'border-radius': '8px',
+    'border': '1px solid black',
+  }
+};
+
   constructor(private navCtrl: NavController, private authService: AuthService, private router: Router) {
     addIcons({arrowBack});
+    
    }
 
   ngOnInit() {
     this.authService.getUserId()
+    this.listenToAuthState();
+  }
+  
+
+ async sendVerification() {
+  FirebaseAuthentication.addListener('phoneCodeSent', event => {
+      this.verificationId = event.verificationId;
+      console.log('verificationID: ', this.verificationId)
+    });
+    try {
+      const result = await FirebaseAuthentication.signInWithPhoneNumber({
+        phoneNumber: `+91${this.phoneNumber}`
+      });
+      // On Android, verificationId is stored internally, no need to keep manually
+      this.otpSent = true
+      console.log('SMS code sent');
+    } catch (e) {
+      console.error('Failed to send code', e);
+    }
+  }
+
+  listenToAuthState() {
+    FirebaseAuthentication.addListener('authStateChange', async (event) => {
+      if (event.user) {
+        this.user = event.user;
+        console.log('✅ User signed in:', this.user);
+      } else {
+        this.user = null;
+        console.log('ℹ️ User not signed in');
+      }
+    });
+  }
+
+  async verifyOTP() {
+    
+
+    try {
+      const result = await FirebaseAuthentication.confirmVerificationCode({
+        verificationId: this.verificationId,
+        verificationCode: this.verificationCode,
+      });
+      console.log(result)
+      this.checkUser()
+      console.log(`Authentication successful!\nUID: ${result.user}`);
+    } catch (error) {
+      console.error('OTP verification failed:', error);
+      alert('Invalid code or verification failed.');
+    }
+  }
+
+  onOtpChange(value: string) {
+  this.verificationCode = value;
+  if(this.verificationCode.length == 6){
+    this.verifyOTP()
+  }
+}
+
+  async logout() {
+  try {
+    await FirebaseAuthentication.signOut();
+    alert('User signed out.');
+  } catch (error) {
+    console.error('Logout failed:', error);
+    alert('Failed to log out.');
+  }
+}
+
+  private sleep(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   goBack(){
@@ -43,7 +134,6 @@ export class LoginPage implements OnInit {
     } else {
       this.otpSent = false
     }
-    
   }
 
   sendOtp(){
@@ -60,19 +150,10 @@ this.isToastOpen = false
     }
   }
 
-  veirifyUserOtp() {
-  if (this.otp === this.enteredOtp) {
-    console.log('OTP verified successfully');
-    this.verifyOtp()
-  } else {
-    console.error('Invalid OTP');
-  }
-}
-
-  verifyOtp() {
+  checkUser() {
   this.isLoading = true;
   let params = {
-    "phone": this.mobileNumber
+    "phone": `+91${this.phoneNumber}`
   }
   this.authService.checkUser(params).subscribe(
     (res) => {
@@ -86,6 +167,7 @@ console.log(res)
         this.createToken()
         this.authService.getUserId()
       } else {
+        alert('new user')
         this.isLoading = false;
         this.showRegisterForm = true;
       }
@@ -102,12 +184,12 @@ console.log(res)
 
 createNewUser(){
   let params = {
-    "username": this.mobileNumber,
+    "username": `+91${this.phoneNumber}`,
     "email": this.email,
     "first_name": this.fullName,
     "last_name": "",
     "profile_image": "",
-    "phone": this.mobileNumber,
+    "phone": `+91${this.phoneNumber}`,
     "is_active": true,
     "is_verified": true
 }
@@ -142,7 +224,7 @@ response: any;
 
   createToken(){
     let params = {
-      "phone": this.mobileNumber
+      "phone": `+91${this.phoneNumber}`
     }
     this.authService.createToken(params).subscribe(res => {
 this.response = res
