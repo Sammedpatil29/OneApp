@@ -62,21 +62,62 @@ export class LoginPage implements OnInit {
   
 
  async sendVerification() {
+  // Set up the listener for the verification ID (for iOS)
   FirebaseAuthentication.addListener('phoneCodeSent', event => {
-      this.verificationId = event.verificationId;
-      console.log('verificationID: ', this.verificationId)
+    this.verificationId = event.verificationId;
+    console.log('✅ Verification ID received:', this.verificationId);
+  });
+
+  try {
+    const result = await FirebaseAuthentication.signInWithPhoneNumber({
+      phoneNumber: `+91${this.phoneNumber}`,
     });
-    try {
-      const result = await FirebaseAuthentication.signInWithPhoneNumber({
-        phoneNumber: `+91${this.phoneNumber}`
-      });
-      // On Android, verificationId is stored internally, no need to keep manually
-      this.otpSent = true
-      console.log('SMS code sent');
-    } catch (e) {
-      console.error('Failed to send code', e);
+
+    this.otpSent = true;
+    console.log('✅ SMS code sent:', result);
+
+  } catch (e: any) {
+    console.error('❌ Failed to send OTP:', e);
+
+    const code = e.code || e.message || 'unknown';
+
+    // Friendly error messages for known Firebase codes
+    switch (code) {
+      case 'auth/invalid-phone-number':
+        alert('🚫 Invalid phone number format. Please check and try again.');
+        break;
+
+      case 'auth/too-many-requests':
+        alert('⚠️ Too many OTP requests. Please wait a few minutes before retrying.');
+        break;
+
+      case 'auth/quota-exceeded':
+        alert('📵 SMS quota exceeded for this project. Try again later.');
+        break;
+
+      case 'auth/network-request-failed':
+        alert('🌐 Network error. Please check your connection.');
+        break;
+
+      case 'auth/user-disabled':
+        alert('⛔ This user has been disabled. Please contact support.');
+        break;
+
+      case 'auth/app-not-authorized':
+        alert('🔐 This app is not authorized to use Firebase Authentication.');
+        break;
+
+      case 'auth/missing-client-identifier':
+        alert('⚠️ Firebase is not correctly configured for iOS. Check your setup.');
+        break;
+
+      default:
+        alert('❌ Something went wrong. Please try again.');
+        break;
     }
   }
+}
+
 
   listenToAuthState() {
     FirebaseAuthentication.addListener('authStateChange', async (event) => {
@@ -91,21 +132,48 @@ export class LoginPage implements OnInit {
   }
 
   async verifyOTP() {
-    
+  try {
+    const result = await FirebaseAuthentication.confirmVerificationCode({
+      verificationId: this.verificationId,
+      verificationCode: this.verificationCode,
+    });
 
-    try {
-      const result = await FirebaseAuthentication.confirmVerificationCode({
-        verificationId: this.verificationId,
-        verificationCode: this.verificationCode,
-      });
-      console.log(result)
-      this.checkUser()
-      console.log(`Authentication successful!\nUID: ${result.user}`);
-    } catch (error) {
-      console.error('OTP verification failed:', error);
-      alert('Invalid code or verification failed.');
+    console.log('✅ OTP verification successful!', result);
+    this.checkUser(); // Proceed to your login/registration logic
+
+  } catch (error: any) {
+    console.error('❌ OTP verification failed:', error);
+
+    const code = error.code || error.message || 'unknown';
+
+    switch (code) {
+      case 'auth/invalid-verification-code':
+        alert('🚫 The OTP you entered is incorrect. Please try again.');
+        break;
+
+      case 'auth/code-expired':
+        alert('⌛ The OTP has expired. Please request a new one.');
+        break;
+
+      case 'auth/invalid-verification-id':
+        alert('⚠️ Invalid verification session. Please try restarting the login.');
+        break;
+
+      case 'auth/missing-verification-code':
+        alert('🔢 Please enter the OTP.');
+        break;
+
+      case 'auth/network-request-failed':
+        alert('🌐 Network error. Please check your internet connection.');
+        break;
+
+      default:
+        alert('❌ Verification failed. Please try again.');
+        break;
     }
   }
+}
+
 
   onOtpChange(value: string) {
   this.verificationCode = value;

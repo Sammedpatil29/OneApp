@@ -4,6 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonApp, IonRouterOutlet, IonText, IonCardTitle } from '@ionic/angular/standalone';
 import { LocationService } from 'src/app/services/location.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { Platform } from '@ionic/angular';
+import { RegisterFcmService } from 'src/app/services/register-fcm.service';
+import { ProfileService } from 'src/app/services/profile.service';
 
 @Component({
   selector: 'app-layout',
@@ -19,8 +22,9 @@ export class LayoutPage implements OnInit {
   token: any
   addresses: any = []
   params: any
+  profileData: any;
 
-   constructor(private locationService: LocationService, private authService: AuthService) {}
+   constructor(private locationService: LocationService, private authService: AuthService, private platform: Platform, private registarFcm: RegisterFcmService, private profileService: ProfileService) {}
 
  async ngOnInit() {
   const current = await this.locationService.getCurrentPosition()
@@ -54,12 +58,27 @@ export class LayoutPage implements OnInit {
       })
       },500)
     }
-        console.log(this.token)
+        console.log('token',this.token)
     })
     // Set the initial position (you can dynamically adjust this)
     // orderBubble.style.left = '20px';  // Set initial left position
     // orderBubble.style.top = '150px';
   }
+
+  getProfileData(){
+  console.log('triggered')
+  let params = {
+    "token": this.token
+  }
+ this.profileService.getProfileData(params).subscribe({
+  next: (res) => {
+    this.profileData = res;
+  error: (error:any) => {
+    alert('Error while fetching data');
+    console.error(error);
+  }}
+});
+}
 
   startDrag(event: MouseEvent | TouchEvent, element: HTMLElement) {
     // Check if the event is touch or mouse and get the appropriate coordinates

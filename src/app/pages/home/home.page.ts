@@ -26,6 +26,8 @@ import { Location } from '@angular/common';
 import { NavController } from '@ionic/angular';
 import { CommonService } from 'src/app/services/common.service';
 import { ProfileService } from 'src/app/services/profile.service';
+import { RegisterFcmService } from 'src/app/services/register-fcm.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 register();
 
@@ -62,7 +64,10 @@ export class HomePage implements OnInit {
 fileName = ''
 fileUrl = ''
 
-  constructor(private router: Router, private locationService: LocationService,private profileService: ProfileService, private platform: Platform, private location: Location, private navCtrl: NavController, private commonService: CommonService) {
+token:any = ''
+profileData:any = ''
+
+  constructor(private router: Router,private authService: AuthService, private registarFcm: RegisterFcmService, private locationService: LocationService,private profileService: ProfileService, private platform: Platform, private location: Location, private navCtrl: NavController, private commonService: CommonService) {
     addIcons({arrowBack,home,buildOutline,receiptOutline,personCircleOutline,briefcaseOutline,constructOutline,library,personCircle,person,search,bag,cube,radio,playCircle});
   this.getServicesData()
   this.getMetaData()
@@ -96,6 +101,23 @@ fileUrl = ''
       console.log('Address received in home:', address);
     });
 
+    this.platform.ready().then(() => {
+      this.registarFcm.initPush();
+    });
+
+    this.token = await this.authService.getToken().then((res:any)=> {
+      console.log(res)
+        this.token = res
+        let params = {
+        "token": this.token,
+        "fcm_token": localStorage.getItem('FcmToken')
+      }
+      this.profileService.updateAddress(params, this.profileData.id).subscribe((res)=>{
+      console.log('fcm token sent successfully')
+        
+    })
+    })
+
     setTimeout(()=>{
       this.isFlashOfferVisible = false
     }, 2000)
@@ -112,6 +134,7 @@ fileUrl = ''
 
   ionViewWillEnter(){
     this.isOld = this.compareVersions(this.appVersion, this.latestVersion)
+    
   }
 
   async getAppVersion(){

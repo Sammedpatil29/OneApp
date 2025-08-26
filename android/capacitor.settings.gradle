@@ -14,6 +14,9 @@ project(':capacitor-firebase-messaging').projectDir = new File('../node_modules/
 include ':capacitor-app'
 project(':capacitor-app').projectDir = new File('../node_modules/@capacitor/app/android')
 
+include ':capacitor-browser'
+project(':capacitor-browser').projectDir = new File('../node_modules/@capacitor/browser/android')
+
 include ':capacitor-filesystem'
 project(':capacitor-filesystem').projectDir = new File('../node_modules/@capacitor/filesystem/android')
 
@@ -49,3 +52,6 @@ project(':capacitor-status-bar').projectDir = new File('../node_modules/@capacit
 
 include ':capacitor-razorpay'
 project(':capacitor-razorpay').projectDir = new File('../node_modules/capacitor-razorpay/android')
+
+include ':cashfree-pg-capacitor'
+project(':cashfree-pg-capacitor').projectDir = new File('../node_modules/cashfree-pg-capacitor/android')
