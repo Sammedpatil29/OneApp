@@ -306,7 +306,7 @@ this.router.navigate(['/layout/example/home'])
 setTimeout(()=> {
   this.router.navigate(['/layout/example/home'])
   this.isLoading = false
-},3000)
+},500)
     }, (error) => {
       this.isToastOpen = false
       this.toastMessage = 'error creating token'

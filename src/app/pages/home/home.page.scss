@@ -110,3 +110,7 @@ ion-refresher.refresher-native .arrow-container ion-icon {
   // border: 1px solid black;
   // box-shadow: 2px 2px 2px black;
 }
+
+.bottom-sheet-modal .modal-handle {
+  display: none !important; /* Forcefully hides the handle */
+}

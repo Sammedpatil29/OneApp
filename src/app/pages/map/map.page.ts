@@ -238,7 +238,8 @@ if(this.routeData == 'addAddress'){
 this.isModalOpen = true
     // Pass data to parent or store
 } else {
-  this.goBack()
+  // this.goBack()
+   this.navCtrl.navigateBack('/layout/example/home');
 }
   }
 

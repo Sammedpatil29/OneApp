@@ -5,7 +5,7 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-    <ion-button (click)="payWithRazorpaycardova()">Pay via UPI</ion-button>
+    <ion-button (click)="razorpayServiceOpen()">Pay via UPI</ion-button>
 <ion-list *ngIf="upiApps">
   <ion-item *ngFor="let app of upiApps; trackby" (click)="payWith(app.id)">
     <ion-avatar slot="start">

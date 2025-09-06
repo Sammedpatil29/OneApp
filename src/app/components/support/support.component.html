@@ -4,4 +4,99 @@
   </ion-toolbar>
 </ion-header>
 
-<app-nodata></app-nodata>
+
+<!-- <app-nodata></app-nodata> -->
+
+<div class="mx-2">
+  <ion-segment mode="ios">
+  <ion-segment-button value="first" content-id="first">
+    <ion-label>Your Tickets</ion-label>
+  </ion-segment-button>
+  <ion-segment-button value="second" content-id="second">
+    <ion-label>Raise a Issue</ion-label>
+  </ion-segment-button>
+</ion-segment>
+
+<ion-segment-view>
+  <ion-segment-content id="first">
+    @if (tickets.length > 0) {
+      <ion-accordion-group expand="inset" value="active" mode="ios">
+  <ion-accordion value="active">
+    <ion-item slot="header" color="light">
+      <ion-label>Active Tickets ({{tickets.length}})</ion-label>
+    </ion-item>
+    <div class="" slot="content">
+      @for (item of tickets; track $index) {
+        <ion-item button expand="block" (click)="openItemModal(item)">
+      <!-- <div class="unread-indicator-wrapper" slot="start"></div> -->
+      <ion-label>
+        <ion-text class="text-truncate">{{item.title}}</ion-text><br />
+        <ion-note color="medium" class="ion-text-wrap"><span [ngClass]="item.status == 'Open'? 'text-success': 'text-danger'"><b>{{item.status}}</b></span> - {{item.created_at}}</ion-note>
+      </ion-label>
+      <div class="metadata-end-wrapper" slot="end">
+        <!-- <ion-note color="medium">{{item.created_at}}</ion-note> -->
+        <!-- <ion-icon color="medium" name="chevron-forward"></ion-icon> -->
+      </div>
+    </ion-item>
+      }
+    </div>
+  </ion-accordion>
+  <ion-accordion value="closed">
+    <ion-item slot="header" color="light">
+      <ion-label>Closed Tickets</ion-label>
+    </ion-item>
+    <div class="ion-padding" slot="content">
+      <div>
+        <p class="text-center">No tickets to show</p>
+      </div>
+    </div>
+  </ion-accordion>
+</ion-accordion-group>
+    } @else {
+      <app-nodata></app-nodata>
+    }
+  </ion-segment-content>
+
+  <ion-segment-content id="second">
+    @if (!raiseTicket) {
+      <ion-accordion-group expand="inset" mode="ios">
+  @for (item of faqs; track $index) {
+    <ion-accordion [value]="$index">
+    <ion-item slot="header" color="light">
+      <ion-label>{{item.question}}</ion-label>
+    </ion-item>
+    <div class="ion-padding" slot="content">{{item.answer}}</div>
+  </ion-accordion>
+  }
+</ion-accordion-group>
+<div class="text-center mb-5">did't get the answer? <span class="text-primary" (click)="raiseTicket = true">Raise a Ticket</span></div>
+    } @else {
+       <ion-list class="text-area mx-4 mt-4">
+  <ion-item class="suggestion" lines="none">
+    <ion-input placeholder="Issue Title" value=""></ion-input>
+  </ion-item>
+</ion-list>
+    <ion-item class="text-area mx-4 mt-4" lines="none">
+  <ion-textarea
+    class="suggestion"
+    placeholder="Detailed Issue"
+    [autoGrow]="true"
+    appearance = "outline"
+  >
+  </ion-textarea>
+</ion-item>
+<div class="mx-3">
+  <ion-button class="ion-padding w-100" color="dark">Submit
+    <!-- @if (isLoading) {
+        <ion-spinner class="button ms-2"  name="crescent"></ion-spinner>
+} -->
+  </ion-button>
+</div>
+<div class="text-center mb-5"> <span class="text-primary" (click)="raiseTicket = false">back to FAQS</span></div>
+    }
+  </ion-segment-content>
+</ion-segment-view>
+
+
+
+</div>

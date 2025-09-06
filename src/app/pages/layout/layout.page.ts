@@ -56,7 +56,7 @@ export class LayoutPage implements OnInit {
             localStorage.setItem('location', JSON.stringify(data))
           } 
       })
-      },500)
+      },50)
     }
         console.log('token',this.token)
     })

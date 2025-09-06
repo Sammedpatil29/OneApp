@@ -59,6 +59,10 @@ export const routes: Routes = [
     path: 'map',
     loadComponent: () => import('./pages/map/map.page').then( m => m.MapPage)
   },
+  {
+    path: 'address-list',
+    loadComponent: () => import('./pages/address-list/address-list.page').then( m => m.AddressListPage)
+  },
       {
     path: 'profile-details',
     loadComponent: () => import('./pages/profile-details/profile-details.page').then( m => m.ProfileDetailsPage)
@@ -102,6 +106,8 @@ export const routes: Routes = [
       },
     ],
   },
+  
+
   
 
 ];

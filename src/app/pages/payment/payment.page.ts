@@ -8,6 +8,7 @@ import { registerPlugin } from '@capacitor/core';
 import { Checkout } from 'capacitor-razorpay';
 import { Browser } from '@capacitor/browser';
 import { HttpClient } from '@angular/common/http';
+import { RazorpayService } from 'src/app/services/razorpay.service';
 
 const CFBridge = registerPlugin('CFBridge') as any;
 declare var Razorpay: any;
@@ -21,7 +22,7 @@ declare var RazorpayCheckout: any;
 })
 export class PaymentPage implements OnInit {
 upiApps: any;
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private razorpayService: RazorpayService) { }
 
   ngOnInit() {
   }
@@ -184,4 +185,23 @@ upiApps: any;
   );
 }
 
+razorpayServiceOpen(){
+  this.razorpayService.payWithRazorpayCardOVA(
+      100,
+      'John Doe',
+      'john@example.com',
+      '9876543210'
+    ).subscribe({
+      next: (result) => {
+        console.log('Payment Success:', result.razorpay_payment_id);
+        // show toast or navigate
+        alert(result.razorpay_payment_id)
+      },
+      error: (err) => {
+        console.error('Payment Failed:', err.description);
+        // show error toast or alert
+        alert(err.description)
+      }
+    });
+}
 }

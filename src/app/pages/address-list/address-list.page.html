@@ -1,0 +1,58 @@
+<ion-header>
+  <ion-toolbar class="pt-4">
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Select Address</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+    @if (!isSpinnerLoading) {
+      <!-- <ion-list class="border mt-2 mx-3" style="border-radius: 20px;">
+      <p class="text-center">Select Location on map 📍</p>
+    </ion-list> -->
+      @if (addresses) {
+      <section>
+      @for (item of addresses; track $index) {
+        <!-- <ion-list class="border mt-2 mx-3" [ngClass]="item.id == Addressid.id? 'border-color': ''" style="border-radius: 20px;">
+      <p>Select Location on map 📍</p>
+    </ion-list> -->
+        <ion-list class="border mt-2 mx-3" [ngClass]="item.id == Addressid.id? 'border-color': ''" style="border-radius: 20px;">
+      <ion-item lines="none" >
+      <div class="unread-indicator-wrapper" slot="start"></div>
+      <ion-label>
+        <small class="border py-1 px-2" style="border-radius: 10px">{{item.label | uppercase}}</small>&nbsp;
+        <ion-text>{{item['house_no']}}&nbsp;{{item['building_name']}}</ion-text><br />
+        <ion-note color="medium" class="ion-text-wrap text-truncate">{{item['landmark']}}&nbsp;{{item['address']}}</ion-note>
+      </ion-label>
+      <div class="metadata-end-wrapper me-2" slot="end">
+        
+        @if(item.id == Addressid.id ){
+          <i class="bi bi-check-circle-fill me-4 text-success" color="dark"></i>
+        } @else {
+          <i class="bi bi-circle me-4 text-success" color="dark" (click)="setAddressAsDefault(item)"></i>
+        }
+        <!-- <i class="bi bi-pencil me-4" color="dark"></i> -->
+        <i class="bi bi-trash text-danger" color="dark" (click)="deleteAddress(item.id)"></i>
+        <!-- <i class="bi bi-check-circle-fill fs-5" color="dark"></i> -->
+      </div>
+    </ion-item>
+    </ion-list>
+      }
+      <div style="height: 200px"></div>
+    </section>
+    } @else {
+      <app-nodata></app-nodata>
+    }
+    <footer class="position-fixed bottom-0 w-100">
+      <ion-button class="ion-padding w-100" (click)="openLocation()" color="dark">Select on map</ion-button>
+    </footer>
+    } @else {
+      <div class="d-flex justify-content-center align-items-center h-100">
+<ion-spinner name="crescent"></ion-spinner>
+      </div>
+    }
+  </ion-content>

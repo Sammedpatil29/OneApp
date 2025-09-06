@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, inject, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -28,6 +28,9 @@ import { CommonService } from 'src/app/services/common.service';
 import { ProfileService } from 'src/app/services/profile.service';
 import { RegisterFcmService } from 'src/app/services/register-fcm.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { ModalController } from '@ionic/angular';
+import { CustonModalComponent } from 'src/app/components/custon-modal/custon-modal.component';
+import { BottomsheetMessageComponent } from 'src/app/components/bottomsheet-message/bottomsheet-message.component';
 
 register();
 
@@ -41,7 +44,6 @@ register();
   imports: [IonRefresherContent, IonRefresher, IonGrid, IonRow, IonCol, IonSpinner, IonButton, IonButtons, IonModal, IonContent, CommonModule, FormsModule, IonContent, IonIcon, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, FooterComponent, IonTitle, IonToolbar, IonHeader, AddressComponent, RouterLink]
 })
 export class HomePage implements OnInit {
-
   isModalOpen = false;
   backButtonSubscription: any;
   city: any = ''
@@ -67,7 +69,7 @@ fileUrl = ''
 token:any = ''
 profileData:any = ''
 
-  constructor(private router: Router,private authService: AuthService, private registarFcm: RegisterFcmService, private locationService: LocationService,private profileService: ProfileService, private platform: Platform, private location: Location, private navCtrl: NavController, private commonService: CommonService) {
+  constructor(private router: Router,private authService: AuthService, private registarFcm: RegisterFcmService, private locationService: LocationService,private profileService: ProfileService, private platform: Platform, private location: Location, private navCtrl: NavController, private commonService: CommonService, private modalCtrl: ModalController) {
     addIcons({arrowBack,home,buildOutline,receiptOutline,personCircleOutline,briefcaseOutline,constructOutline,library,personCircle,person,search,bag,cube,radio,playCircle});
   this.getServicesData()
   this.getMetaData()
@@ -153,6 +155,13 @@ const version = await this.profileService.getAppVersion()
       this.fileName = `OneApp-${this.latestVersion}`
       this.fileUrl = this.metaData[0].download_link
       console.log(this.latestVersion)
+      // if(this.metaData[2].video.message === 'true'){
+      //   let item = {
+      //     'title': this.metaData[2].video.Header,
+      //     'body': this.metaData[2].video.Content
+      //   }
+        this.openItemModal('item')
+      // }
     })
   }
 
@@ -180,7 +189,7 @@ const version = await this.profileService.getAppVersion()
   }
 
   openLocation() {
-    this.router.navigate(['/layout/map'], {
+    this.router.navigate(['/layout/address-list'], {
       state: {data : 'home'}
     })
   }
@@ -251,5 +260,26 @@ navigateFromSlide(route:any){
 
 closeFlashOffer(){
   this.isFlashOfferVisible = false;
+}
+
+async openItemModal(item: any) {
+  const modal = await this.modalCtrl.create({
+    component: BottomsheetMessageComponent,
+    componentProps: { item },
+    breakpoints: [0.5],           // Allow resizing between 0%, 50%, 100%
+      initialBreakpoint: 0.5,
+      backdropDismiss: true,
+      handle: false,
+      handleBehavior: 'none',
+      cssClass: 'bottom-sheet-modal'
+  });
+
+  modal.onDidDismiss().then((res) => {
+    if (res.data?.dismissed) {
+      console.log('Modal returned:', res.data.data);
+    }
+  });
+
+  await modal.present();
 }
 }
