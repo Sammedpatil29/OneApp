@@ -115,3 +115,8 @@ box-shadow: none !important;
 .bottom-sheet-modal {
   --border-radius: 20px 20px 0 0;
 }
+
+.ion-color-dark {
+    --ion-color-base: radial-gradient(circle,rgba(50, 224, 47, 0.38) 0%, rgba(28, 17, 17, 0.83) 0%, rgba(13, 2, 15, 1) 100%) !important;
+    
+}

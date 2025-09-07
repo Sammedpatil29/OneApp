@@ -35,14 +35,14 @@
   @if (!otpSent) {
     <ion-button class="w-100 ion-padding" color="dark" [disabled]="isSendingOtp || phoneNumber.length != 10" (click)="sendVerification()">
       @if(isSendingOtp){
-        {{otpVerificationMessage}} <ion-spinner class="button ms-2"  name="crescent"></ion-spinner>
+        <ion-spinner class="button ms-2"  name="crescent"></ion-spinner>
       } @else {
         Send OTP
       }
     </ion-button>
   } @else {
-    <ion-button class="w-100 ion-padding" color="dark" [disabled]="isLoading" (click)="verifyOTP()">
-      @if(isLoading){
+    <ion-button class="w-100 ion-padding" color="dark" [disabled]="isLoading || isSendingOtp" (click)="verifyOTP()">
+      @if(isLoading || isSendingOtp){
         {{otpVerificationMessage}} <ion-spinner class="button ms-2"  name="crescent"></ion-spinner>
       } @else {
         Verify OTP
@@ -61,7 +61,12 @@
   <ng-otp-input class="custom-input" (onInputChange)="onOtpChange($event)" [config]="otpConfig"></ng-otp-input>
 </div>
 <div class="mx-5 mt-3 text-center">
-  <p>Didn't get otp? <i class="text-primary resend" (click)="sendVerification()">Resend</i></p>
+  <p>Didn't get otp? 
+    @if(timer == 0){
+      <i class="text-primary resend" (click)="sendVerification()"><span>Resend</span></i>
+    } @else {
+      Resend in <span class="text-primary">{{timer}}</span> seconds
+    } </p>
 </div>
 }
 

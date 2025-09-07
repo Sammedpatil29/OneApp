@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 import { Preferences } from '@capacitor/preferences';
 import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
 import { NgOtpInputModule } from 'ng-otp-input';
+import { timer } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -62,7 +63,9 @@ export class LoginPage implements OnInit {
   isToastOpen: boolean = false;
   isSendingOtp: boolean = false;
   intervalId: any;
+  intervalIdforCount: any;
   otpVerificationMessage: string = '';
+  timer = 45
 
   otpConfig = {
     length: 6,
@@ -90,7 +93,7 @@ export class LoginPage implements OnInit {
   }
 
   async sendVerification() {
-
+    this.otpVerificationMessage = 'Resending Otp'
     FirebaseAuthentication.addListener('phoneCodeSent', (event) => {
       this.verificationId = event.verificationId;
       console.log('✅ Verification ID received:', this.verificationId);
@@ -123,6 +126,14 @@ export class LoginPage implements OnInit {
         console.log('interval running');
         if (this.verificationId != '') {
           this.otpSent = true;
+          this.timer = 45
+          this.intervalIdforCount = setInterval(()=> {
+            if(this.timer != 0){
+              this.timer = this.timer - 1
+            } else {
+              clearInterval(this.intervalIdforCount)
+            }
+          },1000)
           this.isSendingOtp = false;
           this.isToastOpen = true;
           this.toastMessage = `OTP sent successfully`;
@@ -271,6 +282,7 @@ export class LoginPage implements OnInit {
       this.navCtrl.back();
     } else {
       this.otpSent = false;
+      clearInterval(this.intervalIdforCount)
     }
   }
 

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonApp, IonRouterOutlet, IonText, IonCardTitle } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonApp, IonRouterOutlet, IonText, IonCardTitle, IonAlert } from '@ionic/angular/standalone';
 import { LocationService } from 'src/app/services/location.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { Platform } from '@ionic/angular';
@@ -13,7 +13,7 @@ import { ProfileService } from 'src/app/services/profile.service';
   templateUrl: './layout.page.html',
   styleUrls: ['./layout.page.scss'],
   standalone: true,
-  imports: [IonCardTitle, IonRouterOutlet, IonApp, CommonModule, FormsModule]
+  imports: [IonAlert, IonCardTitle, IonRouterOutlet, IonApp, CommonModule, FormsModule]
 })
 export class LayoutPage implements OnInit {
   isDragging = false;
