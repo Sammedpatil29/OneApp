@@ -1,43 +1,33 @@
 import { Component, OnInit } from '@angular/core';
-import { IonHeader, IonToolbar, IonSearchbar, IonTitle, IonLabel, IonAccordion, IonItem, IonAccordionGroup, IonSegmentButton, IonSegment, IonSegmentView, IonSegmentContent, IonList, IonText, IonNote, IonIcon, IonInput, IonButton, IonSpinner, IonTextarea, IonModal } from "@ionic/angular/standalone";
+import { IonHeader, IonToolbar, IonSearchbar, IonTitle, IonLabel, IonAccordion, IonItem, IonAccordionGroup, IonSegmentButton, IonSegment, IonSegmentView, IonSegmentContent, IonList, IonText, IonNote, IonIcon, IonInput, IonButton, IonSpinner, IonTextarea, IonModal, IonToast, IonRefresher, IonRefresherContent } from "@ionic/angular/standalone";
 import { NodataComponent } from "../nodata/nodata.component";
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
 import { chevronForward, listCircle } from 'ionicons/icons';
 import { ModalController } from '@ionic/angular';
 import { CustonModalComponent } from '../custon-modal/custon-modal.component';
+import { SupportService } from 'src/app/services/support.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-support',
   templateUrl: './support.component.html',
   styleUrls: ['./support.component.scss'],
-  imports: [IonModal, IonTextarea, IonSpinner, IonButton, IonInput, IonIcon, IonNote, CommonModule, IonText, IonList, IonSegment, IonSegmentButton, IonAccordionGroup, IonItem, IonAccordion, IonLabel, IonHeader, IonToolbar, IonTitle, NodataComponent, IonSegmentView, IonSegmentContent]
+  imports: [IonRefresherContent, IonRefresher, IonToast, IonModal, IonTextarea, IonSpinner, IonButton, IonInput, IonIcon, IonNote, CommonModule, IonText, IonList, IonSegment, IonSegmentButton, IonAccordionGroup, IonItem, IonAccordion, IonLabel, IonHeader, IonToolbar, IonTitle, NodataComponent, IonSegmentView, IonSegmentContent, FormsModule]
 })
 export class SupportComponent  implements OnInit {
   raiseTicket:boolean = false
-tickets: any = [
-  {'title': 'Damaged  Item',
-    'details': 'jlnfrri  bre',
-    'created_at': '25/05/2025',
-    'closed_at': '27/05/2025',
-    'status': 'Open',
-    'order_id': 'Order2342323',
-    'ticket_id': 'Order2342323',
-    'item_list': [],
-    'user_id': '1',
-    'assigned_to': '',
-    'comment': '',
-    'connected_by': ''
-  },
-  {'title': 'Damaged Item',
-        'details': 'jlnfr ibfirbf erbre rbuierb erjgbierb erbfer erbgerb erbire erbgerg erber ergberibg rebier erbier erbgie berb geri ergbre bre',
-    'created_at': '25/05/2025',
-    'closed_at': '27/05/2025',
-    'ticket_id': 'Order2342323',
-    'status': 'Closed',
-    'comment': 'Issue is resolved after refunding the partial amount'
-  }
-]
+  isToastOpen: boolean = false
+  isLoading: boolean = false
+  isCreating: boolean = false
+  toastMessage: string = ''
+  title: string = ''
+  details: string = ''
+  token: any = ''
+  openTickets: any = []
+  closedTickets: any = []
+tickets: any = []
 
 faqs: any = [
   {
@@ -82,11 +72,14 @@ faqs: any = [
   }
 ]
 
-  constructor(private modalCtrl: ModalController) {
+  constructor(private modalCtrl: ModalController, private supportService: SupportService, private authService: AuthService) {
      addIcons({ chevronForward, listCircle });
    }
 
-  ngOnInit() {}
+  async ngOnInit() {
+    this.token = await this.authService.getToken()
+    this.getTickets()
+  }
 
   async openItemModal(item: any) {
   const modal = await this.modalCtrl.create({
@@ -105,6 +98,60 @@ faqs: any = [
   });
 
   await modal.present();
+}
+
+createTicket(){
+  let ticket_id = `TKT${Date.now().toString().slice(-5)}${Math.floor(Math.random() * 100)}`
+  let params = {
+    "token": this.token,
+    "title": this.title,
+    "details": this.details,
+    "ticket_id": ticket_id
+  }
+  this.isCreating = true
+  this.supportService.createTicket(params).subscribe((res:any) => {
+    this.isToastOpen = true
+    this.isCreating = false
+    this.title = ''
+    this.details = ''
+      this.toastMessage = `${res.ticket_id} created successfully`;
+      setTimeout(()=>{
+        this.isToastOpen = false
+      },3000)
+  }, error => {
+    this.isToastOpen = true
+    this.isCreating = false
+      this.toastMessage = `failed to create ticket`;
+      setTimeout(()=>{
+        this.isToastOpen = false
+      },3000)
+  })
+}
+
+getTickets(){
+  let params = {
+    "token": this.token,
+  }
+  this.isLoading = true
+  this.supportService.getTickets(params).subscribe((res:any) => {
+    this.tickets = res
+    this.openTickets = []
+      this.closedTickets = []
+    this.tickets.forEach((element:any) => {
+      this.isLoading = false
+      
+        if(element.status == 'Open'){
+          this.openTickets.push(element);
+          console.log(this.openTickets);
+        } else {
+          this.closedTickets.push(element);
+        }
+    });
+    this.openTickets = this.openTickets.reverse()
+    this.closedTickets = this.closedTickets.reverse()
+  }, error => {
+    this.isLoading = false
+  })
 }
 
 

@@ -43,7 +43,7 @@ ngOnInit() {
 
   getEvents(){
     let params = {
-      "token": this.token
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozLCJwaG9uZSI6Iis5MTk1OTE0MjAwNjgiLCJ1c2VyX25hbWUiOiJzYW1tZWQiLCJyb2xlIjoidXNlciIsImlhdCI6MTc0OTQ2MDI4Mn0.tO4XklsZN3Qw4QLHNctoEgW59dk3pOWAeF7qO8Imv8s"
     }
     this.isLoading = true
       this.eventsService.getEvents(params).subscribe((res)=>{

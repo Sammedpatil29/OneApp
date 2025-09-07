@@ -16,108 +16,163 @@ import { NgOtpInputModule } from 'ng-otp-input';
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
   standalone: true,
-  imports: [IonCardHeader,NgOtpInputModule, IonCardContent, IonCard, IonApp, IonCardSubtitle, IonToast, IonSpinner, IonImg, IonItem, IonLabel, IonText, IonInput, IonCardTitle, IonIcon, IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [
+    IonCardHeader,
+    NgOtpInputModule,
+    IonCardContent,
+    IonCard,
+    IonApp,
+    IonCardSubtitle,
+    IonToast,
+    IonSpinner,
+    IonImg,
+    IonItem,
+    IonLabel,
+    IonText,
+    IonInput,
+    IonCardTitle,
+    IonIcon,
+    IonButton,
+    IonButtons,
+    IonContent,
+    IonHeader,
+    IonTitle,
+    IonToolbar,
+    CommonModule,
+    FormsModule,
+  ],
 })
 export class LoginPage implements OnInit {
-
-   phoneNumber = '';
+  phoneNumber = '';
   verificationCode = '';
   verificationId: string = '';
   codeSent = false;
   user: any = null;
 
-  otpSent: boolean = false
-  mobileNumber = ''
-  otp = ''
-  enteredOtp = ''
+  otpSent: boolean = false;
+  mobileNumber = '';
+  otp = '';
+  enteredOtp = '';
   users: any;
-  showRegisterForm: boolean = false
-  fullName = ''
-  email = ''
-  isLoading: boolean = false
-  toastMessage = ''
-  isToastOpen: boolean = false
+  showRegisterForm: boolean = false;
+  fullName = '';
+  email = '';
+  isLoading: boolean = false;
+  toastMessage = '';
+  isToastOpen: boolean = false;
+  isSendingOtp: boolean = false;
+  intervalId: any;
+  otpVerificationMessage: string = '';
 
   otpConfig = {
-  length: 6,
-  inputStyles: {
-    width: '45px',
-    height: '50px',
-    'font-size': '18px',
-    'margin': '0 6px',
-    'border-radius': '8px',
-    'border': '1px solid black',
-  }
-};
+    length: 6,
+    inputStyles: {
+      width: '45px',
+      height: '50px',
+      'font-size': '18px',
+      margin: '0 6px',
+      'border-radius': '8px',
+      border: '1px solid black',
+    },
+  };
 
-  constructor(private navCtrl: NavController, private authService: AuthService, private router: Router) {
-    addIcons({arrowBack});
-    
-   }
+  constructor(
+    private navCtrl: NavController,
+    private authService: AuthService,
+    private router: Router
+  ) {
+    addIcons({ arrowBack });
+  }
 
   ngOnInit() {
-    this.authService.getUserId()
+    this.authService.getUserId();
     this.listenToAuthState();
   }
-  
 
- async sendVerification() {
-  // Set up the listener for the verification ID (for iOS)
-  FirebaseAuthentication.addListener('phoneCodeSent', event => {
-    this.verificationId = event.verificationId;
-    console.log('✅ Verification ID received:', this.verificationId);
-  });
+  async sendVerification() {
 
-  try {
-    const result = await FirebaseAuthentication.signInWithPhoneNumber({
-      phoneNumber: `+91${this.phoneNumber}`,
+    FirebaseAuthentication.addListener('phoneCodeSent', (event) => {
+      this.verificationId = event.verificationId;
+      console.log('✅ Verification ID received:', this.verificationId);
     });
 
-    this.otpSent = true;
-    console.log('✅ SMS code sent:', result);
+    FirebaseAuthentication.addListener('phoneVerificationFailed', (event) => {
+      console.error('❌ Verification failed event:', event);
+      this.isSendingOtp = false;
+      console.log(
+        '❌ OTP send failed. Reason: ' + (event?.message || 'Unknown error')
+      );
+      this.isToastOpen = true;
+      this.toastMessage = `❌ OTP send failed. Reason: ${
+        event?.message || 'Unknown error'
+      }`;
+      setTimeout(() => {
+        this.isToastOpen = false;
+      }, 3000);
+      clearInterval(this.intervalId);
+    });
 
-  } catch (e: any) {
-    console.error('❌ Failed to send OTP:', e);
+    try {
+      this.isSendingOtp = true;
+      this.verificationId = '';
+      const result = await FirebaseAuthentication.signInWithPhoneNumber({
+        phoneNumber: `+91${this.phoneNumber}`,
+      });
+      console.log('✅ SMS code sent:', result);
+      this.intervalId = setInterval(() => {
+        console.log('interval running');
+        if (this.verificationId != '') {
+          this.otpSent = true;
+          this.isSendingOtp = false;
+          this.isToastOpen = true;
+          this.toastMessage = `OTP sent successfully`;
+          clearInterval(this.intervalId);
+          setTimeout(() => {
+            this.isToastOpen = false;
+          }, 3000);
+        }
+      }, 100);
+    } catch (e: any) {
+      this.isSendingOtp = false;
+      // console.error('❌ Failed to send OTP:', e);
+      this.isToastOpen = true;
+      this.toastMessage = `Failed to send Otp, ${e}`;
+      clearInterval(this.intervalId);
+      setTimeout(() => {
+        this.isToastOpen = false;
+      }, 3000);
 
-    const code = e.code || e.message || 'unknown';
+      const code = e.code || e.message || 'unknown';
 
-    // Friendly error messages for known Firebase codes
-    switch (code) {
-      case 'auth/invalid-phone-number':
-        alert('🚫 Invalid phone number format. Please check and try again.');
-        break;
+      switch (code) {
+        case 'auth/invalid-verification-code':
+          alert('🚫 The OTP you entered is incorrect. Please try again.');
+          break;
 
-      case 'auth/too-many-requests':
-        alert('⚠️ Too many OTP requests. Please wait a few minutes before retrying.');
-        break;
+        case 'auth/code-expired':
+          alert('⌛ The OTP has expired. Please request a new one.');
+          break;
 
-      case 'auth/quota-exceeded':
-        alert('📵 SMS quota exceeded for this project. Try again later.');
-        break;
+        case 'auth/invalid-verification-id':
+          alert(
+            '⚠️ Invalid verification session. Please try restarting the login.'
+          );
+          break;
 
-      case 'auth/network-request-failed':
-        alert('🌐 Network error. Please check your connection.');
-        break;
+        case 'auth/missing-verification-code':
+          alert('🔢 Please enter the OTP.');
+          break;
 
-      case 'auth/user-disabled':
-        alert('⛔ This user has been disabled. Please contact support.');
-        break;
+        case 'auth/network-request-failed':
+          alert('🌐 Network error. Please check your internet connection.');
+          break;
 
-      case 'auth/app-not-authorized':
-        alert('🔐 This app is not authorized to use Firebase Authentication.');
-        break;
-
-      case 'auth/missing-client-identifier':
-        alert('⚠️ Firebase is not correctly configured for iOS. Check your setup.');
-        break;
-
-      default:
-        alert('❌ Something went wrong. Please try again.');
-        break;
+        default:
+          alert('❌ Verification failed. Please try again.');
+          break;
+      }
     }
   }
-}
-
 
   listenToAuthState() {
     FirebaseAuthentication.addListener('authStateChange', async (event) => {
@@ -132,209 +187,208 @@ export class LoginPage implements OnInit {
   }
 
   async verifyOTP() {
-  try {
-    const result = await FirebaseAuthentication.confirmVerificationCode({
-      verificationId: this.verificationId,
-      verificationCode: this.verificationCode,
-    });
+    try {
+      this.isLoading = true;
+      this.otpVerificationMessage = 'Verifying Otp';
+      const result = await FirebaseAuthentication.confirmVerificationCode({
+        verificationId: this.verificationId,
+        verificationCode: this.verificationCode,
+      });
 
-    console.log('✅ OTP verification successful!', result);
-    this.checkUser(); // Proceed to your login/registration logic
+      console.log('✅ OTP verification successful!', result);
+      this.isToastOpen = true;
+      this.toastMessage = `✅ OTP verification successful!`;
+      setTimeout(() => {
+        this.isToastOpen = false;
+      }, 3000);
+      this.isLoading = false;
+      this.otpVerificationMessage = '';
+      this.checkUser(); // Proceed to your login/registration logic
+    } catch (error: any) {
+      this.isLoading = false;
+      this.otpVerificationMessage = '';
+      console.error('❌ OTP verification failed:', error);
 
-  } catch (error: any) {
-    console.error('❌ OTP verification failed:', error);
+      const code = error.code || error.message || 'unknown';
 
-    const code = error.code || error.message || 'unknown';
+      switch (code) {
+        case 'auth/invalid-verification-code':
+          this.isToastOpen = true;
+          this.toastMessage = `🚫 The OTP you entered is incorrect. Please try again.`;
+          setTimeout(() => {
+            this.isToastOpen = false;
+          }, 3000);
+          break;
 
-    switch (code) {
-      case 'auth/invalid-verification-code':
-        alert('🚫 The OTP you entered is incorrect. Please try again.');
-        break;
+        case 'auth/code-expired':
+          alert('⌛ The OTP has expired. Please request a new one.');
+          break;
 
-      case 'auth/code-expired':
-        alert('⌛ The OTP has expired. Please request a new one.');
-        break;
+        case 'auth/invalid-verification-id':
+          alert(
+            '⚠️ Invalid verification session. Please try restarting the login.'
+          );
+          break;
 
-      case 'auth/invalid-verification-id':
-        alert('⚠️ Invalid verification session. Please try restarting the login.');
-        break;
+        case 'auth/missing-verification-code':
+          alert('🔢 Please enter the OTP.');
+          break;
 
-      case 'auth/missing-verification-code':
-        alert('🔢 Please enter the OTP.');
-        break;
+        case 'auth/network-request-failed':
+          alert('🌐 Network error. Please check your internet connection.');
+          break;
 
-      case 'auth/network-request-failed':
-        alert('🌐 Network error. Please check your internet connection.');
-        break;
-
-      default:
-        alert('❌ Verification failed. Please try again.');
-        break;
+        default:
+          this.isToastOpen = true;
+          this.toastMessage = `❌ Verification failed. Please try again..`;
+          setTimeout(() => {
+            this.isToastOpen = false;
+          }, 3000);
+          break;
+      }
     }
   }
-}
-
 
   onOtpChange(value: string) {
-  this.verificationCode = value;
-  if(this.verificationCode.length == 6){
-    this.verifyOTP()
-  }
-}
-
-  async logout() {
-  try {
-    await FirebaseAuthentication.signOut();
-    alert('User signed out.');
-  } catch (error) {
-    console.error('Logout failed:', error);
-    alert('Failed to log out.');
-  }
-}
-
-  private sleep(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
-  goBack(){
-    if(!this.otpSent){
-      this.navCtrl.back();
-    } else {
-      this.otpSent = false
+    this.verificationCode = value;
+    if (this.verificationCode.length == 6) {
+      this.verifyOTP();
     }
   }
 
-  sendOtp(){
-    if(this.mobileNumber.length < 10){
-      this.isToastOpen = false
-        this.toastMessage = 'enter valid mobile number';
-        this.isToastOpen = true
-        setTimeout(()=>{
-this.isToastOpen = false
-        },4000)
+  async logout() {
+    try {
+      await FirebaseAuthentication.signOut();
+      alert('User signed out.');
+    } catch (error) {
+      console.error('Logout failed:', error);
+      alert('Failed to log out.');
+    }
+  }
+
+  goBack() {
+    if (!this.otpSent) {
+      this.navCtrl.back();
     } else {
-      this.sendOtpToUser()
-        this.otpSent = true
+      this.otpSent = false;
     }
   }
 
   checkUser() {
-  this.isLoading = true;
-  let params = {
-    "phone": `+91${this.phoneNumber}`
-  }
-  this.authService.checkUser(params).subscribe(
-    (res) => {
-      // console.log(res);
-      // this.users = res;
-console.log(res)
-      // let isRegistered = this.users.some((item: any) => item.phone.includes(this.mobileNumber));
-      // console.log(isRegistered);
-
-      if (res == true) {
-        this.createToken()
-        this.authService.getUserId()
-      } else {
-        alert('new user')
-        this.isLoading = false;
-        this.showRegisterForm = true;
-      }
-    },
-    (error) => {
-      // Handle error gracefully
-      this.isLoading = false;
-      console.error('Error fetching users:', error);
-      // Optionally, display an error message to the user
-      alert('Failed to verify OTP. Please try again later.');
-    }
-  );
-}
-
-createNewUser(){
-  let params = {
-    "username": `+91${this.phoneNumber}`,
-    "email": this.email,
-    "first_name": this.fullName,
-    "last_name": "",
-    "profile_image": "",
-    "phone": `+91${this.phoneNumber}`,
-    "is_active": true,
-    "is_verified": true
-}
-this.isLoading = true
-  this.authService.postNewUser(params).subscribe(res => {
-    this.createToken()
-  },
-    (error) => {
-      // Handle error gracefully
-      this.isLoading = false;
-      console.error('Error fetching users:', error);
-      // Optionally, display an error message to the user
-      this.toastMessage = error
-      this.isToastOpen = true
-    })
-}
-
-  login(){
-    if(this.fullName.length > 3 && this.email.includes('@') && this.email[-1] != '@') {
-        this.createNewUser()
-    } else {
-      this.isToastOpen = false
-      this.toastMessage = 'Enter valid input'
-      this.isToastOpen = true
-      setTimeout(()=> {
-        this.isToastOpen = false
-      }, 4000)
-    }
-    
-  }
-response: any;
-
-  createToken(){
+    this.isLoading = true;
+    this.otpVerificationMessage = 'Validating User';
     let params = {
-      "phone": `+91${this.phoneNumber}`
-    }
-    this.authService.createToken(params).subscribe(res => {
-this.response = res
-      Preferences.set({
-  key: 'auth-token',
-  value: this.response.token
-})
-this.authService.getUserId()
-console.log(Preferences.get({key: 'auth-token'}))
-this.router.navigate(['/layout/example/home'])
-setTimeout(()=> {
-  this.router.navigate(['/layout/example/home'])
-  this.isLoading = false
-},500)
-    }, (error) => {
-      this.isToastOpen = false
-      this.toastMessage = 'error creating token'
-      this.isToastOpen = true
-      setTimeout(()=> {
-        this.isToastOpen = false
-      })
-    })
-  }
+      phone: `+91${this.phoneNumber}`,
+    };
+    this.authService.checkUser(params).subscribe(
+      (res) => {
+        // console.log(res);
+        // this.users = res;
+        console.log(res);
+        // let isRegistered = this.users.some((item: any) => item.phone.includes(this.mobileNumber));
+        // console.log(isRegistered);
 
-  generateOtp(): string {
-    return Math.floor(1000 + Math.random() * 9000).toString(); // 6-digit OTP
-  }
-
-  sendOtpToUser() {
-    if (this.mobileNumber.length === 10) {
-      this.otp = '1234'
-      this.authService.sendOtp(this.mobileNumber, this.otp).subscribe(
-        (response) => {
-          console.log('OTP sent successfully', response);
-        },
-        (error) => {
-          console.error('Error sending OTP', error);
+        if (res == true) {
+          this.createToken();
+          this.authService.getUserId();
+        } else {
+          this.isToastOpen = true;
+          this.toastMessage = `New User please register!`;
+          setTimeout(() => {
+            this.isToastOpen = false;
+          }, 3000);
+          this.isLoading = false;
+          this.otpVerificationMessage = '';
+          this.showRegisterForm = true;
         }
-      );
-    } else {
-      console.error('Invalid mobile number');
-    }
+      },
+      (error) => {
+        // Handle error gracefully
+        this.isLoading = false;
+        this.otpVerificationMessage = '';
+        console.error('Error fetching users:', error);
+        // Optionally, display an error message to the user
+        this.isToastOpen = true;
+        this.toastMessage = `Failed to check user!`;
+        setTimeout(() => {
+          this.isToastOpen = false;
+        }, 3000);
+      }
+    );
   }
 
+  createNewUser() {
+    let params = {
+      username: `+91${this.phoneNumber}`,
+      email: this.email,
+      first_name: this.fullName,
+      last_name: '',
+      profile_image: '',
+      phone: `+91${this.phoneNumber}`,
+      is_active: true,
+      is_verified: true,
+    };
+    this.isLoading = true;
+    this.authService.postNewUser(params).subscribe(
+      (res) => {
+        this.createToken();
+      },
+      (error) => {
+        // Handle error gracefully
+        this.isLoading = false;
+        console.error('Error fetching users:', error);
+        // Optionally, display an error message to the user
+        this.toastMessage = error;
+        this.isToastOpen = true;
+      }
+    );
+  }
+
+  login() {
+    if (
+      this.fullName.length > 3 &&
+      this.email.includes('@') &&
+      this.email[-1] != '@'
+    ) {
+      this.createNewUser();
+    } else {
+      this.isToastOpen = false;
+      this.toastMessage = 'Enter valid input';
+      this.isToastOpen = true;
+      setTimeout(() => {
+        this.isToastOpen = false;
+      }, 4000);
+    }
+  }
+  response: any;
+
+  createToken() {
+    let params = {
+      phone: `+91${this.phoneNumber}`,
+    };
+    this.authService.createToken(params).subscribe(
+      (res) => {
+        this.response = res;
+        Preferences.set({
+          key: 'auth-token',
+          value: this.response.token,
+        });
+        this.authService.getUserId();
+        console.log(Preferences.get({ key: 'auth-token' }));
+        this.router.navigate(['/layout/example/home']);
+        setTimeout(() => {
+          this.router.navigate(['/layout/example/home']);
+          this.isLoading = false;
+        }, 500);
+      },
+      (error) => {
+        this.isToastOpen = false;
+        this.toastMessage = 'error creating token';
+        this.isToastOpen = true;
+        setTimeout(() => {
+          this.isToastOpen = false;
+        });
+      }
+    );
+  }
 }

@@ -164,9 +164,9 @@ upiApps: any;
   var options = {
     description: 'Test Payment',
     currency: 'INR',
-    key: 'rzp_live_p6MXH1oq4BBYPk',
+    key: 'rzp_test_mumd7Md1QvW8oy',
     amount: 100, // amount in paise
-    name: 'MyApp',
+    name: 'OneApp Events',
     prefill: {
       email: '',
       contact: '',

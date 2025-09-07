@@ -1,8 +1,8 @@
-<ion-content [fullscreen]="true" style="background-color: red">
+<ion-content [fullscreen]="true">
   <div class="p-4 body h-100">
-    <h6 class="text-center">Ticket details</h6>
+    <h6 class="text-center"><b>Ticket details</b></h6>
     <div>
-      <b [ngClass]="item.status == 'Open'? 'text-success': 'text-danger'">{{item.status}}</b> &bull; {{item.ticket_id}} &bull; <small>{{item.created_at}}</small>
+      <b [ngClass]="item.status == 'Open'? 'text-success': 'text-danger'">{{item.status}}</b> &bull; {{item.ticket_id}} &bull; <small>{{item.created_at | date: 'short'}}</small>
     </div>
     <div class="mt-2"><b>{{item.title}}</b></div>
     <q><i>{{item.details}}</i></q>
@@ -11,7 +11,7 @@
     <div class="md-step active">
       <div class="md-step-circle"><span>1</span></div>
       <div class="md-step-title mt-1">Ticket Raised</div>
-      <div class="md-step-title mt-0" style="font-size: 12px;">{{item.created_at}}</div>
+      <div class="md-step-title mt-0" style="font-size: 12px;">{{item.created_at | date: 'short'}}</div>
       <div class="md-step-bar-left"></div>
       <div class="md-step-bar-right"></div>
     </div>
@@ -19,7 +19,7 @@
       <div class="md-step-circle"><span>2</span></div>
       <div class="md-step-title mt-1">Ticket Resolved</div>
       @if (item.status != 'Open') {
-              <div class="md-step-title mt-0" style="font-size: 12px;">{{item.closed_at}}</div>
+              <div class="md-step-title mt-0" style="font-size: 12px;">{{item.closed_at | date: 'short'}}</div>
       }
       <div class="md-step-bar-left"></div>
       <div class="md-step-bar-right"></div>

@@ -1,13 +1,21 @@
-<ion-header>
+
+
+
+<!-- <app-nodata></app-nodata> -->
+
+@if(!isLoading){
+  <ion-header>
   <ion-toolbar class="pt-4">
     <ion-title>Support</ion-title>
   </ion-toolbar>
 </ion-header>
 
+<ion-refresher slot="fixed" class="my-refresher mt-5" color="dark" (ionRefresh)="getTickets()"
+   pullingIcon="arrow-dropdown" refreshingSpinner="crescent">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
 
-<!-- <app-nodata></app-nodata> -->
-
-<div class="mx-2">
+  <div class="mx-2">
   <ion-segment mode="ios">
   <ion-segment-button value="first" content-id="first">
     <ion-label>Your Tickets</ion-label>
@@ -20,18 +28,19 @@
 <ion-segment-view>
   <ion-segment-content id="first">
     @if (tickets.length > 0) {
-      <ion-accordion-group expand="inset" value="active" mode="ios">
+      <ion-accordion-group expand="inset" value="active" mode="ios" class="mx-0">
   <ion-accordion value="active">
     <ion-item slot="header" color="light">
-      <ion-label>Active Tickets ({{tickets.length}})</ion-label>
+      <ion-label>Active Tickets ({{openTickets.length}})</ion-label>
     </ion-item>
-    <div class="" slot="content">
-      @for (item of tickets; track $index) {
+    @if(openTickets.length > 0){
+      <div class="" slot="content">
+      @for (item of openTickets; track $index) {
         <ion-item button expand="block" (click)="openItemModal(item)">
       <!-- <div class="unread-indicator-wrapper" slot="start"></div> -->
       <ion-label>
-        <ion-text class="text-truncate">{{item.title}}</ion-text><br />
-        <ion-note color="medium" class="ion-text-wrap"><span [ngClass]="item.status == 'Open'? 'text-success': 'text-danger'"><b>{{item.status}}</b></span> - {{item.created_at}}</ion-note>
+        <ion-text class="text-truncate"> <b>{{item.title}}</b></ion-text><br />
+        <ion-note color="medium" class="ion-text-wrap"><span [ngClass]="item.status == 'Open'? 'text-success': 'text-danger'"><b>{{item.status}}</b></span> &bull; <b>{{item.ticket_id}}</b> &bull; {{item.created_at | date:'short'}}</ion-note>
       </ion-label>
       <div class="metadata-end-wrapper" slot="end">
         <!-- <ion-note color="medium">{{item.created_at}}</ion-note> -->
@@ -40,16 +49,42 @@
     </ion-item>
       }
     </div>
-  </ion-accordion>
-  <ion-accordion value="closed">
-    <ion-item slot="header" color="light">
-      <ion-label>Closed Tickets</ion-label>
-    </ion-item>
-    <div class="ion-padding" slot="content">
+    } @else {
+      <div class="ion-padding" slot="content">
       <div>
         <p class="text-center">No tickets to show</p>
       </div>
     </div>
+    }
+  </ion-accordion>
+  <ion-accordion value="closed">
+    <ion-item slot="header" color="light">
+      <ion-label>Closed Tickets ({{closedTickets.length}})</ion-label>
+    </ion-item>
+    @if(closedTickets.length > 0){
+      <div class="" slot="content">
+      @for (item of closedTickets; track $index) {
+        <ion-item button expand="block" (click)="openItemModal(item)">
+      <!-- <div class="unread-indicator-wrapper" slot="start"></div> -->
+      <ion-label>
+        <ion-text class="text-truncate"> <b>{{item.title}}</b></ion-text><br />
+        <ion-note color="medium" class="ion-text-wrap"><span [ngClass]="item.status == 'Open'? 'text-success': 'text-danger'"><b>{{item.status}}</b></span> &bull; <b>{{item.ticket_id}}</b> &bull; {{item.created_at | date:'short'}}</ion-note>
+      </ion-label>
+      <div class="metadata-end-wrapper" slot="end">
+        <!-- <ion-note color="medium">{{item.created_at}}</ion-note> -->
+        <!-- <ion-icon color="medium" name="chevron-forward"></ion-icon> -->
+      </div>
+    </ion-item>
+      }
+    </div>
+    } @else {
+        <div class="ion-padding" slot="content">
+      <div>
+        <p class="text-center">No tickets to show</p>
+      </div>
+    </div>
+    }
+    
   </ion-accordion>
 </ion-accordion-group>
     } @else {
@@ -73,7 +108,7 @@
     } @else {
        <ion-list class="text-area mx-4 mt-4">
   <ion-item class="suggestion" lines="none">
-    <ion-input placeholder="Issue Title" value=""></ion-input>
+    <ion-input placeholder="Issue Title" [(ngModel)]="title" value=""></ion-input>
   </ion-item>
 </ion-list>
     <ion-item class="text-area mx-4 mt-4" lines="none">
@@ -82,14 +117,15 @@
     placeholder="Detailed Issue"
     [autoGrow]="true"
     appearance = "outline"
+    [(ngModel)]="details"
   >
   </ion-textarea>
 </ion-item>
-<div class="mx-3">
-  <ion-button class="ion-padding w-100" color="dark">Submit
-    <!-- @if (isLoading) {
+<div class="mx-2">
+  <ion-button class="ion-padding w-100" color="dark" [disabled]="title.length < 5 || details.length < 5 || isCreating" (click)="createTicket()">Submit
+    @if (isCreating) {
         <ion-spinner class="button ms-2"  name="crescent"></ion-spinner>
-} -->
+}
   </ion-button>
 </div>
 <div class="text-center mb-5"> <span class="text-primary" (click)="raiseTicket = false">back to FAQS</span></div>
@@ -97,6 +133,15 @@
   </ion-segment-content>
 </ion-segment-view>
 
-
+<ion-toast
+    [isOpen]="isToastOpen"
+    [message]="toastMessage"
+    [duration]="3000"
+  ></ion-toast>
 
 </div>
+} @else {
+  <div class="d-flex justify-content-center align-items-center h-100">
+        <ion-spinner  name="crescent"></ion-spinner>
+      </div>
+}

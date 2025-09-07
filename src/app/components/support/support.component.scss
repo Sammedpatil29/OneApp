@@ -19,9 +19,8 @@
 }
 
 .text-area {
-    border-radius: 10px;
+    border-radius: 5px;
     border: 1px solid black;
-    border-radius: 20px;
 }
 
 .unread-indicator {
@@ -74,4 +73,8 @@ ion-label ion-note {
 
 ion-modal {
   --height: auto;
+}
+
+::ng-deep :host(.accordion-group-expand-inset){
+  margin-inline: 0px !important;
 }

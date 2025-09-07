@@ -8,7 +8,8 @@ const config: CapacitorConfig = {
     FirebaseAuthentication: {
       skipNativeAuth: false,
       providers: ['phone']
-    }
+    },
+    Cordova: {}
   }
 };
 

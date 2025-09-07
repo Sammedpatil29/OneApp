@@ -31,7 +31,8 @@
       </div>
 
       <div class="col-10" style="height: 88vh; overflow-y: scroll; scrollbar-width: none; -ms-overflow-style: none;">
-        <!-- <ion-searchbar></ion-searchbar> -->
+        <ion-searchbar></ion-searchbar>
+         <!-- <input type="text"> -->
         <div>
       <div class="row p-2 g-2">
       @for (item of filteredGroceryList; track $index) {
@@ -99,5 +100,9 @@
         <ion-spinner  name="crescent"></ion-spinner>
       </div>
     }
+
+    <div class="position=fixed bottom-0 p-1 text-center" style="background-color: rgba(186, 111, 230, 0.418); border-radius: 5px 5px 0px 0px">
+      <small><b>Free Delivery</b> on order above <b>Rs.199</b></small>
+    </div>
  
 </ion-content>

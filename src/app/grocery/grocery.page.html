@@ -19,7 +19,11 @@
     <div class="px-2 pt-2 d-flex align-items-center justify-content-between">
       <div class="w-75 text-truncate">
         <h5 class="mb-0 mt-3"><strong>Delivery Location</strong></h5>
-    <small (click)="openMap()"> <span class="text-truncate" style="max-height: 75%">{{address}}</span></small>
+        @if(address != ''){
+              <small (click)="openMap()"> <span class="text-truncate" style="max-height: 75%">{{address}}</span></small>
+        } @else {
+          <small class="text-primary" (click)="openMap()">Select location on map</small>
+        } 
       </div>
       <div>
         <ion-button shape="round" color="dark" fill="outline" (click)="backToHome()"><i class="bi bi-house-door-fill"></i></ion-button>

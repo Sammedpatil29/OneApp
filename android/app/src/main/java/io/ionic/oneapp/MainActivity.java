@@ -6,6 +6,7 @@ import com.cashfree.capacitor.CFBridge;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
+import android.content.Intent;
 
 import com.ionicframework.capacitor.Checkout;
 
@@ -41,6 +42,24 @@ private void createNotificationChannel() {
             if (notificationManager != null) {
                 notificationManager.createNotificationChannel(channel);
             }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        try {
+            // Razorpay’s Cordova plugin expects this
+            Class<?> razorpayClass = Class.forName("com.razorpay.cordova.RazorpayPlugin");
+            Object instance = razorpayClass.getMethod("getInstance").invoke(null);
+            if (instance != null) {
+                razorpayClass
+                        .getMethod("onActivityResult", int.class, int.class, Intent.class)
+                        .invoke(instance, requestCode, resultCode, data);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

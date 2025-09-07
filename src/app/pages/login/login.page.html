@@ -33,9 +33,21 @@
 }
 <div class="w-100 px-4 position-fixed bottom-0">
   @if (!otpSent) {
-    <ion-button class="w-100 ion-padding" color="dark" (click)="sendVerification()">Send OTP</ion-button>
+    <ion-button class="w-100 ion-padding" color="dark" [disabled]="isSendingOtp || phoneNumber.length != 10" (click)="sendVerification()">
+      @if(isSendingOtp){
+        {{otpVerificationMessage}} <ion-spinner class="button ms-2"  name="crescent"></ion-spinner>
+      } @else {
+        Send OTP
+      }
+    </ion-button>
   } @else {
-    <ion-button class="w-100 ion-padding" color="dark" (click)="verifyOTP()">Verify OTP</ion-button>
+    <ion-button class="w-100 ion-padding" color="dark" [disabled]="isLoading" (click)="verifyOTP()">
+      @if(isLoading){
+        {{otpVerificationMessage}} <ion-spinner class="button ms-2"  name="crescent"></ion-spinner>
+      } @else {
+        Verify OTP
+      }
+    </ion-button>
   }
 </div>
 
@@ -101,5 +113,9 @@
   
  </div>
 }
-
+<ion-toast
+    [isOpen]="isToastOpen"
+    [message]="toastMessage"
+    [duration]="3000"
+  ></ion-toast>
 </ion-content>
