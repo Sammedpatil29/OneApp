@@ -28,7 +28,6 @@ import { CommonService } from 'src/app/services/common.service';
 import { ProfileService } from 'src/app/services/profile.service';
 import { RegisterFcmService } from 'src/app/services/register-fcm.service';
 import { AuthService } from 'src/app/services/auth.service';
-import { ModalController } from '@ionic/angular';
 import { CustonModalComponent } from 'src/app/components/custon-modal/custon-modal.component';
 import { BottomsheetMessageComponent } from 'src/app/components/bottomsheet-message/bottomsheet-message.component';
 
@@ -54,6 +53,9 @@ export class HomePage implements OnInit {
   allServices: any;
   groupedData: { [key: string]: any[] } = {};
   isLoading: boolean = false
+  isServiceLoading: boolean = false
+  isBannerLoading: boolean = false
+  isLocationLoading: boolean = false
   isFlashOfferVisible: boolean = false
   locationData: any
   label: any = ''
@@ -69,7 +71,16 @@ fileUrl = ''
 token:any = ''
 profileData:any = ''
 
-  constructor(private router: Router,private authService: AuthService, private registarFcm: RegisterFcmService, private locationService: LocationService,private profileService: ProfileService, private platform: Platform, private location: Location, private navCtrl: NavController, private commonService: CommonService, private modalCtrl: ModalController) {
+orders: any = [
+    {
+      orderId: '37364643764'
+    },
+    {
+      orderId: '78374'
+    }
+  ] 
+
+  constructor(private router: Router,private authService: AuthService, private registarFcm: RegisterFcmService, private locationService: LocationService,private profileService: ProfileService, private platform: Platform, private location: Location, private navCtrl: NavController, private commonService: CommonService) {
     addIcons({arrowBack,home,buildOutline,receiptOutline,personCircleOutline,briefcaseOutline,constructOutline,library,personCircle,person,search,bag,cube,radio,playCircle});
   this.getServicesData()
   this.getMetaData()
@@ -151,16 +162,16 @@ const version = await this.profileService.getAppVersion()
       this.metaData = res
       console.log(res)
       this.isLoading = false
-      this.latestVersion = this.metaData[0].latest_version
+      this.latestVersion = this.metaData[2].latest_version
       this.fileName = `OneApp-${this.latestVersion}`
-      this.fileUrl = this.metaData[0].download_link
+      this.fileUrl = this.metaData[2].download_link
       console.log(this.latestVersion)
       // if(this.metaData[2].video.message === 'true'){
       //   let item = {
       //     'title': this.metaData[2].video.Header,
       //     'body': this.metaData[2].video.Content
       //   }
-        this.openItemModal('item')
+        // this.openItemModal('item')
       // }
     })
   }
@@ -213,12 +224,14 @@ const version = await this.profileService.getAppVersion()
     }
 
     getServicesData(){
-      this.isLoading = true
+      this.isServiceLoading = true
       this.locationService.getData().subscribe((res)=> {
           this.allServices = res
           this.groupedData = this.groupByCategory(this.allServices);
           console.log(this.groupedData)
-          this.isLoading = false
+          this.isServiceLoading = false
+      }, error => {
+
       })
     }
 
@@ -248,8 +261,10 @@ navigateTo(route:any){
   }
 
 getBanners(){
+  this.isBannerLoading = true
   this.profileService.getBanners().subscribe((res:any)=>{
 this.slides = res.filter((item: { is_active: any; }) => item.is_active);
+this.isBannerLoading = false
       console.log(this.slides)
   })
 }
@@ -260,26 +275,5 @@ navigateFromSlide(route:any){
 
 closeFlashOffer(){
   this.isFlashOfferVisible = false;
-}
-
-async openItemModal(item: any) {
-  const modal = await this.modalCtrl.create({
-    component: BottomsheetMessageComponent,
-    componentProps: { item },
-    breakpoints: [0.5],           // Allow resizing between 0%, 50%, 100%
-      initialBreakpoint: 0.5,
-      backdropDismiss: true,
-      handle: false,
-      handleBehavior: 'none',
-      cssClass: 'bottom-sheet-modal'
-  });
-
-  modal.onDidDismiss().then((res) => {
-    if (res.data?.dismissed) {
-      console.log('Modal returned:', res.data.data);
-    }
-  });
-
-  await modal.present();
 }
 }

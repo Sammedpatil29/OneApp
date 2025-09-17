@@ -27,7 +27,7 @@ dependencies {
     implementation project(':capacitor-status-bar')
     implementation project(':capacitor-razorpay')
     implementation project(':cashfree-pg-capacitor')
-
+    implementation "com.razorpay:checkout:1.6.19"
 }
 
 

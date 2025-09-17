@@ -7,6 +7,10 @@ import { AuthService } from 'src/app/services/auth.service';
 import { Platform } from '@ionic/angular';
 import { RegisterFcmService } from 'src/app/services/register-fcm.service';
 import { ProfileService } from 'src/app/services/profile.service';
+import { AlertController, IonButton } from '@ionic/angular/standalone';
+import { CommonService } from 'src/app/services/common.service';
+import { ModalController } from '@ionic/angular';
+import { BottomsheetMessageComponent } from 'src/app/components/bottomsheet-message/bottomsheet-message.component';
 
 @Component({
   selector: 'app-layout',
@@ -23,8 +27,32 @@ export class LayoutPage implements OnInit {
   addresses: any = []
   params: any
   profileData: any;
+  metaData:any;
+    isLoading: boolean = false
+    latestVersion = ''
+    appVersion:any = ''
+    fileUrl = ''
+    updateSeverity = ''
+    alertButtons = [
+    {
+    text: 'UPDATE',
+    cssClass: 'update-button',
+    handler: () => {
+      console.log('OK clicked');
+      const updateUrl = this.fileUrl;
+          window.open(updateUrl, '_system');
+    },
+  },
+    {
+    text: 'CLOSE',
+    cssClass: 'close-button',
+    handler: () => {
+      console.log('OK clicked');
+    },
+  }
+  ];
 
-   constructor(private locationService: LocationService, private authService: AuthService, private platform: Platform, private registarFcm: RegisterFcmService, private profileService: ProfileService) {}
+   constructor(private locationService: LocationService, private authService: AuthService, private platform: Platform, private registarFcm: RegisterFcmService, private profileService: ProfileService, private alertController: AlertController, private commonService: CommonService, private modalCtrl: ModalController) {}
 
  async ngOnInit() {
   const current = await this.locationService.getCurrentPosition()
@@ -63,6 +91,8 @@ export class LayoutPage implements OnInit {
     // Set the initial position (you can dynamically adjust this)
     // orderBubble.style.left = '20px';  // Set initial left position
     // orderBubble.style.top = '150px';
+    await this.getAppVersion()
+    this.getMetaData()
   }
 
   getProfileData(){
@@ -121,6 +151,86 @@ export class LayoutPage implements OnInit {
     window.removeEventListener('touchend', this.stopDrag);
   };
 
-  
+    async presentAlert() {
+      let title = 'New update available!'
+      if(this.updateSeverity == 'critical'){
+        title = 'Mandatory update available🚨'
+        this.alertButtons = [
+          {
+            text: 'UPDATE',
+            cssClass: 'update-button',
+            handler: () => {
+              console.log('OK clicked');
+              const updateUrl = this.fileUrl;
+              window.open(updateUrl, '_system');
+            },
+          },
+        ];
+      }
+      const alert = await this.alertController.create({
+        header: title,
+        subHeader: '',
+        message: 'New update available with minor bug fixes',
+        buttons: this.alertButtons,
+        backdropDismiss: false,
+        cssClass: 'custom-alert'
+      });
+
+      await alert.present();
+    }
+
+    getMetaData(){
+        this.isLoading = true
+        this.commonService.getMetaData().subscribe((res)=> {
+          this.metaData = res
+          console.log(res)
+          this.isLoading = false
+          this.latestVersion = this.metaData[2].latest_version
+          this.fileUrl = this.metaData[2].download_link
+          this.updateSeverity = JSON.parse(this.metaData[2].video)['updateSeverity'] 
+          console.log(this.latestVersion)
+          // if(this.metaData[2].video.message === 'true'){
+          //   let item = {
+          //     'title': this.metaData[2].video.Header,
+          //     'body': this.metaData[2].video.Content
+          //   }
+          if(this.latestVersion != '' && this.appVersion != null){
+            if(this.latestVersion != this.appVersion){
+              this.presentAlert()
+          }
+          }
+          if(JSON.parse(this.metaData[2].video)['showBottomSheetAd'] == "true" ){
+              this.openItemModal('item')
+          }
+          // }
+        })
+      }
+
+      async getAppVersion(){
+const version = await this.profileService.getAppVersion()
+      this.appVersion = version
+      console.log(this.appVersion)
+     }
+
+     async openItemModal(item: any) {
+  const modal = await this.modalCtrl.create({
+    component: BottomsheetMessageComponent,
+    componentProps: { item },
+    breakpoints: [0.5],           // Allow resizing between 0%, 50%, 100%
+      initialBreakpoint: 0.5,
+      backdropDismiss: true,
+      handle: false,
+      handleBehavior: 'none',
+      cssClass: 'bottom-sheet-modal'
+  });
+
+  modal.onDidDismiss().then((res) => {
+    if (res.data?.dismissed) {
+      console.log('Modal returned:', res.data.data);
+    }
+  });
+
+  await modal.present();
+}
 
 }

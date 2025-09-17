@@ -3,11 +3,16 @@
     border: 1px solid green !important
 }
 
+.container {
+--bs-gutter-x: 0px !important;
+}
+
 .ticket {
-  max-width: 500px;
+  width: 100%;
   border-radius: 16px;
   position: relative;
   overflow: hidden;
+  
 //   border: 1px solid gray;
 //   background-color: #fff;
 }
@@ -35,4 +40,10 @@
   right: -15px;
   top: 50%;
   transform: translateY(-50%);
+}
+
+.ticketCount {
+  background-color: rgba(119, 0, 255, 0.425);
+  border-radius: 7px;
+  color: white
 }

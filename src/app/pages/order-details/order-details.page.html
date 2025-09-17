@@ -1,4 +1,5 @@
-@if (!isOrderPlaced) {
+@if (!isLoading) {
+  @if (!isOrderPlaced) {
   <ion-header>
   <ion-toolbar class="pt-4">
     <ion-buttons slot="start">
@@ -42,7 +43,7 @@
     <ion-input placeholder="Full Name" [(ngModel)]="customerName" [value]="customerName"></ion-input>
   </ion-item>
           <ion-item class="addressField mt-2" lines="none">
-    <ion-input placeholder="Phone" [(ngModel)]="mobileNumber" [value]="mobileNumber"></ion-input>
+    <ion-input placeholder="Phone" [(ngModel)]="mobileNumber" [maxlength]="10" [value]="mobileNumber"></ion-input>
   </ion-item>
           <ion-item class="addressField mt-2" lines="none">
     <ion-input placeholder="Email" [(ngModel)]="email" [value]="email"></ion-input>
@@ -77,7 +78,7 @@
     !mobileNumber || 
     mobileNumber.length !== 10 || 
     !isValidEmail(email)
-  " (click)="razorpayCapacitor()">
+  " (click)="payWithRazorpay()">
 PAY NOW
     </ion-button>
   </div>
@@ -86,7 +87,8 @@ PAY NOW
 } @else {
   <ion-content>
     <div class="h-75 d-flex flex-column justify-content-center align-items-center">
-      <img class="image" src="../../../assets/gif/system-solid-31-check-in-check.gif" alt="">
+      <!-- <img class="image" src="../../../assets/gif/system-solid-31-check-in-check.gif" alt=""> -->
+      <svg xmlns="http://www.w3.org/2000/svg" height="80px" viewBox="0 -960 960 960" width="80px" fill="#0dc52b"><path d="m421-298 283-283-46-45-237 237-120-120-45 45 165 166Zm59 218q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-156t86-127Q252-817 325-848.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 82-31.5 155T763-197.5q-54 54.5-127 86T480-80Z"/></svg>
       <div>Order Placed Successfully!</div>
       <ion-button  fill="outline" size="small" color="dark" (click)="trackOrder()">
         Track order
@@ -94,4 +96,9 @@ PAY NOW
 
   </div>
   </ion-content>
+}
+} @else {
+ <div class="d-flex justify-content-center align-items-center h-100" style="background-color: rgb(255, 255, 255)">
+        <ion-spinner  name="crescent"></ion-spinner>
+      </div>
 }

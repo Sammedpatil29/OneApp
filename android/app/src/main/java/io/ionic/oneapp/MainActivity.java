@@ -1,5 +1,6 @@
 package io.ionic.oneapp;
 
+import com.ionicframework.capacitor.Checkout;
 import com.getcapacitor.BridgeActivity;
 import com.getcapacitor.Plugin;
 import com.cashfree.capacitor.CFBridge;

@@ -9,7 +9,9 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "deploy": "ionic build && npx cap run android --target 65PJQ8SCOJRCS8EI",
+    "sync": "npx cap sync android && ionic build && npx cap run android --target 65PJQ8SCOJRCS8EI"
   },
   "private": true,
   "dependencies": {
@@ -46,6 +48,7 @@
     "capacitor-razorpay": "github:razorpay/razorpay-capacitor",
     "cashfree-pg-capacitor": "^1.0.2",
     "cashfree-pg-sdk-javascript": "^2.0.8",
+    "com.razorpay.cordova": "github:razorpay/razorpay-cordova",
     "firebase": "^12.1.0",
     "html2canvas": "^1.4.1",
     "ionicons": "^7.0.0",

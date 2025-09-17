@@ -5,48 +5,65 @@
         <ion-icon name="arrow-back"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>Track order</ion-title>
+    <ion-title>Order Details</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding" [fullscreen]="true">
-    <section class="mx-2">
-      <div class="d-flex justify-content-center">
-        <ion-button shape="round" color="dark" (click)="shareTicket()">
+<ion-content [fullscreen]="true">
+  <div class="d-flex justify-content-center py-4 text-white fw-5" style="background-color: green; padding-bottom: 67px !important">
+        <!-- <ion-button shape="round" color="dark" (click)="shareTicket()">
   <ion-icon slot="icon-only" name="share"></ion-icon>
 </ion-button>
       <ion-button shape="round" color="dark" (click)="openInGoogleMaps()">
   <ion-icon slot="icon-only" name="location"></ion-icon>
-</ion-button>
+</ion-button> -->
+  <h3>Ticket Confirmed!</h3>
       </div>
-      <ion-card class="container d-flex justify-content-center" class="">
+    <section class="mx-3">
+      
+      <ion-card class="container d-flex justify-content-center" style="margin-top: -57px;">
     <div class="ticket shadow p-4">
-      <img class="mb-3" style="border-radius: 20px; height: 200px; width: 100%" [src]="eventDetails.imageUrl" alt="">
+      <!-- <img class="mb-3" style="border-radius: 20px; height: 200px; width: 100%" [src]="eventDetails.imageUrl" alt=""> -->
       <div id="ticket-card">
         <div class="ticket-header d-flex justify-content-between align-items-center">
         <div>
           <h4 class="fw-bold mb-0">{{orderDetails.title}}</h4>
           <small class="text-secondary">Entry Ticket</small>
         </div>
-        <img style="border-radius: 50%" src="../../../assets/icons/icon-48.webp" alt="Logo" height="50" />
+        <div>
+         <img style="border-radius: 50%; margin-right: -15px; width: 50px" [src]="eventDetails.imageUrl" alt="Logo" height="50" />
+         <img style="border-radius: 50%" src="../../../assets/icons/icon-48.webp" alt="Logo" height="50" />
+        </div>
       </div>
 
       <hr>
 
       <div class="mb-3">
+        <strong class="text-center">Guest Details</strong><br>
         <strong>Guest Name:</strong> <span class="ms-2">{{moreDetails.customerName}}</span><br>
-        <strong>Ticket ID:</strong> <span class="ms-2">{{orderDetails.id}}</span><br>
-        <strong>Count:</strong> <span class="ms-2">{{moreDetails.ticketCount}} Nos.</span>
+        <div class="d-flex justify-content-between">
+        <strong>Ticket ID:</strong> <span class="ms-2">{{moreDetails.ticket_id}}</span><br>
+        <span class="ms-2 p-1 ticketCount">{{moreDetails.ticketCount}} Nos.</span>
+        </div>
       </div>
 
       <div class="mb-3">
+        <div>
+          <strong class="text-center">Event Details</strong>
+        </div><br>
         <strong>Date:</strong> <span class="ms-2">{{eventDetails.date | date: 'dd/MM/yyyy'}}</span><br>
-        <strong>Time:</strong> <span class="ms-2">{{eventDetails.time}}</span><br>
-        <strong>Duration:</strong> <span class="ms-2">{{eventDetails.duration}}</span><br>
+        <div class="d-flex justify-content-between">
+        <div><strong>Time:</strong> <span class="ms-2">{{eventDetails.time}}</span>
+</div>
+<div><strong>Duration:</strong> <span class="ms-2">{{eventDetails.duration}}</span>
+</div>
+        </div> <br>
         <strong>Location:</strong> <span class="ms-2">{{eventDetails.location.name}}</span>
       </div>
 
       <hr>
+
+      <strong class="text-center">Price Breakup</strong> <br>
       <div class="d-flex justify-content-between">
         <small>Total Amount</small>
         <small>&#8377; {{moreDetails.finalCost}}</small>
@@ -74,17 +91,5 @@
     </div>
   </ion-card>
     </section>
-
-    <!-- <div class="d-flex justify-content-center">
-      <ion-button (click)="openInGoogleMaps()" class="mt-2 w-75 text-cenetr" fill="outline" color="dark">
-      location <i class="bi bi-geo-alt"></i>
-    </ion-button>
-    </div>
-
-    <ion-button expand="block" color="primary" (click)="downloadTicket()">Download</ion-button>
-<ion-button expand="block" color="secondary" (click)="shareTicket()">Share</ion-button>
-<div class="position-fixed" style="top: 0px; z-index: 20">
-  <img src="../../../assets/waves.svg" alt="">
-</div> -->
 </ion-content>
 

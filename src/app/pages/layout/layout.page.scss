@@ -34,3 +34,12 @@
     --bs-spinner-vertical-align: -0.070em;
     --bs-spinner-animation-speed: 0.75s;
 }
+
+::ng-deep .custom-alert .alert-wrapper {
+  width: 90%;
+  max-width: 400px;
+  display: flex !important;
+  justify-content: center !important;
+  border-radius: 20px !important;
+  padding: 10px !important;
+}

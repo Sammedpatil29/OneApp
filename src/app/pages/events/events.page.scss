@@ -43,7 +43,6 @@ ion-img {
 
 ion-button.shadow-button {
   --box-shadow: 2px 2px 8px var(--ion-color, black);
-
 }
 
 .border-date{
@@ -57,6 +56,6 @@ ion-button.shadow-button {
 }
 
 .border-description{
-  border: 1px solid gray;
+  // border: 1px solid gray;
   border-radius: 15px;
 }

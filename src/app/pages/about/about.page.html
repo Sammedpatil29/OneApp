@@ -105,12 +105,12 @@
   >
   </ion-textarea>
 </ion-item>
-<div class="mx-3">
-  <ion-button class="ion-padding w-100" (click)="postSuggestion()" color="dark">Submit
+<div class="mx-4">
+  <button class="w-100 mt-3 button-primary btn btn-dark" (click)="postSuggestion()">Submit
     @if (isLoading) {
         <ion-spinner class="button ms-2"  name="crescent"></ion-spinner>
 }
-  </ion-button>
+  </button>
 </div>
 
   </ion-content>

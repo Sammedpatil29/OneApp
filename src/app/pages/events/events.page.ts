@@ -8,7 +8,9 @@ import { NavController } from '@ionic/angular';
 import { FooterComponent } from "../../components/footer/footer.component";
 import { EventsService } from 'src/app/services/events.service';
 import { AuthService } from 'src/app/services/auth.service';
-
+import { EventDialogComponent } from 'src/app/components/event-dialog/event-dialog.component';
+import { ModalController } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 @Component({
   selector: 'app-events',
   templateUrl: './events.page.html',
@@ -27,7 +29,7 @@ export class EventsPage implements OnInit {
   @ViewChild(IonModal, { static: false }) modal: IonModal | undefined;
 presentingEl: any;
 
-  constructor(private navCtrl: NavController, private eventsService: EventsService, private authService: AuthService) { 
+  constructor(private navCtrl: NavController, private eventsService: EventsService, private authService: AuthService, private modalCtrl: ModalController, private popoverController: PopoverController) { 
           addIcons({arrowBack}); 
   }
 
@@ -104,4 +106,20 @@ this.navCtrl.navigateBack('/layout/example/home')
     })
   }
 
-}
+  async openItemModal(item: any) {
+    document.body.classList.add('modal-open');
+   const modal = await this.modalCtrl.create({
+      component: EventDialogComponent,
+      componentProps: { item },
+      backdropDismiss: true,
+      cssClass: 'bottom-sheet-modal', // Custom class for bottom sheet styling
+    });
+
+    await modal.present();
+
+    const { data, role } = await modal.onDidDismiss();
+    console.log('Modal dismissed:', role, data);
+  }
+  
+  }
+

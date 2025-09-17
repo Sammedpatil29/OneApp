@@ -1,5 +1,18 @@
 <div class="border">
   <ion-tabs>
+    <!-- <div class="orders-list" style="color: whitesmoke">
+      <swiper-container style="background-color: rgb(32 144 4 / 79%); padding: 10px 10px; border-radius: 10px 10px 0px 0px" [slidesPerView]="1" [spaceBetween]="0" [loop]="true"
+   autoplay-delay="5000" autoplay-disable-on-interaction="false">
+    @for (item of orders; track $index) {
+      <swiper-slide (click)="onOrderClick(item.orderId)">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>{{item.orderId}} is out for delivery</div>
+        <img style="transform: rotate(90deg); width: 24px;" src="assets/gif/system-regular-11-arrow-up-hover-arrow-up-1.gif" alt="">
+      </div>
+    </swiper-slide>
+    }
+  </swiper-container>
+    </div> -->
   <ion-tab-bar slot="bottom">
     <ion-tab-button tab="home">
       <ion-icon name="home"></ion-icon>

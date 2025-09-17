@@ -1,7 +1,7 @@
 import { Component, numberAttribute, OnInit, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonCardSubtitle, IonInput, IonItem } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonCardSubtitle, IonInput, IonItem, IonSpinner } from '@ionic/angular/standalone';
 import { NavController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { arrowBack } from 'ionicons/icons';
@@ -14,31 +14,31 @@ import { Platform } from '@ionic/angular';
 // import { RazorpayCheckout } from 'capacitor-razorpay';
 import { registerPlugin } from '@capacitor/core';
 
-const RazorpayCheckout = registerPlugin<any>('RazorpayCheckout');
+// const RazorpayCheckout = registerPlugin<any>('RazorpayCheckout');
 declare var Razorpay: any;
-// declare var RazorpayCheckout: any;
+declare var RazorpayCheckout: any;
 
-declare module 'capacitor-razorpay' {
-  export interface RazorpayOptions {
-    key: string;
-    amount: number;
-    currency: string;
-    name: string;
-    description?: string;
-    prefill?: {
-      email?: string;
-      contact?: string;
-      name?: string;
-    };
-    theme?: {
-      color?: string;
-    };
-  }
+// declare module 'capacitor-razorpay' {
+//   export interface RazorpayOptions {
+//     key: string;
+//     amount: number;
+//     currency: string;
+//     name: string;
+//     description?: string;
+//     prefill?: {
+//       email?: string;
+//       contact?: string;
+//       name?: string;
+//     };
+//     theme?: {
+//       color?: string;
+//     };
+//   }
 
-  export interface RazorpayCheckoutPlugin {
-    open(options: RazorpayOptions): Promise<any>;
-  }
-}
+//   export interface RazorpayCheckoutPlugin {
+//     open(options: RazorpayOptions): Promise<any>;
+//   }
+// }
 
 
 @Component({
@@ -46,7 +46,7 @@ declare module 'capacitor-razorpay' {
   templateUrl: './order-details.page.html',
   styleUrls: ['./order-details.page.scss'],
   standalone: true,
-  imports: [IonItem, IonInput, IonCardSubtitle, IonIcon, IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonSpinner, IonItem, IonInput, IonCardSubtitle, IonIcon, IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
 export class OrderDetailsPage implements OnInit {
   ticketCount = 1
@@ -122,6 +122,8 @@ export class OrderDetailsPage implements OnInit {
   placedOrderDetails: any
 
 createOrder() {
+  let custLocation = localStorage.getItem('location')
+  let order_id = `ORD${Date.now().toString()}-${1000 + Math.floor(Math.random() * 9999)}`
   let details = {
     "ticketCount": this.ticketCount,
     "charges": this.charges,
@@ -131,7 +133,10 @@ createOrder() {
     "mobileNumber": this.mobileNumber,
     "email": this.email,
     "eventId": this.order.data.id,
-    "eventDetails": this.order
+    "eventDetails": this.order,
+    "orderId": order_id,
+    "custLocation": custLocation,
+    "type":'nonDelivery'
   };
 
   let params = {
@@ -142,20 +147,23 @@ createOrder() {
     status: 'pending',
     details: JSON.stringify(details),
   };
-
+this.isLoading = true
   this.eventService.createOrder(params).subscribe(async (res:any) => {
     this.placedOrderDetails = res;
+    const orderDetails = JSON.parse(this.placedOrderDetails.details)
     this.isOrderPlaced = true;
-
+    this.isLoading = false
+    const uniqueId = Math.floor(Math.random()*99)
     // ✅ Send local notification
     await LocalNotifications.schedule({
       notifications: [
         {
           title: '🎉 Order Placed Successfully!',
-          body: `Your order for "${this.order.data.title}" is confirmed.`,
-          largeBody: 'This is a longer message that will show when expanded by the user in the notification shade.',
-          id: 1, // Unique ID
+          body: `Your order for "${this.order.data.title}" is confirmed with Order Id ${orderDetails.orderId}`,
+          // largeBody: `Your order for "${this.order.data.title}" is confirmed. `,
+          id: uniqueId, // Unique ID
           schedule: { at: new Date(Date.now() + 500) }, // 1 second delay
+          smallIcon: 'oneapp',
           extra: {
             orderId: res?.id || null
           }
@@ -173,6 +181,8 @@ createOrder() {
         });
       }
     }, 2000);
+  }, error => {
+    this.isLoading = false
   });
 }
 
@@ -197,22 +207,45 @@ isValidEmail(email: string): boolean {
       theme: { color: '#050505ff' }
     };
 
-    // const successCallback = (payment_id: string) => {
-    //   this.ngZone.run(() => {
-    //     console.log('Payment Success:', payment_id);
-    //     alert('Payment successful: ' + payment_id);
-    //     // 👉 send to backend for verification
-    //   });
-    // };
+    try {
+      RazorpayCheckout.open(
+        options,
+        async (paymentData: any) => {
+          console.log('Payment Success:', paymentData);
+          console.log('Payment Successful!', JSON.stringify(paymentData));
+          // 👉 send paymentData.razorpay_payment_id to your server for verification
+        },
+        async (error: any) => {
+          console.error('Payment Failed:', error);
+          console.log('Payment Failed', JSON.stringify(error));
+        }
+      );
+    } catch (err) {
+      console.error('Unexpected Error:', err);
+    }
 
-    // const cancelCallback = (error: any) => {
-    //   this.ngZone.run(() => {
-    //     console.error('Payment Failed:', error);
-    //     alert('Payment failed: ' + JSON.stringify(error));
-    //   });
-    // };
+  //   const successCallback = (payment_id: string) => {
+  //     this.ngZone.run(() => {
+  //       console.log('Payment Success:', payment_id);
+  //       alert('Payment successful: ' + payment_id);
+  //     });
+  //   };
 
-    // RazorpayCheckout.open(options, successCallback, cancelCallback);
+  //   const cancelCallback = (error: any) => {
+  //     this.ngZone.run(() => {
+  //       console.error('Payment Failed:', error);
+  //       alert('Payment failed: ' + JSON.stringify(error));
+  //     });
+  //   };
+
+  //   document.addEventListener('deviceready', () => {
+  //   if ((window as any).RazorpayCheckout) {
+  //     console.log('Opening Razorpay...');
+  //     (window as any).RazorpayCheckout.open(options, successCallback, cancelCallback);
+  //   } else {
+  //     alert('RazorpayCheckout plugin not found');
+  //   }
+  // });
 
 //     document.addEventListener('deviceready', () => {
 //   (window as any).RazorpayCheckout.open(options,
@@ -221,19 +254,19 @@ isValidEmail(email: string): boolean {
 //   );
 // });
 
-if ((window as any).RazorpayCheckout) {
-    (window as any).RazorpayCheckout.open(
-      options,
-      (success: any) => {
-        alert('Payment Success: ' + JSON.stringify(success));
-      },
-      (error: any) => {
-        alert('Payment Failed: ' + JSON.stringify(error));
-      }
-    );
-  } else {
-    alert('RazorpayCheckout not found');
-  }
+// if ((window as any).RazorpayCheckout) {
+//     (window as any).RazorpayCheckout.open(
+//       options,
+//       (success: any) => {
+//         alert('Payment Success: ' + JSON.stringify(success));
+//       },
+//       (error: any) => {
+//         alert('Payment Failed: ' + JSON.stringify(error));
+//       }
+//     );
+//   } else {
+//     alert('RazorpayCheckout not found');
+//   }
 
     // (window as any).RazorpayCheckout.open(
     //   options,
@@ -275,6 +308,53 @@ this.navCtrl.back()
       alert('✅ Payment Success: ' + JSON.stringify(result));
     } catch (err) {
       alert('❌ Payment Failed: ' + JSON.stringify(err));
+    }
+  }
+
+  async payWithRazorpay() {
+    if(this.finalCost == 0){
+        this.createOrder()
+    } else {
+      this.isLoading = true
+    const options: any = {
+      key: 'rzp_test_mumd7Md1QvW8oy', // Replace with your Razorpay Key ID
+      amount: 100, 
+      currency: 'INR',
+      name: 'OneApp Events',
+      description: 'Test Transaction',
+      image: 'https://your-logo.com/logo.png',
+      prefill: {
+        name: 'Sammed',
+        email: 'test@example.com',
+        contact: '8578477474',
+      },
+      theme: {
+        color: '#0f0f0fff',
+      },
+      handler: async (response: any) => {
+        console.log('Payment Success', response);
+        console.log('Payment Successful', JSON.stringify(response));
+        this.isLoading = false
+        this.createOrder()
+        // 👉 Send response.razorpay_payment_id to backend for verification
+      },
+      modal: {
+        ondismiss: async () => {
+          this.isLoading = false
+          console.log('Payment Cancelled', 'User closed the payment window.');
+        }
+      }
+    };
+
+    const rzp = new Razorpay(options);
+
+    rzp.on('payment.failed', async (response: any) => {
+      this.isLoading = false
+      console.error('Payment Failed', response.error);
+      console.log('Payment Failed', JSON.stringify(response.error));
+    });
+
+    rzp.open();
     }
   }
 }
