@@ -113,17 +113,25 @@ box-shadow: none !important;
 }
 
 .bottom-sheet-modal {
-  --border-radius: 20px 20px 0 0;
+  --border-radius: 16px 16px 0 0;
+  // --height: auto;
+  // align-items: flex-end; // 👈 THIS is critical for bottom-sheet appearance
+  // display: flex;
+  .modal-wrapper {
+    background: #fff !important; /* fallback white */
+    padding: 16px;
+    width: 100%;
+  }
 }
 
-.bottom-sheet-modal .modal-wrapper {
-  --height: auto;
-}
+// .bottom-sheet-modal .modal-wrapper {
+//   --height: auto;
+// }
 
-.ion-color-dark {
-    --ion-color-base: radial-gradient(circle,rgba(50, 224, 47, 0.38) 0%, rgba(28, 17, 17, 0.83) 0%, rgba(13, 2, 15, 1) 100%) !important;
+// .ion-color-dark {
+//     --ion-color-base: radial-gradient(circle,rgba(50, 224, 47, 0.38) 0%, rgba(28, 17, 17, 0.83) 0%, rgba(13, 2, 15, 1) 100%) !important;
     
-}
+// }
 
 ion-button.shadow-button {
   --box-shadow: none;

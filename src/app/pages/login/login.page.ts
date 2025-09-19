@@ -207,11 +207,11 @@ export class LoginPage implements OnInit {
       });
 
       console.log('✅ OTP verification successful!', result);
-      this.isToastOpen = true;
-      this.toastMessage = `✅ OTP verification successful!`;
-      setTimeout(() => {
-        this.isToastOpen = false;
-      }, 3000);
+      // this.isToastOpen = true;
+      // this.toastMessage = `✅ OTP verification successful!`;
+      // setTimeout(() => {
+      //   this.isToastOpen = false;
+      // }, 3000);
       this.isLoading = false;
       this.otpVerificationMessage = '';
       this.checkUser(); // Proceed to your login/registration logic

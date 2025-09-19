@@ -60,6 +60,7 @@ export class OrderDetailsPage implements OnInit {
   mobileNumber = ''
   email = ''
   token: any
+  refOrderId = ''
 
   constructor(private navCtrl: NavController, private platform: Platform, private authService: AuthService, private router: Router, private eventService: EventsService, private ngZone: NgZone) {
     addIcons({arrowBack});
@@ -114,7 +115,8 @@ export class OrderDetailsPage implements OnInit {
     this.isNavigated = true
       this.navCtrl.navigateRoot('/layout/track-order', {
             state: {
-              orderDetails: this.placedOrderDetails
+              orderDetails: this.placedOrderDetails,
+              from: 'order-details'
             }
           });
   }
@@ -124,6 +126,7 @@ export class OrderDetailsPage implements OnInit {
 createOrder() {
   let custLocation = localStorage.getItem('location')
   let order_id = `ORD${Date.now().toString()}-${1000 + Math.floor(Math.random() * 9999)}`
+  this.refOrderId = order_id
   let details = {
     "ticketCount": this.ticketCount,
     "charges": this.charges,
@@ -176,11 +179,12 @@ this.isLoading = true
       if (!this.isNavigated) {
         this.navCtrl.navigateRoot('/layout/track-order', {
           state: {
-            orderDetails: res
+            orderDetails: res,
+            from: 'order-details'
           }
         });
       }
-    }, 2000);
+    }, 3000);
   }, error => {
     this.isLoading = false
   });

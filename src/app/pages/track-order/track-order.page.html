@@ -11,20 +11,15 @@
 
 <ion-content [fullscreen]="true">
   <div class="d-flex justify-content-center py-4 text-white fw-5" style="background-color: green; padding-bottom: 67px !important">
-        <!-- <ion-button shape="round" color="dark" (click)="shareTicket()">
-  <ion-icon slot="icon-only" name="share"></ion-icon>
-</ion-button>
-      <ion-button shape="round" color="dark" (click)="openInGoogleMaps()">
-  <ion-icon slot="icon-only" name="location"></ion-icon>
-</ion-button> -->
   <h3>Ticket Confirmed!</h3>
       </div>
     <section class="mx-3">
       
-      <ion-card class="container d-flex justify-content-center" style="margin-top: -57px;">
+      <div class="" style="background-color: rgb(210 225 227 / 40%); border-radius: 16px">
+        <ion-card id="ticket-card" class="container d-flex justify-content-center" style="margin-top: -57px;">
     <div class="ticket shadow p-4">
       <!-- <img class="mb-3" style="border-radius: 20px; height: 200px; width: 100%" [src]="eventDetails.imageUrl" alt=""> -->
-      <div id="ticket-card">
+      <div >
         <div class="ticket-header d-flex justify-content-between align-items-center">
         <div>
           <h4 class="fw-bold mb-0">{{orderDetails.title}}</h4>
@@ -39,47 +34,44 @@
       <hr>
 
       <div class="mb-3">
-        <strong class="text-center">Guest Details</strong><br>
         <strong>Guest Name:</strong> <span class="ms-2">{{moreDetails.customerName}}</span><br>
         <div class="d-flex justify-content-between">
-        <strong>Ticket ID:</strong> <span class="ms-2">{{moreDetails.ticket_id}}</span><br>
+        <strong>Ticket ID:</strong> <span class="ms-1">{{moreDetails.orderId}}</span><br>
         <span class="ms-2 p-1 ticketCount">{{moreDetails.ticketCount}} Nos.</span>
         </div>
       </div>
 
       <div class="mb-3">
-        <div>
-          <strong class="text-center">Event Details</strong>
-        </div><br>
-        <strong>Date:</strong> <span class="ms-2">{{eventDetails.date | date: 'dd/MM/yyyy'}}</span><br>
         <div class="d-flex justify-content-between">
-        <div><strong>Time:</strong> <span class="ms-2">{{eventDetails.time}}</span>
-</div>
-<div><strong>Duration:</strong> <span class="ms-2">{{eventDetails.duration}}</span>
-</div>
-        </div> <br>
-        <strong>Location:</strong> <span class="ms-2">{{eventDetails.location.name}}</span>
+          <span><strong>Date:</strong> <span class="ms-2">{{eventDetails.date | date: 'dd/MM/yyyy'}}</span></span>
+        <span><strong>Time:</strong> <span class="ms-2">{{eventDetails.time}}</span></span>
+        <span><strong>Duration:</strong> <span class="ms-2">{{eventDetails.duration}}</span></span>
+        </div>
+        <strong>Location:</strong> <span class="ms-2">{{eventDetails.location.location}}</span>
       </div>
 
       <hr>
-
-      <strong class="text-center">Price Breakup</strong> <br>
-      <div class="d-flex justify-content-between">
-        <small>Total Amount</small>
-        <small>&#8377; {{moreDetails.finalCost}}</small>
+      <div class="w-100 d-flex justify-content-center">
+          <img [src]="qrUrl">
       </div>
+      <hr>
       <span class="text-secondary">
         <div class="d-flex justify-content-between">
         <small>Ticket Price x {{moreDetails.ticketCount}}</small> 
         <small>&#8377; {{moreDetails.totalPrice}}</small>
       </div>
       <div class="d-flex justify-content-between">
-        <small>Charges (7%)</small>
+        <small>Charges</small>
         <small>&#8377; {{moreDetails.charges | number:'1.2-2'}}</small>
       </div>
       <div class="d-flex justify-content-between">
         <small>Discount</small>
         <small>- &#8377; 0</small>
+      </div>
+      <hr class="p-0 m-1" style="border-top: 1px dashed;">
+      <div class="d-flex justify-content-between">
+        <small>Total</small>
+        <small>&#8377; {{moreDetails.finalCost}}</small>
       </div>
       </span>
       <hr>
@@ -90,6 +82,37 @@
       </div>
     </div>
   </ion-card>
+  <div class="d-flex pb-2 pe-3 gap-3 justify-content-end" [hidden]="isSharing">
+    <svg xmlns="http://www.w3.org/2000/svg" (click)="shareTicket()" height="20px" viewBox="0 -960 960 960" width="20px" fill="#000000"><path d="M672.22-100q-44.91 0-76.26-31.41-31.34-31.41-31.34-76.28 0-6 4.15-29.16L284.31-404.31q-14.46 15-34.36 23.5t-42.64 8.5q-44.71 0-76.01-31.54Q100-435.39 100-480q0-44.61 31.3-76.15 31.3-31.54 76.01-31.54 22.74 0 42.64 8.5 19.9 8.5 34.36 23.5l284.46-167.08q-2.38-7.38-3.27-14.46-.88-7.08-.88-15.08 0-44.87 31.43-76.28Q627.49-860 672.4-860t76.25 31.44Q780-797.13 780-752.22q0 44.91-31.41 76.26-31.41 31.34-76.28 31.34-22.85 0-42.5-8.69Q610.15-662 595.69-677L311.23-509.54q2.38 7.39 3.27 14.46.88 7.08.88 15.08t-.88 15.08q-.89 7.07-3.27 14.46L595.69-283q14.46-15 34.12-23.69 19.65-8.69 42.5-8.69 44.87 0 76.28 31.43Q780-252.51 780-207.6t-31.44 76.25Q717.13-100 672.22-100Zm.09-60q20.27 0 33.98-13.71Q720-187.42 720-207.69q0-20.27-13.71-33.98-13.71-13.72-33.98-13.72-20.27 0-33.98 13.72-13.72 13.71-13.72 33.98 0 20.27 13.72 33.98Q652.04-160 672.31-160Zm-465-272.31q20.43 0 34.25-13.71 13.83-13.71 13.83-33.98 0-20.27-13.83-33.98-13.82-13.71-34.25-13.71-20.11 0-33.71 13.71Q160-500.27 160-480q0 20.27 13.6 33.98 13.6 13.71 33.71 13.71Zm465-272.3q20.27 0 33.98-13.72Q720-732.04 720-752.31q0-20.27-13.71-33.98Q692.58-800 672.31-800q-20.27 0-33.98 13.71-13.72 13.71-13.72 33.98 0 20.27 13.72 33.98 13.71 13.72 33.98 13.72Zm0 496.92ZM207.69-480Zm464.62-272.31Z"/></svg>
+    <svg style="transform: rotate(45deg)" (click)="openInGoogleMaps()" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#000000"><path d="M330.15-296.16 480-364.15l149.85 67.99 10.38-10.38L480-693.84l-160.23 387.3 10.38 10.38ZM480.07-100q-78.84 0-148.21-29.92t-120.68-81.21q-51.31-51.29-81.25-120.63Q100-401.1 100-479.93q0-78.84 29.92-148.21t81.21-120.68q51.29-51.31 120.63-81.25Q401.1-860 479.93-860q78.84 0 148.21 29.92t120.68 81.21q51.31 51.29 81.25 120.63Q860-558.9 860-480.07q0 78.84-29.92 148.21t-81.21 120.68q-51.29 51.31-120.63 81.25Q558.9-100 480.07-100Zm-.07-60q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" (click)="downloadTicket()" height="20px" viewBox="0 -960 960 960" width="20px" fill="#000000"><path d="M180-100v-60h600v60H180Zm299.62-155.39L227.31-584.23h145.38V-860h214.23v275.77h145.39L479.62-255.39Zm0-97.69 129.46-170.77h-82.16V-800h-94.23v276.15h-82.15l129.08 170.77Zm.38-170.77Z"/></svg>
+  </div>
+  <!-- <div class="d-flex pb-2 pe-3 gap-3 justify-content-end">
+      <ion-spinner class="button ms-2" style="width: 12px !important; height: 19px"  name="crescent"></ion-spinner>
+  </div> -->
+      </div>
+
+      <div id="ad-container" style="text-align: center;"></div>
+      <div class="mt-2" style="height: 100px; border-radius: 15px; background-color: blue">
+          <div id="ad-container1" style="text-align: center;">
+    <ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-3940256099942544"
+     data-ad-slot="6300978111"
+     data-ad-format="auto"></ins>
+  </div>
+  <script>
+  (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+      </div>
+      
     </section>
+
+    <ion-toast
+    [isOpen]="isToastOpen"
+    [message]="toastMessage"
+    [duration]="3000"
+  ></ion-toast>
+
 </ion-content>
 
