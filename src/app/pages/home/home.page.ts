@@ -70,15 +70,9 @@ fileUrl = ''
 
 token:any = ''
 profileData:any = ''
+activeOrderDetails: any;
 
-orders: any = [
-    {
-      orderId: '37364643764'
-    },
-    {
-      orderId: '78374'
-    }
-  ] 
+orders: any = [] 
 
   constructor(private router: Router,private authService: AuthService, private registarFcm: RegisterFcmService, private locationService: LocationService,private profileService: ProfileService, private platform: Platform, private location: Location, private navCtrl: NavController, private commonService: CommonService) {
     addIcons({arrowBack,home,buildOutline,receiptOutline,personCircleOutline,briefcaseOutline,constructOutline,library,personCircle,person,search,bag,cube,radio,playCircle});
@@ -127,8 +121,30 @@ orders: any = [
       }
       this.profileService.updateAddress(params, this.profileData.id).subscribe((res)=>{
       console.log('fcm token sent successfully')
-        
     })
+    })
+
+    this.token = await this.authService.getToken().then((res:any)=> {
+      console.log(res)
+        this.token = res
+        let params = {
+        "token": this.token
+      }
+      this.commonService.getActiveOrders(params).subscribe((res)=>{
+    this.orders = res
+    this.activeOrderDetails = []
+    this.orders.forEach((item:any)=> {
+        let Json = {}
+        let details = JSON.parse(item.details)
+        Json = {
+          "orderId": details.orderId,
+          "status": item.status
+        }
+        this.activeOrderDetails.push(Json)
+    })
+    console.log(this.activeOrderDetails)
+    console.log(this.orders)
+  })
     })
 
     setTimeout(()=>{
@@ -275,5 +291,20 @@ navigateFromSlide(route:any){
 
 closeFlashOffer(){
   this.isFlashOfferVisible = false;
+}
+
+goToOrderDetails(orderId:any){
+  let orderDetails;
+  this.orders.forEach((item:any)=>{
+    let details = JSON.parse(item.details)
+    if(details.orderId == orderId){
+      orderDetails = item
+    }
+  })
+  this.navCtrl.navigateRoot('/layout/track-order', {
+            state: {
+              orderDetails: orderDetails
+            }
+          });
 }
 }

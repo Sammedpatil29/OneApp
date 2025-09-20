@@ -113,14 +113,17 @@ box-shadow: none !important;
 }
 
 .bottom-sheet-modal {
+  display: flex !important;
+  align-items: flex-end !important;
+  --height: auto;
   --border-radius: 16px 16px 0 0;
-  // --height: auto;
-  // align-items: flex-end; // 👈 THIS is critical for bottom-sheet appearance
-  // display: flex;
+
   .modal-wrapper {
-    background: #fff !important; /* fallback white */
+    background: #fff;
     padding: 16px;
-    width: 100%;
+    border-radius: 16px 16px 0 0;
+    max-height: 20vh;
+    overflow-y: auto;
   }
 }
 

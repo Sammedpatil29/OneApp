@@ -85,9 +85,9 @@ faqs: any = [
   const modal = await this.modalCtrl.create({
     component: CustonModalComponent,
     componentProps: { item },
-    breakpoints: [0, 1],
-    initialBreakpoint: 0.5,
-    backdropDismiss: true, 
+    // breakpoints: [0, 1],
+    // initialBreakpoint: 0.5,
+    backdropDismiss: true,
     cssClass: 'bottom-sheet-modal'
   });
 

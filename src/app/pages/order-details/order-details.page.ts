@@ -147,7 +147,7 @@ createOrder() {
     type: 'event',
     title: this.order.data.title,
     created_at: Date(),
-    status: 'pending',
+    status: 'active',
     details: JSON.stringify(details),
   };
 this.isLoading = true

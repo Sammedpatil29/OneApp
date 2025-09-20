@@ -1,4 +1,4 @@
-<ion-content>
+<ion-content [fullscreen]="true">
   @if(!isLoading){
   <ion-header>
     <ion-toolbar class="container pt-4 pb-2">
@@ -97,6 +97,11 @@
 } -->
 
   @if(!isBannerLoading){ @if (slides.length != 0) {
+
+    <div class="h-25 magicpattern d-flex align-items-center justify-content-center" style="border-radius: 0px 0px 15px 15px">
+          <div class="text-large text-white fw-1200 fs-1">Get Offers</div>
+    </div>
+
   <swiper-container [slidesPerView]="1" [spaceBetween]="0" [loop]="true" autoplay-delay="2500"
     autoplay-disable-on-interaction="false">
     @for (item of slides; track $index) {
@@ -309,21 +314,32 @@
   </div>
   }
 
-  <div class="orders-list position-fixed bottom-0 w-100" style="color: whitesmoke">
-    <swiper-container style="
+ 
+    <div class="orders-list position-fixed bottom-0 w-100" style="color: whitesmoke">
+     @if(orders.length != 0){
+      <swiper-container style="
         background-color: rgb(32, 144, 4);
         padding: 10px 10px;
         border-radius: 10px 10px 0px 0px;
       " [slidesPerView]="1" [spaceBetween]="0" [loop]="true" autoplay-delay="5000" pagination="true"
       autoplay-disable-on-interaction="false">
-      @for (item of orders; track $index) {
-      <swiper-slide>
-        <div class="d-flex align-items-center justify-content-between">
-          <div>{{item.orderId}} is out for delivery</div>
-          <!-- <img style="transform: rotate(90deg); width: 24px;" src="assets/gif/system-regular-11-arrow-up-hover-arrow-up-1.gif" alt=""> -->
+      @for (item of activeOrderDetails; track $index) {
+      <swiper-slide (click)="goToOrderDetails(item.orderId)">
+        <div class="row" style="padding-right: 0px !important">
+          <div class="col-2 d-flex align-items-center justify-content-center">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M438-226 296-368l58-58 84 84 168-168 58 58-226 226ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Z"/></svg>
+          </div>
+          <div class="col-10">
+            <div>@if(item.status == 'active'){
+            You have an upcoming event!
+          }</div>
+            <small>{{item.orderId}}</small>
+          </div>
         </div>
       </swiper-slide>
       }
     </swiper-container>
+    }
   </div>
+  
 </ion-content>

@@ -1,5 +1,5 @@
-<ion-content>
-  <div class="p-4 body h-100">
+
+  <div class="p-4 body h-100 position-relative" style="min-height: 100px;">
     <h6 class="text-center"><b>Ticket details</b></h6>
     <div>
       <b [ngClass]="item.status == 'Open'? 'text-success': 'text-danger'">{{item.status}}</b> &bull; {{item.ticket_id}} &bull; <small>{{item.created_at | date: 'short'}}</small>
@@ -38,4 +38,10 @@
   }
 
   </div>
-</ion-content>
+
+  <div class="position-absolute" style="top: 10px; right: 10px; position: absolute;" (click)="closeBottomSheet()">
+    <button style="background-color: transparent;">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#D9D9D9"><path d="m336-280 144-144 144 144 56-56-144-144 144-144-56-56-144 144-144-144-56 56 144 144-144 144 56 56ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>
+    </button>
+  </div>
+

@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { IonContent, IonTitle } from "@ionic/angular/standalone";
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'app-custon-modal',
@@ -11,8 +12,12 @@ import { FormsModule } from '@angular/forms';
 })
 export class CustonModalComponent  implements OnInit {
   @Input() item: any;
-  constructor() { }
+  constructor(private modalCtrl: ModalController) { }
 
   ngOnInit() {}
+
+  closeBottomSheet(){
+      this.modalCtrl.dismiss()
+  }
 
 }
