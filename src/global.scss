@@ -202,3 +202,7 @@ swiper-container::part(bullet-active) {
   opacity: 1;
 }
 
+.searchbar-input.sc-ion-searchbar-md {
+  --border-radius: 10px !important;
+}
+

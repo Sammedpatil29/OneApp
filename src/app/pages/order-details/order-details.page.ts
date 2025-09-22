@@ -61,6 +61,7 @@ export class OrderDetailsPage implements OnInit {
   email = ''
   token: any
   refOrderId = ''
+  transactionId = ''
 
   constructor(private navCtrl: NavController, private platform: Platform, private authService: AuthService, private router: Router, private eventService: EventsService, private ngZone: NgZone) {
     addIcons({arrowBack});
@@ -139,7 +140,8 @@ createOrder() {
     "eventDetails": this.order,
     "orderId": order_id,
     "custLocation": custLocation,
-    "type":'nonDelivery'
+    "type":'nonDelivery',
+    "transactionId": this.transactionId
   };
 
   let params = {
@@ -322,15 +324,15 @@ this.navCtrl.back()
       this.isLoading = true
     const options: any = {
       key: 'rzp_test_mumd7Md1QvW8oy', // Replace with your Razorpay Key ID
-      amount: 100, 
+      amount: this.finalCost * 100, 
       currency: 'INR',
       name: 'OneApp Events',
       description: 'Test Transaction',
       image: 'https://your-logo.com/logo.png',
       prefill: {
-        name: 'Sammed',
-        email: 'test@example.com',
-        contact: '8578477474',
+        name: this.customerName,
+        email: this.email,
+        contact: this.mobileNumber,
       },
       theme: {
         color: '#0f0f0fff',
@@ -338,6 +340,7 @@ this.navCtrl.back()
       handler: async (response: any) => {
         console.log('Payment Success', response);
         console.log('Payment Successful', JSON.stringify(response));
+        this.transactionId = response.razorpay_payment_id
         this.isLoading = false
         this.createOrder()
         // 👉 Send response.razorpay_payment_id to backend for verification

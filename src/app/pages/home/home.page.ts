@@ -30,6 +30,9 @@ import { RegisterFcmService } from 'src/app/services/register-fcm.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { CustonModalComponent } from 'src/app/components/custon-modal/custon-modal.component';
 import { BottomsheetMessageComponent } from 'src/app/components/bottomsheet-message/bottomsheet-message.component';
+import { EventsService } from 'src/app/services/events.service';
+import { GroceryService } from 'src/app/services/grocery.service';
+import { forkJoin } from 'rxjs';
 
 register();
 
@@ -43,6 +46,8 @@ register();
   imports: [IonRefresherContent, IonRefresher, IonGrid, IonRow, IonCol, IonSpinner, IonButton, IonButtons, IonModal, IonContent, CommonModule, FormsModule, IonContent, IonIcon, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, FooterComponent, IonTitle, IonToolbar, IonHeader, AddressComponent, RouterLink]
 })
 export class HomePage implements OnInit {
+  headerBg = 'rgba(255, 255, 255, 0)';
+
   isModalOpen = false;
   backButtonSubscription: any;
   city: any = ''
@@ -54,6 +59,7 @@ export class HomePage implements OnInit {
   groupedData: { [key: string]: any[] } = {};
   isLoading: boolean = false
   isServiceLoading: boolean = false
+  isSpecialDataLoading: boolean = false
   isBannerLoading: boolean = false
   isLocationLoading: boolean = false
   isFlashOfferVisible: boolean = false
@@ -67,17 +73,18 @@ export class HomePage implements OnInit {
   latestVersion = '';
 fileName = ''
 fileUrl = ''
-
+events: any;
 token:any = ''
 profileData:any = ''
 activeOrderDetails: any;
+groceryList:any;
+availableServices: any = []
 
 orders: any = [] 
 
-  constructor(private router: Router,private authService: AuthService, private registarFcm: RegisterFcmService, private locationService: LocationService,private profileService: ProfileService, private platform: Platform, private location: Location, private navCtrl: NavController, private commonService: CommonService) {
+  constructor(private router: Router,private authService: AuthService, private groceryService: GroceryService, private registarFcm: RegisterFcmService, private locationService: LocationService,private profileService: ProfileService, private platform: Platform, private location: Location, private navCtrl: NavController, private commonService: CommonService, private eventService: EventsService) {
     addIcons({arrowBack,home,buildOutline,receiptOutline,personCircleOutline,briefcaseOutline,constructOutline,library,personCircle,person,search,bag,cube,radio,playCircle});
-  this.getServicesData()
-  this.getMetaData()
+  this.initialData()
   }
 
   slides: any = []
@@ -147,6 +154,8 @@ orders: any = []
   })
     })
 
+   this.loadData()
+
     setTimeout(()=>{
       this.isFlashOfferVisible = false
     }, 2000)
@@ -191,6 +200,29 @@ const version = await this.profileService.getAppVersion()
       // }
     })
   }
+
+  initialData(){
+    this.isLoading = true
+    this.isServiceLoading = true
+      forkJoin({
+        allServices: this.locationService.getData(),
+        metaData: this.commonService.getMetaData()
+      }).subscribe((res:any)=> {
+        this.allServices = res.allServices
+        this.metaData = res.metaData
+        this.groupedData = this.groupByCategory(this.allServices);
+        this.checkServices()
+          console.log(this.groupedData)
+          this.isLoading = false
+          this.isServiceLoading = false
+      this.latestVersion = this.metaData[2].latest_version
+      this.fileName = `OneApp-${this.latestVersion}`
+      this.fileUrl = this.metaData[2].download_link
+      }, error => {
+        this.isServiceLoading = false
+        this.isLoading = false
+      })
+    }
 
   compareVersions(versionA: string, versionB: string): number {
     const aParts = versionA.trim().split('.').map(Number);
@@ -251,6 +283,8 @@ const version = await this.profileService.getAppVersion()
       })
     }
 
+    
+
     groupByCategory(data: any[]) {
   return data.reduce((acc, item) => {
     const category = item.category;
@@ -307,4 +341,79 @@ goToOrderDetails(orderId:any){
             }
           });
 }
+
+onScroll(event: any) {
+    const scrollTop = event.detail.scrollTop;
+    const maxScroll = 150; // point at which it becomes fully white
+
+    // Calculate opacity between 0 and 1
+    let opacity = Math.min(scrollTop / maxScroll, 1);
+
+    this.headerBg = `rgba(255, 255, 255, ${opacity})`;
+  }
+  
+  getEvents(){
+    let params = {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozLCJwaG9uZSI6Iis5MTk1OTE0MjAwNjgiLCJ1c2VyX25hbWUiOiJzYW1tZWQiLCJyb2xlIjoidXNlciIsImlhdCI6MTc0OTQ2MDI4Mn0.tO4XklsZN3Qw4QLHNctoEgW59dk3pOWAeF7qO8Imv8s"
+    }
+      this.eventService.getEvents(params).subscribe((res)=>{
+        this.events = res
+        console.log(this.events)
+      }, error => {
+      })
+  }
+
+  getGroceryList() {
+    let params = {
+      token: this.token,
+    };
+    this.isLoading = true;
+    this.groceryService.getGroceryList(params).subscribe(
+      (res:any) => {
+        this.groceryList = res.slice(0,7);
+      },
+      (error:any) => {
+        this.isLoading = false;
+      }
+    );
+  }
+
+  loadData() {
+  this.isSpecialDataLoading = true;
+  let params = {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozLCJwaG9uZSI6Iis5MTk1OTE0MjAwNjgiLCJ1c2VyX25hbWUiOiJzYW1tZWQiLCJyb2xlIjoidXNlciIsImlhdCI6MTc0OTQ2MDI4Mn0.tO4XklsZN3Qw4QLHNctoEgW59dk3pOWAeF7qO8Imv8s"
+    }
+
+  forkJoin({
+    events: this.eventService.getEvents(params),
+    groceryList: this.groceryService.getGroceryList(params),
+  }).subscribe({
+    next: (res:any) => {
+      this.events = res.events;
+      this.groceryList = res.groceryList.slice(0, 7); // Slice as you did before
+      this.isSpecialDataLoading = false;
+      console.log('Events:', this.events);
+      console.log('Grocery List:', this.groceryList);
+    },
+    error: (err:any) => {
+      console.error('Error loading data:', err);
+      this.isSpecialDataLoading = false;
+    }
+  });
+}
+
+gotoGrocery(){
+  this.navCtrl.navigateForward('/layout/grocery')
+}
+
+gotoEvents(){
+  this.navCtrl.navigateForward('/layout/events')
+}
+
+checkServices(){
+  this.allServices.forEach((item:any)=>{
+    this.availableServices.push(item.title)
+  })
+}
+
 }

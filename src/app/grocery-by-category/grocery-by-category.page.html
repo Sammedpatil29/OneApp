@@ -13,7 +13,7 @@
 
     @if (!isLoading) {
       <div class="row g-0">
-      <div class="col-2 side-box" style="height: 88vh; overflow-y: scroll; scrollbar-width: none; -ms-overflow-style: none;">
+      <div class="col-2 side-box" style="height: 87vh; overflow-y: hidden; scrollbar-width: none; -ms-overflow-style: none;">
         <ul style="margin-bottom: 100px;">
           <li class="text-center py-1 mb-1 ms-1" [ngClass]="currentCategory == 'All'? 'list-active':''" (click)="currentCategory = 'All'">
             <img style="width: 40px; border-radius: 50%" src="../../assets/icons/5.png" alt=""><br>
@@ -30,8 +30,11 @@
         </ul>
       </div>
 
-      <div class="col-10" style="height: 88vh; overflow-y: scroll; scrollbar-width: none; -ms-overflow-style: none;">
-        <ion-searchbar></ion-searchbar>
+      <div class="col-10" style="height: 87vh; overflow-y: scroll; scrollbar-width: none; -ms-overflow-style: none; overflow-x: hidden">
+        <div class="d-flex align-items-center justify-content-between">
+            <ion-searchbar class="position-sticky w-100" style="top: 0; z-index: 99; background-color: white"></ion-searchbar>
+            <div style="padding: 8px;"><i class="bi bi-funnel fs-2"></i></div>
+        </div>
          <!-- <input type="text"> -->
         <div>
       <div class="row p-2 g-2">
@@ -95,14 +98,14 @@
   </div>
 }
     </div>
+
+    <div class="position-fixed p-1 text-center w-100" style="background-color: rgb(225, 185, 248); border-radius: 5px 5px 0px 0px; bottom: 0px">
+      <small><b>Free Delivery</b> on order above <b>Rs.199</b></small>
+    </div>
+
     } @else {
       <div class="d-flex justify-content-center align-items-center h-100">
         <ion-spinner  name="crescent"></ion-spinner>
       </div>
     }
-
-    <div class="position=fixed bottom-0 p-1 text-center" style="background-color: rgba(186, 111, 230, 0.418); border-radius: 5px 5px 0px 0px">
-      <small><b>Free Delivery</b> on order above <b>Rs.199</b></small>
-    </div>
- 
 </ion-content>

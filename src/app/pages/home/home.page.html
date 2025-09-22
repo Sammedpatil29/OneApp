@@ -1,14 +1,14 @@
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true"  (ionScroll)="onScroll($event)" scrollEvents="true">
   @if(!isLoading){
-  <ion-header>
-    <ion-toolbar class="container pt-4 pb-2">
+  <div class="w-100 position-fixed pe-2 pt-3" style="z-index: 999" [ngStyle]="{ 'background-color': headerBg }">
+    <div class="container pt-4 pb-2">
       <div class="text-center">
-        <span style="font-weight: 700; font-size: 25px"><b>OneApp</b></span>
+        <!-- <span style="font-weight: 700; font-size: 25px"><b class="text-secondary">OneApp</b></span> -->
       </div>
 
       <div class="d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center w-75" (click)="openLocation()">
-          <i class="bi bi-geo-alt me-2"></i>
+          <i class="bi bi-geo-alt me-2 text-secondary"></i>
           @if (address == '') {
           <div class="d-flex flex-column me-2" style="line-height: 1.2">
             <!-- <h6 class="p-0 fs-6">Location</h6> -->
@@ -20,22 +20,22 @@
             <!-- <h6 class="p-0 fs-6">Location</h6> -->
             <ion-card-subtitle class="text-truncate" style="max-width: 50vw">
               @if(label == ""){
-              <span>Location</span>
+              <span class="">Location</span>
               } @else {
               <span>{{label | titlecase}}</span>
               }
-              <br /><span (click)="openLocation()">{{address}}</span></ion-card-subtitle>
+              <br /><span (click)="openLocation()" class="">{{address}}</span></ion-card-subtitle>
           </div>
           }
-          <i class="bi bi-chevron-down me-2" (click)="openLocation()"></i>
+          <i class="bi bi-chevron-down me-2 text-secondary" (click)="openLocation()"></i>
         </div>
         <div class="float-end" (click)="goToProfile()">
           <img style="width: 30px" src="../../../assets/gif/system-solid-8-account-hover-account.gif" />
           <!-- <i class="bi bi-person-circle fs-3"></i> -->
         </div>
       </div>
-    </ion-toolbar>
-  </ion-header>
+    </div>
+  </div>
   <ion-refresher slot="fixed" class="my-refresher mt-5" color="dark" (ionRefresh)="getServicesData()"
     pullingIcon="arrow-dropdown" refreshingSpinner="crescent">
     <ion-refresher-content></ion-refresher-content>
@@ -58,7 +58,7 @@
             <!-- <h6 class="p-0 fs-6">Location</h6> -->
             <ion-card-subtitle class="text-truncate" style="max-width: 50vw; color: transparent">
               @if(label == ""){
-              <span>Location</span>
+              <span class="text-white">Location</span>
               } @else {
               <span style="color: transparent">{{label | titlecase}}</span>
               }
@@ -98,8 +98,9 @@
 
   @if(!isBannerLoading){ @if (slides.length != 0) {
 
-    <div class="h-25 magicpattern d-flex align-items-center justify-content-center" style="border-radius: 0px 0px 15px 15px">
-          <div class="text-large text-white fw-1200 fs-1">Get Offers</div>
+    <div class="magicpattern d-flex align-items-center justify-content-center" style="border-radius: 0px 0px 15px 15px; height: 320px">
+      <div style="height: 10px"></div>
+      <div class="text-large text-white fw-1200 fs-1" style="margin-top: 71px; font-size: 44px !important; font-weight: bolder;"><b class="freeDelivery">FREE DELIVERY</b></div>
     </div>
 
   <swiper-container [slidesPerView]="1" [spaceBetween]="0" [loop]="true" autoplay-delay="2500"
@@ -113,7 +114,7 @@
     }
   </swiper-container>
   } } @else {
-  <swiper-container [slidesPerView]="1" [spaceBetween]="0" [loop]="true" autoplay-delay="2500"
+  <swiper-container class="mt-5" style="margin-top: 100px !important" [slidesPerView]="1" [spaceBetween]="0" [loop]="true" autoplay-delay="2500"
     autoplay-disable-on-interaction="false">
     <swiper-slide>
       <ion-card class="skeleton" style="height: 180px">
@@ -263,11 +264,88 @@
   </div>
   }
 
-  <!-- <div class="top-portion d-flex align-items-center justify-content-center">
-     <ion-card >
-      e3eeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-     </ion-card>
-  </div> -->
+ @if(!isSpecialDataLoading){
+   <!-- event recommendations -->
+  @if(availableServices.includes('Local Events')){
+    <div class="mt-3 px-2 py-4" style="background-color: rgba(255, 0, 0, 0.185)">
+    <div class="">
+        <ion-card-subtitle class="ps-3 header-subtitle text-uppercase text-center fw-bold text-dark">
+          Recemmended Events
+        </ion-card-subtitle>
+      </div>
+
+      <swiper-container [slidesPerView]="2" [spaceBetween]="0" [loop]="false" [autoplay]="false">
+    @for (item of events; track $index) {
+    <swiper-slide>
+      <ion-card style="border-radius: 10px !important" (click)="navigateFromSlide(item.route)">
+        <img [src]="item.imageUrl" alt="" />
+      </ion-card>
+    </swiper-slide>
+    }
+  </swiper-container>
+    <button class="w-100 btn btn-outline-secondary" (click)="gotoEvents()">See more</button>
+  </div>
+  }
+
+  <!-- offer of the day banner -->
+  <div class="mt-3 px-2">
+    <div class="">
+        <ion-card-subtitle class="ps-3 text-uppercase text-center fw-bold text-dark">
+          Offer of the day
+        </ion-card-subtitle>
+      </div>
+
+      <div class="offerOftheday mt-2 d-flex align-items-center justify-content-center" style="border-radius: 20px; height: 100px !important; background-color: rgba(0, 102, 255, 0.637)">
+          <h1><b>Free Delivery on first 3 Orders</b></h1>
+      </div>
+
+  </div>
+
+  <!-- top grocery recommendations -->
+   @if(availableServices.includes('Grocery')){
+    <div class="mt-3 px-2">
+    <div class="">
+        <ion-card-subtitle class="ps-3 text-uppercase text-center fw-bold text-dark">
+          Top selling daily needs
+        </ion-card-subtitle>
+      </div>
+
+      <swiper-container class="mt-2" [slidesPerView]="3.2" [spaceBetween]="3" [loop]="false" [pagination]="{ clickable: true }" [freeMode]="true" [autoplay]="false">
+    @for (item of groceryList; track $index) {
+    <swiper-slide>
+        <div class="position-relative">
+
+          <img style="border-radius: 15px;" [src]="item.image_url" alt="">
+            
+                    <!-- <div class="quantity-button position-absolute" style="right: 5px;"> -->
+    <!-- <div class="d-flex align-items-center justify-content-center">
+      <span class="bttn px-2" (click)="decrement(cartItem.id)">&#8722;</span>
+      <span class="bttn px-2">{{cartItem.quantity}}</span>
+      <span class="bttn px-2" (click)="increment(cartItem.id)">&#43;</span>
+    </div> -->
+  <!-- </div> -->
+        </div>
+        <div class="px-1">
+          <div><small
+              style="font-size: 10px !important; color: rgb(111, 111, 241)">{{item.quantity.amount}}&nbsp;{{item.quantity.unit}}</small>
+          </div>
+          <span>
+            <small>
+              <strong>{{item.name}}</strong></small>
+        </span>
+        <div class="">
+          <small style="font-size: 10px;" class="mb-0 d-block text-success">10% OFF</small>
+          <small><strong class="me-1">&#8377;{{item.price.ourPrice}}</strong> <span class="text-decoration-line-through">&#8377;{{item.price.mrp}}</span></small>
+        </div>
+        </div>
+    </swiper-slide>
+    }
+  </swiper-container>
+    <button class="w-100 btn btn-outline-secondary" (click)="gotoGrocery()">See more</button>
+  </div>
+   }
+  
+ }
 
   <app-footer></app-footer>
   <ion-modal [isOpen]="isModalOpen" (didDismiss)="handleModalClose()">
@@ -314,8 +392,8 @@
   </div>
   }
 
- 
-    <div class="orders-list position-fixed bottom-0 w-100" style="color: whitesmoke">
+ <!-- orders tracking  -->
+    <div class="orders-list position-fixed bottom-0 w-100" style="color: whitesmoke; z-index: 99999 !important">
      @if(orders.length != 0){
       <swiper-container style="
         background-color: rgb(32, 144, 4);

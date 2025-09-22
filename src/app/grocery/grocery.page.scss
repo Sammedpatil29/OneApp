@@ -1,12 +1,15 @@
 .header-grocery {
-    height: 25vh;
     background: #2A7B9B;
     background: linear-gradient(177deg, rgb(10, 168, 23) 0%, rgba(8, 255, 111, 0) 87%, rgba(237, 221, 83, 0) 100%);
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    background-color: white;
 }
 
-::ng-deep.searchbar-input.sc-ion-searchbar-md {
-    border-radius: 20px !important;
-}
+// ::ng-deep.searchbar-input.sc-ion-searchbar-md {
+//     border-radius: 20px !important;
+// }
 
 .cash-text {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;

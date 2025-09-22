@@ -18,7 +18,7 @@
   <div>
     <div class="px-2 pt-2 d-flex align-items-center justify-content-between">
       <div class="w-75 text-truncate">
-        <h5 class="mb-0 mt-3"><strong>Delivery Location</strong></h5>
+        <h5 class="mb-0 mt-3"><strong>Delivery in 7 min</strong></h5>
         @if(address != ''){
               <small (click)="openMap()"> <span class="text-truncate" style="max-height: 75%">{{address}}</span></small>
         } @else {
@@ -29,11 +29,16 @@
         <ion-button shape="round" color="dark" fill="outline" (click)="backToHome()"><i class="bi bi-house-door-fill"></i></ion-button>
       </div>
     </div>
-    <ion-searchbar 
+    <div class="d-flex justify-content-between align-items-center">
+      <ion-searchbar 
     class="my-2"
     debounce="500"
     (ionFocus)="startSearch()"
     placeholder="Search for items"></ion-searchbar>
+    <div class="text-nowrap" style="padding: 8px; background-color: rgb(24, 23, 23); color: white; border-radius: 10px 0px 0px 10px;">
+      GIVEAWAYS
+    </div>
+    </div>
 </div>
 </div>
 <!-- <div class="border free-cash-box">
