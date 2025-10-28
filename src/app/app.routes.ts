@@ -88,6 +88,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/track-order/track-order.page').then( m => m.TrackOrderPage)
   },
   {
+    path: 'grocery-order-details',
+    loadComponent: () => import('./pages/grocery-order-details/grocery-order-details.page').then( m => m.GroceryOrderDetailsPage)
+  },
+  {
     path: 'cart',
     loadComponent: () => import('./pages/cart/cart.page').then( m => m.CartPage)
   },
@@ -98,6 +102,18 @@ export const routes: Routes = [
   {
     path: 'grocery-by-category',
     loadComponent: () => import('./grocery-by-category/grocery-by-category.page').then( m => m.GroceryByCategoryPage)
+  },
+  {
+    path: 'grocery-special/:route',
+    loadComponent: () => import('./pages/grocery-special/grocery-special.page').then( m => m.GrocerySpecialPage)
+  },
+   {
+    path: 'ride',
+    loadComponent: () => import('./pages/ride/ride.page').then( m => m.RidePage)
+  },
+  {
+    path: 'ride-selection-page',
+    loadComponent: () => import('./pages/ride-selection-page/ride-selection-page.page').then( m => m.RideSelectionPagePage)
   },
       {
         path: '',
@@ -110,4 +126,5 @@ export const routes: Routes = [
 
   
 
+ 
 ];

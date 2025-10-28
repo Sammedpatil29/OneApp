@@ -323,7 +323,7 @@ this.navCtrl.back()
     } else {
       this.isLoading = true
     const options: any = {
-      key: 'rzp_test_mumd7Md1QvW8oy', // Replace with your Razorpay Key ID
+      key: 'rzp_test_RJn8z8TkeG3RU4', // Replace with your Razorpay Key ID
       amount: this.finalCost * 100, 
       currency: 'INR',
       name: 'OneApp Events',

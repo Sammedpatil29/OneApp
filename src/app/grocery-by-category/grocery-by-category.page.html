@@ -15,18 +15,12 @@
       <div class="row g-0">
       <div class="col-2 side-box" style="height: 87vh; overflow-y: hidden; scrollbar-width: none; -ms-overflow-style: none;">
         <ul style="margin-bottom: 100px;">
-          <li class="text-center py-1 mb-1 ms-1" [ngClass]="currentCategory == 'All'? 'list-active':''" (click)="currentCategory = 'All'">
-            <img style="width: 40px; border-radius: 50%" src="../../assets/icons/5.png" alt=""><br>
-            <small style="font-size: 12px; line-height: 1.2; display: inline-block;">All</small>
+          @for (item of Categories; track $index) {
+            <li class="text-center py-1 mb-1 ms-1" [ngClass]="currentCategory == item.category_name? 'list-active':''" (click)="currentCategory = item.category_name">
+            <img style="width: 40px; border-radius: 50%" [src]="item.image_url" alt=""><br>
+            <small style="font-size: 12px; line-height: 1.2; display: inline-block;">{{item.category_name}}</small>
           </li>
-          <li class="text-center py-1 mb-1 ms-1" [ngClass]="currentCategory == 'Best Sellers'? 'list-active':''" (click)="currentCategory = 'Best Sellers'">
-            <img style="width: 40px; border-radius: 50%" src="../../assets/icons/5.png" alt=""><br>
-            <small style="font-size: 12px; line-height: 1.2; display: inline-block;">Best Sellers</small>
-          </li>
-          <li class=" text-center py-1 mb-1 ms-1" [ngClass]="currentCategory == 'Price Droffs'? 'list-active':''" (click)="currentCategory = 'Price Droffs'">
-            <img style="width: 40px; border-radius: 50%" src="../../assets/icons/5.png" alt=""><br>
-            <small style="font-size: 12px; line-height: 1.2; display: inline-block;">Price Droffs</small>
-          </li>
+          }
         </ul>
       </div>
 
@@ -43,21 +37,31 @@
         <div class="position-relative">
 
           <img style="border-radius: 15px;" [src]="item.image_url" alt="">
-            @if (!cartIncludes(item.id) || cartItems == []) {
-              <div class="quantity-add-button position-absolute" style="right: 5px;" (click)="addItemToCart(item.id, item)">Add</div>
+            @if (!keys.includes(item.id)) {
+              <div class="quantity-add-button position-absolute" style="right: 5px;" (click)="addItemToCart(item.id)">Add</div>
             } @else {
+              <!-- <div class="quantity-add-button position-absolute" style="right: 5px;" (click)="addItemToCart(item.id, item)">{{item.id}}</div>
                 @for (cartItem of cartItems.items; track $index) {
-                  @if (cartItem.item_details.id === item.id) {
-                    <div class="quantity-button position-absolute" style="bottom: 5px; right: 2px">
-  <div class="d-flex align-items-center justify-content-center">
-    <span class="bttn px-2" (click)="decrement(cartItem.id)">&#8722;</span>
-    <span class="bttn">{{cartItem.quantity}}</span>
-    <span class="bttn px-2" (click)="increment(cartItem.id)">&#43;</span>
+                  @if (cartItem.item_details.id === item.id) { -->
+                    <div class="quantity-button position-absolute" style="right: 5px;">
+    <div class="d-flex align-items-center justify-content-center">
+      <span class="bttn px-2" (click)="decrement(item.id)">&#8722;</span>
+      <span class="bttn px-2">{{cartItems1[item.id]}}</span>
+      <span class="bttn px-2" (click)="increment(item.id)">&#43;</span>
+    </div>
   </div>
-</div>
-                  }
-                }
+                  <!-- }
+                } -->
             }
+           <!-- <div class="px-3"> -->
+  <!-- <ion-button size="small" color="dark" class="quantity-button position-absolute bottom-0" style="right: 5px;">
+    <div class="d-flex align-items-center justify-content-center">
+      <span class="bttn px-2" (click)="decrement()">&#8722;</span>
+      <span class="bttn px-2">4</span>
+      <span class="bttn px-2" (click)="increment()">&#43;</span>
+    </div>
+  </ion-button> -->
+<!-- </div> -->
         </div>
         <div class="px-1">
           <div><small
@@ -81,7 +85,7 @@
     </div>
     
 
-    <div class="w-100 position-fixed bottom-0 px-2 pb-2 slide-top-normal">
+    <div class="w-100 position-fixed px-2 pb-2 slide-top-normal" style="bottom: 30px">
       @if (showCart && totalItems > 0) {
       <div class="background-cart w-100 d-flex justify-content-between align-items-center p-3 text-center" style="z-index: 999 !important; border-radius: 15px" (click)="openCart()">
       <h5 class="mb-0">{{totalItems}} 
@@ -99,7 +103,7 @@
 }
     </div>
 
-    <div class="position-fixed p-1 text-center w-100" style="background-color: rgb(225, 185, 248); border-radius: 5px 5px 0px 0px; bottom: 0px">
+    <div class="position-fixed p-1 text-center w-100" style="background-color: rgb(225, 185, 248); border-radius: 5px 5px 0px 0px; bottom: env(safe-area-inset-bottom);">
       <small><b>Free Delivery</b> on order above <b>Rs.199</b></small>
     </div>
 

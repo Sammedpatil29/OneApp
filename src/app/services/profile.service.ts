@@ -15,7 +15,7 @@ user_id: any;
 profileUrl = 'https://oneapp-backend.onrender.com/api/users/'
 suggestion = 'https://oneapp-backend.onrender.com/api/suggestions/'
 updateDetails = 'https://oneapp-backend.onrender.com/api/address/'
-bannerUrl = 'https://oneapp-backend.onrender.com/api/banner/'
+bannerUrl = 'https://oneapp-backend.onrender.com/api/banner/banners/'
 
 getProfileData(params:any){
   return this.http.post(`${this.profileUrl}user-by-token/`, params)
@@ -45,7 +45,7 @@ updateAddress(params:any, id:any){
   return this.http.put(`${this.profileUrl}user-by-token/`, params)
 }
 
-getBanners(){
-  return this.http.get(this.bannerUrl)
+getBanners(type:any){
+  return this.http.get(`${this.bannerUrl}?type=${type}`)
 }
 }

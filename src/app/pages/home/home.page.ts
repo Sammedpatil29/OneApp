@@ -312,7 +312,7 @@ navigateTo(route:any){
 
 getBanners(){
   this.isBannerLoading = true
-  this.profileService.getBanners().subscribe((res:any)=>{
+  this.profileService.getBanners('hometop').subscribe((res:any)=>{
 this.slides = res.filter((item: { is_active: any; }) => item.is_active);
 this.isBannerLoading = false
       console.log(this.slides)

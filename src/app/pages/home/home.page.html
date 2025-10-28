@@ -8,11 +8,11 @@
 
       <div class="d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center w-75" (click)="openLocation()">
-          <i class="bi bi-geo-alt me-2 text-secondary"></i>
+          <i class="bi bi-geo-alt-fill me-2 text-dark"></i>
           @if (address == '') {
           <div class="d-flex flex-column me-2" style="line-height: 1.2">
             <!-- <h6 class="p-0 fs-6">Location</h6> -->
-            <ion-card-subtitle class="text-truncate" style="max-width: 50vw"><span class="">Location</span> <br /><span
+            <ion-card-subtitle class="text-truncate" style="max-width: 50vw"><span class="text-dark">Location</span> <br /><span
                 (click)="openLocation()" class="text-primary">Select your location</span></ion-card-subtitle>
           </div>
           } @else {
@@ -20,17 +20,17 @@
             <!-- <h6 class="p-0 fs-6">Location</h6> -->
             <ion-card-subtitle class="text-truncate" style="max-width: 50vw">
               @if(label == ""){
-              <span class="">Location</span>
+              <span class="text-dark">Location</span>
               } @else {
-              <span>{{label | titlecase}}</span>
+              <span class="text-dark"><b>{{label | titlecase}}</b></span>
               }
-              <br /><span (click)="openLocation()" class="">{{address}}</span></ion-card-subtitle>
+              <br /><span (click)="openLocation()" class="text-dark">{{address}}</span></ion-card-subtitle>
           </div>
           }
-          <i class="bi bi-chevron-down me-2 text-secondary" (click)="openLocation()"></i>
+          <i class="bi bi-chevron-down me-2 text-dark" (click)="openLocation()"></i>
         </div>
         <div class="float-end" (click)="goToProfile()">
-          <img style="width: 30px" src="../../../assets/gif/system-solid-8-account-hover-account.gif" />
+          <img style="width: 30px" src="../../../assets/gif/system-solid-8-account-hover-pinch.gif" />
           <!-- <i class="bi bi-person-circle fs-3"></i> -->
         </div>
       </div>
@@ -58,7 +58,7 @@
             <!-- <h6 class="p-0 fs-6">Location</h6> -->
             <ion-card-subtitle class="text-truncate" style="max-width: 50vw; color: transparent">
               @if(label == ""){
-              <span class="text-white">Location</span>
+              <span style="color: transparent">Location</span>
               } @else {
               <span style="color: transparent">{{label | titlecase}}</span>
               }
@@ -98,12 +98,26 @@
 
   @if(!isBannerLoading){ @if (slides.length != 0) {
 
-    <div class="magicpattern d-flex align-items-center justify-content-center" style="border-radius: 0px 0px 15px 15px; height: 320px">
-      <div style="height: 10px"></div>
-      <div class="text-large text-white fw-1200 fs-1" style="margin-top: 71px; font-size: 44px !important; font-weight: bolder;"><b class="freeDelivery">FREE DELIVERY</b></div>
-    </div>
+ <swiper-container
+  [slidesPerView]="1"
+  [spaceBetween]="0"
+  [loop]="true"
+  [autoplay]="{ delay: 1000, disableOnInteraction: false }"
+  class="full-swiper"
+  style="height: 35vh; position: sticky; top: 0; z-index: -999"
+  effect="fade"
+>
+  <!-- <swiper-slide>
+    <img src="assets/images/Untitled design (1).png" alt="slide" class="square-image" />
+  </swiper-slide> -->
+  @for (item of slides; track $index) {
+    <swiper-slide (click)="navigateFromSlide(item.route)">
+    <img [src]="item.img" alt="slide" class="square-image" />
+  </swiper-slide>
+  }
+</swiper-container>
 
-  <swiper-container [slidesPerView]="1" [spaceBetween]="0" [loop]="true" autoplay-delay="2500"
+  <swiper-container [hidden]="true" [slidesPerView]="1" [spaceBetween]="0" [loop]="true" autoplay-delay="2500"
     autoplay-disable-on-interaction="false">
     @for (item of slides; track $index) {
     <swiper-slide>
@@ -123,7 +137,7 @@
     </swiper-slide>
   </swiper-container>
   } @if(!isServiceLoading){
-  <div class="mt-3">
+  <div class="pt-3" style="background-color: white">
     <div *ngFor="let group of groupedData | keyvalue">
       <!-- Category Title -->
       <div class="">
@@ -265,16 +279,19 @@
   }
 
  @if(!isSpecialDataLoading){
-   <!-- event recommendations -->
+  
+  <div style="background-color: white">
+     <!-- event recommendations -->
   @if(availableServices.includes('Local Events')){
-    <div class="mt-3 px-2 py-4" style="background-color: rgba(255, 0, 0, 0.185)">
+    <div class="px-2 py-4" style="background-color: rgba(101, 243, 160, 0.185)">
     <div class="">
-        <ion-card-subtitle class="ps-3 header-subtitle text-uppercase text-center fw-bold text-dark">
+        <!-- <ion-card-subtitle class="ps-3 header-subtitle text-uppercase text-center fw-bold text-dark">
           Recemmended Events
-        </ion-card-subtitle>
+        </ion-card-subtitle> -->
+        <img src="assets/gif/Hot Events.gif" alt="">
       </div>
 
-      <swiper-container [slidesPerView]="2" [spaceBetween]="0" [loop]="false" [autoplay]="false">
+      <swiper-container [slidesPerView]="1.9" [spaceBetween]="0" [loop]="false" [autoplay]="false">
     @for (item of events; track $index) {
     <swiper-slide>
       <ion-card style="border-radius: 10px !important" (click)="navigateFromSlide(item.route)">
@@ -289,28 +306,22 @@
 
   <!-- offer of the day banner -->
   <div class="mt-3 px-2">
-    <div class="">
-        <ion-card-subtitle class="ps-3 text-uppercase text-center fw-bold text-dark">
-          Offer of the day
-        </ion-card-subtitle>
-      </div>
-
-      <div class="offerOftheday mt-2 d-flex align-items-center justify-content-center" style="border-radius: 20px; height: 100px !important; background-color: rgba(0, 102, 255, 0.637)">
-          <h1><b>Free Delivery on first 3 Orders</b></h1>
-      </div>
+    
+  <img src="assets/gif/Hot Events (2).gif" style="border-radius: 10px" alt="">
 
   </div>
 
   <!-- top grocery recommendations -->
    @if(availableServices.includes('Grocery')){
-    <div class="mt-3 px-2">
+    <div class="mt-4 px-2">
     <div class="">
-        <ion-card-subtitle class="ps-3 text-uppercase text-center fw-bold text-dark">
+        <!-- <ion-card-subtitle class="ps-3 text-uppercase text-center fw-bold text-dark">
           Top selling daily needs
-        </ion-card-subtitle>
+        </ion-card-subtitle> -->
+        <img src="assets/gif/Hot Events (1).gif" alt="" />
       </div>
 
-      <swiper-container class="mt-2" [slidesPerView]="3.2" [spaceBetween]="3" [loop]="false" [pagination]="{ clickable: true }" [freeMode]="true" [autoplay]="false">
+      <swiper-container class="mt-2" [slidesPerView]="3.2" [spaceBetween]="3" [loop]="false" [pagination]="{ clickable: true }" [freeMode]="true"  [grid]="{ rows: 2, fill: 'row' }" [autoplay]="false">
     @for (item of groceryList; track $index) {
     <swiper-slide>
         <div class="position-relative">
@@ -325,7 +336,7 @@
     </div> -->
   <!-- </div> -->
         </div>
-        <div class="px-1">
+        <div class="px-1 mb-3">
           <div><small
               style="font-size: 10px !important; color: rgb(111, 111, 241)">{{item.quantity.amount}}&nbsp;{{item.quantity.unit}}</small>
           </div>
@@ -344,6 +355,7 @@
     <button class="w-100 btn btn-outline-secondary" (click)="gotoGrocery()">See more</button>
   </div>
    }
+  </div>
   
  }
 

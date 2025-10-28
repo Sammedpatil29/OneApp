@@ -1,0 +1,117 @@
+<ion-content [fullscreen]="true">
+  
+  @if(!isAddressSelected){
+    <!-- address selection section starts-->
+  <section>
+    <!-- topbar start -->
+  <div class="border pt-4 position-sticky bg-white" style="top:0">
+    <ion-title class="d-flex align-items-center justify-content-start my-2 mx-3 p-0 mb-3">
+     
+      <div (click)="goBack()" class="d-flex align-items-center justify-content-start">
+        <svg class="me-2" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M400-240 160-480l240-240 56 58-142 142h486v80H314l142 142-56 58Z"/></svg>
+        {{selectedInput}}
+      </div>
+    
+    </ion-title>
+  <div class="ms-3 position-relative">
+    <div class="d-flex align-items-center justify-content-center">
+      <div class="d-flex align-items-center justify-content-center" style="width: 20px; height: 20px; background-color: green; border-radius: 50%">
+        <div style="width: 8px; height: 8px; background-color: rgb(255, 255, 255); border-radius: 50%"></div>
+      </div>
+      <!-- <ion-searchbar class="box-shadow: none !important"></ion-searchbar> -->
+       <input class="w-100 mx-2 p-2" [(ngModel)]="pickup"
+  (input)="onInputChange('pickup')" placeholder="pickup"(focus)="selectedInput = 'Pickup'" style="border-radius: 10px; border: 1px solid gray" type="text">
+       @if(pickup != ''){
+        <div class="me-2" (click)="pickup = ''"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#999999"><path d="m336-307.69 144-144 144 144L652.31-336l-144-144 144-144L624-652.31l-144 144-144-144L307.69-624l144 144-144 144L336-307.69ZM480.13-120q-74.67 0-140.41-28.34-65.73-28.34-114.36-76.92-48.63-48.58-76.99-114.26Q120-405.19 120-479.87q0-74.67 28.34-140.41 28.34-65.73 76.92-114.36 48.58-48.63 114.26-76.99Q405.19-840 479.87-840q74.67 0 140.41 28.34 65.73 28.34 114.36 76.92 48.63 48.58 76.99 114.26Q840-554.81 840-480.13q0 74.67-28.34 140.41-28.34 65.73-76.92 114.36-48.58 48.63-114.26 76.99Q554.81-120 480.13-120Z"/></svg>
+  </div>
+       }
+    </div>
+    <div style="height: 24px;
+    width: 0px;
+    border-left: 1px solid gray;
+    position: absolute;
+    top: 34px;
+    left: 9px;"></div>
+    <div class="d-flex align-items-center justify-content-center">
+      <div class="d-flex align-items-center justify-content-center" style="width: 20px; height: 20px; background-color: rgb(224, 95, 9); border-radius: 50%">
+        <div style="width: 8px; height: 8px; background-color: rgb(255, 255, 255); border-radius: 50%"></div>
+      </div>
+      <input class="w-100 mx-2 p-2 my-2" #dropInput [(ngModel)]="drop" (input)="onInputChange('drop')" placeholder="drop" (focus)="selectedInput = 'Drop'" style="border-radius: 10px; border: 1px solid gray" type="text">
+      @if(drop != ''){
+        <div class="me-2" (click)="drop = ''"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#999999"><path d="m336-307.69 144-144 144 144L652.31-336l-144-144 144-144L624-652.31l-144 144-144-144L307.69-624l144 144-144 144L336-307.69ZM480.13-120q-74.67 0-140.41-28.34-65.73-28.34-114.36-76.92-48.63-48.58-76.99-114.26Q120-405.19 120-479.87q0-74.67 28.34-140.41 28.34-65.73 76.92-114.36 48.58-48.63 114.26-76.99Q405.19-840 479.87-840q74.67 0 140.41 28.34 65.73 28.34 114.36 76.92 48.63 48.58 76.99 114.26Q840-554.81 840-480.13q0 74.67-28.34 140.41-28.34 65.73-76.92 114.36-48.58 48.63-114.26 76.99Q554.81-120 480.13-120Z"/></svg>
+  </div>
+       }
+    </div>
+  </div>
+  <button class="bg-white px-2 py-1 mb-2" style="border-radius: 10px; margin-left: 41px; border: 1px solid gray"><small><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#1f1f1f"><path d="M460-420h40v-120h120v-40H500v-120h-40v120H340v40h120v120Zm20 300.77Q339-243.92 267.58-351.81q-71.43-107.88-71.43-196.34 0-126.93 82.66-209.39Q361.46-840 480-840q118.54 0 201.19 82.46 82.66 82.46 82.66 209.39 0 88.46-71.43 196.34Q621-243.92 480-119.23Z"/></svg> select on map</small></button>
+  </div>
+  <!-- topbar ends -->
+
+  @if (filteredPredictions.length != 0  || filteredPredictionsOut.length != 0) {
+    <!-- search results starts -->
+  @if(filteredPredictions.length > 0){
+     <ion-title>Local</ion-title>
+  }
+   @for(item of filteredPredictions; track $index){
+    <div class="py-2 px-3" style="border-bottom: 1px solid gray" (click)="setPickupDropbyHistory(item)">
+    <div class="d-flex align-items-center">
+      <div style="line-height: 3px" class="d-flex align-items-center justify-content-center flex-column me-2 p-2">
+        <svg class="m-0 p-0" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#1f1f1f"><path d="M478.46-160q-121.84 0-212.42-79.58Q175.46-319.15 161.23-440h40.46Q218-336.77 295.73-268.38 373.46-200 478.46-200q117 0 198.5-81.5t81.5-198.5q0-117-81.5-198.5T478.46-760q-62.08 0-116.69 26.23-54.62 26.23-96.39 72.23h99.24v40H198.46v-166.15h40v95.54q46.39-50.93 108.73-79.39Q409.54-800 478.46-800q66.54 0 124.73 25.04t101.69 68.54q43.5 43.5 68.54 101.69 25.04 58.19 25.04 124.73t-25.04 124.73q-25.04 58.19-68.54 101.69-43.5 43.5-101.69 68.54Q545-160 478.46-160Zm128.16-165.85L460.77-471.69V-680h40v191.69l134.15 134.16-28.3 28.3Z"/></svg><br>
+        <!-- <small class="text-nowrap" style="font-size: 10px">20 km</small> -->
+      </div>
+      <div style="line-height: normal" class="text-truncate">
+        <small class="p-0"><b>{{item.name}}</b></small><br>
+        <small class="m-0 text-nowrap">{{item.formatted_address}}</small>
+      </div>
+    </div>
+   </div>
+   }
+
+@if(filteredPredictionsOut.length > 0){
+     <ion-title>Out Station</ion-title>
+  }
+   @for(item of filteredPredictionsOut; track $index){
+    <div class="py-2 px-3" style="border-bottom: 1px solid gray" (click)="setPickupDropbyHistory(item)">
+    <div class="d-flex align-items-center">
+      <div style="line-height: 3px" class="d-flex align-items-center justify-content-center flex-column me-2 p-2">
+        <svg class="m-0 p-0" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#1f1f1f"><path d="M478.46-160q-121.84 0-212.42-79.58Q175.46-319.15 161.23-440h40.46Q218-336.77 295.73-268.38 373.46-200 478.46-200q117 0 198.5-81.5t81.5-198.5q0-117-81.5-198.5T478.46-760q-62.08 0-116.69 26.23-54.62 26.23-96.39 72.23h99.24v40H198.46v-166.15h40v95.54q46.39-50.93 108.73-79.39Q409.54-800 478.46-800q66.54 0 124.73 25.04t101.69 68.54q43.5 43.5 68.54 101.69 25.04 58.19 25.04 124.73t-25.04 124.73q-25.04 58.19-68.54 101.69-43.5 43.5-101.69 68.54Q545-160 478.46-160Zm128.16-165.85L460.77-471.69V-680h40v191.69l134.15 134.16-28.3 28.3Z"/></svg><br>
+        <!-- <small class="text-nowrap" style="font-size: 10px">20 km</small> -->
+      </div>
+      <div style="line-height: normal" class="text-truncate">
+        <small class="p-0"><b>{{item.name}}</b></small><br>
+        <small class="m-0 text-nowrap">{{item.formatted_address}}</small>
+      </div>
+    </div>
+   </div>
+   }
+  <!-- search results ends -->
+  } @else {
+    @for(item of userHistory; track $index){
+    <div class="py-2 px-3" style="border-bottom: 1px solid gray" (click)="setPickupDropbyHistory(item)">
+    <div class="d-flex align-items-center">
+      <div style="line-height: 3px" class="d-flex align-items-center justify-content-center flex-column me-2 p-2">
+        <svg class="m-0 p-0" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#1f1f1f"><path d="M478.46-160q-121.84 0-212.42-79.58Q175.46-319.15 161.23-440h40.46Q218-336.77 295.73-268.38 373.46-200 478.46-200q117 0 198.5-81.5t81.5-198.5q0-117-81.5-198.5T478.46-760q-62.08 0-116.69 26.23-54.62 26.23-96.39 72.23h99.24v40H198.46v-166.15h40v95.54q46.39-50.93 108.73-79.39Q409.54-800 478.46-800q66.54 0 124.73 25.04t101.69 68.54q43.5 43.5 68.54 101.69 25.04 58.19 25.04 124.73t-25.04 124.73q-25.04 58.19-68.54 101.69-43.5 43.5-101.69 68.54Q545-160 478.46-160Zm128.16-165.85L460.77-471.69V-680h40v191.69l134.15 134.16-28.3 28.3Z"/></svg><br>
+        <!-- <small class="text-nowrap" style="font-size: 10px">20 km</small> -->
+      </div>
+      <div style="line-height: normal" class="text-truncate">
+        <small class="p-0"><b>{{item.name}}</b></small><br>
+        <small class="m-0 text-nowrap">{{item.formatted_address}}</small>
+      </div>
+    </div>
+   </div>
+   }
+  }
+  
+  </section>
+<!-- address selection section ends-->
+  } @else {
+    <!-- ride selection section starts-->
+ <section>
+  <app-ride-selection></app-ride-selection>
+ </section>
+<!-- ride selection section ends-->
+  }
+
+
+
+</ion-content>

@@ -1,4 +1,9 @@
-<ion-header>
+
+
+
+    
+    @if (!isOrderPlaced) {
+      <ion-header>
   <ion-toolbar class="pt-4">
     <ion-buttons slot="start">
       <ion-button (click)="goBack()">
@@ -8,18 +13,26 @@
     <ion-title>Cart</ion-title>
   </ion-toolbar>
 </ion-header>
-
-<ion-content [fullscreen]="true">
-  <div class="p-2 mx-2 mt-3 text-center" style="border-radius: 10px; background-color: rgba(145, 241, 193, 0.733)">
-        Check the details before proceed
+      <ion-content>
+  @if(!isLoading){
+      @if(cartItems.length != 0){
+        <div class="p-2 mx-2 mb-2 text-center text-success position-sticky" style="border-radius: 0px 0px 7px 7px; background-color: rgb(181, 245, 213); top: 0px; z-index: 99;">
+        @if(delivery == 0 || baseprice > 199){
+          <small><b>Free delivery</b> applied on this order🥳</small>
+        } @else {
+          <small>Add Items worth <b>&#8377;{{199 - baseprice}}</b> to 🔓unlock<b> Free Delivery</b></small>
+        }
     </div>
-  <div class="border mx-2 mt-2" style="border-radius: 10px;">
-    @if(!isLoading){
-      @for (item of cartItems?.items; track $index) {
-      @if (item.quantity != 0) {
-        <div class="row">
+      }
+    <div class="border mx-2 p-2 mt-2" style="border-radius: 10px 10px 0px 0px; border-bottom: 0px solid black !important">
+    <b style="font-size: 17px">Item Details</b>
+  </div>
+  <div class="border mx-2 pt-2" style="border-radius: 0px 0px 10px 10px;">
+       @if(cartItems.length != 0){
+         @for (item of cartItems[0].items; track $index) {
+        <div class="row pe-2">
       <div class="col-3">
-        <img class="p-2" style="border-radius: 18px;" [src]="item.item_details.image_url" alt="">
+        <img class="px-2 pb-2 pt-0" style="border-radius: 18px;" [src]="item.item_details.image_url" alt="">
       </div>
       <div class="col-6 d-flex flex-column align-items-start justify-content-center">
         <h6 class="mb-1 truncate-2-lines w-100">{{item.item_details.name}}</h6>
@@ -28,25 +41,281 @@
       <div class="col-3 d-flex align-items-center flex-column justify-content-center">
         <div class="quantity-button" style="right: 5px;">
           <div class="d-flex align-items-center justify-content-center">
-            <span class="bttn px-2" (click)="decrement(item.id)">&#8722;</span>
+            <span class="bttn px-2" (click)="decrement(item.item_details.id, item.quantity)">&#8722;</span>
             <span class="bttn px-2">{{item.quantity}}</span>
-            <span class="bttn px-2" (click)="increment(item.id)">&#43;</span>
+            <span class="bttn px-2" (click)="increment(item.item_details.id, item.quantity)">&#43;</span>
           </div>
         </div>
-        <small class="float-end me-2 fs-6">&#8377;{{getNewItemPrice(item.quantity, item.item_details.price.ourPrice)}}</small>
+        <small class="float-end me-2 fs-6 text-nowrap">&#8377;{{getNewItemPrice(item.quantity, item.item_details.price.ourPrice)}} <span class="text-secondary" style="text-decoration: line-through">&#8377;{{item.quantity * item.item_details.price.mrp}}</span></small>
       </div>
     </div>
+       } } @else {
+        <div class="w-100 p-3 align-items-center justify-content-center text-center">
+          <h4>Cart is Empty!</h4>
+    <button class="btn btn-dark" (click)="goBack()">Add items to cart</button>
+</div>
       }
-    }
-    } @else {
-      <div class="d-flex justify-content-center align-items-center h-100">
-        <ion-spinner  name="crescent"></ion-spinner>
-      </div>
-    }
   </div>
+
+  <div class="border mx-2 p-2 mt-2" style="border-radius: 10px 10px 0px 0px; border-bottom: 0px solid black !important">
+    <b style="font-size: 17px">You may also like</b>
+  </div>
+  <div class="border mx-2 p-2" style="border-radius: 0px 0px 10px 10px;">
+    
+    <swiper-container class="mt-2" [slidesPerView]="3.2" [spaceBetween]="3" [loop]="false" [pagination]="{ clickable: true }" [freeMode]="true"  [grid]="{ rows: 2, fill: 'row' }" [autoplay]="false">
+    @for (item of groceryList; track $index) {
+    <swiper-slide>
+        <div class="position-relative">
+
+          <img style="border-radius: 15px;" [src]="item.image_url" alt="">
+            
+                    <div class="quantity-button position-absolute" style="right: 5px;">
+    <div class="d-flex align-items-center justify-content-center">
+      <span class="bttn px-2">&#8722;</span>
+      <span class="bttn px-2">3</span>
+      <span class="bttn px-2">&#43;</span>
+    </div>
+  </div>
+        </div>
+        <div class="px-1 mb-2">
+          <div><small
+              style="font-size: 10px !important; color: rgb(111, 111, 241)">{{item.quantity.amount}}&nbsp;{{item.quantity.unit}}</small>
+          </div>
+          <span>
+            <small>
+              <strong class="text-truncate d-block">{{item.name}}</strong></small>
+        </span>
+        <div class="">
+          <small style="font-size: 10px;" class="mb-0 d-block text-success">10% OFF</small>
+          <small><strong class="me-1">&#8377;{{item.price.ourPrice}}</strong> <span class="text-decoration-line-through">&#8377;{{item.price.mrp}}</span></small>
+        </div>
+        </div>
+    </swiper-slide>
+    }
+  </swiper-container>
+
+  </div>
+  
+  @if(cartItems.length != 0){
+    <div class="border mx-2 p-2 mt-2" style="border-radius: 10px 10px 0px 0px; border-bottom: 0px solid black !important">
+    <b style="font-size: 17px">Bill Summary</b>
+  </div>
+    <div class="border mx-2 p-2" style="border-radius: 0px 0px 10px 10px;">
+    <span class="text-secondary">
+        <div class="d-flex justify-content-between">
+        <small class="text-dark">Base Price x {{totalItems}}</small> 
+        <small><span class="text-dark"><b>&#8377;{{baseprice}} </b> </span><span style="text-decoration: line-through">&#8377;{{mrpTotal}}</span></small>
+      </div>
+      <div class="d-flex justify-content-between">
+        <small class="text-success">Discount on MRP</small>
+        <small class="text-success">- &#8377;{{mrpTotal-baseprice}}</small>
+      </div>
+      <hr class="my-1">
+      <div class="d-flex justify-content-between">
+        <small class="text-dark">Handling Charges</small>
+        <small class="text-dark"> &#8377;{{handlingCharges}}</small>
+      </div>
+      <div class="d-flex justify-content-between">
+        <small class="text-dark">Delivery Charges</small>
+        @if(delivery == 0){
+          <small><span class="text-secondary" style="text-decoration: line-through">&#8377;30</span><span class="text-success"> Free</span></small>
+        } @else {
+          <small class="text-dark"> &#8377;{{delivery}}</small>
+        }
+      </div>
+      <hr class="my-1">
+      @if(getTime() == true){
+        <div class="d-flex justify-content-between">
+        <small class="text-dark">🌚 Latenight Fee</small>
+        <small class="text-dark"> &#8377;{{latenightCharges}}</small>
+      </div>
+      <hr class="my-1">
+      }
+      <!-- <div class="d-flex justify-content-between">
+        <small class="text-dark">🌧️ Surcharge</small>
+        <small class="text-dark"> &#8377;0</small>
+      </div> -->
+      
+      <div class="d-flex justify-content-between">
+        <small class="text-success">Promotional Discount</small>
+        <small class="text-success position-relative">- &#8377;{{promotionalDiscount}} <img class="position-absolute" style="right: 0;" src=""> </small>
+      </div>
+      <hr class="p-0 m-1" style="border-top: 1px dashed;">
+      <div class="d-flex justify-content-between">
+        <small class="text-dark" style="font-size: 17px;"><b>Total</b></small>
+        <small class="text-dark" style="font-size: 17px;"><b>&#8377;{{finalCost}}</b></small>
+      </div>
+      <div class="w-100 text-center" style="border-radius: 4px; background-color: rgba(26, 243, 26, 0.185)">
+        <small class="text-success p-1 py-1">Congratulations! 🎉 You've saved <b>₹{{totalSavingsOnthisOrder}}</b> on this order!</small>
+      </div>
+      </span>
+  </div>
+<div class="mx-2 py-2 px-3 align-items-center mt-2 d-flex justify-content-between" style="border-radius: 10px 10px 10px 10px; background-color: rgba(0, 0, 0, 0.11)">
+       <div class="d-flex align-items-center">
+        <img src="assets/gif/wired-lineal-290-coin-morph-coins.gif" height="24px" alt="">
+        &nbsp;<h6 class="m-0"> <b>&#8377;50</b> Free Cash 
+        @if (promotionalDiscount == 0) {
+          Available
+        } @else {
+          Applied 🎉
+        }
+        </h6>
+       </div>
+      <!-- @if(promotionalDiscount == 0){ -->
+        <small class="m-0 text-success"><div class="checkbox-wrapper-12">
+  <div class="cbx">
+    <input id="cbx-12" type="checkbox" (click)="applyCash()"/>
+    <label for="cbx-12"></label>
+    <svg width="15" height="14" viewbox="0 0 15 14" fill="none">
+      <path d="M2 8.36364L6.23077 12L13 2"></path>
+    </svg>
+  </div>
+  <!-- Gooey-->
+  <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <defs>
+      <filter id="goo-12">
+        <fegaussianblur in="SourceGraphic" stddeviation="4" result="blur"></fegaussianblur>
+        <fecolormatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -7" result="goo-12"></fecolormatrix>
+        <feblend in="SourceGraphic" in2="goo-12"></feblend>
+      </filter>
+    </defs>
+  </svg>
+</div></small>
+      <!-- } @else {
+        <small class="m-0 text-success" (click)="promotionalDiscount = 0; calculation()">remove</small>
+      } -->
+  </div>
+
+<div class="border mx-2 p-2 mt-2" style="border-radius: 10px 10px 0px 0px; border-bottom: 0px solid black !important">
+    <b style="font-size: 17px">Select Payment Method</b>
+  </div>
+  <div class="border mx-2 p-2" style="border-radius: 0px 0px 10px 10px;">
+    <div class="row px-3 gap-2">
+      <button class="border col text-center py-4" style="border-radius: 10px" [ngClass]="selectedPayment == 'cod'? 'selectedPayment': ''" (click)="selectedPayment = 'cod'" [disabled]="finalCost > 1500 || getTime()">
+      Cash On Delivery
+      </button>
+    <button class="border col text-center py-4" style="border-radius: 10px" [ngClass]="selectedPayment == 'online'? 'selectedPayment': ''" (click)="selectedPayment = 'online'">
+      Online
+    </button>
+    </div>
+      <div class="w-100 text-center mt-1" style="border-radius: 4px; background-color: transparent">
+        @if(getTime()){
+            <small class="text-secondary p-1 py-1" style="font-size:12px !important">*COD is not available from 10PM to 6AM.</small>
+        } @else if (finalCost > 1500) {
+            <small class="text-secondary p-1 py-1" style="font-size:12px !important">*COD is not available on orders above &#8377;1500.</small>
+        }
+      </div>
+  </div>
+  <div class="border mx-2 mt-2 p-2" style="border-radius: 10px;">
+    <small><strong>Cancellation Policy</strong></small><br>
+    <small>Orders cannot be cancelled once packed for delivery. In case of unexpected delays, a refund will be provided,
+      if applicable</small>
+  </div>
+  <div style="height: 200px;"></div>  
+}
+
+  
+    } @else {
+    <div class="skeleton p-2 mx-2 mb-2 text-center text-success" style="border-radius: 7px; background-color: rgb(181, 245, 213); top: 0px;">
+          <span style="color:transparent"><b>Free delivery</b> applied on this order🥳</span>
+    </div>
+    <div class="border mx-2 p-2 mt-2" style="border-radius: 10px 10px 0px 0px; border-bottom: 0px solid black !important">
+    <b style="font-size: 17px" class="skeleton skeleton-text">Item Details</b>
+  </div>
+   <div class="border mx-2 pt-2" style="border-radius: 0px 0px 10px 10px;">
+        <div class="row pe-2">
+      <div class="col-3">
+        <div class="skeleton px-2 pb-2 pt-0 ms-2 mb-1" style="border-radius: 18px; height: 80px" src="item.item_details.image_url" alt=""></div>
+      </div>
+      <div class="col-6 d-flex flex-column align-items-start justify-content-center">
+        <h6 class="skeleton-text skeleton mb-1 truncate-2-lines w-100">Tomato Ketchup</h6>
+        <small style="font-size: 12px; color: rgba(112, 60, 233, 0.76)" class="skeleton" style="color:transparent">500 gms</small>
+      </div>
+      <div class="col-3 d-flex align-items-center flex-column justify-content-center">
+        <div class="skeleton" style="right: 5px;">
+          <div class="d-flex align-items-center justify-content-center">
+            <span class="bttn px-2" style="color: transparent">&#8722;</span>
+            <span class="bttn px-2" style="color: transparent">12</span>
+            <span class="bttn px-2" style="color: transparent">&#43;</span>
+          </div>
+        </div>
+        <small class="skeleton skeleton-text float-end me-2 fs-6 text-nowrap">1000 <span class="text-secondary" style="text-decoration: line-through"></span></small>
+      </div>
+    </div>
+        <div class="row pe-2">
+      <div class="col-3">
+        <div class="skeleton px-2 pb-2 pt-0 ms-2 mb-1" style="border-radius: 18px; height: 80px" src="item.item_details.image_url" alt=""></div>
+      </div>
+      <div class="col-6 d-flex flex-column align-items-start justify-content-center">
+        <h6 class="skeleton-text skeleton mb-1 truncate-2-lines w-100">Tomato Ketchup</h6>
+        <small style="font-size: 12px; color: rgba(112, 60, 233, 0.76)" class="skeleton" style="color:transparent">500 gms</small>
+      </div>
+      <div class="col-3 d-flex align-items-center flex-column justify-content-center">
+        <div class="skeleton" style="right: 5px;">
+          <div class="d-flex align-items-center justify-content-center">
+            <span class="bttn px-2" style="color: transparent">&#8722;</span>
+            <span class="bttn px-2" style="color: transparent">12</span>
+            <span class="bttn px-2" style="color: transparent">&#43;</span>
+          </div>
+        </div>
+        <small class="skeleton skeleton-text float-end me-2 fs-6 text-nowrap">1000 <span class="text-secondary" style="text-decoration: line-through"></span></small>
+      </div>
+    </div>
+        <div class="row pe-2">
+      <div class="col-3">
+        <div class="skeleton px-2 pb-2 pt-0 ms-2 mb-1" style="border-radius: 18px; height: 80px" src="item.item_details.image_url" alt=""></div>
+      </div>
+      <div class="col-6 d-flex flex-column align-items-start justify-content-center">
+        <h6 class="skeleton-text skeleton mb-1 truncate-2-lines w-100">Tomato Ketchup</h6>
+        <small style="font-size: 12px; color: rgba(112, 60, 233, 0.76)" class="skeleton" style="color:transparent">500 gms</small>
+      </div>
+      <div class="col-3 d-flex align-items-center flex-column justify-content-center">
+        <div class="skeleton" style="right: 5px;">
+          <div class="d-flex align-items-center justify-content-center">
+            <span class="bttn px-2" style="color: transparent">&#8722;</span>
+            <span class="bttn px-2" style="color: transparent">12</span>
+            <span class="bttn px-2" style="color: transparent">&#43;</span>
+          </div>
+        </div>
+        <small class="skeleton skeleton-text float-end me-2 fs-6 text-nowrap">1000 <span class="text-secondary" style="text-decoration: line-through"></span></small>
+      </div>
+    </div>
+  </div>
+  <div class="border mx-2 p-2 mt-2" style="border-radius: 10px 10px 0px 0px; border-bottom: 0px solid black !important">
+    <b style="font-size: 17px" class="skeleton skeleton-text">Bill Summary</b>
+  </div>
+    <div class="border mx-2 p-2" style="border-radius: 0px 0px 10px 10px;">
+    <span class="text-secondary">
+        <div class="d-flex justify-content-between">
+        <small class="text-dark skeleton skeleton-text"></small> 
+      </div>
+      <div class="d-flex justify-content-between">
+        <small class="text-success skeleton skeleton-text"></small>
+        <small class="text-success"><b class="skeleton skeleton-text">- &#8377;{{mrpTotal-baseprice}}</b></small>
+      </div>
+      <hr class="my-1">
+      <div class="d-flex justify-content-between">
+        <small class="text-dark skeleton skeleton-text"></small> 
+      </div>
+      <div class="d-flex justify-content-between">
+        <small class="text-success skeleton skeleton-text"></small>
+        <small class="text-success"><b class="skeleton skeleton-text">- &#8377;{{mrpTotal-baseprice}}</b></small>
+      </div>
+      <hr class="p-0 m-1" style="border-top: 1px dashed;">
+      <div class="d-flex justify-content-between">
+        <small class="text-dark" style="font-size: 17px;"><b class="skeleton skeleton-text">Total</b></small>
+        <small class="text-dark" style="font-size: 17px;"><b class="skeleton skeleton-text">6366</b></small>
+      </div>
+      <div class="w-100 text-center skeleton" style="border-radius: 4px; height: 50px; background-color: rgba(26, 243, 26, 0.185)">
+        <small class="text-success p-1 py-1"> </small>
+      </div>
+      </span>
+  </div>
+      <div style="height: 300px"></div>
+    }
   <!-- <div class="border mx-2 mt-2 p-2" style="border-radius: 10px;"> -->
   <!-- <ion-card-subtitle class="ms-2 mt-2"> Price breakup</ion-card-subtitle> -->
-  <div class="border mx-2 mt-2" style="border-radius: 15px">
+  <!-- <div class="border mx-2 mt-2" style="border-radius: 15px">
     @if (!isLoading) {
       <section>
       <div class="price-breakup mt-1 p-2 d-flex justify-content-between align-items-center">
@@ -80,23 +349,49 @@
         <ion-spinner  name="crescent"></ion-spinner>
       </div>
     }
-  </div>
+  </div> -->
   <!-- </div> -->
-  <div class="border mx-2 mt-2 p-2" style="border-radius: 10px;">
-    <small><strong>Cancellation Policy</strong></small><br>
-    <small>Orders cannot be cancelled once packed for delivery. In case of unexpected delays, a refund will be provided,
-      if applicable</small>
-  </div>
-  <div style="height: 150px;"></div>
-  <ion-footer class="position-fixed bottom-0 px-2">
-
-    <div class="row bg-white py-2">
-      <div class="col-5 d-flex align-items-center justify-content-center">
-        <h1 class="m-0">&#8377;{{finalPayableAmount()}}</h1>
+   <!-- <small class="mt-2 ms-3"><strong>Price Breakup</strong></small> -->
+  
+    @if (cartItems.length != 0) {
+      <div class="w-100 position-fixed bottom-0 px-3 pt-2 bg-white" style="padding-bottom: 33px !important; border-top: 1px solid #80808024; z-index: 999">
+        <!-- <div class="w-100 p-2" style="background-color: rgb(186, 240, 186)">fefefef</div> -->
+         <div class="mb-1 py-1 px-1 d-flex align-items-center justify-conent-center" style="border-radius: 6px; background-color: rgba(0, 162, 255, 0.199)" (click)="openMap()">
+            <div class="px-2"><svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#1f1f1f"><path d="M120-648.67v-192h273.33v192H120ZM276.16-200q-48.83 0-83.16-34.67-34.33-34.66-34.33-83.33H80v-120q0-65.33 45.67-111.33 45.66-46 111-46h156.66v210.66h154L692-566v-127.33H570V-760h122q27.5 0 47.08 19.58 19.59 19.59 19.59 47.09v150.66L580-318H393.33q0 48.67-34.17 83.33-34.18 34.67-83 34.67Zm-.16-66.67q21 0 35.83-15.16Q326.67-297 326.67-318H225.33q0 21 14.84 36.17Q255-266.67 276-266.67ZM762.82-200q-48.82 0-83.15-34.18-34.34-34.17-34.34-83 0-48.82 34.18-83.15 34.18-34.34 83-34.34t83.16 34.18q34.33 34.18 34.33 83t-34.18 83.16q-34.17 34.33-83 34.33Zm-.15-66.67q21 0 35.83-14.83 14.83-14.83 14.83-35.83t-14.83-35.84Q783.67-368 762.67-368t-35.84 14.83Q712-338.33 712-317.33q0 21 14.83 35.83 14.84 14.83 35.84 14.83Z"/></svg></div>
+          <div style="width: 78vw">
+              <div class="w-75 text-truncate">
+        <h6 class="mb-0 mt-1"><strong>Delivering to {{label}}</strong></h6>
+        @if(address != ''){
+              <small (click)="openMap()"> <span class="text-truncate" style="max-height: 75%">{{address}}</span></small>
+        } @else {
+          <small class="text-primary" (click)="openMap()">Select location on map</small>
+        } 
       </div>
-      <div class="col-7">
-        <ion-button class="w-100 ion-padding" color="dark">Place Order</ion-button>
-      </div>
+            </div>
+        </div>
+        <button class="btn btn-dark btn-lg w-100" style="border-radius: 10px" (click)="pay()" [disabled]="isGettingResponse || isLoading">
+          
+          
+          @if(isLoading || isGettingResponse){
+            <span class="text-secondary">Updating Cart</span>
+          } @else {
+            Click to Pay <b>&#8377;{{finalCost}}</b>
+          }
+        </button>
     </div>
-  </ion-footer>
-</ion-content>
+    }
+    </ion-content>
+  } @else {
+      <ion-content>
+    <div class="h-100 d-flex flex-column justify-content-center align-items-center">
+      <!-- <img class="image" src="../../../assets/gif/system-solid-31-check-in-check.gif" alt=""> -->
+      <svg xmlns="http://www.w3.org/2000/svg" height="80px" viewBox="0 -960 960 960" width="80px" fill="#0dc52b"><path d="m421-298 283-283-46-45-237 237-120-120-45 45 165 166Zm59 218q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-156t86-127Q252-817 325-848.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 82-31.5 155T763-197.5q-54 54.5-127 86T480-80Z"/></svg>
+      <div class="fs-4">Order Placed Successfully!</div>
+      <div style="font-size: smaller">Order Id - {{refOrderId}}</div>
+      <ion-button  fill="outline" size="small" color="dark" (click)="trackOrder()">
+        Track order
+      </ion-button>
+      <div style="height: 200px"></div>
+  </div>
+  </ion-content>
+    }

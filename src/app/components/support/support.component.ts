@@ -9,6 +9,7 @@ import { CustonModalComponent } from '../custon-modal/custon-modal.component';
 import { SupportService } from 'src/app/services/support.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-support',
@@ -25,6 +26,7 @@ export class SupportComponent  implements OnInit {
   title: string = ''
   details: string = ''
   token: any = ''
+  activeTab: any = 'first'
   openTickets: any = []
   closedTickets: any = []
 tickets: any = []
@@ -72,7 +74,14 @@ faqs: any = [
   }
 ]
 
-  constructor(private modalCtrl: ModalController, private supportService: SupportService, private authService: AuthService) {
+  constructor(private modalCtrl: ModalController, private supportService: SupportService, private authService: AuthService, private router: Router) {
+    const navigation = this.router.getCurrentNavigation();
+  const state = navigation?.extras.state;
+  if (state) {
+    this.raiseTicket = state['showForm']
+    this.activeTab = state['activeTab']
+    this.title = state['orderId']
+  }
      addIcons({ chevronForward, listCircle });
    }
 

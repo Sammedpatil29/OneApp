@@ -1,0 +1,204 @@
+<ion-header>
+  <ion-toolbar class="pt-4">
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Order Details</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content (ionScroll)="onScroll($event)" scrollEvents="true">
+  
+  <div class="d-flex flex-column text-center justify-content-center py-4 text-white fw-5 position-sticky"
+    style="background-color: green; padding-bottom: 67px !important; top: 0; z-index: -999; border-radius: 0px 0px 10px 10px;">
+    <h3 class="m-0">{{orderStatus(orderDetails.status[orderDetails.status.length - 1].status)}}!</h3>
+    <span>
+  {{ itemDetails.orderId.toString().slice(0, -4) }}<b>{{itemDetails.orderId.toString().slice(-4) }}</b>
+</span>
+<!-- <div class="w-100 position-absolute py-2" style="background-color: rgb(0, 128, 0); top: 0; z-index: 99999 !important" [ngStyle]="{ 'background-color': headerBg, 'color': headerColor }">
+    <h6 class="m-0">{{orderStatus(orderDetails.status[orderDetails.status.length - 1].status)}}!</h6>
+  </div> -->
+  </div>
+  
+
+  <!-- banner -->
+  <div class="mx-2" style="border-radius: 10px; margin-top: -58px; background-color: white">
+    <img class="img-fluid w-100" style="border-radius: 10px; height: 200px" src="assets/Untitled.png" alt="">
+  </div>
+
+  <!-- track order -->
+   <div class="border mx-2 p-2 mt-2 d-flex justify-content-between align-items-center" style="border-radius: 10px 10px 0px 0px; border-bottom: 0px solid black !important; background-color: white">
+    <b style="font-size: 17px">Order Status</b>
+<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M120-250q-29.15 0-49.58-20.42Q50-290.85 50-320t20.42-49.58Q90.85-390 120-390q6.77 0 12.23.58 5.46.57 10.85 3.73l191.23-191.23q-3.16-5.39-3.73-10.85-.58-5.46-.58-12.23 0-29.15 20.42-49.58Q370.85-670 400-670t49.58 20.42Q470-629.15 470-600q0 3.54-3.54 22.31l111.23 111.23q5.39-2.39 10.46-2.96 5.08-.58 11.85-.58t12.04.58q5.27.57 10.27 3.73l152-152q-3.16-5-3.73-10.27-.58-5.27-.58-12.04 0-29.15 20.42-49.58Q810.85-710 840-710t49.58 20.42Q910-669.15 910-640t-20.42 49.58Q869.15-570 840-570q-6.77 0-12.04-.58-5.27-.57-10.27-3.73l-152 152q3.16 5 3.73 10.27.58 5.27.58 12.04 0 29.15-20.42 49.58Q629.15-330 600-330t-49.58-20.42Q530-370.85 530-400q0-6.77.58-12.23.57-5.46 3.73-10.85L423.08-534.31q-5.39 3.16-10.85 3.73-5.46.58-12.23.58-3.54 0-22.31-3.54L186.46-342.31q2.39 5.39 2.96 10.46.58 5.08.58 11.85 0 29.15-20.42 49.58Q149.15-250 120-250Z"/></svg>  </div>
+   <div class="border mx-2 p-3 position-relative" style="border-radius: 0px 0px 10px 10px; background-color: white">
+    
+@for (item of orderDetails['status']; track $index) {
+        <div class="d-flex align-items-center">
+          @if(item.status != 'cancelled'){
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#27b300"><path d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>
+          } @else {
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#EA3323"><path d="m336-280 144-144 144 144 56-56-144-144 144-144-56-56-144 144-144-144-56 56 144 144-144 144 56 56ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>
+          }
+          <div class="ms-1">
+          <b style="line-height: 1; margin-bottom: 0;">{{orderStatus(item.status)}}</b>
+          <small style="line-height: 1; margin-bottom: -3px;">, {{item.date | date: 'dd/MM/yy, h:mm a' }}</small>
+        </div>
+      </div>
+      @if (item.status != 'delivered' && !endStatus.includes(item.status)){
+          <div style="width: 1px; height: 20px; background-color: #ccc; margin: 0 12px;"></div>
+      }
+      
+}      
+      @if (!endStatus.includes(orderDetails.status[orderDetails.status.length - 1].status)) {
+        <div class="d-flex align-items-center">
+        <span class="loader"></span>
+        </div>
+      }
+      <!-- <div class="bullet d-flex align-items-center justify-content-center">
+        <svg xmlns="http://www.w3.org/2000/svg" height="15px" viewBox="0 -960 960 960" width="15px" fill="#FFFFFF"><path d="m24-424 18-72h198l-18 72H24Zm252 256q-50 0-85-35t-35-85H72l30-88h157l34-136h74l42-168H210l14-40q8-22 26.5-35t41.5-13h452l-36 144h84l120 168-48 168h-48q0 50-35 85t-85 35q-50 0-85-35t-35-85H396q0 50-35 85t-85 35ZM96-560l18-72h234l-18 72H96Zm180 320q20.4 0 34.2-13.8Q324-267.6 324-288q0-20.4-13.8-34.2Q296.4-336 276-336q-20.4 0-34.2 13.8Q228-308.4 228-288q0 20.4 13.8 34.2Q255.6-240 276-240Zm420 0q20.4 0 34.2-13.8Q744-267.6 744-288q0-20.4-13.8-34.2Q716.4-336 696-336q-20.4 0-34.2 13.8Q648-308.4 648-288q0 20.4 13.8 34.2Q675.6-240 696-240Zm-36-192h170l3-11-78-109h-65l-30 120Z"/></svg>
+      </div> -->
+        @if(orderDetails.status[orderDetails.status.length - 1].status == 'delivered'){
+                <div class="position-absolute w-100 d-flex align-items-center justify-content-center flex-column ms-5" style="background-color: rgb(0, 128, 0); height: -webkit-fill-available; top: 0; right: 0; border-radius: 0px 0px 10px 10px">
+        <!-- <svg xmlns="http://www.w3.org/2000/svg" height="60px" viewBox="0 -960 960 960" width="60px" fill="#27b300"><path d="M422-297.33 704.67-580l-49.34-48.67L422-395.33l-118-118-48.67 48.66L422-297.33ZM480-80q-82.33 0-155.33-31.5-73-31.5-127.34-85.83Q143-251.67 111.5-324.67T80-480q0-83 31.5-156t85.83-127q54.34-54 127.34-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 82.33-31.5 155.33-31.5 73-85.5 127.34Q709-143 636-111.5T480-80Z"/></svg>   -->
+        
+          <h1 class="m-0" style="color: rgb(250, 249, 250); font-size: 45px; font-weight: 900; text-shadow: 2px 2px 2px rgb(27, 26, 27)"><b>7 min</b></h1>
+          <h6 class="m-0 text-white">that's all we took!</h6>
+        </div>
+        }
+      </div>
+
+      <!-- Raider Block -->
+       <div class="mx-2 border p-2 mt-2 bg-white d-flex justify-content-between align-items-center" style="border-radius: 10px">
+        <div class="d-flex align-items-center">
+          <img class="me-2" style="height:40px" src="assets/icon/ChatGPT Image Oct 14, 2025, 07_41_18 PM.png" alt="">  
+        <div style="line-height: normal;">
+            <b>{{orderDetails.raider_details.name}}</b><br>
+            <small style="font-size: 12px">
+              <i class="bi bi-star-fill text-warning me-1"></i>
+              <i class="bi bi-star-fill text-warning me-1"></i>
+              <i class="bi bi-star-fill text-warning me-1"></i>
+              <i class="bi bi-star-fill text-warning me-1"></i>
+              <i class="bi bi-star-half text-warning me-1"></i>
+            </small>
+          </div>
+        </div>
+          <small class="text-primary" style="font-size: 12px"><i class="bi bi-telephone-fill me-1"></i>Call Raider</small>
+       </div>
+      
+
+  <!-- OTP block -->
+    <div class="mx-2 p-1 mt-2" style="border-radius: 10px; background: linear-gradient(90deg,rgba(43, 48, 51, 1) 0%, rgba(16, 18, 18, 1) 50%, rgba(31, 30, 28, 1) 100%);">
+      <div class="d-flex p-2 align-items-center justify-content-evenly">
+        <b class="fs-6 text-white">OTP</b>
+    @for (item of orderDetails.otp; track $index) {
+        <b class="fs-6 text-white px-3 py-1" style="border-radius: 10px; box-shadow:inset 1px 1px 2px rgb(190, 14, 14)">{{item}}</b>
+      }
+      </div>
+      <div class="text-secondary text-start w-100 mt-1 p-1 bg-white" style="font-size: 12px; border-radius: 8px"><img style="width: 15px" src="assets/gif/wired-lineal-1140-error-hover-oscillate.gif">do not share the OTP with the Raider until you’ve confirmed receipt of all items.</div>
+  </div>
+
+  <!-- order details -->
+   <div class="border mx-2 p-2 mt-2 d-flex justify-content-between bg-white" [ngStyle]="{'border-radius': expandItemDetails? '10px 10px 0px 0px': '10px', 'border-bottom': expandItemDetails? '1px solid gray': '0px solid black !important'}" (click)="expandItemDetails = !expandItemDetails">
+    <b style="font-size: 17px">Item Details</b>
+    @if(!expandItemDetails){
+      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M480-528 296-344l-56-56 240-240 240 240-56 56-184-184Z"/></svg>
+    } @else {
+      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
+    }
+  </div>
+  @if (expandItemDetails) {
+    <div class="border mx-2 p-2" style="border-radius: 0px 0px 10px 10px; border-top: none; background-color: white">
+      @for(item of itemDetails.items; track $index){
+        <div class="row pe-2">
+      <div class="col-3">
+        <img class="px-2 pb-2 pt-0" style="border-radius: 18px;" [src]="item.item_details.image_url" alt="">
+      </div>
+      <div class="col-6 d-flex flex-column align-items-start justify-content-center">
+        <h6 class="mb-1 truncate-2-lines w-100">{{item.item_details.name}}</h6>
+        <small style="font-size: 12px; color: rgba(112, 60, 233, 0.76)">{{item.item_details.quantity.amount}}&nbsp;{{item.item_details.quantity.unit}}</small>
+      </div>
+      <div class="col-3 d-flex align-items-center flex-column justify-content-center">
+      </div>
+    </div>
+      }
+    </div>
+  }
+
+  <!-- price breakup -->
+   <div class="border mx-2 p-2 mt-2 d-flex justify-content-between" [ngStyle]="{'border-radius': expandBillSummary? '10px 10px 0px 0px': '10px', 'border-bottom': expandBillSummary? '1px solid gray': '0px solid black !important'}" (click)="expandBillSummary = !expandBillSummary">
+    <b style="font-size: 17px">Bill Summary</b>
+    @if(!expandBillSummary){
+      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M480-528 296-344l-56-56 240-240 240 240-56 56-184-184Z"/></svg>
+    } @else {
+      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
+    }
+  </div>
+  @if(expandBillSummary){
+     <div>
+       <div class="border mx-2 p-2" style="border-radius: 0px 0px 10px 10px;">
+    <span class="text-secondary">
+        <div class="d-flex justify-content-between">
+        <small class="text-dark">Base Price x {{itemDetails.itemsCount}}</small> 
+        <small><span class="text-dark"><b>&#8377;{{itemDetails.baseprice}} </b> </span><span style="text-decoration: line-through">&#8377;{{itemDetails.mrpTotal}}</span></small>
+      </div>
+      <div class="d-flex justify-content-between">
+        <small class="text-success">Discount on MRP</small>
+        <small class="text-success">- &#8377;{{itemDetails.mrpTotal-itemDetails.baseprice}}</small>
+      </div>
+      <hr class="my-1">
+      <div class="d-flex justify-content-between">
+        <small class="text-dark">Handling Charges</small>
+        <small class="text-dark"> &#8377;{{itemDetails.handlingCharges}}</small>
+      </div>
+      <div class="d-flex justify-content-between">
+        <small class="text-dark">Delivery Charges</small>
+        @if(itemDetails.deliveryCharges == 0){
+          <small><span class="text-secondary" style="text-decoration: line-through">&#8377;30</span><span class="text-success"> Free</span></small>
+        } @else {
+          <small class="text-dark"> &#8377;{{itemDetails.deliveryCharges}}</small>
+        }
+      </div>
+      <hr class="my-1">
+      <!-- @if(getTime() == true){ -->
+        <div class="d-flex justify-content-between">
+        <small class="text-dark">🌚 Latenight Fee</small>
+        <small class="text-dark"> &#8377;{{itemDetails.lateNightFees}}</small>
+      </div>
+      <hr class="my-1">
+      <!-- } -->
+      <!-- <div class="d-flex justify-content-between">
+        <small class="text-dark">🌧️ Surcharge</small>
+        <small class="text-dark"> &#8377;0</small>
+      </div> -->
+      
+      <div class="d-flex justify-content-between">
+        <small class="text-success">Promotional Discount</small>
+        <small class="text-success position-relative">- &#8377;{{itemDetails.promotionalDiscount}} <img class="position-absolute" style="right: 0;" src=""> </small>
+      </div>
+      <hr class="p-0 m-1" style="border-top: 1px dashed;">
+      <div class="d-flex justify-content-between">
+        <small class="text-dark" style="font-size: 17px;"><b>Total</b></small>
+        <small class="text-dark" style="font-size: 17px;"><b>&#8377;{{itemDetails.finalCost}}</b></small>
+      </div>
+      <div class="w-100 text-center mb-2" style="border-radius: 4px; background-color: rgba(26, 243, 26, 0.185)">
+        <small class="text-success p-1 py-1">Congratulations! 🎉 You've saved <b>₹{{itemDetails.savings}}</b> on this order!</small>
+      </div>
+      <small class="mt-3 text-dark">Payment Mode - {{itemDetails.paymentMode | uppercase}}</small> 
+      </span>
+  </div>
+  </div>
+  }
+
+  <div class="mt-2 px-2 w-100 d-flex gap-2"> 
+    @if(!endStatus.includes(orderDetails.status[orderDetails.status.length - 1].status)){
+      <button class="btn btn-outline-danger w-100">Cancel order</button>
+    }
+    <button class="btn btn-outline-dark w-100" (click)="openSupport(itemDetails.orderId)">Need Help?</button>
+  </div>
+
+   <div class="mt-2 mb-5">
+
+  </div>
+</ion-content>

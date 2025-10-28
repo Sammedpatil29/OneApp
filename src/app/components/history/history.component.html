@@ -59,10 +59,15 @@
                   <i [ngClass]="getStatusIcon(item.status)" class="ps-1"></i>
                 </ion-note>
               </ion-label>
-              <div class="metadata-end-wrapper" slot="end">
-                <ion-note color="medium">{{item.created_at | date:'dd/MM'}} &bull; {{item.created_at | date: 'HH:mm'}}</ion-note>
+              <ion-label class="metadata-end-wrapper" slot="end">
+                <div>
+                  <div class="d-flex justify-content-center">
+                    <ion-note color="medium">{{item.created_at | date:'dd/MM'}} &bull; {{item.created_at | date: 'HH:mm'}}</ion-note>
                 <ion-icon color="medium" name="chevron-forward"></ion-icon>
-              </div>
+                  </div>
+                <ion-note color="success" style="font-size: large"><b>&#8377;{{getCost(item.details)}}</b></ion-note>
+                </div>
+              </ion-label>
             </ion-item>
           }
         </ion-list>

@@ -25,7 +25,21 @@ export class LocationService {
   constructor(private http: HttpClient) { }
 
   async getCurrentPosition() {
-    this.coordinates = await Geolocation.getCurrentPosition();
+    // const permissionStatus = await Geolocation.checkPermissions();
+
+    // if (permissionStatus.location !== 'granted') {
+    //   const requestResult = await Geolocation.requestPermissions();
+    //   if (requestResult.location !== 'granted') {
+    //     console.warn('Location permission not granted.');
+    //     return null;
+    //   }
+    // }
+
+    // this.coordinates = await Geolocation.getCurrentPosition();
+    this.coordinates = await Geolocation.getCurrentPosition({
+  enableHighAccuracy: true,
+  timeout: 10000
+});
     this.getAddress(this.coordinates.coords.latitude, this.coordinates.coords.longitude)
     console.log('Current position:', this.coordinates);
     let finalData = {

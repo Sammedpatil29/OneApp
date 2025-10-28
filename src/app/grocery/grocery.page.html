@@ -35,9 +35,10 @@
     debounce="500"
     (ionFocus)="startSearch()"
     placeholder="Search for items"></ion-searchbar>
-    <div class="text-nowrap" style="padding: 8px; background-color: rgb(24, 23, 23); color: white; border-radius: 10px 0px 0px 10px;">
+    <!-- <div class="text-nowrap" style="padding: 8px; background-color: rgb(24, 23, 23); color: white; border-radius: 10px 0px 0px 10px;">
       GIVEAWAYS
-    </div>
+    </div> -->
+    <img style="border-radius: 10px 0px 0px 10px; height: 40px; box-shadow: 0px 1px 1px black" (click)="goTo(miniBanner[0].route)" [src]="miniBanner[0].img">
     </div>
 </div>
 </div>
@@ -45,45 +46,16 @@
 <h1 class="text-center mb-0 py-5 cash-text">&#8377;100 FREE CASH <br> <small style="font-size: 20px;">On all orders</small></h1>
 
 </div> -->
-
   <ion-title class="mt-2">Select by categories</ion-title>
   <div class="row p-2 g-2">
-    <div class="col-3" (click)="goToGrocerybyCategory()">
-          <img style="border-radius: 15px" src="../../assets/icons/5.png" alt="">
+    @for (item of Categories; track $index) {
+      <div class="col-3" (click)="goToGrocerybyCategory()">
+          <img style="border-radius: 15px" [src]="item.image_url" alt="">
         <div class="mx-2 text-center">
-         <small style="line-height: 0.1 !important;">Vegetables & Fruits</small>
+         <small class="mt-1" style="float: inline-end; line-height: normal">{{item.category_name}}</small>
         </div>
     </div>
-    <div class="col-3">
-          <img style="border-radius: 15px" src="../../assets/icons/4.png" alt="">
-        <div class="mx-2 text-center">
-         <small>Atta, Rice & Dal</small>
-        </div>
-    </div>
-    <div class="col-3">
-          <img style="border-radius: 15px" src="../../assets/icons/6.png" alt="">
-        <div class="mx-2 text-center">
-         <small>Oil, Ghee & Masala</small>
-        </div>
-    </div>
-    <div class="col-3">
-          <img style="border-radius: 15px" src="../../assets/icons/7.png" alt="">
-        <div class="mx-2 text-center">
-         <small>Bakery and Biscuits</small>
-        </div>
-    </div>
-    <div class="col-3">
-          <img style="border-radius: 15px" src="../../assets/icons/6.png" alt="">
-        <div class="mx-2 text-center">
-         <small>Oil, Ghee & Masala</small>
-        </div>
-    </div>
-    <div class="col-3">
-          <img style="border-radius: 15px" src="../../assets/icons/7.png" alt="">
-        <div class="mx-2 text-center">
-         <small>Bakery and Biscuits</small>
-        </div>
-    </div>
+    }
   </div>
 
     <ion-title class="mt-2">Recommended for you</ion-title>
@@ -93,20 +65,21 @@
         <div class="position-relative">
 
           <img style="border-radius: 15px;" [src]="item.image_url" alt="">
-            @if (!cartIncludes(item.id) || cartItems == [] || cartItems.quantity == 0) {
-              <div class="quantity-add-button position-absolute" style="right: 5px;" (click)="addItemToCart(item.id, item)">Add</div>
+            @if (!keys.includes(item.id)) {
+              <div class="quantity-add-button position-absolute" style="right: 5px;" (click)="addItemToCart(item.id)">Add</div>
             } @else {
+              <!-- <div class="quantity-add-button position-absolute" style="right: 5px;" (click)="addItemToCart(item.id, item)">{{item.id}}</div>
                 @for (cartItem of cartItems.items; track $index) {
-                  @if (cartItem.item_details.id === item.id) {
+                  @if (cartItem.item_details.id === item.id) { -->
                     <div class="quantity-button position-absolute" style="right: 5px;">
     <div class="d-flex align-items-center justify-content-center">
-      <span class="bttn px-2" (click)="decrement(cartItem.id)">&#8722;</span>
-      <span class="bttn px-2">{{cartItem.quantity}}</span>
-      <span class="bttn px-2" (click)="increment(cartItem.id)">&#43;</span>
+      <span class="bttn px-2" (click)="decrement(item.id)">&#8722;</span>
+      <span class="bttn px-2">{{cartItems1[item.id]}}</span>
+      <span class="bttn px-2" (click)="increment(item.id)">&#43;</span>
     </div>
   </div>
-                  }
-                }
+                  <!-- }
+                } -->
             }
            <!-- <div class="px-3"> -->
   <!-- <ion-button size="small" color="dark" class="quantity-button position-absolute bottom-0" style="right: 5px;">
@@ -123,9 +96,9 @@
               style="font-size: 10px !important; color: rgb(111, 111, 241)">{{item.quantity.amount}}&nbsp;{{item.quantity.unit}}</small>
           </div>
           <span>
-            <small>
-              <strong>{{item.name}}</strong></small>
-        </span>
+            <small style="float: left; line-height: normal">
+              <strong >{{item.name}}</strong></small>
+        </span> <br>
         <div class="">
           <small style="font-size: 10px;" class="mb-0 d-block text-success">10% OFF</small>
           <small><strong class="me-1">&#8377;{{item.price.ourPrice}}</strong> <span class="text-decoration-line-through">&#8377;{{item.price.mrp}}</span></small>
@@ -133,9 +106,6 @@
         </div>
       </div>
       }
-      <ion-infinite-scroll (ionInfinite)="onIonInfinite($event)">
-    <ion-infinite-scroll-content></ion-infinite-scroll-content>
-  </ion-infinite-scroll>
     </div>
   } @else {
     <div class="d-flex justify-content-center align-items-center h-100">
@@ -165,30 +135,12 @@
         <app-nodata></app-nodata>
       } @else {
         @for (item of searchedItems; track $index) {
-      <div class="col-4 rounded">
-        <div class="position-relative">
-          <img style="border-radius: 15px;" [src]="item.image_url" alt="">
-          <ion-button class="position-absolute bottom-0" color="dark" shape="round" style="right: 5px;">add</ion-button>
-        </div>
-        <div class="px-1">
-          <div><small
-              style="font-size: 10px !important; color: rgb(111, 111, 241)">{{item.quantity.amount}}&nbsp;{{item.quantity.unit}}</small>
-          </div>
-          <span>
-            <small>
-              <strong>{{item.name}}</strong></small>
-        </span>
-        <div class="">
-          <small style="font-size: 10px;" class="mb-0 d-block text-success">10% OFF</small>
-          <small><strong class="me-1">&#8377;{{item.price.ourPrice}}</strong> <span class="text-decoration-line-through">&#8377;{{item.price.mrp}}</span></small>
-        </div>
-        </div>
-      </div>
+      category
       }
       }
       </div> 
       @if (showCart && totalItems > 0) {
-    <div class="w-100 position-fixed bottom-0 px-2 pb-2 slide-top-normal">
+    <div class="w-100 position-fixed px-2 pb-2 slide-top-normal" style="bottom: env(safe-area-inset-bottom) !important">
       <div class="background-cart w-100 d-flex justify-content-between align-items-center p-3 text-center" style="z-index: 999 !important; border-radius: 15px" (click)="openCart()">
       <h5 class="mb-0">{{totalItems}}
         @if (totalItems !== 1) {
@@ -209,12 +161,12 @@
   </ion-modal>
   <!-- modal for search ends -->
 
- 
+ <div style="height: 80px !important"></div>
 </div>
 
 </ion-content>
 @if (showCart && totalItems > 0) {
-    <div class="w-100 position-fixed bottom-0 px-2 pb-2 slide-top-normal">
+    <div class="w-100 position-fixed position px-2 pb-2 slide-top-normal" style="bottom: env(safe-area-inset-bottom) !important">
       <div class="background-cart w-100 d-flex justify-content-between align-items-center p-3 text-center" style="z-index: 999 !important; border-radius: 15px" (click)="openCart()">
       <h5 class="mb-0">{{totalItems}} 
         @if (totalItems !== 1) {

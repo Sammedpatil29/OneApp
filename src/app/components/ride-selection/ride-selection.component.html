@@ -1,0 +1,171 @@
+<div style="height: 100vh">
+  <!-- map block starts -->
+  <div #map style="height: 60vh; width: 100%;" class="position-relative"></div>
+  <div class="position-absolute d-flex align-items-center justify-content-center" (click)="goback()"
+    style="height: 40px; width: 40px; background-color: rgb(255, 255, 255); border-radius: 50%; top: 25px; left: 15px; box-shadow: 0px 0px 2px black">
+    <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#1f1f1f">
+      <path d="M400-240 160-480l240-240 56 58-142 142h486v80H314l142 142-56 58Z" />
+    </svg>
+  </div>
+  <!-- map block ends -->
+
+  <!-- bottom sheet starts -->
+  <div class="detailsBlock border bg-white position-sticky"
+    style="border-radius: 10px 10px 0px 0px; height: 50vh; margin-top: -10vh; z-index: 9999; box-shadow: 0px 0px 2px black">
+
+    <!-- top bar starts -->
+    <div class="bg-white py-1 position-sticky" style="border-radius: 9px 9px 0px 0px; top: 0">
+      <h4 class="m-0 text-center"></h4>
+    </div>
+    <!-- top bar ends -->
+
+    @if (!searching) {
+       <!-- service options starts -->
+     <div class="p-2 overflow-auto" style="max-height: calc(50vh - 100px);">
+      <!-- {{distance}}-{{timeInMins}} -->
+      @for(item of tripOptions; track $index){
+        <div class="border p-2 mb-2 me-0" style="border-radius: 10px" [ngClass]="selected_service == item.type?'selectedServiceclass':''" (click)="selectService(item)">
+        <div class="row m-0">
+          <div class="col-2 p-0">
+            <img style="height: 50px;" [src]="item.image_url" alt="">
+          </div>
+          <div class="col-8" style="line-height: 15px">
+            <p class="m-0"><b>{{item.type | titlecase}}</b></p>
+            <small style="font-size: 13px !important" class="text-secondary">{{item.max_person}}</small><br>
+            <small style="font-size: 13px !important" class="text-secondary">{{timeInMins | number:'1.0-0'}} mins &bull; Drop 4:10 pm</small>
+          </div>
+          <div class="col-2 d-flex align-items-center">
+            <b class="text-nowrap" style="font-size: 19px">&#8377;{{item.price | number:'1.0-0'}}</b>
+          </div>
+        </div>
+      </div>
+      }
+      
+      <div style="height: 10px"></div>
+     </div>
+    <!-- service options ends -->
+
+    <!-- bottom bar starts -->
+    <div class="bg-white pt-3 pb-4 position-fixed w-100 px-2 d-flex justify-content-between align-items-center" style=" bottom: 0; box-shadow: 0px 0px 2px black; height: 100px">
+      <div class="p-1 fs-5 d-flex align-items-center"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#2cbd0f"><path d="M546.38-268.46h51.39l.77-3-155-166.68 1-2.86h10q58.61 0 95.65-29.92 37.04-29.93 41.96-80.08h38.47v-32.38h-39.57q-2.9-21.16-13.09-38.5-10.19-17.35-25.81-30.35h78.47v-32.39H329.38v34.7h127.54q39.08 0 64.43 17.61 25.34 17.62 31.34 48.93H329.38V-551h224.31q-4.46 34.62-30.31 54.5-25.84 19.88-67.15 19.88h-66.15V-438l156.3 169.54ZM480.13-120q-74.67 0-140.41-28.34-65.73-28.34-114.36-76.92-48.63-48.58-76.99-114.26Q120-405.19 120-479.87q0-74.67 28.34-140.41 28.34-65.73 76.92-114.36 48.58-48.63 114.26-76.99Q405.19-840 479.87-840q74.67 0 140.41 28.34 65.73 28.34 114.36 76.92 48.63 48.58 76.99 114.26Q840-554.81 840-480.13q0 74.67-28.34 140.41-28.34 65.73-76.92 114.36-48.58 48.63-114.26 76.99Q554.81-120 480.13-120Z"/></svg>
+        <span>Cash</span></div>
+      <button class="btn btn-dark py-2 w-75" (click)="bookRide()">Book {{selected_service | titlecase}}</button>
+    </div>
+    <!-- bottom bar ends -->
+    } @else {
+      
+      
+      
+<div class="px-2 overflow-auto" style="max-height: calc(50vh - 50px);">
+  @if(activeRide.raider_details == null){
+        <!-- searching animation starts -->
+       <div class="w-100 text-center d-flex align-items-center justify-content-center flex-column mt-2 position-sticky" style="top: 0px">
+          <b>Looking for a near by rider</b>
+          <div class="loader mt-1"></div>
+       </div>
+      <!-- searching animation ends -->
+      } @else {
+        <div class="" style="top: 0; z-index: 9999">
+          <div class="w-100 mb-1 ms-2">
+            @if(activeRide?.status == 'assigned'){
+                <small><b>On the way - </b>Rider is <b>{{estimatedDistance}}km</b> away, arriving in <b>{{estimatedDisplayTime}}</b></small>
+            } @else if (activeRide?.status == 'arrived') {
+                <small><b>Arrived! - </b> Rider is at your location.</small>
+            } @else if (activeRide?.status == 'started') {
+                <small><b>Trip Started! - </b>Reaching your location by <b>{{estimatedDistance}}</b></small>
+            }
+          </div>
+          <div class="border px-2 pt-2 pb-1 d-flex align-items-center justify-content-between bg-white" style="border-radius: 10px 10px 0px 0px; border-bottom: 0px !important">
+          <div class="d-flex align-items-center">
+            <div class="me-2"  style="height: 40px; width: 40px; border-radius: 50%; background-color: green"></div>
+          <div style="line-height: 1">
+            <small><b>{{activeRide.raider_details.name}}</b></small><br>
+            <small style="font-size: 13px">partner since {{activeRide.raider_details.join_date}}</small>
+          </div>
+          </div>
+          <div class=" p-1 text-dark d-flex align-items-center" style="border-radius: 5px; box-shadow: 0px 0px 2px black;" [ngStyle]="{'background-color': activeRide.raider_details.fuel_type == 'ev'? 'green': '#f6c600', 'color': activeRide.raider_details.fuel_type == 'ev'? 'white': 'black', 'border': activeRide.raider_details.fuel_type == 'ev'? '1px solid white': '1px solid black'}" >
+            <div style="line-height: 8px; margin-right: 2px" class="d-flex flex-column align-items-center">
+              <div style="width: 5px; height: 5px; background-color: gray"></div>
+            <small style="font-size: 4px" [ngStyle]="{'color': activeRide.raider_details.fuel_type == 'ev'? 'white': 'black'}">IND</small>
+            </div>
+            <span [ngStyle]="{'color': activeRide.raider_details.fuel_type == 'ev'? 'white': 'black'}">{{activeRide.raider_details.vehicle_number}}</span>
+          </div>
+          
+          <!-- {{activeRide.raider_details.name}} -->
+        </div>
+        
+        <div class="border py-1 px-2 d-flex align-items-center justify-content-between bg-white" style="border-radius:  0px 0px 10px 10px; border-top: 1px dashed rgba(158, 158, 158, 0.61) !important">
+          <small class="ms-1"><b>{{activeRide.raider_details.vehicle_type | titlecase}}-</b>{{activeRide.raider_details.vehicle_model}}</small>
+          <small class="text-primary float-end border border-primary px-2" style="border-radius: 5px">call</small>
+        </div>
+        </div>
+        
+        <!-- otp block -->
+         <div class=" p-1 mt-2" style="border-radius: 10px; background: linear-gradient(90deg,rgba(43, 48, 51, 1) 0%, rgba(16, 18, 18, 1) 50%, rgba(31, 30, 28, 1) 100%);">
+      <div class="d-flex p-1 align-items-center justify-content-evenly">
+        <b class="fs-10 text-white">OTP</b>
+    @for (item of activeRide?.otp; track $index) {
+        <b class="fs-10 text-white px-3 py-1" style="border-radius: 10px; box-shadow:inset 1px 1px 2px rgb(190, 14, 14)">{{item}}</b>
+      }
+      </div>
+      <!-- <div class="text-secondary text-start w-100 mt-1 p-1 bg-white" style="font-size: 12px; border-radius: 8px"><img style="width: 15px" src="assets/gif/wired-lineal-1140-error-hover-oscillate.gif">do not share the OTP with the Raider until you’ve confirmed receipt of all items.</div> -->
+  </div>
+      }
+
+      <!-- banner starts -->
+       <div class="border p-2 mt-2 d-flex align-items-center justify-content-between" style="border-radius: 10px; height: 100px; background-color: rgba(128, 128, 128, 0.247)"></div>
+      <!-- banner ends -->
+  <!-- <div style="height: 200px"></div> -->
+      <!-- trip details starts -->
+       <div class="mt-2 position-relative">
+        <div class="border py-2" style="border-radius: 10px 10px 0px 0px; border-bottom: 0px solid black !important;">
+        <div class="row pb-2">
+          <div class="col-2 d-flex align-items-center justify-content-center m-0">
+            <div class="d-flex align-items-center justify-content-center" style="width: 20px; height: 20px; background-color: green; border-radius: 50%">
+              <div style="width: 10px; height: 10px; background-color: rgb(241, 248, 241); border-radius: 50%"></div>
+            </div>
+          </div>
+          <div class="col-10" style="line-height: 16px">
+            <small><b>{{activeRide.trip_details.origin.name}}</b></small><br>
+            <small>{{activeRide.trip_details.origin.address}}</small>
+          </div>
+        </div>
+        <hr class="m-0 me-3 ms-5" style="border-top: 1px dashed black">
+        <!-- <div class="position-absolute" style="    height: 30px;
+    border-right: 1px solid gray;
+    left: 10;
+    top: 37px;
+    left: 43px;"></div> -->
+       </div>
+       <div class="border pb-2" style="border-radius:0px 0px 10px 10px ; border-top: 0px solid black !important;">
+        <div class="row">
+          <div class="col-2 d-flex align-items-center justify-content-center m-0">
+            <div class="d-flex align-items-center justify-content-center" style="width: 20px; height: 20px; background-color: rgb(226, 73, 13); border-radius: 50%">
+              <div style="width: 10px; height: 10px; background-color: rgb(241, 248, 241); border-radius: 50%"></div>
+            </div>
+          </div>
+          <div class="col-10" style="line-height: 16px">
+            <small><b>{{activeRide.trip_details.drop.name}}</b></small><br>
+            <small>{{activeRide.trip_details.drop.address}}</small>
+          </div>
+        </div>
+       </div>
+       </div>
+      <!-- trip details ends -->
+      <!-- esstimated fare starts -->
+       <div class="border mt-2 p-2 d-flex align-items-center justify-content-between" style="border-radius: 10px">
+        <small><b>Estimated Ride Fare</b></small>
+        <small><b>&#8377;{{activeRide.service_details.price | number:'1.0-0'}}</b></small>
+       </div>
+      <!-- t esstimated fare ends -->
+
+      <div class="mt-2">
+        <button class="btn btn-outline-danger w-100" (click)="cancelRide()">Cancel Ride</button>
+      </div>
+</div>
+       
+    }
+   
+  </div>
+  <!-- bottom sheet ends -->
+</div>

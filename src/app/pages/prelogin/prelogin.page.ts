@@ -72,7 +72,7 @@ appVersion:string = ''
     this.loadingMessage = 'fetching Location...'
     const coords = await this.locationService.getCurrentPosition();
     // this.isLoading = false
-    console.log('Coords from component:', coords.coords.latitude);
+    // console.log('Coords from component:', coords.coords.latitude);
   }
 
 token:any;

@@ -58,9 +58,11 @@
     "ng-otp-input": "^2.0.9",
     "ngx-qrcode": "^0.1.0-rc.1",
     "ngx-qrcode2": "^9.0.0",
+    "ngx-socket-io": "^4.9.3",
     "qrcode": "^1.5.4",
     "rxjs": "^7.8.2",
     "semver": "^7.7.2",
+    "socket.io-client": "^4.8.1",
     "swiper": "^11.2.6",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
