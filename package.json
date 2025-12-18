@@ -10,7 +10,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
-    "deploy": "ionic build && npx cap run android --target 65PJQ8SCOJRCS8EI",
+    "deploy": "npx ionic build && npx cap run android --target 65PJQ8SCOJRCS8EI",
     "sync": "npx cap sync android && ionic build && npx cap run android --target 65PJQ8SCOJRCS8EI"
   },
   "private": true,
