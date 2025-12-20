@@ -5,7 +5,7 @@ import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, Ion
 import { addIcons } from 'ionicons';
 import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
-import { arrowBack } from 'ionicons/icons';
+import { arrowBack, chevronBack, arrowForward } from 'ionicons/icons';
 import { GroceryService } from 'src/app/services/grocery.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { EventsService } from 'src/app/services/events.service';
@@ -86,7 +86,7 @@ export class CartPage implements OnInit {
     private authService: AuthService,
     private eventService: EventsService
   ) {
-    addIcons({ arrowBack });
+    addIcons({chevronBack,arrowForward,arrowBack});
   }
 
   ngOnInit() {

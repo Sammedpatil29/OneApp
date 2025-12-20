@@ -124,7 +124,10 @@
 <div class="my-3 mx-4">
   <ion-button class="book-btn w-100" mode="ios" color="dark" [disabled]="title.length < 5 || details.length < 5 || isCreating" (click)="createTicket()">Submit
     @if (isCreating) {
-        <ion-spinner class="button ms-2"  name="crescent"></ion-spinner>
+        <div class="loader-state">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Raising Ticket...</p>
+    </div>
 }
   </ion-button>
 </div>
@@ -142,6 +145,9 @@
 </div>
 } @else {
   <div class="d-flex justify-content-center align-items-center h-100">
-        <ion-spinner  name="crescent"></ion-spinner>
+        <div class="loader-state">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Getting Support Ready...</p>
+    </div>
       </div>
 }

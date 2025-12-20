@@ -1,36 +1,51 @@
-<div class="border">
+<div style="position: relative; height: 100%; width: 100%;">
   <ion-tabs>
-    <!-- <div class="orders-list" style="color: whitesmoke">
-      <swiper-container style="background-color: rgb(32 144 4 / 79%); padding: 10px 10px; border-radius: 10px 10px 0px 0px" [slidesPerView]="1" [spaceBetween]="0" [loop]="true"
-   autoplay-delay="5000" autoplay-disable-on-interaction="false">
-    @for (item of orders; track $index) {
-      <swiper-slide (click)="onOrderClick(item.orderId)">
-      <div class="d-flex align-items-center justify-content-between">
-        <div>{{item.orderId}} is out for delivery</div>
-        <img style="transform: rotate(90deg); width: 24px;" src="assets/gif/system-regular-11-arrow-up-hover-arrow-up-1.gif" alt="">
-      </div>
-    </swiper-slide>
-    }
-  </swiper-container>
-    </div> -->
-  <ion-tab-bar slot="bottom">
-    <ion-tab-button tab="home">
-      <ion-icon name="home"></ion-icon>
-      Home
-    </ion-tab-button>
-    <ion-tab-button tab="search">
-      <ion-icon name="search"></ion-icon>
-      Services
-    </ion-tab-button>
-    <ion-tab-button tab="support">
-      <ion-icon name="help-circle"></ion-icon>
-              <!-- <img style="width: 20px;" src="../../../assets/gif/system-solid-31-check-in-check.gif" alt=""> -->
-      Support
-    </ion-tab-button>
-    <ion-tab-button tab="history">
-      <ion-icon name="time"></ion-icon>
-      History
-    </ion-tab-button>
-  </ion-tab-bar>
-</ion-tabs>
+    <div (click)="goToHome()"
+      style="
+        position: absolute;
+        bottom: 25px; 
+        left: 50%;
+        transform: translateX(-50%);
+        width: 65px;
+        height: 65px;
+        background: #000000;
+        border-radius: 50%;
+        z-index: 99999; 
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        border: 4px solid #ffffff;
+        cursor: pointer;
+      ">
+      <ion-icon name="home" style="color: #ffffff; font-size: 26px; margin: 0;"></ion-icon>
+      <span style="color: #ffffff; font-size: 10px; font-weight: 700; margin-top: 2px;">Home</span>
+    </div>
+
+    <ion-tab-bar slot="bottom" 
+      style="
+        height: 60px; 
+        --border: 0; 
+        --background: #ffffff; 
+        display: flex; 
+        justify-content: space-around; 
+        align-items: center;
+        overflow: visible;
+        contain: none;
+      ">
+      
+      <ion-tab-button tab="support" style="--color-selected: #000000;">
+        <ion-icon name="help-circle-outline" style="font-size: 22px;"></ion-icon>
+        <ion-label style="font-size: 10px; font-weight: 600;">Support</ion-label>
+      </ion-tab-button>
+
+      <div style="width: 70px;"></div>
+
+      <ion-tab-button tab="history" style="--color-selected: #000000;">
+        <ion-icon name="time-outline" style="font-size: 22px;"></ion-icon>
+        <ion-label style="font-size: 10px; font-weight: 600;">History</ion-label>
+      </ion-tab-button>
+    </ion-tab-bar>
+  </ion-tabs>
 </div>

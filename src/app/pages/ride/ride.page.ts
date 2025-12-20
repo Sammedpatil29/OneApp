@@ -161,7 +161,9 @@ export class RidePage implements OnInit, AfterViewInit {
    }
 
   async ngOnInit() {
-    this.isLoading = true
+    setTimeout(()=>{
+      this.isLoading = true
+    },0)
     const current = await this.locationService.getCurrentPosition()
     console.log(current)
    

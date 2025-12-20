@@ -15,6 +15,7 @@ register();
 })
 export class NavbarComponent  implements OnInit {
 
+
   orders: any = [
     {
       orderId: '37364643764'
@@ -32,6 +33,10 @@ export class NavbarComponent  implements OnInit {
 
   onOrderClick(orderId: any){
     alert(`clicked on ${orderId}`)
+  }
+
+  goToHome(){
+    this.router.navigate(['/layout/example/home']);
   }
 
 }

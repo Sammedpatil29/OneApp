@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Preferences } from '@capacitor/preferences';
 import jwt_decode from 'jwt-decode';
 import { Observable } from 'rxjs';
+import { NavController } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,7 @@ token: any;
 
 private apiUrl = 'https://api.msg91.com/api/v5/otp';
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient, private router: Router, private navCtrl: NavController) { }
 
   getUsers(){
 return this.http.get(this.url)
@@ -48,7 +49,7 @@ return this.http.get(this.url)
     await Preferences.remove({key: 'auth-token'})
     await Preferences.remove({key: 'user_id'})
     localStorage.removeItem('location')
-    this.router.navigate(['/'])
+    this.navCtrl.navigateRoot(['/login']);
   }
 
   async getToken(){

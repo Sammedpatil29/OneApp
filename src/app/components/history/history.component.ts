@@ -43,6 +43,7 @@ import { NavController } from '@ionic/angular';
   ],
 })
 export class HistoryComponent implements OnInit {
+[x: string]: any;
   history: any[] = [];
   category: any[] = ['All', 'doctor'];
   filteredHistory: any[] = this.history;

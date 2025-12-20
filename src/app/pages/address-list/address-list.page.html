@@ -51,8 +51,9 @@
       <ion-button class="book-btn w-100" (click)="openLocation()" color="dark">Select on map</ion-button>
     </footer>
     } @else {
-      <div class="d-flex justify-content-center align-items-center h-100">
-<ion-spinner name="crescent"></ion-spinner>
-      </div>
+      <div class="loader-state">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Loading Address...</p>
+    </div>
     }
   </ion-content>

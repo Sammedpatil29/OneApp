@@ -59,7 +59,7 @@ nameShort = ''
   }
 
   goBack() {
-    this.navCtrl.navigateBack('/layout/example/home')
+    this.navCtrl.back();
   }
 
   openDetails(option: any) {
