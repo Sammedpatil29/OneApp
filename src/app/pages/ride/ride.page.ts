@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonSearchbar } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonSearchbar, IonSpinner } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { arrowBack } from 'ionicons/icons';
 import { library, playCircle, radio, search, home, cube, bag, receiptOutline, person, personCircle, personCircleOutline, constructOutline, briefcaseOutline, buildOutline } from 'ionicons/icons';
@@ -14,7 +14,7 @@ import { LocationService } from 'src/app/services/location.service';
   templateUrl: './ride.page.html',
   styleUrls: ['./ride.page.scss'],
   standalone: true,
-  imports: [IonSearchbar, IonIcon, IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, RideSelectionComponent]
+  imports: [IonSpinner, IonSearchbar, IonIcon, IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, RideSelectionComponent]
 })
 export class RidePage implements OnInit, AfterViewInit {
 @ViewChild('autocompleteInput') autocompleteInput!: ElementRef<HTMLInputElement>;
@@ -27,6 +27,7 @@ export class RidePage implements OnInit, AfterViewInit {
   dropLocation:any;
   pickupLocation:any;
   isAddressSelected: boolean = false
+  isLoading: boolean = false
 
   polygonCoords: google.maps.LatLngLiteral[] = [
     { lat: 16.721, lng: 75.051 },
@@ -160,6 +161,7 @@ export class RidePage implements OnInit, AfterViewInit {
    }
 
   async ngOnInit() {
+    this.isLoading = true
     const current = await this.locationService.getCurrentPosition()
     console.log(current)
    
@@ -174,8 +176,10 @@ export class RidePage implements OnInit, AfterViewInit {
         }
       }
       this.tripData.origin = this.pickupLocation
+      this.isLoading = false
     } else {
       alert('location permission denied')
+      this.isLoading = false
     }
   }
 

@@ -1,61 +1,193 @@
-.mainHeader{
-    height: auto !important;
-    // background-color: red !important;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 800 800'%3E%3Crect fill='%23000000' width='800' height='800'/%3E%3Cg fill-opacity='1'%3E%3Ccircle fill='%23000000' cx='400' cy='400' r='600'/%3E%3Ccircle fill='%23180d1c' cx='400' cy='400' r='500'/%3E%3Ccircle fill='%23261431' cx='400' cy='400' r='400'/%3E%3Ccircle fill='%23351947' cx='400' cy='400' r='300'/%3E%3Ccircle fill='%23451e5e' cx='400' cy='400' r='200'/%3E%3Ccircle fill='%23552277' cx='400' cy='400' r='100'/%3E%3C/g%3E%3C/svg%3E");
+/* ================= VARIABLES ================= */
+:host {
+  --primary-accent: #6366f1;
+  --bg-soft: #f8fafc;
+  --card-radius: 20px;
+}
+
+ion-content {
+  --background: var(--bg-soft);
+}
+
+/* ================= NAVIGATION ================= */
+.glass-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  display: flex; justify-content: space-between;
+  padding: 50px 20px 10px;
+  z-index: 1000;
+  pointer-events: none;
+  
+  ion-button { pointer-events: auto; }
+}
+
+.nav-pill-btn {
+  --background: rgba(0, 0, 0, 0.3);
+  --border-radius: 50%;
+  --box-shadow: none;
+  width: 44px; height: 44px;
+  backdrop-filter: blur(8px);
+}
+
+.help-btn {
+  --color: white;
+  font-weight: 700;
+  text-transform: capitalize;
+  font-size: 14px;
+}
+
+/* ================= HERO HEADER ================= */
+.main-hero-header {
+  height: 277px;
+  background: linear-gradient(135deg, #657baf 0%, #334155 100%);
+  // background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 800 800'%3E%3Cg fill-opacity='0.1'%3E%3Ccircle fill='%236366f1' cx='400' cy='400' r='600'/%3E%3Ccircle fill='%234f46e5' cx='400' cy='400' r='400'/%3E%3C/g%3E%3C/svg%3E");
   background-size: cover;
-  border-radius: 0px 0px 50px 50px;
+  border-radius: 0 0 40px 40px;
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: 40px;
+  
+background-color: #330000;
+background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 800 400'%3E%3Cdefs%3E%3CradialGradient id='a' cx='396' cy='281' r='514' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%23D18'/%3E%3Cstop offset='1' stop-color='%23330000'/%3E%3C/radialGradient%3E%3ClinearGradient id='b' gradientUnits='userSpaceOnUse' x1='400' y1='148' x2='400' y2='333'%3E%3Cstop offset='0' stop-color='%23FA3' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%23FA3' stop-opacity='0.5'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill='url(%23a)' width='800' height='400'/%3E%3Cg fill-opacity='0.4'%3E%3Ccircle fill='url(%23b)' cx='267.5' cy='61' r='300'/%3E%3Ccircle fill='url(%23b)' cx='532.5' cy='61' r='300'/%3E%3Ccircle fill='url(%23b)' cx='400' cy='30' r='300'/%3E%3C/g%3E%3C/svg%3E");
+background-attachment: fixed;
+background-size: cover;
+
+  .header-overlay {
+    width: 100%;
+    text-align: center;
+  }
+
+  .hero-title {
+    color: white;
+    font-size: 28px;
+    font-weight: 900;
+    margin-bottom: 25px;
+    letter-spacing: -0.5px;
+  }
 }
 
-ion-modal {
-  --height: auto;
+.icon-actions {
+  display: flex;
+  justify-content: space-evenly;
+
+  .action-item {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    
+    .icon-circle {
+      width: 56px; height: 56px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 18px;
+      display: flex; align-items: center; justify-content: center;
+      img { width: 32px; height: 32px; }
+    }
+
+    span { color: white; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+  }
 }
 
-ion-button .modal {
- --border-radius: 8px;
+/* ================= CATEGORIES ================= */
+.section-container {
+  padding: 0 20px;
+  margin-top: 30px;
 }
 
-ion-img {
-    --border-radius: 20px;
+.section-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 15px;
 }
 
-.custom-modal::part(content) {
-//   border: 2px solid #007bff;
-  border-radius: 20px 20px 0px 0px;
-//   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+.horizontal-scroll-container {
+  display: flex;
+  overflow-x: auto;
+  gap: 12px;
+  padding-bottom: 10px;
+  &::-webkit-scrollbar { display: none; }
+
+  .category-pill {
+    white-space: nowrap;
+    padding: 10px 24px;
+    background: white;
+    border-radius: 14px;
+    font-weight: 700;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+    
+    &.active {
+      background: #000;
+      color: white;
+      border-color: #000;
+    }
+  }
 }
 
-.ion-padding {
-    // --padding-start: var(--ion-padding, 16px);
-    // --padding-end: var(--ion-padding, 16px);
-    // --padding-top: var(--ion-padding, 16px);
-    // --padding-bottom: var(--ion-padding, 16px);
-     -webkit-padding-start: var(--ion-padding, 0px); 
-     padding-inline-start: var(--ion-padding, 0px); 
-    -webkit-padding-end: var(--ion-padding, 0px); 
-     padding-inline-end: var(--ion-padding, 0px); 
-     padding-top: var(--ion-padding, 0px); 
-     padding-bottom: var(--ion-padding, 0px);
+/* ================= MASONRY EVENT GRID ================= */
+.event-masonry-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
 }
 
-::ng-deep .button-native{
-  box-shadow:  0px 0px 10px red !important;
+.modern-event-card {
+  background: white;
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease;
+
+  &:active { transform: scale(0.96); }
+
+  .card-image-box {
+    position: relative;
+    height: auto;
+    
+    img { width: 100%; height: 100%; object-fit: cover; }
+
+    .price-badge {
+      position: absolute;
+      top: 10px; right: 10px;
+      background: white;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 800;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      
+      &.free { color: #10b981; }
+    }
+  }
+
+  .card-info {
+    padding: 12px;
+    
+    .card-date { font-size: 10px; font-weight: 700; color: var(--primary-accent); text-transform: uppercase; margin: 0; }
+    .card-name { font-size: 14px; font-weight: 800; color: #1e293b; margin: 4px 0 0; line-height: 1.3; }
+  }
 }
 
-ion-button.shadow-button {
-  --box-shadow: 2px 2px 8px var(--ion-color, black);
+/* ================= FLOATING BUTTON ================= */
+.fab-container {
+  position: fixed;
+  bottom: 30px;
+  width: 100%;
+  display: flex; justify-content: center;
+  z-index: 1000;
 }
 
-.border-date{
-  // border: 1px solid gray;
-  margin-top: 4px;
-  border-radius: 10px;
+.floating-bookings-btn {
+  --background: #000;
+  --border-radius: 18px;
+  --box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+  height: 54px;
+  font-weight: 700;
+  padding: 0 20px;
 }
 
-.event-title{
-  // margin-top: 4px
-}
-
-.border-description{
-  // border: 1px solid gray;
-  border-radius: 15px;
+/* ================= LOADER ================= */
+.loader-state {
+  height: 100%; display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  p { margin-top: 15px; color: #64748b; font-weight: 600; }
 }

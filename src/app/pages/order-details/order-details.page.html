@@ -71,9 +71,9 @@
       
   </div>
 
-  <div class="w-100 px-2 d-flex align-items-center justify-content-between position-fixed bottom-0" style="background-color: var(--ion-color-light);">
+  <div class="w-100 p-3 d-flex align-items-center justify-content-between position-fixed bottom-0" style="background-color: var(--ion-color-light);">
     <h3 class="m-0"><strong class="ms-3">&#8377;{{finalCost}}</strong></h3>
-    <ion-button color="dark" class="w-75 ion-padding" slot="end" [disabled]="
+    <ion-button color="dark" class="w-75 book-btn" slot="end" [disabled]="
     !customerName || 
     !mobileNumber || 
     mobileNumber.length !== 10 || 

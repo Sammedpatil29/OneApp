@@ -1,10 +1,10 @@
 import { Component, numberAttribute, OnInit, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonCardSubtitle, IonInput, IonItem, IonSpinner } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonCardSubtitle, IonInput, IonItem, IonSpinner, IonFooter } from '@ionic/angular/standalone';
 import { NavController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { arrowBack } from 'ionicons/icons';
+import { arrowBack, chevronBack, shieldCheckmark, arrowForwardOutline } from 'ionicons/icons';
 import { Router } from '@angular/router';
 import { EventsService } from 'src/app/services/events.service';
 import { AuthService } from 'src/app/services/auth.service';
@@ -46,7 +46,7 @@ declare var RazorpayCheckout: any;
   templateUrl: './order-details.page.html',
   styleUrls: ['./order-details.page.scss'],
   standalone: true,
-  imports: [IonSpinner, IonItem, IonInput, IonCardSubtitle, IonIcon, IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonFooter, IonSpinner, IonItem, IonInput, IonCardSubtitle, IonIcon, IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
 export class OrderDetailsPage implements OnInit {
   ticketCount = 1
@@ -64,7 +64,7 @@ export class OrderDetailsPage implements OnInit {
   transactionId = ''
 
   constructor(private navCtrl: NavController, private platform: Platform, private authService: AuthService, private router: Router, private eventService: EventsService, private ngZone: NgZone) {
-    addIcons({arrowBack});
+    addIcons({arrowForwardOutline,chevronBack,shieldCheckmark,arrowBack});
     document.addEventListener('deviceready', () => {
     console.log('Device ready - Cordova plugins available');
   });

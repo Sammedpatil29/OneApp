@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonButtons, IonIcon, IonCardSubtitle, IonCardContent, IonCardTitle, IonCardHeader, IonCard, IonModal, IonImg, IonSpinner } from '@ionic/angular/standalone';
-import { arrowBack } from 'ionicons/icons';
+import { arrowBack, chevronBack, helpCircleOutline, ticketOutline } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { NavController } from '@ionic/angular';
 import { FooterComponent } from "../../components/footer/footer.component";
@@ -30,7 +30,7 @@ export class EventsPage implements OnInit {
 presentingEl: any;
 
   constructor(private navCtrl: NavController, private eventsService: EventsService, private authService: AuthService, private modalCtrl: ModalController, private popoverController: PopoverController) { 
-          addIcons({arrowBack}); 
+          addIcons({chevronBack,helpCircleOutline,ticketOutline,arrowBack}); 
   }
 
 ngOnInit() {
@@ -112,6 +112,7 @@ this.navCtrl.navigateBack('/layout/example/home')
       component: EventDialogComponent,
       componentProps: { item },
       backdropDismiss: true,
+      handle: true,
       cssClass: 'bottom-sheet-modal', // Custom class for bottom sheet styling
     });
 

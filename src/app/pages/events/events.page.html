@@ -1,108 +1,84 @@
-@if (!isLoading) {
-<ion-content [fullscreen]="true" style="overflow-x: hidden">
-  
-    <div class="position-fixed d-flex justify-content-between px-3 pt-5 w-100" style="top: 0; z-index:999">
-    <ion-buttons slot="start" style="background-color: rgba(196, 193, 193, 0.322); border-radius: 50px">
-      <ion-button (click)="back()">
-        <ion-icon name="arrow-back" class="text-white"></ion-icon>
+<ion-content [fullscreen]="true">
+  @if (!isLoading) {
+    <div class="glass-nav animate__animated animate__fadeInDown">
+      <ion-button (click)="back()" class="nav-pill-btn">
+        <ion-icon name="chevron-back" color="light"></ion-icon>
       </ion-button>
-    </ion-buttons>
-    <ion-buttons slot="end">
-          <ion-button fill="outline" shape="round" color="success" size="small" (click)="openHelp()">help</ion-button>
-    </ion-buttons>
-  </div>
+      <ion-button fill="clear" class="help-btn" (click)="openHelp()">
+        Help <ion-icon name="help-circle-outline" slot="end"></ion-icon>
+      </ion-button>
+    </div>
 
-  <div class="mainHeader pt-5">
-      <h3 class="text-center pt-5 text-white"> <strong>Local Events</strong> </h3>
-      <div class="d-flex mt-4 justify-content-evenly align-items-center pb-3">
-<div class="d-flex flex-column align-items-center">
-  <img style="width: 50px;" src="../../../assets/icons/wired-flat-19-magnifier-zoom-search-hover-spin.gif" alt="">
-  <p class="text-center text-white">Explore</p>
-</div>
-<div class="d-flex flex-column align-items-center">
-   <img style="width: 50px;" src="../../../assets/icons/wired-flat-400-bookmark-hover-flutter.gif" alt="">
-  <p class="text-center text-white">book</p>
-</div>
-<div class="d-flex flex-column align-items-center">
-   <img style="width: 50px;" src="../../../assets/icons/wired-flat-2237-champagne-flutes-hover-cheers.gif" alt="">
-  <p class="text-center text-white">Enjoy</p>
-</div>
-      </div>
-  </div>
-<ion-card-subtitle class="ps-3 my-2 text-titlecase text-dark text-center fw-bold">Explore by Category</ion-card-subtitle>
-<div class="row gap-0 px-3">
-  <div class="col p-0">
-    <ion-card style="height: 90px !important;">
-      <div class="d-flex align-items-center justify-content-center h-100 fs-4 fw-bold text-dark">
-        Expos
-      </div>
-    </ion-card>
-  </div>
-  <div class="col p-0">
-    <ion-card style="height: 90px;">
-      <div class="d-flex align-items-center justify-content-center h-100 fs-4 fw-bold text-dark">
-        Parties
-      </div>
-    </ion-card>
-  </div>
-  <div class="col p-0">
-    <ion-card style="height: 90px;">
-      <div class="d-flex align-items-center justify-content-center h-100 fs-4 fw-bold text-dark">
-        Events
-      </div>
-    </ion-card>
-  </div>
-</div>
-<ion-card-subtitle class="ps-3 my-2 text-uppercase text-dark text-center fw-bold">Explore Events</ion-card-subtitle>
- 
-      <div class="container">
-  <div class="row">
-    <div class="col-6 mb-4 m-0 position-relative" *ngFor="let card of events">
-      <ion-card class="m-0 border" style="box-shadow: none" (click)="openItemModal(card)">
-        <img [src]="card.imageUrl" [alt]="card.title" />
-        <div class="border-date mb-2 px-1">
-      <div class="d-flex justify-content-between mx-1 mt-1">
-          <small class="text-primary">{{card.date | date: 'dd/MM/yy'}}</small>
-          @if (card.isFree == true) {
-            <small class="text-success">Free</small>
-          } @else {
-            <small class="text-dark ">&#8377;{{card.ticketPrice}}</small>
-          }
-          
+    <div class="main-hero-header">
+      <div class="header-overlay">
+        <h1 class="hero-title">Local Events</h1>
+        
+        <div class="icon-actions">
+          <div class="action-item">
+            <div class="icon-circle">
+              <img src="../../../assets/icons/wired-flat-19-magnifier-zoom-search-hover-spin.gif">
+            </div>
+            <span>Explore</span>
+          </div>
+          <div class="action-item">
+            <div class="icon-circle">
+              <img src="../../../assets/icons/wired-flat-400-bookmark-hover-flutter.gif">
+            </div>
+            <span>Book</span>
+          </div>
+          <div class="action-item">
+            <div class="icon-circle">
+              <img src="../../../assets/icons/wired-flat-2237-champagne-flutes-hover-cheers.gif">
+            </div>
+            <span>Enjoy</span>
+          </div>
         </div>
-        <div class="ms-1 event-title text-dark"><b>{{card.title}}</b></div>
-    </div>
-    
-      </ion-card>
-      <!-- @if (saved == false) {
-                  <i class="bi bi-heart position-absolute fs-5 text-danger" (click)="saved = true" style="top:5px; right:20px; z-index: 1; cursor: pointer"></i>
-        } @else {
-                  <i class="bi bi-heart-fill position-absolute fs-5 text-danger" (click)="saved = true" style="top:5px; right:20px; z-index: 1; cursor: pointer"></i>
-        } -->
-      
-    
-    </div>
-    
-  </div>
-</div>
-
-<app-footer></app-footer>
-
-<div class="w-100 position-fixed d-flex justify-content-center" style="bottom: 30px; z-index: 2">
-<div class="w-auto">
-  <ion-button class="ion-padding shadow-button" color="dark" shape="round" (click)="openBookings()">Bookings</ion-button>
-</div>
-</div>
-  
- 
-
-</ion-content>
-
-
-} @else {
-  <ion-content>
-    <div class="d-flex justify-content-center align-items-center h-100">
-        <ion-spinner  name="crescent"></ion-spinner>
       </div>
-  </ion-content>
-}
+    </div>
+
+    <div class="section-container position-sticky pt-3 pb-2" style="top: 0px; z-index: 10;">
+      <h2 class="section-title">Explore by Category</h2>
+      <div class="horizontal-scroll-container">
+        <div class="category-pill active">Upcoming</div>
+        <div class="category-pill">All</div>
+        <div class="category-pill">Expos</div>
+        <div class="category-pill">Parties</div>
+        <div class="category-pill">Events</div>
+        <div class="category-pill">Concerts</div>
+      </div>
+    </div>
+
+    <div class="section-container mt-4">
+      <h2 class="section-title">Upcoming for You</h2>
+      <div class="event-masonry-grid">
+        <div class="modern-event-card" *ngFor="let card of events" (click)="openItemModal(card)">
+          <div class="card-image-box">
+            <img [src]="card.imageUrl" [alt]="card.title">
+            <div class="price-badge" [class.free]="card.isFree">
+              {{ card.isFree ? 'FREE' : ('₹' + card.ticketPrice) }}
+            </div>
+          </div>
+          <div class="card-info">
+            <p class="card-date">{{card.date | date: 'dd MMM, yyyy'}}</p>
+            <h3 class="card-name">{{card.title}}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <app-footer></app-footer>
+
+    <div class="fab-container">
+      <ion-button class="floating-bookings-btn" (click)="openBookings()">
+        <ion-icon name="ticket-outline" slot="start"></ion-icon>
+        My Bookings
+      </ion-button>
+    </div>
+
+  } @else {
+    <div class="loader-state">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Finding events near you...</p>
+    </div>
+  }
+</ion-content>

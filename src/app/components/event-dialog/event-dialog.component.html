@@ -1,32 +1,62 @@
+<div class="event-details-container animate__animated animate__fadeIn">
+  <div class="info-pill my-2">
+        <h3 class="event-name mb-0">{{eventDetails.name || eventDetails.title | titlecase}}</h3>
+      </div>
+  <div class="split-header">
+    <div class="image-column">
+      <div class="image-wrapper">
+        <img [src]="eventDetails.imageUrl" class="main-event-image">
+        <div class="image-overlay-tag" *ngIf="eventDetails.isFree">Free</div>
+      </div>
+    </div>
 
-          <div class="px-3 pt-4 h-50" style="min-height: 100px;">
-        <div class="w-100" style="max-width: 100%; overflow: hidden;">
-  <img class="img-fluid" 
-       style="border-radius: 20px !important; width: 100%; height: 200px; object-fit: cover;" 
-       [src]="eventDetails.imageUrl">
+    <div class="details-column">
+      
+
+      <div class="info-pill">
+  <i class="bi bi-calendar-event text-warning"></i>
+  <span>{{eventDetails.date | date: 'dd MMM'}} • {{eventDetails.date | date: 'hh:mm a'}}</span>
 </div>
-        <small><div class="d-flex justify-content-between px-2 mt-2 align-items-center" style="box-shadow: 0px 0px 2px black; border-radius: 6px">
-        <p class="m-0 p-1"><i class="bi bi-calendar-fill me-1 text-warning"></i>{{eventDetails.date | date: 'dd-MMM'}} &bull; {{eventDetails.time}} </p>
-        <p class="m-0 p-1"><i class="bi bi-clock-fill me-1 text-success"></i>{{eventDetails.duration}}</p>
-      </div></small>
-        <small><div class="d-flex justify-content-between px-2 mt-2 align-items-center" style="box-shadow: 0px 0px 2px black; border-radius: 6px">
-        <p class="m-0 p-1"><i class="bi bi-geo-alt-fill me-1 text-primary"></i>{{eventDetails.location.location | titlecase}}  </p>
-        <p class="m-0 p-1"><i class="bi bi-phone-fill me-1 text-success"></i>{{eventDetails.contact}}</p>
-      </div></small>
-        <div class="border-description mt-2 p-2" style="box-shadow: 0px 0px 2px black; border-radius: 6px">
-          <small>
-            {{eventDetails.description}}
-          </small><br>
-          <small>Organized by <span class="text-success"><b>{{eventDetails.organizer | titlecase}}</b></span></small>
-        </div>
-        
+      
+      <div class="info-pill">
+        <i class="bi bi-hourglass-split text-success"></i>
+        <span>{{eventDetails.duration}}</span>
+      </div>
 
-      <div class="d-flex flex-center my-2" style="width: 100%">
-        @if (!eventDetails.isFree) {
-        <ion-title class="w-50 fs-2">{{eventDetails.ticketPrice | currency:'INR':'symbol':'1.0-0' }}<small class="fw-lighter">/person</small></ion-title>
-        } @else {
-        <ion-title class="w-50 text-success fs-2">Free Entry</ion-title>
-        }
-        <button color="dark ion-padding" class="btn btn-dark" (click)="bookNow(eventDetails)">Book Now</button>
+      <div class="info-pill">
+        <i class="bi bi-geo-alt text-primary"></i>
+        <span>{{eventDetails.location.location | titlecase}}</span>
       </div>
+
+      <div class="info-pill">
+        <i class="bi bi-telephone text-success"></i>
+        <span>{{eventDetails.contact}}</span>
       </div>
+    </div>
+  </div>
+
+  <div class="description-card">
+    <h4 class="section-label">About Event</h4>
+    <p class="description-text">{{eventDetails.description}}</p>
+    <div class="organizer-tag">
+      Organized by <span>{{eventDetails.organizer | titlecase}}</span>
+    </div>
+  </div>
+
+  <div class="action-footer">
+  <div class="price-section">
+    @if (!eventDetails.isFree) {
+      <span class="price-amount">
+        {{eventDetails.ticketPrice | currency:'INR':'symbol':'1.0-0' }}
+        <span class="price-unit">/person</span>
+      </span>
+    } @else {
+      <span class="free-text">Free Entry</span>
+    }
+  </div>
+
+  <ion-button color="dark" mode="ios" class="book-btn" (click)="bookNow(eventDetails)">
+    Book Now
+  </ion-button>
+</div>
+</div>

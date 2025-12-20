@@ -1,4 +1,4 @@
-import { IonContent, IonTitle } from "@ionic/angular/standalone";
+import { IonContent, IonTitle, IonButton, IonSpinner } from "@ionic/angular/standalone";
 import { Component, ElementRef, ViewChild, AfterViewInit, OnInit, MissingTranslationStrategy } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { CommonModule } from "@angular/common";
@@ -12,7 +12,7 @@ import { io, Socket } from 'socket.io-client';
   selector: 'app-ride-selection',
   templateUrl: './ride-selection.component.html',
   styleUrls: ['./ride-selection.component.scss'],
-  imports: [IonTitle, CommonModule, FormsModule]
+  imports: [IonSpinner, IonButton, IonTitle, CommonModule, FormsModule]
 })
 export class RideSelectionComponent  implements OnInit {
 

@@ -121,8 +121,8 @@
   >
   </ion-textarea>
 </ion-item>
-<div class="mx-2">
-  <ion-button class="ion-padding w-100" color="dark" [disabled]="title.length < 5 || details.length < 5 || isCreating" (click)="createTicket()">Submit
+<div class="my-3 mx-4">
+  <ion-button class="book-btn w-100" mode="ios" color="dark" [disabled]="title.length < 5 || details.length < 5 || isCreating" (click)="createTicket()">Submit
     @if (isCreating) {
         <ion-spinner class="button ms-2"  name="crescent"></ion-spinner>
 }

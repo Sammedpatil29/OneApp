@@ -4,7 +4,7 @@ import { EmailValidator, FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonCardTitle, IonInput, IonText, IonLabel, IonItem, IonImg, IonSpinner, IonToast, IonCardSubtitle, IonApp, IonCard, IonCardContent, IonCardHeader } from '@ionic/angular/standalone';
 import { NavController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { arrowBack } from 'ionicons/icons';
+import { arrowBack, chevronBack } from 'ionicons/icons';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
 import { Preferences } from '@capacitor/preferences';
@@ -84,7 +84,7 @@ export class LoginPage implements OnInit {
     private authService: AuthService,
     private router: Router
   ) {
-    addIcons({ arrowBack });
+    addIcons({chevronBack,arrowBack});
   }
 
   ngOnInit() {

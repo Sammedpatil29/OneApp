@@ -1,125 +1,250 @@
-/* ================= BASE ================= */
+/* ================= VARIABLES ================= */
+:host {
+  --primary-accent: #000000;
+  --secondary-accent: black; // Modern Indigo
+  --soft-bg: #f8fafc;
+  --input-bg: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+}
+
+/* ================= BASE & BG ================= */
 ion-content {
-  --padding-bottom: 120px;
-  background: #ffffff;
+  --background: var(--soft-bg);
+}
+
+.bg-decoration {
+  position: absolute;
+  top: -100px;
+  right: -50px;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, rgba(255, 255, 255, 0) 70%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.main-container {
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ================= HEADER ================= */
-ion-title {
-  font-size: 18px;
-  font-weight: 700;
+ion-header ion-toolbar {
+  --background: transparent;
+  --border-width: 0;
+  padding-top: 10px;
 }
 
-/* ================= WRAPPER ================= */
-.login-wrapper {
-  padding: 20px;
+.back-btn {
+  --background: white;
+  --color: black;
+  --border-radius: 12px;
+  --box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  margin-left: 8px;
+  width: 44px;
+  height: 44px;
 }
 
-/* ================= TITLES ================= */
+.header-section {
+  margin-top: 20px;
+  margin-bottom: 40px;
+
+  .brand-name {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin: 0;
+    color: var(--text-main);
+  }
+  .brand-tagline {
+    color: var(--secondary-accent);
+    font-weight: 600;
+    font-size: 14px;
+    margin: 4px 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+}
+
+/* ================= TYPOGRAPHY ================= */
 .page-title {
-  font-size: 22px;
-  font-weight: 700;
-  margin: 24px 0 16px;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 8px;
 }
 
 .subtitle {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 16px;
+  font-size: 15px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 30px;
 }
 
-/* ================= PHONE INPUT ================= */
-ion-item.custom-input {
-  --background: #ffffff;
-  --border-radius: 14px;
-  --min-height: 56px;
-  --padding-start: 14px;
-  --inner-padding-end: 14px;
-  --highlight-color-focused: #000;
-
-  border: 1px solid #ddd;
-  border-radius: 14px;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
-  transition: 0.2s ease;
+.phone-highlight {
+  color: var(--text-main);
+  font-weight: 700;
+  border-bottom: 2px solid var(--secondary-accent);
 }
 
-ion-item.custom-input:focus-within {
-  border-color: #000;
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
+/* ================= INPUTS ================= */
+.input-container {
+  display: flex;
+  align-items: center;
+  background: var(--input-bg);
+  border-radius: 18px;
+  padding: 8px 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:focus-within {
+    border-color: var(--text-main);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
 }
 
-.country-code {
+.country-pill {
+  background: #f1f5f9;
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-right: 12px;
+}
+
+.modern-input {
+  --padding-start: 0;
+  font-size: 18px;
   font-weight: 600;
-  color: #555;
+  letter-spacing: 1px;
 }
 
-ion-item.custom-input ion-input {
-  font-size: 16px;
-  font-weight: 600;
-  margin-left: 8px;
+/* For Registration Fields */
+.modern-field {
+  ion-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 8px;
+    margin-left: 4px;
+  }
+}
+
+.outline-input {
+  --background: var(--input-bg);
+  --border-radius: 16px;
+  --padding-start: 16px;
+  --border-color: #e2e8f0;
+  --border-style: solid;
+  --border-width: 1px;
+  font-weight: 500;
+  height: 56px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 /* ================= OTP ================= */
 .otp-wrapper {
+  margin: 20px 0;
   display: flex;
   justify-content: center;
-  margin-top: 16px;
 }
 
-ng-otp-input input {
-  width: 46px !important;
-  height: 52px !important;
-  border-radius: 12px !important;
-  border: 1px solid #ddd !important;
-  font-size: 18px !important;
-  font-weight: 700 !important;
-  box-shadow: 0 4px 10px rgba(0,0,0,.08);
+::v-deep ng-otp-input input {
+  width: 50px !important;
+  height: 60px !important;
+  border-radius: 16px !important;
+  border: 2px solid #e2e8f0 !important;
+  background: white !important;
+  font-size: 22px !important;
+  margin: 0 5px !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+
+  &:focus {
+    border-color: var(--secondary-accent) !important;
+    transform: scale(1.05);
+  }
 }
 
-ng-otp-input input:focus {
-  border-color: #000 !important;
-  box-shadow: 0 8px 18px rgba(0,0,0,.15);
-}
-
-/* ================= RESEND ================= */
 .resend-wrapper {
+  margin-top: 25px;
   text-align: center;
-  margin-top: 12px;
+  font-size: 14px;
+  color: var(--text-muted);
+
+  .resend-link {
+    color: var(--secondary-accent);
+    font-weight: 700;
+    text-decoration: none;
+    margin-left: 5px;
+  }
+
+  .timer-text b {
+    color: var(--text-main);
+  }
 }
 
-.resend {
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.resend:hover {
-  text-decoration: underline;
-}
-
-/* ================= BUTTON ================= */
-.bottom-action {
+/* ================= BUTTONS ================= */
+.bottom-action-container {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 16px;
-  background: linear-gradient(
-    to top,
-    #ffffff 70%,
-    rgba(255,255,255,0)
-  );
+  padding: 24px 24px 40px; // Extra bottom padding for notch phones
+  background: linear-gradient(to top, var(--soft-bg) 80%, transparent);
 }
 
-ion-button {
-  height: 52px;
-  border-radius: 14px;
-  font-size: 16px;
-  font-weight: 700;
+.primary-modern-btn {
+  --border-radius: 18px;
+  --box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  height: 60px;
+  margin: 0;
+  font-size: 17px;
+  letter-spacing: 0.5px;
+  
+  &::part(native) {
+    transition: all 0.2s ease;
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
 }
 
-/* ================= SPINNER ================= */
-ion-spinner {
-  width: 18px !important;
-  height: 18px !important;
-  margin-left: 8px;
+/* ================= TOAST ================= */
+.custom-toast {
+  --background: var(--text-main);
+  --color: white;
+  --border-radius: 12px;
+  --button-color: white;
+}
+
+.input-container:focus-within {
+  border-color: var(--text-main); /* Changes the whole box border to black */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Adds a soft glow */
+  transform: translateY(-1px); /* Slight lift effect */
+}
+
+/* Add this to your SCSS file */
+
+.modern-input, .outline-input {
+  /* This removes the default underline/highlight line on focus */
+  --highlight-height: 0;
+  --inner-padding-end: 0;
+  --padding-bottom: 0;
+  
+  /* Ensures no bottom border from the item container */
+  border-bottom: none !important;
+}
+
+/* If you are using ion-item wrappers, targeting the item highlight specifically */
+ion-item {
+  --highlight-color-focused: transparent !important;
+  --highlight-color-valid: transparent !important;
+  --highlight-color-invalid: transparent !important;
 }
