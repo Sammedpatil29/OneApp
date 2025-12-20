@@ -1,41 +1,125 @@
-.body{
-    
+/* ================= BASE ================= */
+ion-content {
+  --padding-bottom: 120px;
+  background: #ffffff;
 }
 
-ion-spinner{
-    width: 10px !important; 
-    height: 10px !important;
+/* ================= HEADER ================= */
+ion-title {
+  font-size: 18px;
+  font-weight: 700;
 }
 
-.resend:hover {
-    text-decoration: underline;
+/* ================= WRAPPER ================= */
+.login-wrapper {
+  padding: 20px;
 }
 
-ion-item.custom-input {
-    --border: 1px solid black;
-  --border-radius: 20px;
-  --background: white;
-  --padding-start: 12px;
-  --inner-padding-end: 12px;
-  --min-height: 50px;
-  --highlight-color-focused: #3880ff;
-  --border-color: transparent;
+/* ================= TITLES ================= */
+.page-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 24px 0 16px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #666;
   margin-bottom: 16px;
-//   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.849);
-  border-radius: 4px;
-  border: 1px solid black;
+}
+
+/* ================= PHONE INPUT ================= */
+ion-item.custom-input {
+  --background: #ffffff;
+  --border-radius: 14px;
+  --min-height: 56px;
+  --padding-start: 14px;
+  --inner-padding-end: 14px;
+  --highlight-color-focused: #000;
+
+  border: 1px solid #ddd;
+  border-radius: 14px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+  transition: 0.2s ease;
+}
+
+ion-item.custom-input:focus-within {
+  border-color: #000;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
+}
+
+.country-code {
+  font-weight: 600;
+  color: #555;
 }
 
 ion-item.custom-input ion-input {
   font-size: 16px;
-  font-weight: 500;
-  padding-left: 4px;
-  margin-left: 10px;
+  font-weight: 600;
+  margin-left: 8px;
 }
 
-ion-item.custom-input.otp-input ion-input {
-  letter-spacing: 6px;
+/* ================= OTP ================= */
+.otp-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+ng-otp-input input {
+  width: 46px !important;
+  height: 52px !important;
+  border-radius: 12px !important;
+  border: 1px solid #ddd !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 10px rgba(0,0,0,.08);
+}
+
+ng-otp-input input:focus {
+  border-color: #000 !important;
+  box-shadow: 0 8px 18px rgba(0,0,0,.15);
+}
+
+/* ================= RESEND ================= */
+.resend-wrapper {
   text-align: center;
+  margin-top: 12px;
 }
 
+.resend {
+  font-weight: 600;
+  cursor: pointer;
+}
 
+.resend:hover {
+  text-decoration: underline;
+}
+
+/* ================= BUTTON ================= */
+.bottom-action {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px;
+  background: linear-gradient(
+    to top,
+    #ffffff 70%,
+    rgba(255,255,255,0)
+  );
+}
+
+ion-button {
+  height: 52px;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* ================= SPINNER ================= */
+ion-spinner {
+  width: 18px !important;
+  height: 18px !important;
+  margin-left: 8px;
+}
