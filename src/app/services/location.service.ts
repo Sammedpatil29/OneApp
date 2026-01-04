@@ -13,7 +13,6 @@ export class LocationService {
 
   private addressSource = new BehaviorSubject<string>('');
   address$ = this.addressSource.asObservable();
-  
   coordinates: any = []
   city: any = ''
   address: any = ''

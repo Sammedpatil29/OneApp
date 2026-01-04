@@ -407,7 +407,9 @@ gotoGrocery(){
 }
 
 gotoEvents(){
-  this.navCtrl.navigateForward('/layout/events')
+  this.navCtrl.navigateForward('/layout/events', {
+    animationDirection: 'forward',
+  })
 }
 
 checkServices(){
