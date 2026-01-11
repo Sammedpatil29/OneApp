@@ -83,7 +83,7 @@ export class AboutPage implements OnInit {
     if(this.data == 'Personal Details'){
       this.getProfileData()
     }
-    if(this.data == 'About OneApp'){
+    if(this.data == 'About Pintu'){
       const version = await this.profileService.getAppVersion()
       this.appVersion = version
     }

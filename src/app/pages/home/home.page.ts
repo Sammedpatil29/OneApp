@@ -188,7 +188,7 @@ const version = await this.profileService.getAppVersion()
       console.log(res)
       this.isLoading = false
       this.latestVersion = this.metaData[2].latest_version
-      this.fileName = `OneApp-${this.latestVersion}`
+      this.fileName = `Pintu-${this.latestVersion}`
       this.fileUrl = this.metaData[2].download_link
       console.log(this.latestVersion)
       // if(this.metaData[2].video.message === 'true'){
@@ -216,7 +216,7 @@ const version = await this.profileService.getAppVersion()
           this.isLoading = false
           this.isServiceLoading = false
       this.latestVersion = this.metaData[2].latest_version
-      this.fileName = `OneApp-${this.latestVersion}`
+      this.fileName = `Pintu-${this.latestVersion}`
       this.fileUrl = this.metaData[2].download_link
       }, error => {
         this.isServiceLoading = false

@@ -166,7 +166,7 @@ upiApps: any;
     currency: 'INR',
     key: 'rzp_test_mumd7Md1QvW8oy',
     amount: 100, // amount in paise
-    name: 'OneApp Events',
+    name: 'Pintu Events',
     prefill: {
       email: '',
       contact: '',

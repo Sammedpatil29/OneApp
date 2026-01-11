@@ -387,7 +387,7 @@ export class CartPage implements OnInit {
         key: 'rzp_test_RJn8z8TkeG3RU4', // Replace with your Razorpay Key ID
         amount: this.finalCost * 100,
         currency: 'INR',
-        name: 'OneApp Grocery',
+        name: 'Pintu Grocery',
         description: 'Test Transaction',
         image: 'https://your-logo.com/logo.png',
         prefill: {

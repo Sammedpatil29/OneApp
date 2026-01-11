@@ -204,7 +204,7 @@ isValidEmail(email: string): boolean {
       currency: 'INR',
       key: 'rzp_live_p6MXH1oq4BBYPk',
       amount: 100,
-      name: 'OneApp Events',
+      name: 'Pintu Events',
       prefill: {
         email: '',
         contact: '8686868686',
@@ -305,7 +305,7 @@ this.navCtrl.back()
         key: 'rzp_live_p6MXH1oq4BBYPk',
         amount: 100,
         currency: 'INR',
-        name: 'OneApp Events',
+        name: 'Pintu Events',
         description: 'Test Payment',
         prefill: {
           contact: '9876543210'
@@ -326,7 +326,7 @@ this.navCtrl.back()
       key: 'rzp_test_RJn8z8TkeG3RU4', // Replace with your Razorpay Key ID
       amount: this.finalCost * 100, 
       currency: 'INR',
-      name: 'OneApp Events',
+      name: 'Pintu Events',
       description: 'Test Transaction',
       image: 'https://your-logo.com/logo.png',
       prefill: {
