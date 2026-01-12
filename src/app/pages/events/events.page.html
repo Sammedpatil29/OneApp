@@ -39,19 +39,35 @@
     <div class="section-container position-sticky pt-3 pb-2" style="top: 0px; z-index: 10;">
       <h2 class="section-title">Explore by Category</h2>
       <div class="horizontal-scroll-container">
-        <div class="category-pill active">Upcoming</div>
-        <div class="category-pill">All</div>
-        <div class="category-pill">Expos</div>
-        <div class="category-pill">Parties</div>
-        <div class="category-pill">Events</div>
-        <div class="category-pill">Concerts</div>
-      </div>
+  <div 
+    class="category-pill" 
+    [class.active]="currentFilter === 'Upcoming'"
+    (click)="applyFilter('Upcoming')">
+    Upcoming
+  </div>
+
+  <div 
+    class="category-pill" 
+    [class.active]="currentFilter === 'All'"
+    (click)="applyFilter('All')">
+    All
+  </div>
+
+  @for (item of categories; track item) {
+    <div 
+      class="category-pill" 
+      [class.active]="currentFilter === item"
+      (click)="applyFilter(item)">
+      {{ item | titlecase }}
+    </div>
+  }
+</div>
     </div>
 
     <div class="section-container mt-4">
       <h2 class="section-title">Upcoming for You</h2>
       <div class="event-masonry-grid">
-        <div class="modern-event-card" *ngFor="let card of events" (click)="openItemModal(card)">
+        <div class="modern-event-card" *ngFor="let card of filteredEvents" (click)="openItemModal(card)">
           <div class="card-image-box">
             <img [src]="card.imageUrl" [alt]="card.title">
             <div class="price-badge" [class.free]="card.isFree">

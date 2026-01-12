@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Pintu</string>
-    <string name="title_activity_main">Pintu</string>
+    <string name="app_name">Pintu - Minutes App</string>
+    <string name="title_activity_main">Pintu - Minutes App</string>
     <string name="package_name">io.ionic.oneapp</string>
     <string name="custom_url_scheme">io.ionic.oneapp</string>
 </resources>

@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'io.ionic.oneapp',
-  appName: 'Pintu',
+  appName: 'Pintu - Minutes App',
   webDir: 'www',
   plugins: {
     FirebaseAuthentication: {
