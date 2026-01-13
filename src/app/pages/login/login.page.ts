@@ -51,6 +51,7 @@ export class LoginPage implements OnInit {
   user: any = null;
 
   otpSent: boolean = false;
+  verifyingToken: boolean = false;
   mobileNumber = '';
   otp = '';
   enteredOtp = '';
@@ -66,6 +67,7 @@ export class LoginPage implements OnInit {
   intervalIdforCount: any;
   otpVerificationMessage: string = '';
   timer = 45
+  tokenDecoded: any;
 
   otpConfig = {
     length: 6,
@@ -88,8 +90,41 @@ export class LoginPage implements OnInit {
   }
 
   ngOnInit() {
+    this.verifyToken()
     this.authService.getUserId();
     this.listenToAuthState();
+  }
+
+  token:any;
+  async verifyToken(){
+    // this.loadingMessage = 'verifying user...'
+    this.token = await this.authService.getToken()
+    // console.log(this.authService.getToken().__zone_symbol__value)
+    console.log(this.token)
+    if(this.token){
+      // this.navCtrl.navigateRoot('/layout')
+    }
+    let params = {
+      "token": this.token
+    }
+    this.verifyingToken = true
+    this.authService.verifyToken(params).subscribe(res => {
+      this.tokenDecoded = res
+      this.verifyingToken = false
+      console.log(res)
+      if(this.tokenDecoded.valid == true){
+        this.router.navigate(['/layout/example/home'])
+        setTimeout(()=> {
+            this.navCtrl.navigateRoot('/layout')
+        }, 500)
+
+      } else {
+this.verifyingToken = false
+      }
+    }, error => {
+      this.navCtrl.navigateBack('/login')
+      this.verifyingToken = false
+    })
   }
 
   async sendVerification() {

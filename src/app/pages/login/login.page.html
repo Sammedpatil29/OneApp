@@ -1,7 +1,8 @@
 <ion-content [fullscreen]="true">
   <div class="bg-decoration"></div>
 
-  @if (!showRegisterForm) {
+  @if(!verifyingToken){
+    @if (!showRegisterForm) {
     <ion-header class="ion-no-border pt-4">
       <ion-toolbar>
         <ion-buttons slot="start">
@@ -138,6 +139,14 @@
         <span *ngIf="!isLoading">Complete Setup</span>
         <ion-spinner *ngIf="isLoading" name="dots"></ion-spinner>
       </ion-button>
+    </div>
+  }
+  } @else {
+    <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center" style="background-color: #5e17eb">
+      <img style="width: 250px" src="assets/icon/ic_launcher_foreground.png" alt="">
+      <div class="spinner-border text-white" role="status">
+  <span class="visually-hidden">Loading...</span>
+</div>
     </div>
   }
 

@@ -82,7 +82,7 @@ token:any;
     // console.log(this.authService.getToken().__zone_symbol__value)
     console.log(this.token)
     if(this.token){
-      this.navCtrl.navigateRoot('/layout')
+      // this.navCtrl.navigateRoot('/layout')
     }
     let params = {
       "token": this.token
@@ -91,9 +91,9 @@ token:any;
       this.tokenDecoded = res
       console.log(res)
       if(this.tokenDecoded.valid == true){
-        // this.router.navigate(['/layout/example/home'])
+        this.router.navigate(['/layout/example/home'])
         setTimeout(()=> {
-            // this.navCtrl.navigateRoot('/layout')
+            this.navCtrl.navigateRoot('/layout')
         }, 500)
 
       } else {

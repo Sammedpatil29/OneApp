@@ -4,7 +4,7 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 export const routes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./pages/prelogin/prelogin.page').then( m => m.PreloginPage)
+    loadComponent: () =>import('./pages/login/login.page').then(m => m.LoginPage)
   },
   {
     path: 'login',
