@@ -243,12 +243,12 @@ const version = await this.profileService.getAppVersion()
 
   goToProfile() {
     console.log('Navigating to profile...');
-    this.router.navigateByUrl('/layout/profile');
+    this.navCtrl.navigateForward('/layout/profile');
 
   }
 
   openLocation() {
-    this.router.navigate(['/layout/address-list'], {
+    this.navCtrl.navigateForward('/layout/address-list', {
       state: {data : 'home'}
     })
   }
@@ -307,7 +307,7 @@ shuffleArray(array: any[]) {
 
 navigateTo(route:any){
     console.log(`/layout/${route}`)
-    this.router.navigate([`/layout/${route}`])
+    this.navCtrl.navigateForward(`/layout/${route}`)
   }
 
 getBanners(){

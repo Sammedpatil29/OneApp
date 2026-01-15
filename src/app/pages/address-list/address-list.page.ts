@@ -62,7 +62,7 @@ addresses: any = [
   }
 
   openLocation() {
-    this.router.navigate(['/layout/map'], {
+    this.navCtrl.navigateForward('/layout/map', {
       state: {data : 'home'}
     })
   }

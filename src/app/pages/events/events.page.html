@@ -36,7 +36,7 @@
       </div>
     </div>
 
-    <div class="section-container position-sticky pt-3 pb-2" style="top: 0px; z-index: 10;">
+    <div class="section-container position-sticky pt-5 pb-2" style="top: 0px; z-index: 10; background-color: #f7fafc;">
       <h2 class="section-title">Explore by Category</h2>
       <div class="horizontal-scroll-container">
   <div 
@@ -69,7 +69,11 @@
       <div class="event-masonry-grid">
         <div class="modern-event-card" *ngFor="let card of filteredEvents" (click)="openItemModal(card)">
           <div class="card-image-box">
-            <img [src]="card.imageUrl" [alt]="card.title">
+            @if(card.imageUrl){
+              <img [src]="card.imageUrl" [alt]="card.title">
+            } @else {
+              <img src="https://dummyimage.com/1080x1410/e0e0e0/c2c2c2.png&text=Coming Soon" [alt]="card.title">
+            }
             <div class="price-badge" [class.free]="card.isFree">
               {{ card.isFree ? 'FREE' : ('₹' + card.ticketPrice) }}
             </div>

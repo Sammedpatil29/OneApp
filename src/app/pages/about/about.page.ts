@@ -246,7 +246,7 @@ this.isSpinnerLoading = true
   }
 
   openLocation(){
-    this.router.navigate(['/layout/map'], {
+    this.navCtrl.navigateForward('/layout/map', {
       state: {data : 'addAddress'}
     })
   }

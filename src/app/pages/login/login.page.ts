@@ -113,16 +113,16 @@ export class LoginPage implements OnInit {
       this.verifyingToken = false
       console.log(res)
       if(this.tokenDecoded.valid == true){
-        this.router.navigate(['/layout/example/home'])
+        this.navCtrl.navigateRoot('/layout/example/home')
         setTimeout(()=> {
-            this.navCtrl.navigateRoot('/layout')
+            this.navCtrl.navigateRoot('/layout/example/home')
         }, 500)
 
       } else {
 this.verifyingToken = false
       }
     }, error => {
-      this.navCtrl.navigateBack('/login')
+      this.navCtrl.navigateRoot('/login')
       this.verifyingToken = false
     })
   }
@@ -422,9 +422,9 @@ this.verifyingToken = false
         });
         this.authService.getUserId();
         console.log(Preferences.get({ key: 'auth-token' }));
-        this.router.navigate(['/layout/example/home']);
+        this.navCtrl.navigateRoot(['/layout/example/home']);
         setTimeout(() => {
-          this.router.navigate(['/layout/example/home']);
+          this.navCtrl.navigateRoot(['/layout/example/home']);
           this.isLoading = false;
         }, 500);
       },

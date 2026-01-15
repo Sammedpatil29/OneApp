@@ -63,7 +63,7 @@ nameShort = ''
   }
 
   openDetails(option: any) {
-  this.router.navigate(['/layout/about'], {
+  this.navCtrl.navigateForward(['/layout/about'], {
     state: { data: option }
   });
 }

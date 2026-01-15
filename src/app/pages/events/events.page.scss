@@ -14,7 +14,7 @@ ion-content {
   position: fixed;
   top: 0; left: 0; right: 0;
   display: flex; justify-content: space-between;
-  padding: 50px 20px 10px;
+  padding: 20px 20px 10px;
   z-index: 1000;
   pointer-events: none;
   
@@ -26,11 +26,11 @@ ion-content {
   --border-radius: 50%;
   --box-shadow: none;
   width: 44px; height: 44px;
-  backdrop-filter: blur(8px);
+  // backdrop-filter: blur(8px);
 }
 
 .help-btn {
-  --color: white;
+  --color: rgb(57, 84, 238);
   font-weight: 700;
   text-transform: capitalize;
   font-size: 14px;
@@ -190,4 +190,21 @@ background-size: cover;
   height: 100%; display: flex; flex-direction: column;
   justify-content: center; align-items: center;
   p { margin-top: 15px; color: #64748b; font-weight: 600; }
+}
+
+.auto-height-modal {
+  --height: auto;
+  align-items: flex-end; // Aligns the modal to the bottom
+
+  .modal-wrapper {
+    // This allows the modal to shrink-wrap its content
+    height: auto !important; 
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+  }
+
+  ion-content {
+    --background: transparent;
+    height: auto;
+  }
 }

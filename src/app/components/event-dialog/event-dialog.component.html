@@ -5,7 +5,11 @@
   <div class="split-header">
     <div class="image-column">
       <div class="image-wrapper">
-        <img [src]="eventDetails.imageUrl" class="main-event-image">
+        @if(eventDetails.imageUrl){
+          <img [src]="eventDetails.imageUrl" class="main-event-image">
+        } @else {
+          <img src="https://dummyimage.com/1080x1410/e0e0e0/c2c2c2.png&text=Coming Soon">
+        }
         <div class="image-overlay-tag" *ngIf="eventDetails.isFree">Free</div>
       </div>
     </div>

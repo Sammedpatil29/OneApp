@@ -71,7 +71,7 @@ ngOnInit() {
     "ticketoptions": [],
     "isFree": false,
     "ticketPrice": "1500.00",
-    "imageUrl": "https://res.cloudinary.com/dvwggnqnw/image/upload/v1749563401/event_Banner_1_1_kojcox.png",
+    "imageUrl": "",
     "registrationUrl": "",
     "recurrence": "none",
     "user": null
@@ -669,20 +669,25 @@ this.navCtrl.navigateBack('/layout/example/home')
   }
 
   async openItemModal(item: any) {
-    document.body.classList.add('modal-open');
-   const modal = await this.modalCtrl.create({
-      component: EventDialogComponent,
-      componentProps: { item },
-      backdropDismiss: true,
-      handle: true,
-      cssClass: 'bottom-sheet-modal', // Custom class for bottom sheet styling
-    });
+  const modal = await this.modalCtrl.create({
+    component: EventDialogComponent,
+    componentProps: { item },
+    backdropDismiss: true,
+    
+    // // --- Add these lines ---
+    // initialBreakpoint: 0.5, // Opens at 50% height
+    // breakpoints: [0, 0.5, 0.9], // Allowed positions: 0% (closed), 50%, 90%
+    handle: true, // Shows the drag handle at the top
+    // -----------------------
 
-    await modal.present();
+    cssClass: 'bottom-sheet-modal', 
+  });
 
-    const { data, role } = await modal.onDidDismiss();
-    console.log('Modal dismissed:', role, data);
-  }
+  await modal.present();
+
+  const { data, role } = await modal.onDidDismiss();
+  document.body.classList.remove('modal-open'); // Clean up class
+}
   
   }
 
