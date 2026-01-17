@@ -112,18 +112,38 @@ box-shadow: none !important;
     font-weight: 400;
 }
 
+/* Update your global.scss */
+body.modal-open {
+  /* Prevent the body from scrolling */
+  overflow: hidden !important;
+  /* Prevent touch-move events from bubbling down on mobile */
+  touch-action: none; 
+}
+
+/* This targets the page behind the modal */
+body.modal-open ion-content {
+  /* Disables scrolling on the underlying page's content */
+  --overflow: hidden;
+}
+
+/* Fix your custom class */
 .bottom-sheet-modal {
-  display: flex !important;
-  align-items: flex-end !important;
   --height: auto;
+  --width: 100%;
   --border-radius: 16px 16px 0 0;
+  align-items: flex-end; 
+
+  &::part(content) {
+    /* This ensures the backdrop behind the modal is correctly positioned */
+    position: relative;
+  }
 
   .modal-wrapper {
+    /* Remove max-height: 20vh if you want to see all data */
+    /* Use max-height: 90vh so it doesn't go off-screen if content is huge */
+    max-height: 90vh; 
     background: #fff;
-    padding: 16px;
     border-radius: 16px 16px 0 0;
-    max-height: 20vh;
-    overflow-y: auto;
   }
 }
 

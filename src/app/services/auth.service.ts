@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Preferences } from '@capacitor/preferences';
@@ -10,11 +10,9 @@ import { NavController } from '@ionic/angular';
   providedIn: 'root'
 })
 export class AuthService {
-url = 'https://oneapp-backend.onrender.com/api/users/'
+url = 'https://oneapp-express-singapore.onrender.com/'
 tokenUrl = 'https://oneapp-backend.onrender.com/api/login/'
 token: any;
-
-private apiUrl = 'https://api.msg91.com/api/v5/otp';
 
   constructor(private http: HttpClient, private router: Router, private navCtrl: NavController) { }
 
@@ -29,20 +27,23 @@ return this.http.get(this.url)
   });
 }
 
-  postNewUser(params:any){
-    return this.http.post(this.url, params)
+  register(params:any){
+    return this.http.post(`${this.url}register`, params)
   }
 
   checkUser(params:any){
-    return this.http.post(`${this.url}check-phone/`, params)
+    return this.http.post(`${this.url}login`, params)
   }
 
-  createToken(params:any){
-    return this.http.post(`${this.tokenUrl}create-token/`, params)
-  }
+  verifyToken(token: string) {
+    // 1. Create the headers
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
 
-  verifyToken(params:any){
-    return this.http.post(`${this.tokenUrl}verify-token/`, params)
+    // 2. Pass headers in the request options
+    // Note: I removed the trailing slash '/' to match your Node route exactly
+    return this.http.get(`${this.url}verify-token`, { headers: headers });
   }
 
   async logout(){
@@ -58,20 +59,20 @@ return this.http.get(this.url)
     return token.value
   }
 
-  response:any
-  async getUserId(){
-    const token = await this.getToken()
-    console.log(token)
-    let params = {
-      "token": token
-    }
-    this.verifyToken(params).subscribe(res => {
-      this.response = res
-      const user_id = this.response.data.user_id
-      console.log(user_id)
-      Preferences.set({key: 'user_id', value: String(user_id)})
-    })
-  }
+  // response:any
+  // async getUserId(){
+  //   const token = await this.getToken()
+  //   console.log(token)
+  //   let params = {
+  //     "token": token
+  //   }
+  //   this.verifyToken(params).subscribe(res => {
+  //     this.response = res
+  //     const user_id = this.response.data.user_id
+  //     console.log(user_id)
+  //     Preferences.set({key: 'user_id', value: String(user_id)})
+  //   })
+  // }
 
   
 }

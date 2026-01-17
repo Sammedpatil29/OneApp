@@ -104,7 +104,7 @@
   [loop]="true"
   [autoplay]="{ delay: 1000, disableOnInteraction: false }"
   class="full-swiper"
-  style="height: 35vh; position: sticky; top: 0; z-index: -999"
+  style="height: 40vh; position: sticky; top: 0; z-index: -999"
   effect="fade"
 >
   <!-- <swiper-slide>
@@ -112,7 +112,10 @@
   </swiper-slide> -->
   @for (item of slides; track $index) {
     <swiper-slide (click)="navigateFromSlide(item.route)">
-    <img [src]="item.img" alt="slide" class="square-image" />
+    <img src="assets/Events (2).gif" alt="slide" class="square-image" />
+  </swiper-slide>
+    <swiper-slide (click)="navigateFromSlide(item.route)">
+    <img src="assets/gif/Untitled design (2).gif" alt="slide" class="square-image" />
   </swiper-slide>
   }
 </swiper-container>
@@ -137,7 +140,11 @@
     </swiper-slide>
   </swiper-container>
   } @if(!isServiceLoading){
-  <div class="pt-3" style="background-color: white">
+  <div class="pt-1" style="background-color: white; margin-top: -30px;
+    border-radius: 20px 20px 0px 0px;">
+    <div>
+      <div class="modal-handle"></div>
+    </div>
     <div *ngFor="let group of groupedData | keyvalue">
       <!-- Category Title -->
       <div class="">
@@ -277,87 +284,6 @@
     </ion-grid>
   </div>
   }
-
- @if(!isSpecialDataLoading){
-  
-  <div style="background-color: white">
-     <!-- event recommendations -->
-  @if(availableServices.includes('Local Events')){
-    <div class="px-2 py-4" style="background-color: rgba(101, 243, 160, 0.185)">
-    <div class="">
-        <!-- <ion-card-subtitle class="ps-3 header-subtitle text-uppercase text-center fw-bold text-dark">
-          Recemmended Events
-        </ion-card-subtitle> -->
-        <img src="assets/gif/Hot Events.gif" alt="">
-      </div>
-
-      <swiper-container [slidesPerView]="1.9" [spaceBetween]="0" [loop]="false" [autoplay]="false">
-    @for (item of events; track $index) {
-    <swiper-slide>
-      <ion-card style="border-radius: 10px !important" (click)="navigateFromSlide(item.route)">
-        <img [src]="item.imageUrl" alt="" />
-      </ion-card>
-    </swiper-slide>
-    }
-  </swiper-container>
-    <ion-button fill="outline" color="dark" class="w-100 book-btn" (click)="gotoEvents()">See more</ion-button>
-  </div>
-  }
-
-  <!-- offer of the day banner -->
-  <div class="mt-3 px-2">
-    
-  <img src="assets/gif/Hot Events (2).gif" style="border-radius: 10px" alt="">
-
-  </div>
-
-  <!-- top grocery recommendations -->
-   @if(availableServices.includes('Grocery')){
-    <div class="mt-4 px-2">
-    <div class="">
-        <!-- <ion-card-subtitle class="ps-3 text-uppercase text-center fw-bold text-dark">
-          Top selling daily needs
-        </ion-card-subtitle> -->
-        <img src="assets/gif/Hot Events (1).gif" alt="" />
-      </div>
-
-      <swiper-container class="mt-2" [slidesPerView]="3.2" [spaceBetween]="3" [loop]="false" [pagination]="{ clickable: true }" [freeMode]="true"  [grid]="{ rows: 2, fill: 'row' }" [autoplay]="false">
-    @for (item of groceryList; track $index) {
-    <swiper-slide>
-        <div class="position-relative">
-
-          <img style="border-radius: 15px;" [src]="item.image_url" alt="">
-            
-                    <!-- <div class="quantity-button position-absolute" style="right: 5px;"> -->
-    <!-- <div class="d-flex align-items-center justify-content-center">
-      <span class="bttn px-2" (click)="decrement(cartItem.id)">&#8722;</span>
-      <span class="bttn px-2">{{cartItem.quantity}}</span>
-      <span class="bttn px-2" (click)="increment(cartItem.id)">&#43;</span>
-    </div> -->
-  <!-- </div> -->
-        </div>
-        <div class="px-1 mb-3">
-          <div><small
-              style="font-size: 10px !important; color: rgb(111, 111, 241)">{{item.quantity.amount}}&nbsp;{{item.quantity.unit}}</small>
-          </div>
-          <span>
-            <small>
-              <strong>{{item.name}}</strong></small>
-        </span>
-        <div class="">
-          <small style="font-size: 10px;" class="mb-0 d-block text-success">10% OFF</small>
-          <small><strong class="me-1">&#8377;{{item.price.ourPrice}}</strong> <span class="text-decoration-line-through">&#8377;{{item.price.mrp}}</span></small>
-        </div>
-        </div>
-    </swiper-slide>
-    }
-  </swiper-container>
-    <ion-button fill="outline" color="dark" class="w-100 book-btn" (click)="gotoGrocery()">See more</ion-button>
-  </div>
-   }
-  </div>
-  
- }
 
   <app-footer></app-footer>
   <ion-modal [isOpen]="isModalOpen" (didDismiss)="handleModalClose()">

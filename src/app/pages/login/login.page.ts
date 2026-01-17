@@ -4,7 +4,7 @@ import { EmailValidator, FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonCardTitle, IonInput, IonText, IonLabel, IonItem, IonImg, IonSpinner, IonToast, IonCardSubtitle, IonApp, IonCard, IonCardContent, IonCardHeader } from '@ionic/angular/standalone';
 import { NavController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { arrowBack, chevronBack } from 'ionicons/icons';
+import { arrowBack, chevronBack, timeOutline, personOutline, mailOutline, arrowForward } from 'ionicons/icons';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
 import { Preferences } from '@capacitor/preferences';
@@ -86,33 +86,28 @@ export class LoginPage implements OnInit {
     private authService: AuthService,
     private router: Router
   ) {
-    addIcons({chevronBack,arrowBack});
+    addIcons({arrowBack,timeOutline,personOutline,mailOutline,arrowForward,chevronBack});
   }
 
-  ngOnInit() {
-    this.verifyToken()
-    this.authService.getUserId();
-    this.listenToAuthState();
+  async ngOnInit() {
+    this.token = await this.authService.getToken()
+    if(this.token){
+      this.verifyToken()
+    }
   }
 
   token:any;
   async verifyToken(){
     // this.loadingMessage = 'verifying user...'
     this.token = await this.authService.getToken()
-    // console.log(this.authService.getToken().__zone_symbol__value)
     console.log(this.token)
     if(this.token){
-      // this.navCtrl.navigateRoot('/layout')
-    }
-    let params = {
-      "token": this.token
-    }
+     
     this.verifyingToken = true
-    this.authService.verifyToken(params).subscribe(res => {
-      this.tokenDecoded = res
+    this.authService.verifyToken(this.token).subscribe((res: any) => {
       this.verifyingToken = false
       console.log(res)
-      if(this.tokenDecoded.valid == true){
+      if(res.valid == true){
         this.navCtrl.navigateRoot('/layout/example/home')
         setTimeout(()=> {
             this.navCtrl.navigateRoot('/layout/example/home')
@@ -125,6 +120,8 @@ this.verifyingToken = false
       this.navCtrl.navigateRoot('/login')
       this.verifyingToken = false
     })
+    }
+    
   }
 
   async sendVerification() {
@@ -220,18 +217,6 @@ this.verifyingToken = false
     }
   }
 
-  listenToAuthState() {
-    FirebaseAuthentication.addListener('authStateChange', async (event) => {
-      if (event.user) {
-        this.user = event.user;
-        console.log('✅ User signed in:', this.user);
-      } else {
-        this.user = null;
-        console.log('ℹ️ User not signed in');
-      }
-    });
-  }
-
   async verifyOTP() {
     try {
       this.isLoading = true;
@@ -242,11 +227,6 @@ this.verifyingToken = false
       });
 
       console.log('✅ OTP verification successful!', result);
-      // this.isToastOpen = true;
-      // this.toastMessage = `✅ OTP verification successful!`;
-      // setTimeout(() => {
-      //   this.isToastOpen = false;
-      // }, 3000);
       this.isLoading = false;
       this.otpVerificationMessage = '';
       this.checkUser(); // Proceed to your login/registration logic
@@ -325,20 +305,17 @@ this.verifyingToken = false
     this.isLoading = true;
     this.otpVerificationMessage = 'Validating User';
     let params = {
-      phone: `+91${this.phoneNumber}`,
+      phone: `${this.phoneNumber}`,
     };
     this.authService.checkUser(params).subscribe(
-      (res) => {
+      (res:any) => {
         // console.log(res);
         // this.users = res;
         console.log(res);
         // let isRegistered = this.users.some((item: any) => item.phone.includes(this.mobileNumber));
         // console.log(isRegistered);
 
-        if (res == true) {
-          this.createToken();
-          this.authService.getUserId();
-        } else {
+        if (res.isNewUser == true) {
           this.isToastOpen = true;
           this.toastMessage = `New User please register!`;
           setTimeout(() => {
@@ -346,7 +323,20 @@ this.verifyingToken = false
           }, 3000);
           this.isLoading = false;
           this.otpVerificationMessage = '';
-          this.showRegisterForm = true;
+          this.showRegisterForm = true
+          // this.authService.getUserId();
+        } else {
+          Preferences.set({
+          key: 'auth-token',
+          value: res.token,
+        });
+        // this.authService.getUserId();
+        console.log(Preferences.get({ key: 'auth-token' }));
+        this.navCtrl.navigateRoot('/layout/example/home');
+        // setTimeout(() => {
+        //   this.navCtrl.navigateRoot(['/layout/example/home']);
+        //   this.isLoading = false;
+        // }, 500);
         }
       },
       (error) => {
@@ -364,21 +354,41 @@ this.verifyingToken = false
     );
   }
 
-  createNewUser() {
+  register() {
     let params = {
-      username: `+91${this.phoneNumber}`,
+      phone: `${this.phoneNumber}`,
       email: this.email,
       first_name: this.fullName,
       last_name: '',
-      profile_image: '',
-      phone: `+91${this.phoneNumber}`,
+      username: `${this.phoneNumber}`,
       is_active: true,
       is_verified: true,
     };
     this.isLoading = true;
-    this.authService.postNewUser(params).subscribe(
-      (res) => {
-        this.createToken();
+    this.authService.register(params).subscribe(
+      (res:any) => {
+        if(res.success == true){
+          Preferences.set({
+          key: 'auth-token',
+          value: res.token,
+        });
+        let values = {
+          name: res.user.first_name,
+          phone: res.user.phone,
+          email: res.user.email
+        }
+        localStorage.setItem('userDetails', JSON.stringify(values))
+
+        this.navCtrl.navigateRoot('/layout/example/home');
+this.isLoading = false;
+        } else {
+          this.isToastOpen = true
+          this.toastMessage = `${res.message}`
+          setTimeout(() => {
+            this.isToastOpen = false;
+          }, 3000);
+          this.isLoading = false;
+        }
       },
       (error) => {
         // Handle error gracefully
@@ -391,51 +401,4 @@ this.verifyingToken = false
     );
   }
 
-  login() {
-    if (
-      this.fullName.length > 3 &&
-      this.email.includes('@') &&
-      this.email[-1] != '@'
-    ) {
-      this.createNewUser();
-    } else {
-      this.isToastOpen = false;
-      this.toastMessage = 'Enter valid input';
-      this.isToastOpen = true;
-      setTimeout(() => {
-        this.isToastOpen = false;
-      }, 4000);
-    }
-  }
-  response: any;
-
-  createToken() {
-    let params = {
-      phone: `+91${this.phoneNumber}`,
-    };
-    this.authService.createToken(params).subscribe(
-      (res) => {
-        this.response = res;
-        Preferences.set({
-          key: 'auth-token',
-          value: this.response.token,
-        });
-        this.authService.getUserId();
-        console.log(Preferences.get({ key: 'auth-token' }));
-        this.navCtrl.navigateRoot(['/layout/example/home']);
-        setTimeout(() => {
-          this.navCtrl.navigateRoot(['/layout/example/home']);
-          this.isLoading = false;
-        }, 500);
-      },
-      (error) => {
-        this.isToastOpen = false;
-        this.toastMessage = 'error creating token';
-        this.isToastOpen = true;
-        setTimeout(() => {
-          this.isToastOpen = false;
-        });
-      }
-    );
-  }
 }

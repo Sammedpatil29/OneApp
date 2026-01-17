@@ -1,21 +1,17 @@
 @if(!isloading){
   <ion-header>
   <ion-toolbar class="pt-4">
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
     <ion-title>History</ion-title>
-  </ion-toolbar>
-</ion-header>
-<ion-refresher slot="fixed" class="my-refresher mt-5" color="dark" (ionRefresh)="getHistory()"
-   pullingIcon="arrow-dropdown" refreshingSpinner="crescent">
-    <ion-refresher-content></ion-refresher-content>
-  </ion-refresher>
-<!-- <ion-content> -->
-  @if (history.length) {
-    <section>
-      <div class="d-flex align-items-center mt-2 mx-3">
+    <div class="d-flex align-items-center mt-1 mx-3 position-sticky" style="top: 0px">
         <!-- Horizontally scrollable chips -->
-        <div class="chip-scroll-container">
+        <div class="chip-scroll-container gap-0">
   @for (item of category; track $index) {
-    <ion-chip class="chip-item" [outline]="true" (click)="onCategoryChange($event)">{{item}}</ion-chip>
+    <ion-chip class="chip-item" [outline]="true" (click)="onCategoryChange($event)" [ngClass]="selectedCategory.toLowerCase() === item.toLowerCase()? 'active-chip' : ''">{{item | titlecase}}</ion-chip>
   }
 </div>
         <!-- Funnel icon -->
@@ -39,38 +35,49 @@
               </ion-select>
             </ion-item>
           </ion-list> -->
-        <span class="text-nowrap p-2">Filter by Status</span>
+        <!-- <span class="text-nowrap p-2">Filter by Status</span> -->
         </div>
       </div>
+  </ion-toolbar>
+</ion-header>
+<ion-refresher slot="fixed" class="my-refresher mt-5" color="dark" (ionRefresh)="getHistory()"
+   pullingIcon="arrow-dropdown" refreshingSpinner="crescent">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+<!-- <ion-content> -->
+  @if (history.length) {
+    <section>
       
       
-      <div>
-        <ion-list [inset]="true">
-          @for (item of filteredHistory; track $index) {
-            <ion-item [button]="true" detail="false" (click)="openDetails(item)">
-              <div class="unread-indicator-wrapper" slot="start">
-                <!-- <div class="bi bi-pen"></div> -->
-              </div>
-              <ion-label>
-                <strong class="text-uppercase">{{item.type}}</strong>
-                <ion-text>{{item.title}}</ion-text><br />
-                <ion-note color="medium" class="ion-text-wrap">
+      
+      <div class="px-3 mb-5 mt-2">
+        @for (item of filteredHistory; track $index) {
+          <div class="history-card mb-1" (click)="openDetails(item)">
+            <div class="card-body p-3">
+              
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="date-badge">
+                  {{item.created_at | date:'dd MMM'}} <span class="text-muted">•</span> {{item.created_at | date: 'HH:mm'}}
+                </span>
+                <div class="status-badge" [class.success]="item.status === 'completed'" [class.warning]="item.status === 'pending'">
+                  <i [ngClass]="getStatusIcon(item.status)" class="me-1"></i>
                   {{item.status}}
-                  <i [ngClass]="getStatusIcon(item.status)" class="ps-1"></i>
-                </ion-note>
-              </ion-label>
-              <ion-label class="metadata-end-wrapper" slot="end">
-                <div>
-                  <div class="d-flex justify-content-center">
-                    <ion-note color="medium">{{item.created_at | date:'dd/MM'}} &bull; {{item.created_at | date: 'HH:mm'}}</ion-note>
-                <ion-icon color="medium" name="chevron-forward"></ion-icon>
-                  </div>
-                <ion-note color="success" style="font-size: large"><b>&#8377;{{getCost(item.details)}}</b></ion-note>
                 </div>
-              </ion-label>
-            </ion-item>
-          }
-        </ion-list>
+              </div>
+
+              <div class="d-flex align-items-center justify-content-between mb-3">
+                <h6 class="m-0 fw-bold text-dark text-truncate" style="max-width: 70%;">{{item.title}}</h6>
+                <ion-icon name="chevron-forward" color="medium" style="font-size: 1.2rem; opacity: 0.5"></ion-icon>
+              </div>
+
+              <div class="card-footer-row d-flex justify-content-between align-items-end pt-2 border-top">
+                <span class="type-pill">{{item.type}}</span>
+                <span class="cost-text">&#8377;{{getCost(item.details)}}</span>
+              </div>
+
+            </div>
+          </div>
+        }
       </div>
     </section>
   } @else {

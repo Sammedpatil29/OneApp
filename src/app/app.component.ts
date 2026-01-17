@@ -6,6 +6,7 @@ import { Platform } from '@ionic/angular';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { NavController } from '@ionic/angular';
 import { PushNotifications, Token, PushNotification } from '@capacitor/push-notifications';
+import { SplashScreen } from '@capacitor/splash-screen';
 
 @Component({
   selector: 'app-root',
@@ -30,6 +31,7 @@ export class AppComponent implements OnInit{
 
    async initializeApp() {
     await this.platform.ready();
+    await SplashScreen.hide();
     this.checkNetworkStatus();
     this.listenToNetwork();
   }

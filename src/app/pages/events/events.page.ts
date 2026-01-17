@@ -620,7 +620,7 @@ applyFilter(filterType: string) {
   }
 
   openHelp(){
-    this.navCtrl.navigateForward('/layout/example/support')
+    this.navCtrl.navigateForward('/layout/support')
   }
 
   openBookings(){
@@ -668,25 +668,32 @@ this.navCtrl.navigateBack('/layout/example/home')
     })
   }
 
-  async openItemModal(item: any) {
+
+async openItemModal(item: any) {
+  // 1. Lock scroll
+  document.body.classList.add('modal-open');
+
   const modal = await this.modalCtrl.create({
     component: EventDialogComponent,
     componentProps: { item },
     backdropDismiss: true,
-    
-    // // --- Add these lines ---
-    // initialBreakpoint: 0.5, // Opens at 50% height
-    // breakpoints: [0, 0.5, 0.9], // Allowed positions: 0% (closed), 50%, 90%
-    handle: true, // Shows the drag handle at the top
-    // -----------------------
+    cssClass: 'bottom-sheet-modal',
+    // Adding breakpoints even at 1 allows Ionic to use the "Sheet" engine 
+    // which is better at blocking background touch events
+    initialBreakpoint: 1,
+    breakpoints: [0, 1]
+  });
 
-    cssClass: 'bottom-sheet-modal', 
+  modal.onDidDismiss().then((res) => {
+    // 2. Unlock scroll
+    document.body.classList.remove('modal-open');
+    
+    if (res.data?.dismissed) {
+      console.log('Modal returned:', res.data.data);
+    }
   });
 
   await modal.present();
-
-  const { data, role } = await modal.onDidDismiss();
-  document.body.classList.remove('modal-open'); // Clean up class
 }
   
   }

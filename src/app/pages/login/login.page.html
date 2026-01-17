@@ -36,9 +36,7 @@
             </ion-input>
           </div>
         </div>
-      }
-
-      @if (otpSent) {
+      } @else {
         <div class="form-section animate__animated animate__fadeIn">
           <h2 class="page-title">Verify Details</h2>
           <p class="subtitle">Sent to <span class="phone-highlight">+91 {{phoneNumber}}</span></p>
@@ -133,7 +131,7 @@
         color="dark"
         class="book-btn w-100"
         [disabled]="isLoading"
-        (click)="login()">
+        (click)="register()">
         <span *ngIf="!isLoading">Complete Setup</span>
         <ion-spinner *ngIf="isLoading" name="dots"></ion-spinner>
       </ion-button>

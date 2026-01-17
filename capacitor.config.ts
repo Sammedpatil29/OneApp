@@ -10,6 +10,10 @@ const config: CapacitorConfig = {
       providers: ['phone']
     },
     Cordova: {}
+  },
+  server: {
+    androidScheme: 'https',
+    hostname: 'pintu-minutes.app' 
   }
 };
 

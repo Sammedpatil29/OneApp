@@ -211,6 +211,23 @@ swiper-slide {
   display: block;
 }
 
+.modal-handle {
+  width: 48px; /* Standard width */
+  height: 5px; /* Not too thick */
+  background-color: #e0e0e0; /* Soft gray */
+  border-radius: 5px; /* Pill shape */
+  margin: 12px auto 8px auto; /* Centers it horizontally & adds spacing */
+  
+  /* Optional: Adds a subtle interaction hint */
+  transition: background-color 0.2s ease;
+}
+
+/* Optional: Darker when pressed/active */
+.modal-handle:active {
+  background-color: #bdbdbd;
+}
+
+
 
 
 

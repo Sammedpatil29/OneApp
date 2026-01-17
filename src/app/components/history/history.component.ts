@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IonContent, IonCardSubtitle, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonButton, IonIcon, IonHeader, IonToolbar, IonTitle, IonNote, IonList, IonItem, IonLabel, IonText, IonChip, IonSelect, IonSelectOption, IonRefresher, IonRefresherContent, IonSpinner } from "@ionic/angular/standalone";
+import { IonContent, IonCardSubtitle, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonButton, IonIcon, IonHeader, IonToolbar, IonTitle, IonNote, IonList, IonItem, IonLabel, IonText, IonChip, IonSelect, IonSelectOption, IonRefresher, IonRefresherContent, IonSpinner, IonButtons } from "@ionic/angular/standalone";
 import { addIcons } from 'ionicons';
 import { library, playCircle, radio, search, person, home, homeOutline, time, helpCircle, homeSharp, searchOutline, funnel, funnelOutline } from 'ionicons/icons';
 import { HistoryService } from './history.service';
@@ -14,7 +14,7 @@ import { NavController } from '@ionic/angular';
   selector: 'app-history',
   templateUrl: './history.component.html',
   styleUrls: ['./history.component.scss'],
-  imports: [
+  imports: [IonButtons, 
     IonSpinner,
     CommonModule,
     IonRefresherContent,
@@ -83,7 +83,7 @@ export class HistoryComponent implements OnInit {
     this.isloading = true;
     let params = {
       token:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMiwicGhvbmUiOiIrOTE3NDA2OTg0MzA4IiwidXNlcl9uYW1lIjoiU2FtbWVkIFBhdGlsIFZJIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NTgyMTc2NjJ9.J2j66IfijcfkojEV-TBbfmiDKKTGD9b7amWRbZ4ldxQ',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozLCJwaG9uZSI6Iis5MTk1OTE0MjAwNjgiLCJ1c2VyX25hbWUiOiJTYW1tZWQgQmlyYWRhcnBhdGlsIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3Njg0MTYzNTV9.QuMR0q_8IjUXMXtEpvTD78KT0bgR78FkfKQH-CDG9WQ'
     };
     this.historyService.getHistory(params).subscribe(
       (res) => {
@@ -134,14 +134,15 @@ export class HistoryComponent implements OnInit {
     this.router.navigate(['/layout/profile']);
   }
 
+  selectedCategory:any = 'All';
   onCategoryChange(category: any) {
-    let selectedCategory = category.target.innerText;
-    console.log(selectedCategory);
-    if (selectedCategory == 'All') {
+   this.selectedCategory = category.target.innerText;
+    console.log(this.selectedCategory);
+    if (this.selectedCategory == 'All') {
       this.filteredHistory = this.history;
     } else {
       this.filteredHistory = this.history.filter(
-        (item) => item.type.toLowerCase() == selectedCategory.toLowerCase()
+        (item) => item.type.toLowerCase() == this.selectedCategory.toLowerCase()
       );
       console.log(this.filteredHistory);
     }
@@ -167,5 +168,9 @@ export class HistoryComponent implements OnInit {
   getCost(details: any) {
     let parsedDetails = JSON.parse(details);
     return parsedDetails.finalCost;
+  }
+
+  goBack(){
+    this.navCtrl.back()
   }
 }

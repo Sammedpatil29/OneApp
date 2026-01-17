@@ -92,7 +92,7 @@ export class LayoutPage implements OnInit {
     // orderBubble.style.left = '20px';  // Set initial left position
     // orderBubble.style.top = '150px';
     await this.getAppVersion()
-    this.getMetaData()
+    // this.getMetaData()
   }
 
   getProfileData(){
@@ -179,32 +179,32 @@ export class LayoutPage implements OnInit {
       await alert.present();
     }
 
-    getMetaData(){
-        this.isLoading = true
-        this.commonService.getMetaData().subscribe((res)=> {
-          this.metaData = res
-          console.log(res)
-          this.isLoading = false
-          this.latestVersion = this.metaData[2].latest_version
-          this.fileUrl = this.metaData[2].download_link
-          this.updateSeverity = JSON.parse(this.metaData[2].video)['updateSeverity'] 
-          console.log(this.latestVersion)
-          // if(this.metaData[2].video.message === 'true'){
-          //   let item = {
-          //     'title': this.metaData[2].video.Header,
-          //     'body': this.metaData[2].video.Content
-          //   }
-          if(this.latestVersion != '' && this.appVersion != null){
-            if(this.latestVersion != this.appVersion){
-              this.presentAlert()
-          }
-          }
-          if(JSON.parse(this.metaData[2].video)['showBottomSheetAd'] == "true" ){
-              this.openItemModal('item')
-          }
-          // }
-        })
-      }
+    // getMetaData(){
+    //     this.isLoading = true
+    //     this.commonService.getMetaData().subscribe((res)=> {
+    //       this.metaData = res
+    //       console.log(res)
+    //       this.isLoading = false
+    //       this.latestVersion = this.metaData[2].latest_version
+    //       this.fileUrl = this.metaData[2].download_link
+    //       this.updateSeverity = JSON.parse(this.metaData[2].video)['updateSeverity'] 
+    //       console.log(this.latestVersion)
+    //       // if(this.metaData[2].video.message === 'true'){
+    //       //   let item = {
+    //       //     'title': this.metaData[2].video.Header,
+    //       //     'body': this.metaData[2].video.Content
+    //       //   }
+    //       if(this.latestVersion != '' && this.appVersion != null){
+    //         if(this.latestVersion != this.appVersion){
+    //           this.presentAlert()
+    //       }
+    //       }
+    //       if(JSON.parse(this.metaData[2].video)['showBottomSheetAd'] == "true" ){
+    //           this.openItemModal('item')
+    //       }
+    //       // }
+    //     })
+    //   }
 
       async getAppVersion(){
 const version = await this.profileService.getAppVersion()

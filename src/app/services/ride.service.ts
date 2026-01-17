@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 export class RideService {
 private apiUrl = 'https://routes.googleapis.com/directions/v2:computeRoutes';
 private apiKey = 'AIzaSyA85HFedGjgP12MG_dvR-MVgooWTcJNIb0';
-private createRideUrl = 'https://oneapp-express.onrender.com/api/ride/create';
+private createRideUrl = 'https://oneapp-express-singapore.onrender.com/api/ride/create';
 
   constructor(private http: HttpClient) { }
 

@@ -1,91 +1,107 @@
-ion-header {
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
-    overflow: hidden; /* Important to apply radius properly */
-    position: sticky;
-top: 0px;
-  }
-
-  .unread-indicator {
-    background: var(--ion-color-primary);
-  
-    width: 10px;
-    height: 10px;
-  
-    border-radius: 100%;
-  
-    position: absolute;
-  
-    inset-inline-start: 12px;
-    top: 12px;
-  }
-  
-  .metadata-end-wrapper {
-    position: absolute;
-  
-    top: 10px;
-    inset-inline-end: 10px;
-  
-    font-size: 0.8rem;
-  
-    display: flex;
-    align-items: center;
-  }
-  
-  ion-label strong {
-    display: block;
-  
-    max-width: calc(100% - 60px);
-  
-    overflow: hidden;
-  
-    text-overflow: ellipsis;
-  }
-  
-  ion-label ion-note {
-    font-size: 0.9rem;
-  }
-
-  ::ng-deep .list-md.list-inset {
-     -webkit-margin-start: 0px !important; 
-     margin-inline-start: 0px !important; 
-     -webkit-margin-end: 0px; 
-     margin-inline-end: 0px; 
-     margin-top: 0px; 
-     margin-bottom: 0px; 
-     border-radius: 0px; 
-     padding-top: 0px;
+/* --- Global Layout --- */
+ion-content {
+  --background: #f8f9fa; /* Light grey background for contrast */
 }
 
-.chips-container {
-  display: flex;
-  overflow-x: auto; /* Enable horizontal scrolling */
-  white-space: nowrap; /* Prevent text from wrapping */
-}
+.ls-1 { letter-spacing: 1px; }
+.bg-white { background: #ffffff; }
 
-::ng-deep.item-radio-checked.sc-ion-select-popover-md {
-    --background: rgba(var(--ion-color-dark), 0.08);
-    --background-focused: var(--ion-color-dark);
-    --background-focused-opacity: 0.2;
-    --background-hover: var(--ion-color-dark);
-    --background-hover-opacity: 0.12;
+/* --- Filter Section & Chips --- */
+.filter-section {
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  box-shadow: 0 4px 6px -6px rgba(0,0,0,0.1);
 }
 
 .chip-scroll-container {
   display: flex;
-  flex-wrap: nowrap;
   overflow-x: auto;
-  // padding: 0 8px;
-  // gap: 2px; /* spacing between chips */
-  white-space: nowrap;
-  // scrollbar-width: thin; /* Firefox */
+  gap: 10px;
+  padding-bottom: 5px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+}
+.chip-scroll-container::-webkit-scrollbar { display: none; }
+
+.modern-chip {
+  margin: 0;
+  height: 32px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #555;
+  border: 1px solid #e0e0e0;
+  background: #fff;
+  border-radius: 20px;
+  padding: 0 16px;
+  transition: all 0.2s ease;
+
+  &:active {
+    background: #000;
+    color: #fff;
+    border-color: #000;
+  }
 }
 
-.chip-scroll-container::-webkit-scrollbar {
-  height: 6px;
+/* --- Card Design --- */
+.history-card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* Soft premium shadow */
+  transition: transform 0.1s linear;
+  border: 1px solid rgba(0,0,0,0.02);
+  
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.date-badge {
+  font-size: 0.75rem;
+  color: #888;
+  font-weight: 500;
+}
+
+.status-badge {
+  font-size: 0.7rem;
+  text-transform: capitalize;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: #f1f3f5;
+  color: #495057;
+
+  /* Optional colored statuses */
+  &.success { background: #d1e7dd; color: #0f5132; }
+  &.warning { background: #fff3cd; color: #664d03; }
+}
+
+.card-footer-row {
+  border-top: 1px dashed #eee !important;
+}
+
+.type-pill {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6c757d;
+  background: #f8f9fa;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid #eee;
+}
+
+.cost-text {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #198754; /* Success Green */
+  letter-spacing: -0.5px;
 }
 
 .chip-item {
-  flex-shrink: 0;
-  text-align: center;
+  border-radius: 8px !important;
+}
+
+.active-chip {
+  background-color: #000 !important;
+  color: #fff !important;
 }

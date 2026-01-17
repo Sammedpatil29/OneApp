@@ -10,7 +10,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
-    "deploy": "npx ionic build && npx cap run android --target 65PJQ8SCOJRCS8EI",
+    "deploy": "npx ionic build --prod && npx cap run android --target 65PJQ8SCOJRCS8EI",
     "sync": "npx cap sync android && ionic build && npx cap run android --target 65PJQ8SCOJRCS8EI"
   },
   "private": true,
@@ -41,6 +41,7 @@
     "@capacitor/push-notifications": "^7.0.2",
     "@capacitor/screen-orientation": "^7.0.1",
     "@capacitor/share": "^7.0.1",
+    "@capacitor/splash-screen": "^8.0.0",
     "@capacitor/status-bar": "7.0.0",
     "@ionic/angular": "^8.0.0",
     "@techiediaries/ngx-qrcode": "^9.1.0",

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IonHeader, IonToolbar, IonSearchbar, IonTitle, IonLabel, IonAccordion, IonItem, IonAccordionGroup, IonSegmentButton, IonSegment, IonSegmentView, IonSegmentContent, IonList, IonText, IonNote, IonIcon, IonInput, IonButton, IonSpinner, IonTextarea, IonModal, IonToast, IonRefresher, IonRefresherContent } from "@ionic/angular/standalone";
+import { IonHeader, IonToolbar, IonSearchbar, IonTitle, IonLabel, IonAccordion, IonItem, IonAccordionGroup, IonSegmentButton, IonSegment, IonSegmentView, IonSegmentContent, IonList, IonText, IonNote, IonIcon, IonInput, IonButton, IonSpinner, IonTextarea, IonModal, IonToast, IonRefresher, IonRefresherContent, IonButtons } from "@ionic/angular/standalone";
 import { NodataComponent } from "../nodata/nodata.component";
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
@@ -10,12 +10,13 @@ import { SupportService } from 'src/app/services/support.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-support',
   templateUrl: './support.component.html',
   styleUrls: ['./support.component.scss'],
-  imports: [IonRefresherContent, IonRefresher, IonToast, IonModal, IonTextarea, IonSpinner, IonButton, IonInput, IonIcon, IonNote, CommonModule, IonText, IonList, IonSegment, IonSegmentButton, IonAccordionGroup, IonItem, IonAccordion, IonLabel, IonHeader, IonToolbar, IonTitle, NodataComponent, IonSegmentView, IonSegmentContent, FormsModule]
+  imports: [IonButtons, IonRefresherContent, IonRefresher, IonToast, IonModal, IonTextarea, IonSpinner, IonButton, IonInput, IonIcon, IonNote, CommonModule, IonText, IonList, IonSegment, IonSegmentButton, IonAccordionGroup, IonItem, IonAccordion, IonLabel, IonHeader, IonToolbar, IonTitle, NodataComponent, IonSegmentView, IonSegmentContent, FormsModule]
 })
 export class SupportComponent  implements OnInit {
   raiseTicket:boolean = false
@@ -74,7 +75,7 @@ faqs: any = [
   }
 ]
 
-  constructor(private modalCtrl: ModalController, private supportService: SupportService, private authService: AuthService, private router: Router) {
+  constructor(private modalCtrl: ModalController, private supportService: SupportService, private authService: AuthService, private router: Router, private navCtrl: NavController) {
     const navigation = this.router.getCurrentNavigation();
   const state = navigation?.extras.state;
   if (state) {
@@ -91,16 +92,24 @@ faqs: any = [
   }
 
   async openItemModal(item: any) {
+  // 1. Lock scroll
+  document.body.classList.add('modal-open');
+
   const modal = await this.modalCtrl.create({
     component: CustonModalComponent,
     componentProps: { item },
-    // breakpoints: [0, 1],
-    // initialBreakpoint: 0.5,
     backdropDismiss: true,
-    cssClass: 'bottom-sheet-modal'
+    cssClass: 'bottom-sheet-modal',
+    // Adding breakpoints even at 1 allows Ionic to use the "Sheet" engine 
+    // which is better at blocking background touch events
+    initialBreakpoint: 1,
+    breakpoints: [0, 1]
   });
 
   modal.onDidDismiss().then((res) => {
+    // 2. Unlock scroll
+    document.body.classList.remove('modal-open');
+    
     if (res.data?.dismissed) {
       console.log('Modal returned:', res.data.data);
     }
@@ -162,6 +171,10 @@ getTickets(){
     this.isLoading = false
   })
 }
+
+goBack(){
+    this.navCtrl.back()
+  }
 
 
 }
