@@ -69,14 +69,10 @@ nameShort = ''
 }
 
  getProfileData(){
-  console.log('triggered')
   this.isLoading = true
-  let params = {
-    "token": this.token
-  }
- this.profileService.getProfileData(params).subscribe({
-  next: (res) => {
-    this.profileData = res;
+ this.profileService.getProfileData(this.token).subscribe({
+  next: (res:any) => {
+    this.profileData = res.user;
     this.isLoading = false;
     console.log(this.profileData);
   },

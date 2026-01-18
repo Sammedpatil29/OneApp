@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, OnInit } from '@angular/core';
 import { Preferences } from '@capacitor/preferences';
 import { App } from '@capacitor/app'
@@ -17,9 +17,21 @@ suggestion = 'https://oneapp-backend.onrender.com/api/suggestions/'
 updateDetails = 'https://oneapp-backend.onrender.com/api/address/'
 bannerUrl = 'https://oneapp-backend.onrender.com/api/banner/banners/'
 
-getProfileData(params:any){
-  return this.http.post(`${this.profileUrl}user-by-token/`, params)
-}
+url = 'https://oneapp-express-singapore.onrender.com/'
+
+
+// getProfileData(params:any){
+//   return this.http.post(`${this.profileUrl}user-by-token/`, params)
+// }
+
+getProfileData(token: string) {
+    // 1. Create the headers
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.get(`${this.url}user`, { headers: headers });
+  }
 
 async getAppVersion(): Promise<string | null> {
     try {
@@ -41,8 +53,13 @@ postSuggestion(params:any){
   return this.http.post(`${this.suggestion}`, params)
 }
 
-updateAddress(params:any, id:any){
-  return this.http.put(`${this.profileUrl}user-by-token/`, params)
+updateUser(params: any, token: any) {
+  const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`
+  });
+
+  // Correct order: url, body (params), options ({ headers })
+  return this.http.patch(`${this.url}user`, params, { headers: headers });
 }
 
 getBanners(type:any){

@@ -55,60 +55,23 @@ export class LayoutPage implements OnInit {
    constructor(private locationService: LocationService, private authService: AuthService, private platform: Platform, private registarFcm: RegisterFcmService, private profileService: ProfileService, private alertController: AlertController, private commonService: CommonService, private modalCtrl: ModalController) {}
 
  async ngOnInit() {
-  const current = await this.locationService.getCurrentPosition()
-  console.log(current)
-    const orderBubble = document.querySelector('.orderBubble') as HTMLElement;
-    this.token = await this.authService.getToken().then((res:any)=> {
-      console.log(res)
-        this.token = res
-        this.params = {"token": this.token}
-        const locationData = localStorage.getItem('location')
-    console.log(locationData)
-    if(locationData == null){
-      setTimeout(()=>{
-        let params = {
-        "token": this.token
-      }
-      console.log(params)
-      this.locationService.getAddressesList(this.params).subscribe((res)=> {
-          this.addresses = res;
-          if(this.addresses){
-            let data = {
-              lat: this.addresses[0].lat,
-              lng: this.addresses[0].lng,
-              address: this.addresses[0].address,
-              id: this.addresses[0].id,
-              label: this.addresses[0].label
-            }
-            console.log(data)
-            localStorage.setItem('location', JSON.stringify(data))
-          } 
-      })
-      },50)
-    }
-        console.log('token',this.token)
-    })
-    // Set the initial position (you can dynamically adjust this)
-    // orderBubble.style.left = '20px';  // Set initial left position
-    // orderBubble.style.top = '150px';
-    await this.getAppVersion()
-    // this.getMetaData()
+  
   }
 
-  getProfileData(){
-  console.log('triggered')
-  let params = {
-    "token": this.token
-  }
- this.profileService.getProfileData(params).subscribe({
-  next: (res) => {
-    this.profileData = res;
-  error: (error:any) => {
-    alert('Error while fetching data');
-    console.error(error);
-  }}
-});
-}
+//   getProfileData(){
+//   console.log('triggered')
+//   let params = {
+//     "token": this.token
+//   }
+//  this.profileService.getProfileData(params).subscribe({
+//   next: (res) => {
+//     this.profileData = res;
+//   error: (error:any) => {
+//     alert('Error while fetching data');
+//     console.error(error);
+//   }}
+// });
+// }
 
   startDrag(event: MouseEvent | TouchEvent, element: HTMLElement) {
     // Check if the event is touch or mouse and get the appropriate coordinates

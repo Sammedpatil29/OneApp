@@ -6,7 +6,7 @@ import {
   IonHeader,
   IonIcon,
   IonTitle,
-  IonToolbar, IonButtons, IonButton, IonSpinner, IonCol, IonRow, IonGrid, IonRefresher, IonRefresherContent, AlertController } from '@ionic/angular/standalone';
+  IonToolbar, IonButtons, IonButton, IonSpinner, IonCol, IonRow, IonGrid, IonRefresher, IonRefresherContent, AlertController, IonSkeletonText } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
 import { library, playCircle, radio, search, home, cube, bag, receiptOutline, person, personCircle, personCircleOutline, constructOutline, briefcaseOutline, buildOutline, arrowBack } from 'ionicons/icons';
@@ -37,7 +37,7 @@ register();
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   encapsulation: ViewEncapsulation.None,
-  imports: [IonRefresherContent, IonRefresher, IonGrid, IonRow, IonCol, IonSpinner, IonButton, IonButtons, IonContent, CommonModule, FormsModule, IonIcon, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, FooterComponent, IonTitle, IonToolbar, IonHeader, AddressComponent, RouterLink]
+  imports: [IonSkeletonText, IonRefresherContent, IonRefresher, IonGrid, IonRow, IonCol, IonSpinner, IonButton, IonButtons, IonContent, CommonModule, FormsModule, IonIcon, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, FooterComponent, IonTitle, IonToolbar, IonHeader, AddressComponent, RouterLink]
 })
 export class HomePage implements OnInit {
   // UI State
@@ -99,13 +99,13 @@ export class HomePage implements OnInit {
     private navCtrl: NavController,
     private commonService: CommonService,
     private eventService: EventsService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private fcmService: RegisterFcmService
   ) {
     addIcons({ arrowBack, home, buildOutline, receiptOutline, personCircleOutline, briefcaseOutline, constructOutline, library, personCircle, person, search, bag, cube, radio, playCircle });
   }
 
   async ngOnInit() {
-    console.log('home initiated');
     try {
       this.isLoading = true;
 
@@ -114,9 +114,10 @@ export class HomePage implements OnInit {
       if (!this.token) {
         return;
       }
+      this.fcmService.initPush()
 
       await this.homeData();
-      await this.resolveUserLocation();
+      
 
     } catch (error) {
       console.error('❌ Error initializing home:', error);
@@ -127,9 +128,13 @@ export class HomePage implements OnInit {
     }
   }
 
-  ionViewWillEnter() {
-    this.isOld = this.compareVersions(this.appVersion, this.latestVersion);
+  ionViewDidEnter() {
+  const storedLocation = localStorage.getItem('location');
+  if (storedLocation) {
+    console.log('✅ Using Location from LocalStorage');
+    this.currentLocation = JSON.parse(storedLocation);
   }
+}
 
   // --- Data Fetching ---
 
@@ -138,13 +143,27 @@ export class HomePage implements OnInit {
     this.commonService.getHomeData(this.token).subscribe((res: any) => {
       this.banners = res.data.banners;
       this.allServices = res.data.services;
-      this.slides = res.data.slides;
+      this.slides = this.banners;
       this.addresses = res.data.addresses;
       this.groupedData = this.groupByCategory(this.allServices);
-      this.isLoading = false;
+      setTimeout(()=>{
+        this.isLoading = false;
+      }, 100)
+       this.resolveUserLocation();
     }, error => {
       this.isLoading = false;
     });
+    this.sendFcmToken()
+  }
+
+  sendFcmToken(){
+    let params = {
+      "fcm_token": localStorage.getItem('FcmToken')
+    }
+    this.commonService.sendFcmToken(params, this.token).subscribe((res: any) => {
+      console.log(res)
+    });
+
   }
 
   getServicesData() {
@@ -174,7 +193,6 @@ export class HomePage implements OnInit {
   // --- Location Logic ---
 
   async resolveUserLocation() {
-    // CHECK 1: Local Storage
     const storedLocation = localStorage.getItem('location');
     if (storedLocation) {
       console.log('✅ Using Location from LocalStorage');
@@ -182,16 +200,14 @@ export class HomePage implements OnInit {
       return;
     }
 
-    // CHECK 2: API Saved Addresses
     if (this.addresses && this.addresses.length > 0) {
       console.log('✅ Using Primary Address from API');
-      // Format backend address to match your local storage structure
       const primaryAddress = {
         lat: this.addresses[0].lat,
         lng: this.addresses[0].lng,
         address: this.addresses[0].address,
         id: this.addresses[0].id,
-        label: this.addresses[0].label || 'Home'
+        label: this.addresses[0].label
       };
 
       this.setAndStoreLocation(primaryAddress);
@@ -226,57 +242,23 @@ export class HomePage implements OnInit {
       const gpsLocation = {
         lat: coordinates.coords.latitude,
         lng: coordinates.coords.longitude,
-        address: 'Current Location', // You can call a Reverse Geocoding API here to get text
-        id: null,
-        label: 'Current Location'
+        address: 'Current Location',
       };
 
       this.setAndStoreLocation(gpsLocation);
 
     } catch (error: any) {
-      this.handleLocationError(error);
     }
   }
 
   setAndStoreLocation(data: any) {
     this.currentLocation = data;
     localStorage.setItem('location', JSON.stringify(data));
-  }
-
-  async handleLocationError(error: any) {
-    console.error('❌ GPS Error:', error);
-
-    let message = 'Unable to get your location.';
-
-    if (error.message === 'PermissionDenied') {
-      message = 'Please enable location permissions in settings to use this feature.';
-    } else if (error.code === 1) { // PERMISSION_DENIED
-      message = 'Location permission denied.';
-    } else if (error.code === 2) { // POSITION_UNAVAILABLE
-      message = 'Location signal unavailable.';
-    } else if (error.code === 3) { // TIMEOUT
-      message = 'Location request timed out.';
+    const storedLocation = localStorage.getItem('location');
+    if (storedLocation) {
+      console.log('✅ Using Location from LocalStorage');
+      this.currentLocation = JSON.parse(storedLocation);
     }
-
-    const alert = await this.alertController.create({
-      header: 'Location Error',
-      message: message,
-      buttons: [
-        {
-          text: 'Select Manually',
-          handler: () => {
-            // Navigate to address selection page or open modal
-          }
-        },
-        {
-          text: 'Retry',
-          handler: () => {
-            this.fetchGPSLocation();
-          }
-        }
-      ]
-    });
-    await alert.present();
   }
 
   receiveData(data: any) {
@@ -363,6 +345,7 @@ export class HomePage implements OnInit {
   // --- Helpers ---
 
   groupByCategory(data: any[]) {
+    this.isLoading = true
     return data.reduce((acc, item) => {
       const category = item.category;
       if (!acc[category]) {
@@ -372,6 +355,7 @@ export class HomePage implements OnInit {
       const shuffledArray = this.shuffleArray(acc);
       return shuffledArray;
     }, {} as { [key: string]: any[] });
+    this.isLoading = false
   }
 
   shuffleArray(array: any[]) {

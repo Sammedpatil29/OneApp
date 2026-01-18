@@ -1,361 +1,219 @@
-<ion-content [fullscreen]="true"  (ionScroll)="onScroll($event)" scrollEvents="true">
-  @if(!isLoading){
-  <div class="w-100 position-fixed pe-2 pt-3" style="z-index: 999" [ngStyle]="{ 'background-color': headerBg }">
-    <div class="container pt-4 pb-2">
-      <div class="text-center">
-        <!-- <span style="font-weight: 700; font-size: 25px"><b class="text-secondary">Pintu</b></span> -->
-      </div>
+<ion-content [fullscreen]="true" (ionScroll)="onScroll($event)" scrollEvents="true">
 
-      <div class="d-flex justify-content-between align-items-center">
-        <div class="d-flex align-items-center w-75" (click)="openLocation()">
-          <i class="bi bi-geo-alt-fill me-2 text-dark"></i>
-          @if (address == '') {
-          <div class="d-flex flex-column me-2" style="line-height: 1.2">
-            <!-- <h6 class="p-0 fs-6">Location</h6> -->
-            <ion-card-subtitle class="text-truncate" style="max-width: 50vw"><span class="text-dark">Location</span> <br /><span
-                (click)="openLocation()" class="text-primary">Select your location</span></ion-card-subtitle>
+  @if(isLoading){
+    <div class="w-100 position-fixed pe-2 pt-3" style="z-index: 999; background: transparent;">
+      <div class="container pt-4 pb-2">
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center w-75">
+            <div class="d-flex flex-column me-2 w-100">
+              <ion-skeleton-text animated style="width: 30%; height: 15px; margin-bottom: 5px; border-radius: 5px;"></ion-skeleton-text>
+              <ion-skeleton-text animated style="width: 60%; height: 15px; border-radius: 5px;"></ion-skeleton-text>
+            </div>
           </div>
-          } @else {
-          <div class="d-flex flex-column me-2" style="line-height: 1.2">
-            <!-- <h6 class="p-0 fs-6">Location</h6> -->
-            <ion-card-subtitle class="text-truncate" style="max-width: 50vw">
-              @if(label == ""){
-              <span class="text-dark">Location</span>
-              } @else {
-              <span class="text-dark"><b>{{label | titlecase}}</b></span>
-              }
-              <br /><span (click)="openLocation()" class="text-dark">{{address}}</span></ion-card-subtitle>
+          <div class="float-end">
+            <ion-skeleton-text animated style="width: 35px; height: 35px; border-radius: 50%;"></ion-skeleton-text>
           </div>
-          }
-          <i class="bi bi-chevron-down me-2 text-dark" (click)="openLocation()"></i>
-        </div>
-        <div class="float-end" (click)="goToProfile()">
-          <img style="width: 30px" src="../../../assets/gif/system-solid-8-account-hover-pinch.gif" />
-          <!-- <i class="bi bi-person-circle fs-3"></i> -->
         </div>
       </div>
     </div>
-  </div>
-  <ion-refresher slot="fixed" class="my-refresher mt-5" color="dark" (ionRefresh)="getServicesData()"
-    pullingIcon="arrow-dropdown" refreshingSpinner="crescent">
-    <ion-refresher-content></ion-refresher-content>
-  </ion-refresher>
-  } @else {
-  <ion-header>
-    <ion-toolbar class="container pt-4 mt-2">
-      <div class="d-flex justify-content-between align-items-center">
-        <div class="skeleton skeleton-text d-flex align-items-center w-75">
-          <!-- <i class="bi bi-geo-alt me-2"></i> -->
-          @if (address == '') {
-          <div class="d-flex flex-column me-2" style="line-height: 1.2">
-            <!-- <h6 class="p-0 fs-6">Location</h6> -->
-            <ion-card-subtitle class="skeleton skeleton-text"><span class=""></span> <br /><span
-                class="skeleton skeleton-text" style="color: transparent">Select your
-                location</span></ion-card-subtitle>
-          </div>
-          } @else {
-          <div class="d-flex flex-column me-2" style="line-height: 1.2">
-            <!-- <h6 class="p-0 fs-6">Location</h6> -->
-            <ion-card-subtitle class="text-truncate" style="max-width: 50vw; color: transparent">
-              @if(label == ""){
-              <span style="color: transparent">Location</span>
-              } @else {
-              <span style="color: transparent">{{label | titlecase}}</span>
-              }
-              <br /><span style="color: transparent">{{address}}</span></ion-card-subtitle>
-          </div>
-          }
-          <!-- <i class="bi bi-chevron-down me-2" (click)="openLocation()"></i> -->
-        </div>
-        <div class="skeleton skeleton-circle" style="height: 30px; width: 30px">
-          <!-- <img style="width: 30px;" src="../../../assets/gif/system-solid-8-account-hover-account.gif"> -->
-          <!-- <i class="bi bi-person-circle fs-3"></i> -->
-        </div>
-      </div>
-    </ion-toolbar>
-  </ion-header>
-  }
-  <!-- <ion-searchbar style="position:sticky; top:0px; z-index: 999"></ion-searchbar> -->
-  <!-- <swiper-container>
-  <swiper-slide>Slide 1</swiper-slide>
-  <swiper-slide>Slide 2</swiper-slide>
-  <swiper-slide>Slide 3</swiper-slide>
-</swiper-container>  -->
 
-  <!-- @if (appVersion != latestVersion) {
-  <div class="w-100 mt-2">
-  <div class="update d-flex justify-content-center align-items-center py-2 mx-2 gap-2">
-    <div class="p-0 fs-5 text-success">
-      <img style="width: 40px" class="" src="../../../assets/icons/icons8-warning.gif" alt="">
-    {{appVersion}} < {{latestVersion}}
-</div>
-<a [href]="fileUrl" [download]="fileName" target="_blank" rel="noopener noreferrer">
-  <ion-button shape="round" fill="outline" color="success">Update</ion-button>
-</a>
-</div>
-</div>
-} -->
+    <div style="margin-top: 0;">
+      <ion-skeleton-text animated style="width: 100%; height: 40vh; margin: 0;"></ion-skeleton-text>
+    </div>
 
-  @if(!isBannerLoading){ @if (slides.length != 0) {
-
- <swiper-container
-  [slidesPerView]="1"
-  [spaceBetween]="0"
-  [loop]="true"
-  [autoplay]="{ delay: 1000, disableOnInteraction: false }"
-  class="full-swiper"
-  style="height: 40vh; position: sticky; top: 0; z-index: -999"
-  effect="fade"
->
-  <!-- <swiper-slide>
-    <img src="assets/images/Untitled design (1).png" alt="slide" class="square-image" />
-  </swiper-slide> -->
-  @for (item of slides; track $index) {
-    <swiper-slide (click)="navigateFromSlide(item.route)">
-    <img src="assets/Events (2).gif" alt="slide" class="square-image" />
-  </swiper-slide>
-    <swiper-slide (click)="navigateFromSlide(item.route)">
-    <img src="assets/gif/Untitled design (2).gif" alt="slide" class="square-image" />
-  </swiper-slide>
-  }
-</swiper-container>
-
-  <swiper-container [hidden]="true" [slidesPerView]="1" [spaceBetween]="0" [loop]="true" autoplay-delay="2500"
-    autoplay-disable-on-interaction="false">
-    @for (item of slides; track $index) {
-    <swiper-slide>
-      <ion-card (click)="navigateFromSlide(item.route)">
-        <img [src]="item.img" alt="" />
-      </ion-card>
-    </swiper-slide>
-    }
-  </swiper-container>
-  } } @else {
-  <swiper-container class="mt-5" style="margin-top: 100px !important" [slidesPerView]="1" [spaceBetween]="0" [loop]="true" autoplay-delay="2500"
-    autoplay-disable-on-interaction="false">
-    <swiper-slide>
-      <ion-card class="skeleton" style="height: 180px">
-        <img alt="" />
-      </ion-card>
-    </swiper-slide>
-  </swiper-container>
-  } @if(!isServiceLoading){
-  <div class="pt-1" style="background-color: white; margin-top: -30px;
-    border-radius: 20px 20px 0px 0px;">
-    <div>
+    <div class="pt-1" style="background-color: white; margin-top: -30px; border-radius: 20px 20px 0px 0px; position: relative; z-index: 1;">
       <div class="modal-handle"></div>
+      
+      @for (group of [1, 2]; track $index) {
+        <div class="container mt-4">
+          <ion-skeleton-text animated style="width: 40%; height: 20px; margin-bottom: 15px; border-radius: 5px;"></ion-skeleton-text>
+          
+          <ion-grid class="p-0">
+            <ion-row>
+              @for (card of [1, 2]; track $index) {
+                <ion-col size="6" class="pe-2 pb-2">
+                  <ion-card style="box-shadow: none; border: 1px solid #f0f0f0;">
+                    <ion-skeleton-text animated style="width: 100%; height: 120px; margin: 0;"></ion-skeleton-text>
+                    <ion-card-header>
+                      <ion-skeleton-text animated style="width: 80%; height: 15px;"></ion-skeleton-text>
+                      <ion-skeleton-text animated style="width: 50%; height: 10px;"></ion-skeleton-text>
+                    </ion-card-header>
+                  </ion-card>
+                </ion-col>
+              }
+            </ion-row>
+          </ion-grid>
+        </div>
+      }
     </div>
-    <div *ngFor="let group of groupedData | keyvalue">
-      <!-- Category Title -->
-      <div class="">
-        <ion-card-subtitle class="ps-3 text-uppercase text-center fw-bold text-dark">
-          {{ group.key }}
-        </ion-card-subtitle>
-      </div>
-
-      <!-- Cards under the category -->
-      <ion-grid class="p-0">
-        <ion-row>
-          <ion-col class="p-0" *ngFor="let item of group.value" [size]="item.width === '100%' ? '12' : '6'">
-            <ion-card style="position: relative; cursor: pointer" (click)="navigateTo(item.route)">
-              <ion-card-header>
-                <div>
-                  <ion-card-title>{{ item.title }}</ion-card-title>
-                  <!-- Offer span (optional) -->
-                  <!-- <span class="offer">{{ item.offers }}</span> -->
-                </div>
-                <ion-card-subtitle>
-                  @if (item.offers != 'Nothing') {
-                  <strong class="offer"><i class="bi bi-tags-fill me-1"></i>{{ item.offers
-                    }}</strong>
+  } 
+  
+  @else {
+    
+    <div class="w-100 position-fixed pe-2 pt-3" style="z-index: 999" [ngStyle]="{ 'background-color': headerBg }">
+      <div class="container pt-4 pb-2">
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center w-75" (click)="openLocation()">
+            <i class="bi bi-geo-alt-fill me-2 text-dark"></i>
+            <div class="d-flex flex-column me-2" style="line-height: 1.2">
+              <ion-card-subtitle class="text-truncate" style="max-width: 50vw">
+                @if (currentLocation == '') {
+                  <span class="text-dark">Location</span> <br />
+                  <span class="text-primary">Select your location</span>
+                } @else {
+                  @if(label == ""){
+                    <span class="text-dark">Location</span>
                   } @else {
-                  <strong>{{ item.subtitle }}</strong>
+                    <span class="text-dark"><b>{{currentLocation?.label | titlecase}}</b></span>
                   }
-                </ion-card-subtitle>
-              </ion-card-header>
-
-              <img [ngStyle]="item.className" [attr.loading]="'lazy'" [src]="item.img" alt="{{ item.title }}" />
-
-              <!-- Optional content -->
-              <!-- <ion-card-content>
-              Additional description here if needed
-            </ion-card-content> -->
-            </ion-card>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-    </div>
-  </div>
-  } @else {
-  <div class="mt-3">
-    <!-- Category Title -->
-    <ion-card-subtitle class="skeleton skeleton-text w-25 ms-3" style="color: transparent">
-      subtitle
-    </ion-card-subtitle>
-
-    <!-- Cards under the category -->
-    <ion-grid class="p-0">
-      <ion-row>
-        <ion-col class="p-0">
-          <ion-card class="skeleton" style="position: relative; cursor: pointer; height: 80px">
-            <ion-card-header>
-              <div>
-                <ion-card-title></ion-card-title>
-                <!-- Offer span (optional) -->
-                <!-- <span class="offer">{{ item.offers }}</span> -->
-              </div>
-            </ion-card-header>
-
-            <!-- Optional content -->
-            <!-- <ion-card-content>
-              Additional description here if needed
-            </ion-card-content> -->
-          </ion-card>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-    <!-- Category Title -->
-    <ion-card-subtitle class="skeleton skeleton-text w-25 ms-3" style="color: transparent">
-      subtitle
-    </ion-card-subtitle>
-
-    <!-- Cards under the category -->
-    <ion-grid class="p-0">
-      <ion-row>
-        <ion-col class="p-0">
-          <ion-card class="skeleton" style="position: relative; cursor: pointer; height: 80px">
-            <ion-card-header>
-              <div>
-                <ion-card-title></ion-card-title>
-                <!-- Offer span (optional) -->
-                <!-- <span class="offer">{{ item.offers }}</span> -->
-              </div>
-            </ion-card-header>
-
-            <!-- Optional content -->
-            <!-- <ion-card-content>
-              Additional description here if needed
-            </ion-card-content> -->
-          </ion-card>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-    <!-- Category Title -->
-    <ion-card-subtitle class="skeleton skeleton-text w-25 ms-3" style="color: transparent">
-      subtitle
-    </ion-card-subtitle>
-
-    <!-- Cards under the category -->
-    <ion-grid class="p-0">
-      <ion-row>
-        <ion-col class="p-0">
-          <ion-card class="skeleton" style="position: relative; cursor: pointer; height: 80px">
-            <ion-card-header>
-              <div>
-                <ion-card-title></ion-card-title>
-                <!-- Offer span (optional) -->
-                <!-- <span class="offer">{{ item.offers }}</span> -->
-              </div>
-            </ion-card-header>
-
-            <!-- Optional content -->
-            <!-- <ion-card-content>
-              Additional description here if needed
-            </ion-card-content> -->
-          </ion-card>
-        </ion-col>
-        <ion-col class="p-0">
-          <ion-card class="skeleton" style="position: relative; cursor: pointer; height: 80px">
-            <ion-card-header>
-              <div>
-                <ion-card-title></ion-card-title>
-                <!-- Offer span (optional) -->
-                <!-- <span class="offer">{{ item.offers }}</span> -->
-              </div>
-            </ion-card-header>
-
-            <!-- Optional content -->
-            <!-- <ion-card-content>
-              Additional description here if needed
-            </ion-card-content> -->
-          </ion-card>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </div>
-  }
-
-  <app-footer></app-footer>
-  <ion-modal [isOpen]="isModalOpen" (didDismiss)="handleModalClose()">
-    <ng-template>
-      <ion-header>
-        <ion-toolbar class="pt-4">
-          <ion-buttons slot="start">
-            <ion-button (click)="goBack()">
-              <ion-icon name="arrow-back"></ion-icon>
-            </ion-button>
-          </ion-buttons>
-          <ion-title>Select Location</ion-title>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content class="">
-        <app-address (location)="receiveData($event)"></app-address>
-      </ion-content>
-    </ng-template>
-  </ion-modal>
-  @if (showVideo && video) {
-  <div class="bubble">
-    <div class="video-wrapper">
-      <video [src]="video" autoplay muted loop playsinline></video>
-      <button class="close-btn" (click)="closeBubble()">
-        <i class="bi bi-x-lg"></i>
-      </button>
-    </div>
-  </div>
-  }
-
-  <!-- flash offers block -->
-  @if(isFlashOfferVisible){
-  <div class="offer-banner w-100">
-    <div class="offer-content mb-2 position-relative">
-      <div class="p-2">
-        <ion-card-title class="fw-bolder">BUY ONE GET ONE</ion-card-title>
-        <ion-card-subtitle>Only for new Customer</ion-card-subtitle>
-        <button class="btn btn-outline-dark mt-2">Get it Now</button>
-        <img src="../../../assets/icons/3dicons-cup-dynamic-color.png" alt="" />
-        <span class="position-absolute" style="top: -18px; right: -8px"><i (click)="closeFlashOffer()"
-            class="bi bi-x-circle-fill text-secondary"></i></span>
-      </div>
-    </div>
-  </div>
-  }
-
- <!-- orders tracking  -->
-    <div class="orders-list position-fixed bottom-0 w-100" style="color: whitesmoke; z-index: 99999 !important">
-     @if(orders.length != 0){
-      <swiper-container style="
-        background-color: rgb(32, 144, 4);
-        padding: 10px 10px;
-        border-radius: 10px 10px 0px 0px;
-      " [slidesPerView]="1" [spaceBetween]="0" [loop]="true" autoplay-delay="5000" pagination="true"
-      autoplay-disable-on-interaction="false">
-      @for (item of activeOrderDetails; track $index) {
-      <swiper-slide (click)="goToOrderDetails(item.orderId)">
-        <div class="row" style="padding-right: 0px !important">
-          <div class="col-2 d-flex align-items-center justify-content-center">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M438-226 296-368l58-58 84 84 168-168 58 58-226 226ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Z"/></svg>
+                  <br /><span class="text-dark">{{currentLocation?.address}}</span>
+                }
+              </ion-card-subtitle>
+            </div>
+            <i class="bi bi-chevron-down me-2 text-dark"></i>
           </div>
-          <div class="col-10">
-            <div>@if(item.status == 'active'){
-            You have an upcoming event!
-          }</div>
-            <small>{{item.orderId}}</small>
+
+          <div class="float-end" (click)="goToProfile()">
+            <img style="width: 30px" src="../../../assets/gif/system-solid-8-account-hover-pinch.gif" />
           </div>
         </div>
-      </swiper-slide>
-      }
-    </swiper-container>
+      </div>
+    </div>
+
+    <ion-refresher slot="fixed" class="my-refresher mt-5" color="dark" (ionRefresh)="homeData()" pullingIcon="arrow-dropdown" refreshingSpinner="crescent">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+
+    @if (slides.length != 0) {
+      <swiper-container
+        [slidesPerView]="1"
+        [spaceBetween]="0"
+        [loop]="true"
+        [autoplay]="{ delay: 2500, disableOnInteraction: false }"
+        class="full-swiper"
+        style="height: 40vh; position: sticky; top: 0; z-index: -999"
+      >
+        @for (item of slides; track $index) {
+          <swiper-slide (click)="navigateFromSlide(item.route)">
+            <img [src]="item.img" alt="slide" class="square-image" />
+          </swiper-slide>
+        }
+      </swiper-container>
     }
-  </div>
-  
-</ion-content>
+
+    <div class="pt-1" style="background-color: white; margin-top: -30px; border-radius: 20px 20px 0px 0px;">
+      <div>
+        <div class="modal-handle"></div>
+      </div>
+
+      @for (group of groupedData | keyvalue; track group.key) {
+        <div>
+          <ion-card-subtitle class="ps-3 text-uppercase text-center fw-bold text-dark mt-3">
+            {{ group.key }}
+          </ion-card-subtitle>
+
+          <ion-grid class="p-0">
+            <ion-row>
+              @for (item of group.value; track item) {
+                <ion-col class="p-0" [size]="item.width === '100%' ? '12' : '6'">
+                  <ion-card style="position: relative; cursor: pointer" (click)="navigateTo(item.route)">
+                    <ion-card-header>
+                      <div>
+                        <ion-card-title>{{ item.title }}</ion-card-title>
+                      </div>
+                      <ion-card-subtitle>
+                        @if (item.offers != 'Nothing') {
+                          <strong class="offer"><i class="bi bi-tags-fill me-1"></i>{{ item.offers }}</strong>
+                        } @else {
+                          <strong>{{ item.subtitle }}</strong>
+                        }
+                      </ion-card-subtitle>
+                    </ion-card-header>
+                    <img [ngStyle]="item.className" [attr.loading]="'lazy'" [src]="item.img" alt="{{ item.title }}" />
+                  </ion-card>
+                </ion-col>
+              }
+            </ion-row>
+          </ion-grid>
+        </div>
+      }
+    </div>
+
+    <app-footer></app-footer>
+
+    <ion-modal [isOpen]="isModalOpen" (didDismiss)="handleModalClose()">
+      <ng-template>
+        <ion-header>
+          <ion-toolbar class="pt-4">
+            <ion-buttons slot="start">
+              <ion-button (click)="goBack()">
+                <ion-icon name="arrow-back"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+            <ion-title>Select Location</ion-title>
+          </ion-toolbar>
+        </ion-header>
+        <ion-content>
+          <app-address (location)="receiveData($event)"></app-address>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
+
+    @if (showVideo && video) {
+      <div class="bubble">
+        <div class="video-wrapper">
+          <video [src]="video" autoplay muted loop playsinline></video>
+          <button class="close-btn" (click)="closeBubble()">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+      </div>
+    }
+
+    @if(isFlashOfferVisible){
+      <div class="offer-banner w-100">
+        <div class="offer-content mb-2 position-relative">
+          <div class="p-2">
+            <ion-card-title class="fw-bolder">BUY ONE GET ONE</ion-card-title>
+            <ion-card-subtitle>Only for new Customer</ion-card-subtitle>
+            <button class="btn btn-outline-dark mt-2">Get it Now</button>
+            <img src="../../../assets/icons/3dicons-cup-dynamic-color.png" alt="" />
+            <span class="position-absolute" style="top: -18px; right: -8px">
+              <i (click)="closeFlashOffer()" class="bi bi-x-circle-fill text-secondary"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+    }
+
+    <div class="orders-list position-fixed bottom-0 w-100" style="color: whitesmoke; z-index: 99999 !important">
+      @if(orders.length != 0){
+        <swiper-container style="background-color: rgb(32, 144, 4); padding: 10px 10px; border-radius: 10px 10px 0px 0px;"
+          [slidesPerView]="1" 
+          [spaceBetween]="0" 
+          [loop]="true" 
+          [autoplay]="{ delay: 5000 }"
+          pagination="true">
+          
+          @for (item of activeOrderDetails; track $index) {
+            <swiper-slide (click)="goToOrderDetails(item.orderId)">
+              <div class="row" style="padding-right: 0px !important">
+                <div class="col-2 d-flex align-items-center justify-content-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF">
+                    <path d="M438-226 296-368l58-58 84 84 168-168 58 58-226 226ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Z"/>
+                  </svg>
+                </div>
+                <div class="col-10">
+                  <div>
+                    @if(item.status == 'active'){ You have an upcoming event! }
+                  </div>
+                  <small>{{item.orderId}}</small>
+                </div>
+              </div>
+            </swiper-slide>
+          }
+        </swiper-container>
+      }
+    </div>
+
+  } </ion-content>

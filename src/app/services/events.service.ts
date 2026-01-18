@@ -7,7 +7,7 @@ import { Injectable } from '@angular/core';
 export class EventsService{
   postUrl = 'https://oneapp-backend.onrender.com/api/orders/'
   postGroceryUrl = 'https://oneapp-backend.onrender.com/api/orders/grocery-order/'
-  getEventsUrl = 'https://oneapp-backend.onrender.com/api/event/events-by-token/'
+  getEventsUrl = 'https://oneapp-express-singapore.onrender.com/api/events'
 
 
 //   {
@@ -30,8 +30,8 @@ export class EventsService{
 
   constructor(private http: HttpClient) { }
 
-  getEvents(params:any){
-    return this.http.post(this.getEventsUrl, params)
+  getEvents(params?:any){
+    return this.http.get(this.getEventsUrl)
   }
 
   createOrder(params:any){

@@ -23,8 +23,16 @@ getMetaData(){
       'Authorization': `Bearer ${token}`
     });
 
-    return this.http.get(`${this.url}verify-token`, { headers: headers });
+    return this.http.get(`${this.url}api/home`, { headers: headers });
   }
+
+  sendFcmToken(params:any, token:any) {
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      });
+  
+      return this.http.patch(`${this.url}fcm-token`, params, { headers: headers });
+    }
 
 getActiveOrders(params: any){
   console.log(params)

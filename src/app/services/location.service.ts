@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Geolocation } from '@capacitor/geolocation';
 import { BehaviorSubject } from 'rxjs';
@@ -20,6 +20,8 @@ export class LocationService {
   addresslistByUser = "https://oneapp-backend.onrender.com/api/address/user-address/"
   deleteAddresses = "https://oneapp-backend.onrender.com/api/address/delete-address/"
   polygonUrl = 'https://oneapp-backend.onrender.com/api/polygon/6/'
+
+  addressUrl = 'https://oneapp-express-singapore.onrender.com/api/addresses'
 
   constructor(private http: HttpClient) { }
 
@@ -70,17 +72,28 @@ export class LocationService {
     return this.http.get('https://oneapp-backend.onrender.com/api/services/active/')
   }
 
-  saveAddress(params:any){
-    return this.http.post(this.addresslistUrl, params)
+  saveAddress(params:any, token:any){
+    let headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    })
+    return this.http.post(this.addressUrl, params, {headers: headers})
   }
 
-  deleteAddress(params:any, id:any){
-    return this.http.post(`${this.deleteAddresses}${id}/`, params)
+  deleteAddress(token:any, id:any){
+    let headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    })
+    return this.http.delete(`${this.addressUrl}/${id}`, {headers: headers})
   }
 
-  getAddressesList(params:any){
-    return this.http.post(this.addresslistByUser, params)
-  }
+  getAddressesList(token: any) {
+  const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`
+  });
+
+  return this.http.get(`${this.addressUrl}`, { headers: headers });
+}
+
 
   getPolygonData(){
     return this.http.get(this.polygonUrl)

@@ -104,17 +104,23 @@ addresses: any = [
       
       this.addresses = [...this.addresses]
       console.log(this.addresses)
+    }, error =>{
+      this.isToastOpen = true
+      this.toastMessage = "failed to delete address";
+      setTimeout(()=>{
+        this.isToastOpen = false
+      },3000)
     })
   }
 
   getAddressList(){
     console.log(this.token)
-    let params = {
-  "token": this.token
-}
+//     let params = {
+//   "token": this.token
+// }
 this.isSpinnerLoading = true
-    this.locationService.getAddressesList(params).subscribe(res => {
-        let address = res
+    this.locationService.getAddressesList(this.token).subscribe((res:any) => {
+        let address = res.data
         this.isSpinnerLoading = false
         this.addresses = address
         this.addresses = [...this.addresses]

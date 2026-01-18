@@ -122,11 +122,10 @@ async ngOnInit() {
         "house_no": this.houseNo,
         "building_name": this.HouseName,
         "receiver_name": this.receiverName,
-        "receiver_contact": this.receiverContact,
-        "token": this.token
+        "receiver_contact": this.receiverContact
     }
     this.isLoading = true
-    this.locationService.saveAddress(params).subscribe(res=> {
+    this.locationService.saveAddress(params, this.token).subscribe(res=> {
       console.log(res)
       this.isLoading = false
       this.isToastOpen = true

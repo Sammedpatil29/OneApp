@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { PushNotifications, Token, PushNotification } from '@capacitor/push-notifications';
+import { ProfileService } from './profile.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RegisterFcmService {
 
-  constructor() { }
+  constructor(private profileService: ProfileService) { }
 
   initPush() {
     // Request permission
@@ -23,12 +24,7 @@ export class RegisterFcmService {
       console.log('FCM Token:', token.value);
       localStorage.setItem('FcmToken', token.value)
       // 👉 Send token to your server
-      // this.http.post('https://your-api.com/api/save-token', {
-      //   userId: 'user-123', // or get it dynamically
-      //   fcmToken: token.value,
-      // }).subscribe(() => {
-      //   console.log('Token saved to backend');
-      // });
+      
     });
 
     // Handle registration error

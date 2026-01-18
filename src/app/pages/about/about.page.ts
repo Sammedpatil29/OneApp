@@ -142,18 +142,16 @@ params: any
   updateAddress(type:any){
     if(type == 'name'){
       let params = {
-        "token": this.token,
         "first_name": this.name
       }
       this.params = params
     } else if(type == 'email'){
       let params = {
-        "token": this.token,
         "email": this.email
     }
     this.params = params
     }
-    this.profileService.updateAddress(this.params, this.profileData.id).subscribe((res)=>{
+    this.profileService.updateUser(this.params, this.token).subscribe((res)=>{
       this.getProfileData()
       if(type == 'name'){
           this.isNameEditable = false
@@ -166,12 +164,9 @@ params: any
 
   getAddressList(){
     console.log(this.token)
-    let params = {
-  "token": this.token
-}
 this.isSpinnerLoading = true
-    this.locationService.getAddressesList(params).subscribe(res => {
-        let address = res
+    this.locationService.getAddressesList(this.token).subscribe((res:any) => {
+        let address = res.data
         this.isSpinnerLoading = false
         this.addresses = address
         this.addresses = [...this.addresses]
@@ -189,11 +184,9 @@ this.isSpinnerLoading = true
   }
 
   deleteAddress(id:any){
-    let params = {
-      "token": this.token
-    }
+    
     this.isSpinnerLoading = true
-    this.locationService.deleteAddress(params, id).subscribe(res => {
+    this.locationService.deleteAddress(this.token, id).subscribe(res => {
       // alert("deleted successfully")
       this.isSpinnerLoading = false
       setTimeout(()=>{
@@ -269,12 +262,10 @@ update(event:any){
 getProfileData(){
   console.log('triggered')
   this.isLoading = true
-  let params = {
-    "token": this.token
-  }
- this.profileService.getProfileData(params).subscribe({
-  next: (res) => {
-    this.profileData = res;
+  
+ this.profileService.getProfileData(this.token).subscribe({
+  next: (res:any) => {
+    this.profileData = res.user;
     this.isLoading = false;
     this.name = this.profileData.first_name
     this.phone = this.profileData.phone
