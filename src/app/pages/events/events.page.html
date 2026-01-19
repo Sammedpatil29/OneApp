@@ -1,7 +1,7 @@
 <ion-content [fullscreen]="true" class="bg-gray-50">
   
   @if (isLoading) {
-    <div class="p-4 pt-14">
+    <div class="p-2 pt-14">
       <div class="flex gap-4 overflow-hidden mb-6">
         <ion-skeleton-text animated style="width: 85%; height: 200px; border-radius: 20px; flex-shrink: 0;"></ion-skeleton-text>
         <ion-skeleton-text animated style="width: 15%; height: 200px; border-radius: 20px 0 0 20px; flex-shrink: 0;"></ion-skeleton-text>
@@ -128,8 +128,12 @@
 
     <ion-fab vertical="bottom" horizontal="center" slot="fixed" class="mb-4">
       <ion-fab-button color="dark" (click)="openBookings()" class="extended-fab">
-        <ion-icon name="ticket-outline" class="mr-2"></ion-icon>
-        <span class="font-bold">My Bookings</span>
+        <!-- <ion-icon name="ticket-outline" class="mr-2"></ion-icon> -->
+         @if(upcomingBookings.length == 0){
+           <span class="font-bold">My Bookings</span>
+         } @else {
+           <span class="font-bold">Upcoming ({{upcomingBookings.length}})</span>
+         }
       </ion-fab-button>
     </ion-fab>
 

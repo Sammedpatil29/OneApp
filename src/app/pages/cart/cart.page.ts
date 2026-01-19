@@ -509,7 +509,7 @@ export class CartPage implements OnInit {
           }
         }, 3000);
       },
-      (error) => {
+      (error:any) => {
         this.isLoading = false;
       }
     );

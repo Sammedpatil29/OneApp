@@ -25,12 +25,14 @@ import { EventDialogComponent } from 'src/app/components/event-dialog/event-dial
 export class EventsPage implements OnInit {
   events: any[] = [];
   filteredEvents: any[] = [];
-  featuredEvents: any[] = []; // Top 3-5 events
+  featuredEvents: any[] = []; 
+  upcomingBookings: any[] = []; 
   categories: string[] = [];
   
   isLoading: boolean = true;
   currentFilter: string = 'All';
   searchTerm: string = '';
+  token: any;
   
   @ViewChild(IonModal) modal: IonModal | undefined;
 
@@ -43,18 +45,19 @@ export class EventsPage implements OnInit {
     addIcons({arrowBack,calendarOutline,searchOutline,locationOutline,ticketOutline,chevronBack,helpCircleOutline,heart,heartOutline}); 
   }
 
-  ngOnInit() {
-    this.authService.getToken().then(token => {
+  async ngOnInit() {
+    await this.getToken()
       this.getEvents();
-    }).catch(error => {
-      console.error('Auth Error:', error);
-      this.isLoading = false; // Stop loading on error
-    });
+  }
+
+  async getToken() {
+    this.token = await this.authService.getToken();
+    // }
   }
 
   getEvents() {
     this.isLoading = true;
-    this.eventsService.getEvents().subscribe((res: any) => {
+    this.eventsService.getEvents(this.token).subscribe((res: any) => {
       // Simulate network delay to show off skeleton (remove in production)
       setTimeout(() => {
         this.events = res.data.map((e: any) => ({ ...e, isFavorite: false })); // Add favorite state locally
@@ -62,7 +65,7 @@ export class EventsPage implements OnInit {
         
         // Pick first 5 as "Featured" for the hero slider
         this.featuredEvents = this.events.slice(0, 5);
-        
+        this.upcomingBookings = res.bookedEvents
         this.applyFilter('All');
         this.isLoading = false;
       }, 800);
@@ -134,7 +137,7 @@ export class EventsPage implements OnInit {
     document.body.classList.remove('modal-open');
   }
 
-  openBookings() { this.navCtrl.navigateForward('/layout/example/history'); }
+  openBookings() { this.navCtrl.navigateForward('/layout/history'); }
   openHelp() { this.navCtrl.navigateForward('/layout/support'); }
   back() { this.navCtrl.navigateBack('/layout/example/home'); }
 }

@@ -1,49 +1,148 @@
-.border{
-    border-radius: 10px;
-    border: 1px solid green !important
+/* Variables */
+$primary-color: #6366f1;
+$ticket-bg: #ffffff;
+$radius: 20px;
+
+ion-content {
+  --background: #f8fafc;
 }
 
-.container {
---bs-gutter-x: 0px !important;
+/* Success Animation */
+.success-icon-bg {
+  width: 80px;
+  height: 80px;
+  background: rgba(45, 212, 191, 0.1); // Soft green bg
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.ticket {
+/* === TICKET STYLING === */
+#ticket-container {
   width: 100%;
-  border-radius: 16px;
-  position: relative;
+  max-width: 380px;
+  margin: 5px auto 0;
+  box-shadow: 0 10px 30px -10px rgba(0,0,0,0.15);
+  border-radius: $radius;
   overflow: hidden;
+  background: transparent;
+}
+
+/* Top Part */
+.ticket-main {
+  background: $ticket-bg;
+  border-radius: $radius $radius 0 0;
+  position: relative;
+}
+
+.event-banner {
+  height: 160px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
   
-//   border: 1px solid gray;
-//   background-color: #fff;
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+  }
+
+  .event-title-overlay {
+    position: absolute;
+    bottom: 15px;
+    left: 15px;
+    right: 15px;
+    color: white;
+
+    .badge-category {
+      background: $primary-color;
+      color: white;
+      font-size: 10px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    h1 {
+      margin: 8px 0 0;
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1.2;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+  }
 }
 
-/* Semi-circular ticket cutouts */
-// .ticket::before,
-// .ticket::after {
-//   content: "";
-//   position: absolute;
-//   width: 30px;
-//   height: 30px;
-//   background: var(--ion-color-light);
-//   box-shadow: inset 0px 0px 1px black;
-//   border-radius: 50%;
-//   z-index: 10;
-// }
+/* Rip Section (The perforated line) */
+.ticket-rip {
+  height: 30px;
+  background: $ticket-bg;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-.ticket::before {
-  left: -15px;
-  top: 50%;
-  transform: translateY(-50%);
+  .dashed-line {
+    width: 85%;
+    border-top: 2px dashed #e2e8f0;
+  }
+
+  /* The Cutouts */
+  .circle-left, .circle-right {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background: #f8fafc; /* Must match page bg */
+    border-radius: 50%;
+    top: 0;
+  }
+
+  .circle-left { left: -15px; }
+  .circle-right { right: -15px; }
 }
 
-.ticket::after {
-  right: -15px;
-  top: 50%;
-  transform: translateY(-50%);
+/* Bottom Stub */
+.ticket-stub {
+  background: $ticket-bg;
+  border-radius: 0 0 $radius $radius;
+  
+  .qr-box {
+    width: 140px;
+    height: 140px;
+    padding: 10px;
+    border: 2px solid #f1f5f9;
+    border-radius: 12px;
+  }
 }
 
-.ticketCount {
-  background-color: rgba(119, 0, 255, 0.425);
-  border-radius: 7px;
-  color: white
+/* Actions Footer */
+.action-btn {
+  cursor: pointer;
+  transition: transform 0.1s;
+  
+  &:active { transform: scale(0.95); }
+
+  .icon-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+  
+  small {
+    font-weight: 600;
+    color: var(--ion-color-medium);
+    font-size: 11px;
+  }
 }
+
+/* Utilities */
+.bg-primary-subtle { background-color: rgba(99, 102, 241, 0.1) !important; }
+.bg-danger-subtle { background-color: rgba(239, 68, 68, 0.1) !important; }
+hr.dashed { border-style: dashed; }

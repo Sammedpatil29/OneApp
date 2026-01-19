@@ -1,118 +1,152 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar class="pt-4">
     <ion-buttons slot="start">
       <ion-button (click)="goBack()">
-        <ion-icon name="arrow-back"></ion-icon>
+        <ion-icon name="arrow-back" color="dark"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>Order Details</ion-title>
+    <ion-title class="fw-bold">Your Ticket</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <div class="d-flex justify-content-center py-4 text-white fw-5" style="background-color: green; padding-bottom: 67px !important">
-  <h3>Ticket Confirmed!</h3>
-      </div>
-    <section class="mx-3">
-      
-      <div class="" style="background-color: rgb(210 225 227 / 40%); border-radius: 16px">
-        <ion-card id="ticket-card" class="container d-flex justify-content-center" style="margin-top: -57px;">
-    <div class="ticket shadow p-4">
-      <!-- <img class="mb-3" style="border-radius: 20px; height: 200px; width: 100%" [src]="eventDetails.imageUrl" alt=""> -->
-      <div >
-        <div class="ticket-header d-flex justify-content-between align-items-center">
-        <div>
-          <h4 class="fw-bold mb-0">{{orderDetails.title}}</h4>
-          <small class="text-secondary">Entry Ticket</small>
-        </div>
-        <div>
-         <img style="border-radius: 50%; margin-right: -15px; width: 50px" [src]="eventDetails.imageUrl" alt="Logo" height="50" />
-         <img style="border-radius: 50%" src="../../../assets/icons/icon-48.webp" alt="Logo" height="50" />
-        </div>
-      </div>
+<ion-content [fullscreen]="true" class="bg-light">
 
-      <hr>
-
-      <div class="mb-3">
-        <strong>Guest Name:</strong> <span class="ms-2">{{moreDetails.customerName}}</span><br>
-        <div class="d-flex justify-content-between">
-        <strong>Ticket ID:</strong> <span class="ms-1">{{moreDetails.orderId}}</span><br>
-        <span class="ms-2 p-1 ticketCount">{{moreDetails.ticketCount}} Nos.</span>
-        </div>
-      </div>
-
-      <div class="mb-3">
-        <div class="d-flex justify-content-between">
-          <span><strong>Date:</strong> <span class="ms-2">{{eventDetails.date | date: 'dd/MM/yyyy'}}</span></span>
-        <span><strong>Time:</strong> <span class="ms-2">{{eventDetails.time}}</span></span>
-        <span><strong>Duration:</strong> <span class="ms-2">{{eventDetails.duration}}</span></span>
-        </div>
-        <strong>Location:</strong> <span class="ms-2">{{eventDetails.location.location}}</span>
-      </div>
-
-      <hr>
-      <div class="w-100 d-flex justify-content-center">
-          <img [src]="qrUrl">
-      </div>
-      <hr>
-      <span class="text-secondary">
-        <div class="d-flex justify-content-between">
-        <small>Ticket Price x {{moreDetails.ticketCount}}</small> 
-        <small>&#8377; {{moreDetails.totalPrice}}</small>
-      </div>
-      <div class="d-flex justify-content-between">
-        <small>Charges</small>
-        <small>&#8377; {{moreDetails.charges | number:'1.2-2'}}</small>
-      </div>
-      <div class="d-flex justify-content-between">
-        <small>Discount</small>
-        <small>- &#8377; 0</small>
-      </div>
-      <hr class="p-0 m-1" style="border-top: 1px dashed;">
-      <div class="d-flex justify-content-between">
-        <small>Total</small>
-        <small>&#8377; {{moreDetails.finalCost}}</small>
-      </div>
-      </span>
-      <hr>
-
-      <div class="text-center">
-        <small class="text-secondary">🎆 Celebrate and enjoy the every moments!<br>Show this ticket at the entry gate.</small>
-      </div>
-      </div>
+  @if (isLoading) {
+    <div class="h-100 d-flex flex-column justify-content-center align-items-center">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p class="mt-3 text-muted fw-medium">Loading ticket...</p>
     </div>
-  </ion-card>
-  <div class="d-flex pb-2 pe-3 gap-3 justify-content-end" [hidden]="isSharing">
-    <svg xmlns="http://www.w3.org/2000/svg" (click)="shareTicket()" height="20px" viewBox="0 -960 960 960" width="20px" fill="#000000"><path d="M672.22-100q-44.91 0-76.26-31.41-31.34-31.41-31.34-76.28 0-6 4.15-29.16L284.31-404.31q-14.46 15-34.36 23.5t-42.64 8.5q-44.71 0-76.01-31.54Q100-435.39 100-480q0-44.61 31.3-76.15 31.3-31.54 76.01-31.54 22.74 0 42.64 8.5 19.9 8.5 34.36 23.5l284.46-167.08q-2.38-7.38-3.27-14.46-.88-7.08-.88-15.08 0-44.87 31.43-76.28Q627.49-860 672.4-860t76.25 31.44Q780-797.13 780-752.22q0 44.91-31.41 76.26-31.41 31.34-76.28 31.34-22.85 0-42.5-8.69Q610.15-662 595.69-677L311.23-509.54q2.38 7.39 3.27 14.46.88 7.08.88 15.08t-.88 15.08q-.89 7.07-3.27 14.46L595.69-283q14.46-15 34.12-23.69 19.65-8.69 42.5-8.69 44.87 0 76.28 31.43Q780-252.51 780-207.6t-31.44 76.25Q717.13-100 672.22-100Zm.09-60q20.27 0 33.98-13.71Q720-187.42 720-207.69q0-20.27-13.71-33.98-13.71-13.72-33.98-13.72-20.27 0-33.98 13.72-13.72 13.71-13.72 33.98 0 20.27 13.72 33.98Q652.04-160 672.31-160Zm-465-272.31q20.43 0 34.25-13.71 13.83-13.71 13.83-33.98 0-20.27-13.83-33.98-13.82-13.71-34.25-13.71-20.11 0-33.71 13.71Q160-500.27 160-480q0 20.27 13.6 33.98 13.6 13.71 33.71 13.71Zm465-272.3q20.27 0 33.98-13.72Q720-732.04 720-752.31q0-20.27-13.71-33.98Q692.58-800 672.31-800q-20.27 0-33.98 13.71-13.72 13.71-13.72 33.98 0 20.27 13.72 33.98 13.71 13.72 33.98 13.72Zm0 496.92ZM207.69-480Zm464.62-272.31Z"/></svg>
-    <svg style="transform: rotate(45deg)" (click)="openInGoogleMaps()" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#000000"><path d="M330.15-296.16 480-364.15l149.85 67.99 10.38-10.38L480-693.84l-160.23 387.3 10.38 10.38ZM480.07-100q-78.84 0-148.21-29.92t-120.68-81.21q-51.31-51.29-81.25-120.63Q100-401.1 100-479.93q0-78.84 29.92-148.21t81.21-120.68q51.29-51.31 120.63-81.25Q401.1-860 479.93-860q78.84 0 148.21 29.92t120.68 81.21q51.31 51.29 81.25 120.63Q860-558.9 860-480.07q0 78.84-29.92 148.21t-81.21 120.68q-51.29 51.31-120.63 81.25Q558.9-100 480.07-100Zm-.07-60q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
-    <svg xmlns="http://www.w3.org/2000/svg" (click)="downloadTicket()" height="20px" viewBox="0 -960 960 960" width="20px" fill="#000000"><path d="M180-100v-60h600v60H180Zm299.62-155.39L227.31-584.23h145.38V-860h214.23v275.77h145.39L479.62-255.39Zm0-97.69 129.46-170.77h-82.16V-800h-94.23v276.15h-82.15l129.08 170.77Zm.38-170.77Z"/></svg>
-  </div>
-  <!-- <div class="d-flex pb-2 pe-3 gap-3 justify-content-end">
-      <ion-spinner class="button ms-2" style="width: 12px !important; height: 19px"  name="crescent"></ion-spinner>
-  </div> -->
-      </div>
+  } 
 
-      <div id="ad-container" style="text-align: center;"></div>
-      <div class="mt-2" style="height: 100px; border-radius: 15px; background-color: blue">
-          <div id="ad-container1" style="text-align: center;">
-    <ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-3940256099942544"
-     data-ad-slot="6300978111"
-     data-ad-format="auto"></ins>
-  </div>
-  <script>
-  (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
-      </div>
+  @else if (orderDetails) {
+    <div class="content-wrapper px-3 pb-5">
       
-    </section>
+      <div class="text-center py-3 animate__animated animate__fadeInDown">
+       @if(orderDetails.status !== 'Confirmed') {
+         <div class="success-icon-bg mx-auto">
+          <ion-icon name="close-circle" color="danger" style="font-size: 48px;"></ion-icon>
+        </div>
+        <h2 class="fw-bold mt-2 mb-0">Booking Cancelled!</h2>
+       } @else {
+         <div class="success-icon-bg mx-auto">
+          <ion-icon name="checkmark-circle" color="success" style="font-size: 48px;"></ion-icon>
+        </div>
+        <h2 class="fw-bold mt-2 mb-0">Booking Confirmed!</h2>
+       }
+        <p class="text-muted small">Order ID: #{{orderDetails.orderId}}</p>
+      </div>
 
-    <ion-toast
-    [isOpen]="isToastOpen"
-    [message]="toastMessage"
-    [duration]="3000"
-  ></ion-toast>
+      <div id="ticket-container" class="animate__animated animate__fadeInUp">
+        
+        <div class="ticket-main">
+          <div class="event-banner" 
+               [style.backgroundImage]="'url(' + (orderDetails.event?.imageUrl || 'https://dummyimage.com/1080x1410/e0e0e0/c2c2c2.png&text=Event') + ')'">
+            <div class="overlay"></div>
+            <div class="event-title-overlay">
+              <span class="badge-category">{{orderDetails.event?.category || 'Event'}}</span>
+              <h1>{{orderDetails.event?.title || orderDetails.title}}</h1>
+            </div>
+          </div>
+
+          <div class="p-3">
+            <ion-grid class="p-0 mb-3">
+              <ion-row>
+                <ion-col size="6" class="border-end">
+                  <div class="d-flex align-items-center gap-2 mb-1">
+                    <ion-icon name="calendar-outline" color="primary"></ion-icon>
+                    <small class="text-muted fw-bold">DATE</small>
+                  </div>
+                  <div class="fw-bold text-dark">{{orderDetails.event?.date | date:'mediumDate'}}</div>
+                </ion-col>
+                <ion-col size="6" class="ps-3">
+                  <div class="d-flex align-items-center gap-2 mb-1">
+                    <ion-icon name="time-outline" color="primary"></ion-icon>
+                    <small class="text-muted fw-bold">TIME</small>
+                  </div>
+                  <div class="fw-bold text-dark">{{orderDetails.event?.time || 'TBA'}}</div>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+
+            <div class="location-box p-2 rounded bg-light mb-3" (click)="openInGoogleMaps()">
+              <div class="d-flex align-items-start gap-2">
+                <ion-icon name="location-outline" color="danger" class="mt-1"></ion-icon>
+                <div>
+                  <small class="text-muted fw-bold d-block">LOCATION</small>
+                  <span class="fw-semibold text-dark">{{orderDetails.event?.location || 'View on Map'}}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-2">
+               <div>
+                 <small class="text-muted">Guest</small>
+                 <div class="fw-bold">{{orderDetails.customerName}}</div>
+               </div>
+               <div class="text-end">
+                 <small class="text-muted">Tickets</small>
+                 <div class="fw-bold">{{orderDetails.ticketCount}} Person(s)</div>
+               </div>
+             </div>
+          </div>
+        </div>
+
+        <div class="ticket-rip">
+          <div class="circle-left"></div>
+          <div class="dashed-line"></div>
+          <div class="circle-right"></div>
+        </div>
+
+        <div class="ticket-stub text-center p-3">
+          <div class="qr-box mx-auto mb-2">
+            <img [src]="qrUrl" alt="Ticket QR" class="img-fluid">
+          </div>
+          <small class="text-muted d-block" style="font-size: 10px; letter-spacing: 1px;">SCAN AT ENTRY</small>
+          <div class="mt-2 text-dark fw-bold monospace">
+            {{orderDetails.orderId}}
+          </div>
+        </div>
+      </div> 
+
+      <div class="mt-4 rounded-3 bg-light border d-flex justify-content-center align-items-center" style="height: 100px;">
+        <div id="ad-container" style="text-align: center;"></div>
+      </div>
+
+    </div>
+  }
+
+  @else {
+    <div class="h-100 d-flex flex-column justify-content-center align-items-center px-4">
+      <ion-icon name="alert-circle-outline" color="medium" style="font-size: 64px;"></ion-icon>
+      <h3 class="mt-2 text-dark">Ticket Not Found</h3>
+      <p class="text-muted text-center">We couldn't load the ticket details. Please try again.</p>
+      <ion-button (click)="goBack()" color="dark" shape="round" class="mt-3">Go Back</ion-button>
+    </div>
+  }
+
+  <ion-toast [isOpen]="isToastOpen" [message]="toastMessage" [duration]="2000" (didDismiss)="isToastOpen = false"></ion-toast>
 
 </ion-content>
 
+<ion-footer class="ion-no-border" *ngIf="!isLoading && orderDetails">
+  <div class="bg-white border-top p-3 d-flex justify-content-around pb-4">
+    <div class="action-btn text-center" (click)="downloadTicket()">
+      <div class="icon-circle bg-light mb-1">
+        <ion-icon name="download-outline" color="dark"></ion-icon>
+      </div>
+      <small>Save</small>
+    </div>
+    <div class="action-btn text-center" (click)="shareTicket()">
+      <div class="icon-circle bg-primary-subtle mb-1">
+        <ion-icon name="share-social-outline" color="primary"></ion-icon>
+      </div>
+      <small>Share</small>
+    </div>
+    <div class="action-btn text-center" (click)="openInGoogleMaps()">
+      <div class="icon-circle bg-danger-subtle mb-1">
+        <ion-icon name="map-outline" color="danger"></ion-icon>
+      </div>
+      <small>Map</small>
+    </div>
+  </div>
+</ion-footer>

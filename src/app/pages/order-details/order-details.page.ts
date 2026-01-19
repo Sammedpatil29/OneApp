@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonCardSubtitle, IonInput, IonItem, IonSpinner, IonSelect, IonSelectOption, IonText, IonToast } from '@ionic/angular/standalone';
 import { NavController, Platform } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { arrowBack } from 'ionicons/icons';
+import { arrowBack, checkmarkCircle, calendarOutline, timeOutline, locationOutline, alertCircleOutline, downloadOutline, shareSocialOutline, mapOutline } from 'ionicons/icons';
 import { Router } from '@angular/router';
 import { EventsService } from 'src/app/services/events.service';
 import { AuthService } from 'src/app/services/auth.service';
@@ -54,7 +54,7 @@ export class OrderDetailsPage implements OnInit, OnDestroy {
     private zone: NgZone,
     private platform: Platform
   ) {
-    addIcons({ arrowBack });
+    addIcons({arrowBack,checkmarkCircle,calendarOutline,timeOutline,locationOutline,alertCircleOutline,downloadOutline,shareSocialOutline,mapOutline});
   }
 
   async ngOnInit() {
@@ -277,9 +277,7 @@ export class OrderDetailsPage implements OnInit, OnDestroy {
         console.log('veerified')
         // Backend should return status: 'paid' ONLY when Webhook is received
         if (res.success && res.status === 'paid') {
-          setTimeout(()=>{
             this.handleSuccess(res);
-          },10000)
         }
         // If status is 'pending', do nothing, just wait for next poll
         else if (res.status === 'failed') {
@@ -303,23 +301,59 @@ export class OrderDetailsPage implements OnInit, OnDestroy {
   }
 
   async handleSuccess(res: any) {
-    this.isPaymentDetected = true;
-    console.log('payment succces')
-    this.stopPolling();
-    this.isLoading = false;
-    
-    await Preferences.remove({ key: 'pending_order_id' });
-    this.showToast("Booking Confirmed!");
-    
-    // Navigate to Success Page or Home
-    this.navCtrl.navigateBack('/layout/events', {
-      state: { orderDetails: res }
-    });
-  }
+  this.isPaymentDetected = true;
+  console.log('Payment Success:', res);
+  
+  this.stopPolling();
+  this.isLoading = false;
+  
+  // Clear the pending order from storage
+  await Preferences.remove({ key: 'pending_order_id' });
+  
+  this.showToast("Booking Confirmed! 🚀");
+
+  // Determine the correct Order ID to pass
+  // Check res structure, fallback to pendingOrderId if API doesn't return ID directly
+  const idToPass = res.booking?.id || res.orderId || res.id || this.pendingOrderId;
+
+  // ✅ FIX: Use navigateRoot to clear history (User shouldn't go back to payment)
+  // OR use navigateForward if you want to keep history.
+  this.navCtrl.navigateRoot(['/layout/track-order'], {
+    animated: true,
+    animationDirection: 'forward',
+    state: { 
+      orderId: res.booking.id, 
+      from: 'order-details' // Required for the 'Back' button logic in TrackOrderPage
+    }
+  });
+  setTimeout(()=>{
+    this.navCtrl.navigateRoot(['/layout/track-order'], {
+    animated: true,
+    animationDirection: 'forward',
+    state: { 
+      orderId: res.orderId, 
+      from: 'order-details' // Required for the 'Back' button logic in TrackOrderPage
+    }
+  });
+  },15000)
+}
+
+dummycall(){
+  this.navCtrl.navigateRoot(['/layout/track-order'], {
+    animated: true,
+    animationDirection: 'forward',
+    state: { 
+      orderId: '14', 
+      from: 'order-details' // Required for the 'Back' button logic in TrackOrderPage
+    }
+  });
+}
 
   ngOnDestroy() {
     this.stopPolling(); // Cleanup when leaving page
   }
+
+
 
   showToast(msg: string) {
     this.isToastOpen = true;

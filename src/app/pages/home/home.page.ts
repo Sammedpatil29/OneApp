@@ -28,6 +28,7 @@ import { EventsService } from 'src/app/services/events.service';
 import { GroceryService } from 'src/app/services/grocery.service';
 import { Geolocation } from '@capacitor/geolocation';
 
+
 register();
 
 @Component({
@@ -276,7 +277,9 @@ export class HomePage implements OnInit {
 
   navigateTo(route: any) {
     console.log(`/layout/${route}`);
-    this.navCtrl.navigateForward(`/layout/${route}`);
+    this.navCtrl.navigateForward(`/layout/${route}`, {
+      animated: false
+    });
   }
 
   navigateFromSlide(route: any) {
@@ -285,7 +288,9 @@ export class HomePage implements OnInit {
 
   goToProfile() {
     console.log('Navigating to profile...');
-    this.navCtrl.navigateForward('/layout/profile');
+    this.navCtrl.navigateForward('/layout/profile', {
+      animated: false
+    });
   }
 
   goToOrderDetails(orderId: any) {

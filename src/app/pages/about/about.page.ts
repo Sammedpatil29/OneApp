@@ -87,6 +87,9 @@ export class AboutPage implements OnInit {
       const version = await this.profileService.getAppVersion()
       this.appVersion = version
     }
+    if(this.data == 'Saved Addresses'){
+      this.getAddressList()
+    }
     // this.getAddressList()
   }
   

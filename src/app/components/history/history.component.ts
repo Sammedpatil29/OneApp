@@ -45,7 +45,7 @@ import { NavController } from '@ionic/angular';
 export class HistoryComponent implements OnInit {
 [x: string]: any;
   history: any[] = [];
-  category: any[] = ['All', 'doctor'];
+  category: any[] = [];
   filteredHistory: any[] = this.history;
   isloading: boolean = false;
   token: any;
@@ -82,12 +82,11 @@ export class HistoryComponent implements OnInit {
   getHistory() {
     this.isloading = true;
     let params = {
-      token:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozLCJwaG9uZSI6Iis5MTk1OTE0MjAwNjgiLCJ1c2VyX25hbWUiOiJTYW1tZWQgQmlyYWRhcnBhdGlsIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3Njg0MTYzNTV9.QuMR0q_8IjUXMXtEpvTD78KT0bgR78FkfKQH-CDG9WQ'
+        type: 'event'
     };
-    this.historyService.getHistory(params).subscribe(
+    this.historyService.getHistory(params, this.token).subscribe(
       (res) => {
-        this.history = res;
+        this.history = res.data;
         this.filteredHistory = this.history;
         this.filteredHistory = this.filteredHistory.reverse();
         let uniqueCategory = Array.from(
@@ -113,26 +112,26 @@ export class HistoryComponent implements OnInit {
       case 'done':
       case 'completed':
       case 'delivered':
-      case 'report ready':
+      case 'paid':
       case 'active':
       case 'resolved':
-        return 'bi bi-check-circle text-success';
+        return 'bi bi-check-circle-fill text-success';
       case 'pending':
-        return 'bi bi-clock text-warning';
+        return 'bi bi-clock-fill text-warning';
       case 'failed':
       case 'rejected':
       case 'error':
-        return 'bi bi-x-circle text-danger';
+        return 'bi bi-x-circle-fill text-danger';
       case 'processing':
-        return 'bi bi-cloud text-primary';
+        return 'bi bi-cloud-fill text-primary';
       default:
-        return 'bi bi-info-circle text-secondary';
+        return 'bi bi-info-circle-fill text-secondary';
     }
   }
 
-  navigateto() {
-    this.router.navigate(['/layout/profile']);
-  }
+  // navigateto() {
+  //   this.nav.navigate(['/layout/profile']);
+  // }
 
   selectedCategory:any = 'All';
   onCategoryChange(category: any) {
@@ -157,18 +156,18 @@ export class HistoryComponent implements OnInit {
         },
       });
     } else {
-      this.navCtrl.navigateRoot('/layout/track-order', {
+      this.navCtrl.navigateForward('/layout/track-order', {
         state: {
-          orderDetails: orderDetails,
+          orderId: orderDetails.id,
         },
       });
     }
   }
 
-  getCost(details: any) {
-    let parsedDetails = JSON.parse(details);
-    return parsedDetails.finalCost;
-  }
+  // getCost(details: any) {
+  //   let parsedDetails = JSON.parse(details);
+  //   return parsedDetails.finalCost;
+  // }
 
   goBack(){
     this.navCtrl.back()

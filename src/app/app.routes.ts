@@ -60,6 +60,11 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./pages/support/support.page').then(m => m.SupportPage),
           },
+          {
+            path: 'history',
+            loadComponent: () =>
+              import('./pages/history/history.page').then(m => m.HistoryPage),
+          },
       {
     path: 'map',
     loadComponent: () => import('./pages/map/map.page').then( m => m.MapPage)

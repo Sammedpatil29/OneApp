@@ -9,7 +9,7 @@ export class EventsService {
   postGroceryUrl =
     'https://oneapp-backend.onrender.com/api/orders/grocery-order/';
   getEventsUrl = 'https://oneapp-express-singapore.onrender.com';
-  postDetailsUrl = 'https://oneapp-express-singapore.onrender.com/api/events/booking-details'
+  // postDetailsUrl = 'https://oneapp-express-singapore.onrender.com/api/events/booking-details'
 
   //   {
   //     "id": 14,
@@ -31,13 +31,17 @@ export class EventsService {
 
   constructor(private http: HttpClient) {}
 
-  getEvents(params?: any) {
-    return this.http.get(`${this.getEventsUrl}/api/events`);
-  }
+  getEvents(token: string) {
+  const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`
+  });
+  
+  return this.http.get(`${this.getEventsUrl}/api/events`, { headers: headers });
+}
 
-  createOrder(params: any) {
-    return this.http.post(this.postUrl, params);
-  }
+  // createOrder(params: any) {
+  //   return this.http.post(this.postUrl, params);
+  // }
 
   createGroceryOrder(params: any) {
     return this.http.post(this.postGroceryUrl, params);
@@ -63,5 +67,9 @@ export class EventsService {
 
   verifyPayment(params: any) {
     return this.http.post(`${this.getEventsUrl}/api/payment/verify-status`, params);
+  }
+
+  fetchOrderDetails(params:any){
+    return this.http.post(`${this.getEventsUrl}/api/events/order-details`, params)
   }
 }

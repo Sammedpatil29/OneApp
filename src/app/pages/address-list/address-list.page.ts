@@ -48,6 +48,13 @@ addresses: any = [
     this.Addressid = JSON.parse(localStorage.getItem('location') || '{}');
       console.log(this.Addressid)
     this.token = await this.authService.getToken()
+    const locationData = localStorage.getItem('location');
+    if (locationData) {
+      const location = JSON.parse(locationData);
+      this.selectedAddress = location.address;
+    }
+
+      this.getAddressList()
   }
 
   selectedAddress:any
