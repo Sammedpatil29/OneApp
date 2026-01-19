@@ -24,17 +24,14 @@ export class EventDialogComponent  implements OnInit {
     console.log(this.eventDetails)
   }
 
-  bookNow(item:any){
-    const order = {
-    data: item,
-    value: 'event'
-  };
-  this.modalCtrl.dismiss();
-    setTimeout(()=>{
-      this.navCtrl.navigateForward('/layout/order-details', {
-    state: { order }
+  async bookNow(item: any) {
+  // 1. Close the modal first and WAIT for it to finish
+  await this.modalCtrl.dismiss();
+
+  // 2. Navigate after the modal is closed
+  this.navCtrl.navigateForward('/layout/order-details', {
+    state: { eventId: item.id } 
   });
-    })
-  }
+}
 
 }

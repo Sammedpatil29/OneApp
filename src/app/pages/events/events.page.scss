@@ -1,129 +1,122 @@
-/* ================= VARIABLES ================= */
+/* Global Variables & Utilities */
 :host {
-  --primary-accent: #6366f1;
-  --bg-soft: #f8fafc;
-  --card-radius: 20px;
+  --primary: #6366f1;
+  --bg-color: #f8fafc;
+  --text-dark: #1e293b;
+  --text-light: #64748b;
+  --card-radius: 16px;
 }
+
+// Utility classes for layout (mimicking Tailwind for ease)
+.flex { display: flex; }
+.justify-between { justify-content: space-between; }
+.items-center { align-items: center; }
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.gap-4 { gap: 16px; }
+.px-4 { padding-left: 16px; padding-right: 16px; }
+.pt-12 { padding-top: 48px; }
+.mb-6 { margin-bottom: 24px; }
+.font-black { font-weight: 900; }
+.text-2xl { font-size: 1.5rem; }
+.bg-white\/80 { background-color: rgba(255, 255, 255, 0.85); }
+.backdrop-blur-md { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
 
 ion-content {
-  --background: var(--bg-soft);
+  --background: var(--bg-color);
 }
 
-/* ================= NAVIGATION ================= */
-.glass-nav {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  display: flex; justify-content: space-between;
-  padding: 20px 20px 10px;
-  z-index: 1000;
-  pointer-events: none;
-  
-  ion-button { pointer-events: auto; }
+/* === SEARCH BAR === */
+.sticky-header-section {
+  position: sticky;
+  top: 0px; // Adjust based on header height
+  z-index: 40;
+  background: #f8fafc;
+  padding-bottom: 10px;
 }
 
-.nav-pill-btn {
-  --background: rgba(0, 0, 0, 0.3);
-  --border-radius: 50%;
-  --box-shadow: none;
-  width: 44px; height: 44px;
-  // backdrop-filter: blur(8px);
-}
-
-.help-btn {
-  --color: rgb(57, 84, 238);
-  font-weight: 700;
-  text-transform: capitalize;
-  font-size: 14px;
-}
-
-/* ================= HERO HEADER ================= */
-.main-hero-header {
-  height: 277px;
-  background: linear-gradient(135deg, #657baf 0%, #334155 100%);
-  // background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 800 800'%3E%3Cg fill-opacity='0.1'%3E%3Ccircle fill='%236366f1' cx='400' cy='400' r='600'/%3E%3Ccircle fill='%234f46e5' cx='400' cy='400' r='400'/%3E%3C/g%3E%3C/svg%3E");
-  background-size: cover;
-  border-radius: 0 0 40px 40px;
-  display: flex;
-  align-items: flex-end;
-  padding-bottom: 40px;
-  
-background-color: #330000;
-background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 800 400'%3E%3Cdefs%3E%3CradialGradient id='a' cx='396' cy='281' r='514' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%23D18'/%3E%3Cstop offset='1' stop-color='%23330000'/%3E%3C/radialGradient%3E%3ClinearGradient id='b' gradientUnits='userSpaceOnUse' x1='400' y1='148' x2='400' y2='333'%3E%3Cstop offset='0' stop-color='%23FA3' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%23FA3' stop-opacity='0.5'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill='url(%23a)' width='800' height='400'/%3E%3Cg fill-opacity='0.4'%3E%3Ccircle fill='url(%23b)' cx='267.5' cy='61' r='300'/%3E%3Ccircle fill='url(%23b)' cx='532.5' cy='61' r='300'/%3E%3Ccircle fill='url(%23b)' cx='400' cy='30' r='300'/%3E%3C/g%3E%3C/svg%3E");
-background-attachment: fixed;
-background-size: cover;
-
-  .header-overlay {
-    width: 100%;
-    text-align: center;
-  }
-
-  .hero-title {
-    color: white;
-    font-size: 28px;
-    font-weight: 900;
-    margin-bottom: 25px;
-    letter-spacing: -0.5px;
-  }
-}
-
-.icon-actions {
-  display: flex;
-  justify-content: space-evenly;
-
-  .action-item {
-    display: flex; flex-direction: column; align-items: center; gap: 8px;
-    
-    .icon-circle {
-      width: 56px; height: 56px;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 18px;
-      display: flex; align-items: center; justify-content: center;
-      img { width: 32px; height: 32px; }
-    }
-
-    span { color: white; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-  }
-}
-
-/* ================= CATEGORIES ================= */
-.section-container {
-  padding: 0 20px;
-  margin-top: 30px;
-}
-
-.section-title {
-  font-size: 18px;
-  font-weight: 800;
-  color: #1e293b;
+.custom-search {
+  --background: #fff;
+  --box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  --border-radius: 12px;
+  --placeholder-color: #94a3b8;
+  padding: 0;
   margin-bottom: 15px;
 }
 
+/* === CATEGORY PILLS === */
 .horizontal-scroll-container {
   display: flex;
   overflow-x: auto;
-  gap: 12px;
-  padding-bottom: 10px;
+  gap: 10px;
+  scrollbar-width: none;
   &::-webkit-scrollbar { display: none; }
 
   .category-pill {
     white-space: nowrap;
-    padding: 10px 24px;
-    background: white;
-    border-radius: 14px;
-    font-weight: 700;
-    color: #64748b;
+    padding: 8px 20px;
+    background: #fff;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-light);
     border: 1px solid #e2e8f0;
-    
+    transition: all 0.2s;
+    cursor: pointer;
+
     &.active {
-      background: #000;
-      color: white;
-      border-color: #000;
+      background: #111;
+      color: #fff;
+      border-color: #111;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
   }
 }
 
-/* ================= MASONRY EVENT GRID ================= */
+/* === FEATURED CAROUSEL === */
+.featured-scroll {
+  display: flex;
+  overflow-x: auto;
+  gap: 16px;
+  padding-bottom: 10px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+
+  .featured-card {
+    flex: 0 0 85%; // Show 85% of card to encourage scroll
+    height: 200px;
+    border-radius: 24px;
+    position: relative;
+    overflow: hidden;
+    scroll-snap-align: center;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+
+    img { width: 100%; height: 100%; object-fit: cover; }
+
+    .overlay {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+      padding: 20px;
+      color: white;
+
+      .feat-badge {
+        background: var(--primary);
+        font-size: 10px;
+        padding: 4px 8px;
+        border-radius: 6px;
+        text-transform: uppercase;
+        font-weight: 700;
+      }
+
+      h3 { margin: 8px 0 4px; font-size: 18px; font-weight: 700; }
+      p { margin: 0; font-size: 12px; display: flex; align-items: center; gap: 4px; opacity: 0.9; }
+    }
+  }
+}
+
+/* === EVENT MASONRY GRID === */
 .event-masonry-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -134,77 +127,92 @@ background-size: cover;
   background: white;
   border-radius: var(--card-radius);
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-  transition: transform 0.2s ease;
-
-  &:active { transform: scale(0.96); }
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
 
   .card-image-box {
     position: relative;
-    height: auto;
+    height: 140px;
     
     img { width: 100%; height: 100%; object-fit: cover; }
 
-    .price-badge {
+    .price-tag {
       position: absolute;
-      top: 10px; right: 10px;
-      background: white;
-      padding: 4px 10px;
-      border-radius: 8px;
+      top: 8px; left: 8px;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(4px);
+      padding: 4px 8px;
+      border-radius: 6px;
       font-size: 11px;
       font-weight: 800;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      color: var(--text-dark);
       
       &.free { color: #10b981; }
+    }
+
+    .fav-btn {
+      position: absolute;
+      top: 8px; right: 8px;
+      background: rgba(255,255,255,0.8);
+      border-radius: 50%;
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      backdrop-filter: blur(4px);
+      border: none;
     }
   }
 
   .card-info {
     padding: 12px;
-    
-    .card-date { font-size: 10px; font-weight: 700; color: var(--primary-accent); text-transform: uppercase; margin: 0; }
-    .card-name { font-size: 14px; font-weight: 800; color: #1e293b; margin: 4px 0 0; line-height: 1.3; }
+    display: flex;
+    gap: 10px;
+
+    .date-badge {
+      display: flex; flex-direction: column; align-items: center;
+      background: #f1f5f9;
+      border-radius: 10px;
+      padding: 6px 8px;
+      height: fit-content;
+      min-width: 45px;
+
+      .month { font-size: 10px; font-weight: 700; color: #ef4444; text-transform: uppercase; }
+      .day { font-size: 16px; font-weight: 800; color: var(--text-dark); line-height: 1; }
+    }
+
+    .details {
+      flex: 1;
+      .card-name { 
+        font-size: 14px; 
+        font-weight: 700; 
+        color: var(--text-dark); 
+        margin: 0 0 4px; 
+        line-height: 1.25;
+      }
+      .location {
+        font-size: 11px;
+        color: var(--text-light);
+        margin: 0;
+        display: flex; align-items: center; gap: 3px;
+      }
+    }
   }
 }
 
-/* ================= FLOATING BUTTON ================= */
-.fab-container {
-  position: fixed;
-  bottom: 30px;
-  width: 100%;
-  display: flex; justify-content: center;
-  z-index: 1000;
+.text-truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.floating-bookings-btn {
-  --background: #000;
-  --border-radius: 18px;
-  --box-shadow: 0 10px 25px rgba(0,0,0,0.25);
-  height: 54px;
-  font-weight: 700;
-  padding: 0 20px;
-}
-
-/* ================= LOADER ================= */
-.loader-state {
-  height: 100%; display: flex; flex-direction: column;
-  justify-content: center; align-items: center;
-  p { margin-top: 15px; color: #64748b; font-weight: 600; }
-}
-
-.auto-height-modal {
-  --height: auto;
-  align-items: flex-end; // Aligns the modal to the bottom
-
-  .modal-wrapper {
-    // This allows the modal to shrink-wrap its content
-    height: auto !important; 
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-  }
-
-  ion-content {
-    --background: transparent;
-    height: auto;
-  }
+/* === FLOATING BUTTON === */
+.extended-fab {
+  --border-radius: 50px;
+  width: auto;
+  min-width: 140px;
+  height: 48px;
+  text-transform: capitalize;
+  letter-spacing: 0.5px;
+  font-size: 14px;
 }

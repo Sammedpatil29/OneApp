@@ -1,367 +1,333 @@
-import { Component, numberAttribute, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonCardSubtitle, IonInput, IonItem, IonSpinner, IonFooter } from '@ionic/angular/standalone';
-import { NavController } from '@ionic/angular';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonCardSubtitle, IonInput, IonItem, IonSpinner, IonSelect, IonSelectOption, IonText, IonToast } from '@ionic/angular/standalone';
+import { NavController, Platform } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { arrowBack, chevronBack, shieldCheckmark, arrowForwardOutline } from 'ionicons/icons';
+import { arrowBack } from 'ionicons/icons';
 import { Router } from '@angular/router';
 import { EventsService } from 'src/app/services/events.service';
 import { AuthService } from 'src/app/services/auth.service';
-import { LocalNotifications } from '@capacitor/local-notifications';
-import { Checkout } from 'capacitor-razorpay';
-import { Platform } from '@ionic/angular';
-// import { RazorpayCheckout } from 'capacitor-razorpay';
-import { registerPlugin } from '@capacitor/core';
+import { Preferences } from '@capacitor/preferences';
 
-// const RazorpayCheckout = registerPlugin<any>('RazorpayCheckout');
-declare var Razorpay: any;
-declare var RazorpayCheckout: any;
-
-// declare module 'capacitor-razorpay' {
-//   export interface RazorpayOptions {
-//     key: string;
-//     amount: number;
-//     currency: string;
-//     name: string;
-//     description?: string;
-//     prefill?: {
-//       email?: string;
-//       contact?: string;
-//       name?: string;
-//     };
-//     theme?: {
-//       color?: string;
-//     };
-//   }
-
-//   export interface RazorpayCheckoutPlugin {
-//     open(options: RazorpayOptions): Promise<any>;
-//   }
-// }
-
+// ⚠️ Declare Window for Native Plugin
+declare var window: any;
 
 @Component({
   selector: 'app-order-details',
   templateUrl: './order-details.page.html',
   styleUrls: ['./order-details.page.scss'],
   standalone: true,
-  imports: [IonFooter, IonSpinner, IonItem, IonInput, IonCardSubtitle, IonIcon, IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonToast, IonText, IonSelect, IonSelectOption, IonSpinner, IonItem, IonInput, IonCardSubtitle, IonIcon, IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
-export class OrderDetailsPage implements OnInit {
-  ticketCount = 1
-  order: any;
-  charges: any;
-  finalCost: any;
-  isOrderPlaced: boolean = false
-  isNavigated: boolean = false
-  isLoading: boolean = false
-  customerName = ''
-  mobileNumber = ''
-  email = ''
-  token: any
-  refOrderId = ''
-  transactionId = ''
+export class OrderDetailsPage implements OnInit, OnDestroy {
+  
+  eventData: any; 
+  ticketCount = 1;
+  unitPrice = 0;
+  basePrice = 0;
+  charges = 0;
+  finalCost = 0;
+  ticketOptions: any[] = []; 
+  selectedOption: any = null;
+  customerName = '';
+  mobileNumber = '';
+  email = '';
+  isLoading = true;
+  token: any;
+  eventId: any;
+  
+  // Toast Variables
+  isToastOpen: boolean = false;
+  toastMessage = '';
+  
+  // ⚡ Polling State
+  pendingOrderId: any = null;
+  pollingInterval: any = null;
+  isPaymentDetected: boolean = false;
 
-  constructor(private navCtrl: NavController, private platform: Platform, private authService: AuthService, private router: Router, private eventService: EventsService, private ngZone: NgZone) {
-    addIcons({arrowForwardOutline,chevronBack,shieldCheckmark,arrowBack});
-    document.addEventListener('deviceready', () => {
-    console.log('Device ready - Cordova plugins available');
-  });
-   }
-   price: number | undefined;
-
-  ngOnInit() {
-    const nav = this.router.getCurrentNavigation();
-    if (nav?.extras?.state && nav.extras.state['order']) {
-      this.order = nav.extras.state['order'];
-      console.log('Received order:', this.order);
-      this.price = this.ticketCount * Number(this.order.data.ticketPrice)
-    }
-    this.calculatePrice()
-
-    this.authService.getToken().then((res)=>{
-      this.token = res
-    })
+  constructor(
+    private navCtrl: NavController,
+    private router: Router,
+    private authService: AuthService,
+    private eventService: EventsService,
+    private zone: NgZone,
+    private platform: Platform
+  ) {
+    addIcons({ arrowBack });
   }
 
-  calculatePrice(){
-    if(this.order.data.isFree){
-      this.price = 0
-      this.charges = 0
-      this.finalCost = 0
-    } else {
-      this.price = this.ticketCount * Number(this.order.data.ticketPrice)
-    this.charges = this.price * 0.07
-    this.finalCost = this.price + this.charges
-    }
-  }
+  async ngOnInit() {
+    this.eventId = history.state.eventId;
 
-  count(opr:any){
-    if(opr == '+'){
-      this.ticketCount = this.ticketCount + 1
-      this.calculatePrice()
-    } else {
-      if(this.ticketCount == 1){
-        // alert('no')
-      } else {
-      this.ticketCount = this.ticketCount - 1
-      this.calculatePrice()
+    if (!this.eventId) {
+      const nav = this.router.getCurrentNavigation();
+      if (nav?.extras?.state) {
+        this.eventId = nav.extras.state['eventId'];
       }
     }
-  }
 
-
-  trackOrder(){
-    this.isNavigated = true
-      this.navCtrl.navigateRoot('/layout/track-order', {
-            state: {
-              orderDetails: this.placedOrderDetails,
-              from: 'order-details'
-            }
-          });
-  }
-
-  placedOrderDetails: any
-
-createOrder() {
-  let custLocation = localStorage.getItem('location')
-  let order_id = `ORD${Date.now().toString()}-${1000 + Math.floor(Math.random() * 9999)}`
-  this.refOrderId = order_id
-  let details = {
-    "ticketCount": this.ticketCount,
-    "charges": this.charges,
-    "finalCost": this.finalCost,
-    "totalPrice": this.price,
-    "customerName": this.customerName,
-    "mobileNumber": this.mobileNumber,
-    "email": this.email,
-    "eventId": this.order.data.id,
-    "eventDetails": this.order,
-    "orderId": order_id,
-    "custLocation": custLocation,
-    "type":'nonDelivery',
-    "transactionId": this.transactionId
-  };
-
-  let params = {
-    token: this.token,
-    type: 'event',
-    title: this.order.data.title,
-    created_at: Date(),
-    status: 'active',
-    details: JSON.stringify(details),
-  };
-this.isLoading = true
-  this.eventService.createOrder(params).subscribe(async (res:any) => {
-    this.placedOrderDetails = res;
-    const orderDetails = JSON.parse(this.placedOrderDetails.details)
-    this.isOrderPlaced = true;
-    this.isLoading = false
-    const uniqueId = Math.floor(Math.random()*99)
-    // ✅ Send local notification
-    await LocalNotifications.schedule({
-      notifications: [
-        {
-          title: '🎉 Order Placed Successfully!',
-          body: `Your order for "${this.order.data.title}" is confirmed with Order Id ${orderDetails.orderId}`,
-          // largeBody: `Your order for "${this.order.data.title}" is confirmed. `,
-          id: uniqueId, // Unique ID
-          schedule: { at: new Date(Date.now() + 500) }, // 1 second delay
-          smallIcon: 'oneapp',
-          extra: {
-            orderId: res?.id || null
-          }
-        }
-      ]
+    this.authService.getToken().then(res => {
+      this.token = res;
+      if (this.eventId) {
+        this.fetchEventDetails(this.eventId);
+      } else {
+        console.error("No Event ID provided!");
+        this.isLoading = false;
+      }
     });
 
-    // ⏱️ Navigate after 2 seconds if not already navigated
-    setTimeout(() => {
-      if (!this.isNavigated) {
-        this.navCtrl.navigateRoot('/layout/track-order', {
-          state: {
-            orderDetails: res,
-            from: 'order-details'
+    // Check if we were in the middle of a payment (e.g. app killed)
+    this.checkPendingOrder();
+  }
+
+  fetchEventDetails(id: any) {
+    this.isLoading = true;
+    let params = { "eventId": id };
+    
+    this.eventService.getEventDetails(params, this.token).subscribe({
+      next: (res: any) => {
+        if (res.success) {
+          this.eventData = res.event;
+          if(res.user) {
+            this.customerName = res.user.name || '';
+            this.mobileNumber = res.user.phone || '';
+            this.email = res.user.email || '';
           }
-        });
-      }
-    }, 3000);
-  }, error => {
-    this.isLoading = false
-  });
-}
-
-
-isValidEmail(email: string): boolean {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-}
-
- payWithRazorpaycardova() {
-    const options = {
-      description: 'Test Payment',
-      currency: 'INR',
-      key: 'rzp_live_p6MXH1oq4BBYPk',
-      amount: 100,
-      name: 'Pintu Events',
-      prefill: {
-        email: '',
-        contact: '8686868686',
-        name: ''
+          this.processTicketOptions(this.eventData.ticketOptions);
+        }
+        this.isLoading = false;
       },
-      theme: { color: '#050505ff' }
+      error: (err:any) => {
+        console.error("API Error", err);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  async checkPendingOrder() {
+    const { value } = await Preferences.get({ key: 'pending_order_id' });
+    if (value) {
+      this.pendingOrderId = value;
+      // Resume polling if we have a pending ID
+      this.startPolling(this.pendingOrderId);
+    }
+  }
+
+  // ... [Ticket Processing and Calculation Methods remain same] ...
+  processTicketOptions(options: any[]) {
+    if (options && options.length > 0) {
+      this.ticketOptions = options.map(opt => ({
+        name: opt.class,
+        price: Number(opt.price),
+        stock: opt.tickets
+      }));
+      this.onTicketSelect(this.ticketOptions[0]);
+    } else {
+      this.ticketOptions = [];
+      this.unitPrice = 0;
+    }
+  }
+
+  onTicketSelect(option: any) {
+    this.selectedOption = option;
+    this.unitPrice = option.price;
+    this.calculateTotal();
+  }
+
+  calculateTotal() {
+    this.basePrice = this.ticketCount * this.unitPrice;
+    this.charges = Math.round(this.basePrice * 0.07); 
+    this.finalCost = this.basePrice + this.charges;
+  }
+
+  count(action: string) {
+    if (action === '+') {
+      if (this.ticketCount < this.eventData.maxSelection) this.ticketCount++;
+      else this.showToast(`Max ${this.eventData.maxSelection} Quantity allowed`);
+    } else if (action === '-') {
+      if (this.ticketCount > 1) this.ticketCount--;
+    }
+    this.calculateTotal();
+  }
+
+  // ✅ 1. Check Availability First
+  PayNow() {
+    if (!this.customerName || !this.mobileNumber || !this.email) {
+      this.showToast("Please fill all details");
+      return;
+    }
+
+    this.isLoading = true;
+
+    let params = {
+      "eventId": this.eventId,
+      "class": this.selectedOption.name,
+      "tickets": this.ticketCount
     };
 
-    try {
-      RazorpayCheckout.open(
-        options,
-        async (paymentData: any) => {
-          console.log('Payment Success:', paymentData);
-          console.log('Payment Successful!', JSON.stringify(paymentData));
-          // 👉 send paymentData.razorpay_payment_id to your server for verification
-        },
-        async (error: any) => {
-          console.error('Payment Failed:', error);
-          console.log('Payment Failed', JSON.stringify(error));
+    this.eventService.checkAvailability(params).subscribe({
+      next: (res: any) => {
+        if (res.success === true) {
+          // Success: Create Order on Backend
+          this.createOrderOnBackend();
+        } else {
+          this.isLoading = false;
+          this.showToast(res.message || "Tickets not available");
         }
-      );
-    } catch (err) {
-      console.error('Unexpected Error:', err);
-    }
-
-  //   const successCallback = (payment_id: string) => {
-  //     this.ngZone.run(() => {
-  //       console.log('Payment Success:', payment_id);
-  //       alert('Payment successful: ' + payment_id);
-  //     });
-  //   };
-
-  //   const cancelCallback = (error: any) => {
-  //     this.ngZone.run(() => {
-  //       console.error('Payment Failed:', error);
-  //       alert('Payment failed: ' + JSON.stringify(error));
-  //     });
-  //   };
-
-  //   document.addEventListener('deviceready', () => {
-  //   if ((window as any).RazorpayCheckout) {
-  //     console.log('Opening Razorpay...');
-  //     (window as any).RazorpayCheckout.open(options, successCallback, cancelCallback);
-  //   } else {
-  //     alert('RazorpayCheckout plugin not found');
-  //   }
-  // });
-
-//     document.addEventListener('deviceready', () => {
-//   (window as any).RazorpayCheckout.open(options,
-//     (success: any) => alert('Success: ' + JSON.stringify(success)),
-//     (error: any) => alert('Error: ' + JSON.stringify(error))
-//   );
-// });
-
-// if ((window as any).RazorpayCheckout) {
-//     (window as any).RazorpayCheckout.open(
-//       options,
-//       (success: any) => {
-//         alert('Payment Success: ' + JSON.stringify(success));
-//       },
-//       (error: any) => {
-//         alert('Payment Failed: ' + JSON.stringify(error));
-//       }
-//     );
-//   } else {
-//     alert('RazorpayCheckout not found');
-//   }
-
-    // (window as any).RazorpayCheckout.open(
-    //   options,
-    //   (success: any) => {
-    //     alert('Payment Success: ' + JSON.stringify(success));
-    //   },
-    //   (error: any) => {
-    //     alert('Payment Failed: ' + JSON.stringify(error));
-    //   }
-    // );
-}
-
-// successCallback(payment_id: any) {
-//   console.log("Payment success:", payment_id);
-//   alert("Payment success: " + payment_id);
-// }
-
-// cancelCallback(error: any) {
-//   console.log("Payment failed:", error);
-//   alert("Payment failed: " + JSON.stringify(error));
-// }
-
-  goBack(){
-this.navCtrl.back()
+      },
+      error: (err) => {
+        this.isLoading = false;
+        this.showToast("Server error checking availability");
+      }
+    });
   }
 
-  async razorpayCapacitor(){
-    try {
-      const result = await RazorpayCheckout.open({
-        key: 'rzp_live_p6MXH1oq4BBYPk',
-        amount: 100,
-        currency: 'INR',
-        name: 'Pintu Events',
-        description: 'Test Payment',
-        prefill: {
-          contact: '9876543210'
+  // ✅ 2. Acquire Order ID from Backend
+  createOrderOnBackend() {
+    const orderData = {
+      eventId: this.eventId,
+      tickets: this.ticketCount,
+      class: this.selectedOption.name,
+    };
+
+    this.eventService.createRazorpayOrder(orderData, this.token).subscribe({
+      next: async (res: any) => {
+        if (res.success) {
+          // Store internal ID
+          this.pendingOrderId = res.internal_order_id;
+          await Preferences.set({ key: 'pending_order_id', value: res.internal_order_id });
+          
+          // Open Razorpay with the acquired Order ID
+          this.initiateRazorpay(res.razorpay_order_id);
+        } else {
+          this.isLoading = false;
+          this.showToast("Failed to create order");
         }
-      });
-      alert('✅ Payment Success: ' + JSON.stringify(result));
-    } catch (err) {
-      alert('❌ Payment Failed: ' + JSON.stringify(err));
-    }
+      },
+      error: (err) => {
+        this.isLoading = false;
+        this.showToast("Server error creating order");
+      }
+    });
   }
 
-  async payWithRazorpay() {
-    if(this.finalCost == 0){
-        this.createOrder()
-    } else {
-      this.isLoading = true
-    const options: any = {
-      key: 'rzp_test_RJn8z8TkeG3RU4', // Replace with your Razorpay Key ID
-      amount: this.finalCost * 100, 
+  // ✅ 3. Initiate Razorpay & START POLLING
+  initiateRazorpay(rzpOrderId: string) {
+    const options = {
+      key: 'rzp_test_S5RLYqr6y2I6xs', 
+      amount: (this.finalCost * 100).toString(), 
       currency: 'INR',
       name: 'Pintu Events',
-      description: 'Test Transaction',
-      image: 'https://your-logo.com/logo.png',
+      description: `${this.selectedOption.name} Ticket x${this.ticketCount}`,
+      image: 'https://your-logo-url.com/logo.png',
+      order_id: rzpOrderId, 
+      
       prefill: {
         name: this.customerName,
         email: this.email,
-        contact: this.mobileNumber,
+        contact: this.mobileNumber
       },
-      theme: {
-        color: '#0f0f0fff',
-      },
-      handler: async (response: any) => {
-        console.log('Payment Success', response);
-        console.log('Payment Successful', JSON.stringify(response));
-        this.transactionId = response.razorpay_payment_id
-        this.isLoading = false
-        this.createOrder()
-        // 👉 Send response.razorpay_payment_id to backend for verification
-      },
-      modal: {
-        ondismiss: async () => {
-          this.isLoading = false
-          console.log('Payment Cancelled', 'User closed the payment window.');
-        }
-      }
+      theme: { color: '#121212' }
     };
 
-    const rzp = new Razorpay(options);
+    this.platform.ready().then(() => {
+      if (typeof window.RazorpayCheckout !== 'undefined') {
+        // A. Open Payment Screen
+        window.RazorpayCheckout.open(options);
 
-    rzp.on('payment.failed', async (response: any) => {
-      this.isLoading = false
-      console.error('Payment Failed', response.error);
-      console.log('Payment Failed', JSON.stringify(response.error));
+        // B. 🚀 START POLLING IMMEDIATELY (Don't wait for success callback)
+        // We assume the user is paying. We ask backend "Is it done?" repeatedly.
+        this.startPolling(this.pendingOrderId);
+
+      } else {
+        this.isLoading = false;
+        this.showToast("Razorpay Plugin not installed");
+      }
     });
+  }
 
-    rzp.open();
+  // ✅ 4. The Polling Logic
+  startPolling(internalOrderId: string) {
+    console.log("Started polling for:", internalOrderId);
+    
+    // Stop any existing polling
+    this.stopPolling();
+
+    // Check every 3 seconds
+    this.pollingInterval = setInterval(() => {
+      this.checkStatusFromBackend(internalOrderId);
+    }, 3000);
+
+    // Failsafe: Stop polling after 2 minutes (120 seconds)
+    setTimeout(() => {
+      if (!this.isPaymentDetected) {
+        this.stopPolling();
+        this.isLoading = false;
+        // Optional: Show "Timeout" message or just let user stay on page
+      }
+    }, 120000);
+  }
+
+  checkStatusFromBackend(internalOrderId: string) {
+    const verifyData = {orderId: internalOrderId };
+
+    this.eventService.verifyPayment(verifyData).subscribe({
+      next: async (res: any) => {
+        console.log('veerified')
+        // Backend should return status: 'paid' ONLY when Webhook is received
+        if (res.success && res.status === 'paid') {
+          setTimeout(()=>{
+            this.handleSuccess(res);
+          },10000)
+        }
+        // If status is 'pending', do nothing, just wait for next poll
+        else if (res.status === 'failed') {
+          this.stopPolling();
+          this.isLoading = false;
+          this.showToast("Payment Failed.");
+        }
+      },
+      error: (err) => {
+        // Network error? Just ignore and retry next poll
+        console.log("Poll error", err);
+      }
+    });
+  }
+
+  stopPolling() {
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
+      this.pollingInterval = null;
     }
+  }
+
+  async handleSuccess(res: any) {
+    this.isPaymentDetected = true;
+    console.log('payment succces')
+    this.stopPolling();
+    this.isLoading = false;
+    
+    await Preferences.remove({ key: 'pending_order_id' });
+    this.showToast("Booking Confirmed!");
+    
+    // Navigate to Success Page or Home
+    this.navCtrl.navigateBack('/layout/events', {
+      state: { orderDetails: res }
+    });
+  }
+
+  ngOnDestroy() {
+    this.stopPolling(); // Cleanup when leaving page
+  }
+
+  showToast(msg: string) {
+    this.isToastOpen = true;
+    this.toastMessage = msg;
+    setTimeout(() => { this.isToastOpen = false; }, 2000);
+  }
+
+  goBack() {
+    this.navCtrl.back();
   }
 }

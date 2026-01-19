@@ -4,9 +4,24 @@ android:versionCode="2"
     android:versionName="1.1.0">
 
 <queries>
+        <package android:name="com.google.android.apps.nbu.paisa.user" />
+        <package android:name="com.phonepe.app" />
+        <package android:name="net.one97.paytm" />
+        <package android:name="in.org.npci.upiapp" />
+        <package android:name="com.dreamplug.androidapp" /> <!-- Cred -->
+        <package android:name="com.whatsapp" />             <!-- WhatsApp -->
+        <package android:name="com.freecharge.android" />   <!-- Freecharge -->
+        <package android:name="com.mobikwik_new" />         <!-- MobiKwik -->
+        <package android:name="com.samsung.android.spay" /> <!-- Samsung Pay -->
+
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="upi" android:host="pay" />
+        </intent>
+        
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
         </intent>
 
         <!-- Optional: Chrome browser for fallback -->
@@ -32,6 +47,14 @@ android:versionCode="2"
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <!-- ✅ Add this for Razorpay Deep Linking -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="oneapp" android:host="payment" />
+            </intent-filter>
         </activity>
 
 
@@ -56,6 +79,3 @@ android:versionCode="2"
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 </manifest>
-
-
-

@@ -1,104 +1,139 @@
-<ion-content [fullscreen]="true">
-  @if (!isLoading) {
-    <div class="glass-nav animate__animated animate__fadeInDown">
-      <ion-button (click)="back()" class="nav-pill-btn">
-        <ion-icon name="chevron-back" color="light"></ion-icon>
-      </ion-button>
-      <ion-button fill="clear" class="help-btn" (click)="openHelp()">
-        Help <ion-icon name="help-circle-outline" slot="end"></ion-icon>
-      </ion-button>
+<ion-content [fullscreen]="true" class="bg-gray-50">
+  
+  @if (isLoading) {
+    <div class="p-4 pt-14">
+      <div class="flex gap-4 overflow-hidden mb-6">
+        <ion-skeleton-text animated style="width: 85%; height: 200px; border-radius: 20px; flex-shrink: 0;"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width: 15%; height: 200px; border-radius: 20px 0 0 20px; flex-shrink: 0;"></ion-skeleton-text>
+      </div>
+      <div class="flex gap-3 mb-6">
+        <ion-skeleton-text animated style="width: 80px; height: 36px; border-radius: 18px;"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width: 80px; height: 36px; border-radius: 18px;"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width: 80px; height: 36px; border-radius: 18px;"></ion-skeleton-text>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <ion-skeleton-text animated style="height: 220px; border-radius: 16px;" *ngFor="let i of [1,2,3,4]"></ion-skeleton-text>
+      </div>
     </div>
+  } 
 
-    <div class="main-hero-header">
-      <div class="header-overlay">
-        <h1 class="hero-title">Local Events</h1>
-        
-        <div class="icon-actions">
-          <div class="action-item">
-            <div class="icon-circle">
-              <img src="../../../assets/icons/wired-flat-19-magnifier-zoom-search-hover-spin.gif">
-            </div>
-            <span>Explore</span>
+  @else {
+    
+    
+
+    <div class="sticky-header-section">
+      <ion-header>
+  <ion-toolbar class="pt-4">
+    <ion-buttons slot="start">
+      <ion-button (click)="back()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Local Events</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openHelp()">
+        <ion-icon name="help-circle-outline" slot="icon-only" color="medium"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+      <div class="px-4 mb-2">
+        <ion-searchbar 
+          mode="ios" 
+          placeholder="Search concerts, workshops..." 
+          class="custom-search"
+          (ionInput)="handleSearch($event)">
+        </ion-searchbar>
+      </div>
+
+      <div class="horizontal-scroll-container px-4 pb-4">
+        <div class="category-pill" [class.active]="currentFilter === 'All'" (click)="applyFilter('All')">All</div>
+        <div class="category-pill" [class.active]="currentFilter === 'Upcoming'" (click)="applyFilter('Upcoming')">Upcoming</div>
+        @for (item of categories; track item) {
+          <div class="category-pill" [class.active]="currentFilter === item" (click)="applyFilter(item)">
+            {{ item | titlecase }}
           </div>
-          <div class="action-item">
-            <div class="icon-circle">
-              <img src="../../../assets/icons/wired-flat-400-bookmark-hover-flutter.gif">
-            </div>
-            <span>Book</span>
-          </div>
-          <div class="action-item">
-            <div class="icon-circle">
-              <img src="../../../assets/icons/wired-flat-2237-champagne-flutes-hover-cheers.gif">
-            </div>
-            <span>Enjoy</span>
-          </div>
-        </div>
+        }
       </div>
     </div>
 
-    <div class="section-container position-sticky pt-5 pb-2" style="top: 0px; z-index: 10; background-color: #f7fafc;">
-      <h2 class="section-title">Explore by Category</h2>
-      <div class="horizontal-scroll-container">
-  <div 
-    class="category-pill" 
-    [class.active]="currentFilter === 'Upcoming'"
-    (click)="applyFilter('Upcoming')">
-    Upcoming
-  </div>
-
-  <div 
-    class="category-pill" 
-    [class.active]="currentFilter === 'All'"
-    (click)="applyFilter('All')">
-    All
-  </div>
-
-  @for (item of categories; track item) {
-    <div 
-      class="category-pill" 
-      [class.active]="currentFilter === item"
-      (click)="applyFilter(item)">
-      {{ item | titlecase }}
-    </div>
-  }
-</div>
-    </div>
-
-    <div class="section-container mt-4">
-      <h2 class="section-title">Upcoming for You</h2>
-      <div class="event-masonry-grid">
-        <div class="modern-event-card" *ngFor="let card of filteredEvents" (click)="openItemModal(card)">
-          <div class="card-image-box">
-            @if(card.imageUrl){
-              <img [src]="card.imageUrl" [alt]="card.title">
-            } @else {
-              <img src="https://dummyimage.com/1080x1410/e0e0e0/c2c2c2.png&text=Coming Soon" [alt]="card.title">
+    <div class="content-container pb-24">
+      
+      @if(currentFilter === 'All' && !searchTerm) {
+        <div class="mb-6">
+          <div class="flex items-end justify-between px-4 mb-3">
+            <h2 class="text-lg font-bold text-gray-800 m-0">Featured</h2>
+            <!-- <span class="text-xs font-semibold text-primary">See All</span> -->
+          </div>
+          
+          <div class="featured-scroll px-4">
+            @for (feat of featuredEvents; track feat) {
+              <div class="featured-card" (click)="openItemModal(feat)">
+                <img [src]="feat.imageUrl || 'https://dummyimage.com/600x800/eee/aaa?text=Event'" alt="Event">
+                <div class="overlay">
+                  <span class="feat-badge">{{feat.category}}</span>
+                  <h3>{{feat.title}}</h3>
+                  <p><ion-icon name="calendar-outline"></ion-icon> {{feat.date | date:'EEE, d MMM'}}</p>
+                </div>
+              </div>
             }
-            <div class="price-badge" [class.free]="card.isFree">
-              {{ card.isFree ? 'FREE' : ('₹' + card.ticketPrice) }}
+          </div>
+        </div>
+      }
+
+      <div class="px-4">
+        <h2 class="text-lg font-bold text-gray-800 mb-3">
+          {{ searchTerm ? 'Search Results' : (currentFilter === 'All' ? 'Popular Events' : (currentFilter | titlecase) + ' Events') }}
+        </h2>
+
+        @if(filteredEvents.length === 0) {
+          <div class="text-center py-10 text-gray-400">
+            <ion-icon name="search-outline" class="text-4xl mb-2"></ion-icon>
+            <p>No events found</p>
+          </div>
+        }
+
+        <div class="event-masonry-grid">
+          @for (card of filteredEvents; track card) {
+            <div class="modern-event-card animate__animated animate__fadeIn" (click)="openItemModal(card)">
+              <div class="card-image-box">
+                <img [src]="card.imageUrl || 'https://dummyimage.com/600x800/eee/aaa?text=Event'" loading="lazy">
+                
+                <div class="price-tag" [class.free]="card.isFree">
+                  {{ card.isFree ? 'FREE' : ('₹' + card.ticketPrice) }}
+                </div>
+                
+                <button class="fav-btn" (click)="toggleFavorite(card, $event)">
+                  <ion-icon [name]="card.isFavorite ? 'heart' : 'heart-outline'" [color]="card.isFavorite ? 'danger' : 'medium'"></ion-icon>
+                </button>
+              </div>
+
+              <div class="card-info">
+                <div class="date-badge">
+                  <span class="month">{{ card.date | date:'MMM' }}</span>
+                  <span class="day">{{ card.date | date:'dd' }}</span>
+                </div>
+                <div class="details">
+                  <h3 class="card-name text-truncate-2 text-wrap">{{card.title}}</h3>
+                  <p class="location text-truncate text-wrap">
+                    <ion-icon name="location-outline"></ion-icon> {{ card.location.location || 'Bangalore' }}
+                  </p>
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="card-info">
-            <p class="card-date">{{card.date | date: 'dd MMM, yyyy'}}</p>
-            <h3 class="card-name">{{card.title}}</h3>
-          </div>
+          }
         </div>
       </div>
     </div>
 
-    <app-footer></app-footer>
+    <ion-fab vertical="bottom" horizontal="center" slot="fixed" class="mb-4">
+      <ion-fab-button color="dark" (click)="openBookings()" class="extended-fab">
+        <ion-icon name="ticket-outline" class="mr-2"></ion-icon>
+        <span class="font-bold">My Bookings</span>
+      </ion-fab-button>
+    </ion-fab>
 
-    <div class="fab-container">
-      <ion-button class="floating-bookings-btn" (click)="openBookings()">
-        <ion-icon name="ticket-outline" slot="start"></ion-icon>
-        My Bookings
-      </ion-button>
-    </div>
-
-  } @else {
-    <div class="loader-state">
-      <ion-spinner name="crescent"></ion-spinner>
-      <p>Finding events near you...</p>
-    </div>
   }
+
+  <app-footer></app-footer>
 </ion-content>
