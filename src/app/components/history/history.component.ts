@@ -112,14 +112,14 @@ export class HistoryComponent implements OnInit {
       case 'done':
       case 'completed':
       case 'delivered':
-      case 'paid':
       case 'active':
       case 'resolved':
         return 'bi bi-check-circle-fill text-success';
       case 'pending':
-        return 'bi bi-clock-fill text-warning';
+      case 'paid':
+        return 'bi bi-clock-fill text-success';
       case 'failed':
-      case 'rejected':
+      case 'cancelled':
       case 'error':
         return 'bi bi-x-circle-fill text-danger';
       case 'processing':

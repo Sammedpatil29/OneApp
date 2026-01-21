@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonCard, IonToast, IonSpinner, IonFooter, IonFab, IonFabButton, IonGrid, IonRow, IonCol, IonText } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonCard, IonToast, IonSpinner, IonFooter, IonFab, IonFabButton, IonGrid, IonRow, IonCol, IonText, ActionSheetController } from '@ionic/angular/standalone';
 import { NavController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import html2canvas from 'html2canvas';
@@ -11,6 +11,7 @@ import { addIcons } from 'ionicons';
 import { arrowBack, shareSocialOutline, downloadOutline, mapOutline, timeOutline, calendarOutline, locationOutline, checkmarkCircle, alertCircleOutline, closeCircle } from 'ionicons/icons';
 import { AdmobService } from 'src/app/services/admob.service';
 import { EventsService } from 'src/app/services/events.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 // Declare global variable for AdMob safety
 declare var window: any;
@@ -35,21 +36,31 @@ export class TrackOrderPage implements OnInit {
   isToastOpen: boolean = false;
   toastMessage = '';
   routeSource = '';
+  token: any;
+
 
   constructor(
     private navCtrl: NavController, 
     private router: Router, 
     private admobService: AdmobService,
-    private eventService: EventsService
+    private eventService: EventsService,
+    private actionSheetCtrl: ActionSheetController,
+    private authService: AuthService
   ) { 
     addIcons({arrowBack,closeCircle,checkmarkCircle,calendarOutline,timeOutline,locationOutline,alertCircleOutline,downloadOutline,shareSocialOutline,mapOutline});
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     // 1. Capture State safely
     // history.state is more reliable than router.getCurrentNavigation in ngOnInit
     this.orderId = history.state.orderId;
     this.routeSource = history.state.from;
+
+    await this.authService.getToken().then(token => {
+      // Store token for later use
+      this.token = token;
+    });
+
 
     // Fallback if history.state is empty
     if (!this.orderId) {
@@ -106,6 +117,51 @@ export class TrackOrderPage implements OnInit {
   }
 
   // --- ACTIONS ---
+
+  async confirmCancel() {
+    const actionSheet = await this.actionSheetCtrl.create({
+      header: 'Cancel Booking',
+      subHeader: 'Are you sure you want to cancel this ticket? The refund will be processed to your original payment method.',
+      buttons: [
+        {
+          text: 'Yes, Cancel Ticket',
+          role: 'destructive',
+          handler: () => {
+            this.cancelOrder();
+          }
+        },
+        {
+          text: 'Keep Ticket',
+          role: 'cancel'
+        }
+      ]
+    });
+
+    await actionSheet.present();
+  }
+
+  cancelOrder() {
+    if (!this.orderId) return;
+    this.isLoading = true;
+    this.eventService.cancelOrder(this.orderId, this.token).subscribe({
+      next: (res: any) => {
+        this.isLoading = false;
+        if (res.success) {
+          this.orderDetails.status = 'cancelled';
+          this.orderDetails.refundAmount = res.refundAmount;
+          this.orderDetails.refundId = res.refundId;
+          this.showToast('Booking cancelled successfully');
+        } else {
+          this.showToast(res.message || 'Failed to cancel booking');
+        }
+      },
+      error: (error:any) => {
+        console.error("Cancel Error", error);
+        this.isLoading = false;
+        this.showToast("Failed to cancel booking");
+      }
+    });
+  }
 
   openInGoogleMaps() {
     if(!this.orderDetails || !this.orderDetails.event) return;

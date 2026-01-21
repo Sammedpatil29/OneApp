@@ -1,0 +1,115 @@
+/* Variables */
+$primary-color: #6366f1;
+$ticket-bg: #ffffff;
+$radius: 20px;
+
+ion-content {
+  --background: #f8fafc;
+}
+
+/* Success Animation */
+.success-icon-bg {
+  width: 80px;
+  height: 80px;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* === TICKET STYLING === */
+#ticket-container {
+  width: 100%;
+  max-width: 380px;
+  margin: 5px auto 0;
+  box-shadow: 0 10px 30px -10px rgba(0,0,0,0.15);
+  border-radius: $radius;
+  overflow: hidden;
+  background: transparent;
+}
+
+/* Top Part */
+.ticket-main {
+  background: $ticket-bg;
+  border-radius: $radius $radius 0 0;
+  position: relative;
+}
+
+.event-banner {
+  height: 160px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+  }
+
+  .event-title-overlay {
+    position: absolute;
+    bottom: 15px;
+    left: 15px;
+    right: 15px;
+    color: white;
+
+    .badge-category {
+      background: $primary-color;
+      color: white;
+      font-size: 10px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    h1 {
+      margin: 8px 0 0;
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1.2;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+  }
+}
+
+/* Offline banner */
+.offline-banner {
+  background-image: linear-gradient(135deg, #ef4444, #991b1b);
+}
+
+/* Rip Section */
+.ticket-rip {
+  height: 30px;
+  background: $ticket-bg;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .dashed-line {
+    width: 85%;
+    border-top: 2px dashed #e2e8f0;
+  }
+
+  .circle-left, .circle-right {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background: #f8fafc;
+    border-radius: 50%;
+    top: 0;
+  }
+
+  .circle-left { left: -15px; }
+  .circle-right { right: -15px; }
+}
+
+/* Bottom Stub */
+.ticket-stub {
+  background: $ticket-bg;
+  border-radius: 0 0 $radius $radius;
+}

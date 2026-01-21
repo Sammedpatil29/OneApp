@@ -125,11 +125,16 @@ export const routes: Routes = [
     path: 'ride-selection-page',
     loadComponent: () => import('./pages/ride-selection-page/ride-selection-page.page').then( m => m.RideSelectionPagePage)
   },
+  {
+    path: 'offline',
+    loadComponent: () => import('./offline/offline.page').then( m => m.OfflinePage)
+  },
       {
         path: '',
         redirectTo: 'example/home',
         pathMatch: 'full',
       },
+      
     ],
   },
   

@@ -227,6 +227,154 @@ swiper-slide {
   background-color: #bdbdbd;
 }
 
+.category-card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 16px; // rounded-4 equivalent
+  overflow: hidden;
+  height: 100%;
+  min-height: 110px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+
+  &:active {
+    transform: scale(0.96); // Nice click feedback
+  }
+}
+
+.blob-decorator {
+  position: absolute;
+  bottom: -10%;
+  right: -10%;
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle, rgba(1, 37, 125, 0.05) 0%, transparent 70%);
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.card-content {
+  padding: 10px;
+  position: relative;
+  z-index: 2;
+
+  .category-title {
+    font-weight: 800;
+    color: #1a1a1a;
+    margin: 0;
+    line-height: 1.2;
+    font-size: 11px;
+    letter-spacing: -0.2px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-transform: capitalize;
+  }
+}
+
+.offer-container {
+  margin-top: 6px;
+
+  .offer-badge {
+    background: linear-gradient(90deg, #ff4d4d, #cf0000);
+    color: white;
+    font-size: 8px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 100px;
+    box-shadow: 0 2px 4px rgba(255, 77, 77, 0.3);
+    display: inline-block;
+  }
+}
+
+.image-wrapper {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  z-index: 2;
+
+  .category-img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    // Gives that floating 3D look
+    filter: drop-shadow(2px 6px 4px rgba(0, 0, 0, 0.15));
+  }
+}
+
+.swiggy-card {
+  background: #ffffff;
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  height: 170px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0,0,0,0.04);
+  transition: transform 0.2s ease;
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  .card-content {
+    padding: 16px;
+    width: 65%;
+    z-index: 2;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+
+    .swiggy-title {
+      font-size: 18px;
+      font-weight: 900;
+      color: #3d4152;
+      margin: 0 0 4px 0;
+      line-height: 1.1;
+      text-transform: uppercase;
+      letter-spacing: -0.5px;
+    }
+
+    .swiggy-subtitle {
+      font-size: 11px;
+      color: #686b78;
+      margin: 0 0 10px 0;
+      font-weight: 600;
+      text-transform: uppercase;
+      opacity: 0.8;
+    }
+
+    .swiggy-offer {
+      align-self: flex-start;
+      font-size: 10px;
+      font-weight: 800;
+      color: #d94314;
+      background: linear-gradient(to right, #ffeae6, #fff0ed);
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid #ffded6;
+    }
+  }
+
+  .swiggy-image-container {
+    position: absolute;
+    bottom: -10px;
+    right: -10px;
+    width: 55%;
+    height: 70%;
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: bottom right;
+      filter: drop-shadow(-4px 4px 8px rgba(0,0,0,0.15));
+      transform: rotate(-5deg);
+    }
+  }
+}
 
 
 

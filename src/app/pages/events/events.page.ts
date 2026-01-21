@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonButtons, IonIcon, IonCardSubtitle, IonCardContent, IonCardTitle, IonCardHeader, IonCard, IonModal, IonImg, IonSpinner, IonSearchbar, IonSkeletonText, IonBadge, IonFab, IonFabButton } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonButtons, IonIcon, IonCardSubtitle, IonCardContent, IonCardTitle, IonCardHeader, IonCard, IonModal, IonImg, IonSpinner, IonSearchbar, IonSkeletonText, IonBadge, IonFab, IonFabButton, IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
 import { arrowBack, chevronBack, helpCircleOutline, ticketOutline, searchOutline, heart, heartOutline, locationOutline, calendarOutline } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { NavController, ModalController } from '@ionic/angular';
@@ -15,7 +15,7 @@ import { EventDialogComponent } from 'src/app/components/event-dialog/event-dial
   templateUrl: './events.page.html',
   styleUrls: ['./events.page.scss'],
   standalone: true,
-  imports: [
+  imports: [IonRefresherContent, IonRefresher, 
     CommonModule, FormsModule, FooterComponent,
     IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon,
     IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCardSubtitle, IonImg,
@@ -72,6 +72,14 @@ export class EventsPage implements OnInit {
     }, error => {
       this.isLoading = false;
     });
+  }
+
+  async handleRefresh(event: any) {
+    // Call the method that fetches your events
+    await this.getEvents();
+    
+    // Complete the refresher animation
+    event.target.complete();
   }
 
   getUniqueCategories(events: any[]): string[] {

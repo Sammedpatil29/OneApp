@@ -51,7 +51,7 @@ export class LoginPage implements OnInit {
   user: any = null;
 
   otpSent: boolean = false;
-  verifyingToken: boolean = false;
+  verifyingToken: boolean = true;
   mobileNumber = '';
   otp = '';
   enteredOtp = '';
@@ -90,29 +90,31 @@ export class LoginPage implements OnInit {
   }
 
   async ngOnInit() {
+    this.verifyingToken = true;
     this.token = await this.authService.getToken()
+    console.log(this.token)
     if(this.token){
-      this.verifyToken()
+      setTimeout(()=>{
+        this.verifyToken()
+      },2000)
+    } else {
+      this.verifyingToken = false;
     }
   }
 
   token:any;
   async verifyToken(){
+    
     // this.loadingMessage = 'verifying user...'
-    this.token = await this.authService.getToken()
+    // this.token = await this.authService.getToken()
     console.log(this.token)
     if(this.token){
      
     this.verifyingToken = true
     this.authService.verifyToken(this.token).subscribe((res: any) => {
-      this.verifyingToken = false
       console.log(res)
       if(res.valid == true){
         this.navCtrl.navigateRoot('/layout/example/home')
-        setTimeout(()=> {
-            this.navCtrl.navigateRoot('/layout/example/home')
-        }, 500)
-
       } else {
 this.verifyingToken = false
       }

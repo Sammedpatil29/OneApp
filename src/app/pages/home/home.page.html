@@ -106,37 +106,30 @@
         <div class="modal-handle"></div>
       </div>
 
-      @for (group of groupedData | keyvalue; track group.key) {
-        <div>
-          <ion-card-subtitle class="ps-3 text-uppercase text-center fw-bold text-dark mt-3">
-            {{ group.key }}
-          </ion-card-subtitle>
+      <div class="px-3 mt-4 mb-2">
+        <h5 class="fw-bolder text-dark m-0">All Services</h5>
+      </div>
 
-          <ion-grid class="p-0">
-            <ion-row>
-              @for (item of group.value; track item) {
-                <ion-col class="p-0" [size]="item.width === '100%' ? '12' : '6'">
-                  <ion-card style="position: relative; cursor: pointer" (click)="navigateTo(item.route)">
-                    <ion-card-header>
-                      <div>
-                        <ion-card-title>{{ item.title }}</ion-card-title>
-                      </div>
-                      <ion-card-subtitle>
-                        @if (item.offers != 'Nothing') {
-                          <strong class="offer"><i class="bi bi-tags-fill me-1"></i>{{ item.offers }}</strong>
-                        } @else {
-                          <strong>{{ item.subtitle }}</strong>
-                        }
-                      </ion-card-subtitle>
-                    </ion-card-header>
-                    <img [ngStyle]="item.className" [attr.loading]="'lazy'" [src]="item.img" alt="{{ item.title }}" />
-                  </ion-card>
-                </ion-col>
-              }
-            </ion-row>
-          </ion-grid>
+      <div class="container px-2 pb-5">
+        <div class="row g-2">
+          @for (item of allServices; track item) {
+            <div class="col-6 p-2">
+              <div class="swiggy-card" (click)="navigateTo(item.route)">
+                <div class="card-content">
+                  <h3 class="swiggy-title">{{ item.title }}</h3>
+                  <p class="swiggy-subtitle">{{ item.subtitle || 'FROM RESTAURANTS' }}</p>
+                  @if (item.offers && item.offers !== 'Nothing') {
+                    <span class="swiggy-offer">{{ item.offers }}</span>
+                  }
+                </div>
+                <div class="swiggy-image-container">
+                  <img [src]="item.img" loading="lazy" [alt]="item.title" />
+                </div>
+              </div>
+            </div>
+          }
         </div>
-      }
+      </div>
     </div>
 
     <app-footer></app-footer>

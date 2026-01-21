@@ -22,17 +22,26 @@
     <div class="content-wrapper px-3 pb-5">
       
       <div class="text-center py-3 animate__animated animate__fadeInDown">
-       @if(orderDetails.status !== 'Confirmed') {
+       @if(orderDetails.status == 'cancelled') {
          <div class="success-icon-bg mx-auto">
-          <ion-icon name="close-circle" color="danger" style="font-size: 48px;"></ion-icon>
+          <ion-icon name="close-circle" style="font-size: 48px; color: #f97316;"></ion-icon>
         </div>
         <h2 class="fw-bold mt-2 mb-0">Booking Cancelled!</h2>
-       } @else {
+        <div class="mt-2 d-inline-block px-3 py-2 rounded-4 border" style="background-color: #fff7ed; color: #c2410c; border-color: #ffedd5;">
+           <div class="fw-bold" style="font-size: 12px;">Event Cancelled & Refund Initiated</div>
+           <div style="font-size: 11px;">Amount: ₹{{orderDetails.refundDetails.refundAmount}} | Ref: {{orderDetails.refundDetails.refundId}}</div>
+        </div>
+       } @else if(orderDetails.status == 'paid'){
          <div class="success-icon-bg mx-auto">
           <ion-icon name="checkmark-circle" color="success" style="font-size: 48px;"></ion-icon>
         </div>
         <h2 class="fw-bold mt-2 mb-0">Booking Confirmed!</h2>
-       }
+       } @else {
+         <div class="success-icon-bg mx-auto">
+          <ion-icon name="checkmark-circle" color="success" style="font-size: 48px;"></ion-icon>
+        </div>
+        <h2 class="fw-bold mt-2 mb-0">Booking Completed!</h2>
+       } 
         <p class="text-muted small">Order ID: #{{orderDetails.orderId}}</p>
       </div>
 
@@ -148,5 +157,13 @@
       </div>
       <small>Map</small>
     </div>
+    @if(orderDetails.status == 'paid') {
+      <div class="action-btn text-center" (click)="confirmCancel()">
+        <div class="icon-circle bg-danger-subtle mb-1">
+          <ion-icon name="close-circle" color="danger"></ion-icon>
+        </div>
+        <small>Cancel</small>
+      </div>
+    }
   </div>
 </ion-footer>

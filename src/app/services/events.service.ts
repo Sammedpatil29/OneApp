@@ -72,4 +72,11 @@ export class EventsService {
   fetchOrderDetails(params:any){
     return this.http.post(`${this.getEventsUrl}/api/events/order-details`, params)
   }
+
+  cancelOrder(id: string, token : any) {
+    let headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.post(`${this.getEventsUrl}/api/events/cancel-booking`, { orderId: id }, { headers: headers });
+}
 }

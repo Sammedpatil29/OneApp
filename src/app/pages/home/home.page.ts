@@ -9,7 +9,7 @@ import {
   IonToolbar, IonButtons, IonButton, IonSpinner, IonCol, IonRow, IonGrid, IonRefresher, IonRefresherContent, AlertController, IonSkeletonText } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
-import { library, playCircle, radio, search, home, cube, bag, receiptOutline, person, personCircle, personCircleOutline, constructOutline, briefcaseOutline, buildOutline, arrowBack } from 'ionicons/icons';
+import { library, playCircle, radio, search, home, cube, bag, receiptOutline, person, personCircle, personCircleOutline, constructOutline, briefcaseOutline, buildOutline, arrowBack, cloudOfflineOutline } from 'ionicons/icons';
 import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle } from '@ionic/angular/standalone';
 import { FooterComponent } from "../../components/footer/footer.component";
 import { Router, RouterLink } from '@angular/router';
@@ -103,7 +103,7 @@ export class HomePage implements OnInit {
     private alertController: AlertController,
     private fcmService: RegisterFcmService
   ) {
-    addIcons({ arrowBack, home, buildOutline, receiptOutline, personCircleOutline, briefcaseOutline, constructOutline, library, personCircle, person, search, bag, cube, radio, playCircle });
+    addIcons({cloudOfflineOutline,arrowBack,home,buildOutline,receiptOutline,personCircleOutline,briefcaseOutline,constructOutline,library,personCircle,person,search,bag,cube,radio,playCircle});
   }
 
   async ngOnInit() {

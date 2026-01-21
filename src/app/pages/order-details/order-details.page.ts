@@ -326,16 +326,6 @@ export class OrderDetailsPage implements OnInit, OnDestroy {
       from: 'order-details' // Required for the 'Back' button logic in TrackOrderPage
     }
   });
-  setTimeout(()=>{
-    this.navCtrl.navigateRoot(['/layout/track-order'], {
-    animated: true,
-    animationDirection: 'forward',
-    state: { 
-      orderId: res.orderId, 
-      from: 'order-details' // Required for the 'Back' button logic in TrackOrderPage
-    }
-  });
-  },15000)
 }
 
 dummycall(){

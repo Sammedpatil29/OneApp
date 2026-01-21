@@ -9,13 +9,22 @@ const config: CapacitorConfig = {
       skipNativeAuth: false,
       providers: ['phone']
     },
+    SplashScreen: {
+      launchShowDuration: 0,
+      launchAutoHide: true,
+      launchFadeOutDuration: 0,
+      showSpinner: false,
+    },
+    PushNotifications: {
+      presentationOptions: ["badge", "sound", "alert"],
+    },
     Cordova: {}
   },
   server: {
-    androidScheme: 'https',
-    hostname: 'pintu-minutes.app' 
+    url: 'https://pintu-teal.vercel.app/',
+    cleartext: true,
+    errorPath: 'offline.html'
   }
 };
 
 export default config;
-

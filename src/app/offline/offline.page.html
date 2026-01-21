@@ -1,0 +1,54 @@
+<ion-content fullscreen>
+
+  <div class="h-100 d-flex flex-column justify-content-center align-items-center px-4">
+
+    <!-- Ticket Container -->
+    <div id="ticket-container">
+
+      <!-- Top -->
+      <div class="ticket-main">
+
+        <div class="event-banner offline-banner">
+          <div class="overlay"></div>
+
+          <div class="event-title-overlay">
+            <span class="badge-category">Offline</span>
+            <h1>No Internet Connection</h1>
+          </div>
+        </div>
+
+        <div class="p-3 text-center">
+          <div class="success-icon-bg mx-auto mb-2">
+            <ion-icon name="wifi-off-outline" color="danger" style="font-size:40px"></ion-icon>
+          </div>
+
+          <p class="text-muted mt-2">
+            Looks like you're not connected to the internet.  
+            Please check your connection and try again.
+          </p>
+        </div>
+      </div>
+
+      <!-- Rip -->
+      <div class="ticket-rip">
+        <div class="circle-left"></div>
+        <div class="dashed-line"></div>
+        <div class="circle-right"></div>
+      </div>
+
+      <!-- Bottom -->
+      <div class="ticket-stub p-3 text-center">
+
+        <ion-button expand="block" shape="round" color="dark" (click)="retry()">
+          Retry Connection
+        </ion-button>
+
+        <p class="text-muted mt-2" style="font-size:12px">
+          Turn on mobile data or Wi-Fi
+        </p>
+
+      </div>
+    </div>
+  </div>
+
+</ion-content>

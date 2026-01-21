@@ -1,5 +1,9 @@
 <ion-content [fullscreen]="true" class="bg-gray-50">
   
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
   @if (isLoading) {
     <div class="p-2 pt-14">
       <div class="flex gap-4 overflow-hidden mb-6">
@@ -18,9 +22,6 @@
   } 
 
   @else {
-    
-    
-
     <div class="sticky-header-section">
       <ion-header>
   <ion-toolbar class="pt-4">
@@ -69,7 +70,7 @@
           <div class="featured-scroll px-4">
             @for (feat of featuredEvents; track feat) {
               <div class="featured-card" (click)="openItemModal(feat)">
-                <img [src]="feat.imageUrl || 'https://dummyimage.com/600x800/eee/aaa?text=Event'" alt="Event">
+                <img [src]="feat.imageUrl || 'https://dummyimage.com/600x800/eee/aaa?text=Event'" alt="Event" loading="lazy">
                 <div class="overlay">
                   <span class="feat-badge">{{feat.category}}</span>
                   <h3>{{feat.title}}</h3>

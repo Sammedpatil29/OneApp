@@ -33,7 +33,12 @@
                 "glob": "**/*",
                 "input": "src/assets",
                 "output": "assets"
-              }
+              },
+              {
+    "glob": "offline.html",
+    "input": "src/",
+    "output": "/"
+  }
             ],
             "styles": ["src/global.scss", "src/theme/variables.scss", "node_modules/bootstrap/dist/css/bootstrap.min.css"],
             "scripts": [
@@ -52,7 +57,7 @@
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "10kb",
-                  "maximumError": "20kb"
+                  "maximumError": "25kb"
                 }
               ],
               "fileReplacements": [

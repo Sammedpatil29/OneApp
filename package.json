@@ -6,12 +6,13 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ionic build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
     "deploy": "npx ionic build --prod && npx cap run android --target 65PJQ8SCOJRCS8EI",
-    "sync": "npx cap sync android && ionic build && npx cap run android --target 65PJQ8SCOJRCS8EI"
+    "sync": "npx cap sync android && ionic build && npx cap run android --target 65PJQ8SCOJRCS8EI",
+    "deploy-vercel": "npx ionic build && cd www && vercel --prod --yes --scope sammedpatil29s-projects -n pintu"
   },
   "private": true,
   "dependencies": {

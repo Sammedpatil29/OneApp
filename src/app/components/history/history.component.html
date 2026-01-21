@@ -45,9 +45,13 @@
                 <span class="date-badge">
                   {{item.created_at | date:'dd MMM'}} <span class="text-muted">•</span> {{item.created_at | date: 'HH:mm'}}
                 </span>
-                <div class="status-badge" [class.success]="item.status === 'completed'" [class.warning]="item.status === 'pending'">
+                <div class="status-badge" [class.success]="item.status === 'completed'" [class.success]="item.status === 'paid'" [class.danger]="item.status === 'cancelled'">
                   <i [ngClass]="getStatusIcon(item.status)" class="me-1"></i>
-                  {{item.status}}
+                  @if(item.status == 'paid'){
+                    Upcoming
+                  } @else {
+                    {{item.status}}
+                  }
                 </div>
               </div>
 
