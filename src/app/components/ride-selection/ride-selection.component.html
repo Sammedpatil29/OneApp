@@ -23,6 +23,25 @@
        <!-- service options starts -->
      <div class="p-2 overflow-auto" style="max-height: calc(50vh - 100px);">
       <!-- {{distance}}-{{timeInMins}} -->
+      @if(isCalculating){
+        @for(item of [1,2,3,4]; track $index){
+          <div class="border p-2 mb-2 me-0" style="border-radius: 10px">
+            <div class="row m-0">
+              <div class="col-2 p-0">
+                <ion-skeleton-text animated style="height: 50px; width: 50px; border-radius: 5px;"></ion-skeleton-text>
+              </div>
+              <div class="col-8" style="line-height: 15px">
+                <p class="m-0"><ion-skeleton-text animated style="width: 60%; height: 15px;"></ion-skeleton-text></p>
+                <small><ion-skeleton-text animated style="width: 40%; height: 10px;"></ion-skeleton-text></small><br>
+                <small><ion-skeleton-text animated style="width: 80%; height: 10px;"></ion-skeleton-text></small>
+              </div>
+              <div class="col-2 d-flex align-items-center">
+                <ion-skeleton-text animated style="width: 100%; height: 20px;"></ion-skeleton-text>
+              </div>
+            </div>
+          </div>
+        }
+      } @else {
       @for(item of tripOptions; track $index){
         <div class="border p-2 mb-2 me-0" style="border-radius: 10px" [ngClass]="selected_service == item.type?'selectedServiceclass':''" (click)="selectService(item)">
         <div class="row m-0">
@@ -32,13 +51,14 @@
           <div class="col-8" style="line-height: 15px">
             <p class="m-0"><b>{{item.type | titlecase}}</b></p>
             <small style="font-size: 13px !important" class="text-secondary">{{item.max_person}}</small><br>
-            <small style="font-size: 13px !important" class="text-secondary">{{timeInMins | number:'1.0-0'}} mins &bull; Drop 4:10 pm</small>
+            <small style="font-size: 13px !important" class="text-secondary">{{item.estimated_time}} &bull; Drop {{item.estimated_reach_time}}</small>
           </div>
           <div class="col-2 d-flex align-items-center">
             <b class="text-nowrap" style="font-size: 19px">&#8377;{{item.price | number:'1.0-0'}}</b>
           </div>
         </div>
       </div>
+      }
       }
       
       <div style="height: 10px"></div>
@@ -47,18 +67,24 @@
 
     <!-- bottom bar starts -->
     <div class="bg-white pt-3 pb-4 position-fixed w-100 px-2 d-flex justify-content-between align-items-center" style=" bottom: 0; box-shadow: 0px 0px 2px black; height: 100px">
+      @if(isCalculating){
+        <div class="p-1 fs-5 d-flex align-items-center w-25">
+           <ion-skeleton-text animated style="width: 100%; height: 20px;"></ion-skeleton-text>
+        </div>
+        <div class="w-75 ms-2">
+           <ion-skeleton-text animated style="width: 100%; height: 45px; border-radius: 25px;"></ion-skeleton-text>
+        </div>
+      } @else {
       <div class="p-1 fs-5 d-flex align-items-center"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#2cbd0f"><path d="M546.38-268.46h51.39l.77-3-155-166.68 1-2.86h10q58.61 0 95.65-29.92 37.04-29.93 41.96-80.08h38.47v-32.38h-39.57q-2.9-21.16-13.09-38.5-10.19-17.35-25.81-30.35h78.47v-32.39H329.38v34.7h127.54q39.08 0 64.43 17.61 25.34 17.62 31.34 48.93H329.38V-551h224.31q-4.46 34.62-30.31 54.5-25.84 19.88-67.15 19.88h-66.15V-438l156.3 169.54ZM480.13-120q-74.67 0-140.41-28.34-65.73-28.34-114.36-76.92-48.63-48.58-76.99-114.26Q120-405.19 120-479.87q0-74.67 28.34-140.41 28.34-65.73 76.92-114.36 48.58-48.63 114.26-76.99Q405.19-840 479.87-840q74.67 0 140.41 28.34 65.73 28.34 114.36 76.92 48.63 48.58 76.99 114.26Q840-554.81 840-480.13q0 74.67-28.34 140.41-28.34 65.73-76.92 114.36-48.58 48.63-114.26 76.99Q554.81-120 480.13-120Z"/></svg>
         <span>Cash</span></div>
       <!-- <ion-button color="dark" class="py-2 w-75 book-btn" >Book {{selected_service | titlecase}}</ion-button> -->
       <ion-button color="dark" class="book-btn w-75" (click)="bookRide()">
         Book {{selected_service | titlecase}}
       </ion-button>
+      }
     </div>
     <!-- bottom bar ends -->
     } @else {
-      
-      
-      
 <div class="px-2 overflow-auto" style="max-height: calc(50vh - 50px);">
   @if(activeRide.raider_details == null){
         <!-- searching animation starts -->
@@ -175,3 +201,11 @@
   </div>
   <!-- bottom sheet ends -->
 </div>
+
+<ion-toast
+    [isOpen]="isToastOpen"
+    [message]="toastMessage"
+    [duration]="3000"
+    mode="ios"
+    class="custom-toast">
+  </ion-toast>

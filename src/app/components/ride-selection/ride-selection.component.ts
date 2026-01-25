@@ -1,4 +1,4 @@
-import { IonContent, IonTitle, IonButton, IonSpinner } from "@ionic/angular/standalone";
+import { IonContent, IonTitle, IonButton, IonSpinner, IonSkeletonText, IonToast } from "@ionic/angular/standalone";
 import { Component, ElementRef, ViewChild, AfterViewInit, OnInit, MissingTranslationStrategy } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { CommonModule } from "@angular/common";
@@ -7,22 +7,25 @@ import {  Input } from '@angular/core';
 import { RideService } from "src/app/services/ride.service";
 import { SocketService } from "src/app/services/socket.service";
 import { io, Socket } from 'socket.io-client';
+import { AuthService } from "src/app/services/auth.service";
 
 @Component({
   selector: 'app-ride-selection',
   templateUrl: './ride-selection.component.html',
   styleUrls: ['./ride-selection.component.scss'],
-  imports: [IonSpinner, IonButton, IonTitle, CommonModule, FormsModule]
+  imports: [IonToast, IonSkeletonText, IonSpinner, IonButton, IonTitle, CommonModule, FormsModule]
 })
 export class RideSelectionComponent  implements OnInit {
 
   @ViewChild('map', { static: false }) mapElement!: ElementRef;
   @Input() tripData: any;
   map: any;
+  rideDetails: any;
   searching: boolean = false 
+  isCalculating: boolean = false 
   availableServices = ['bike','cab','parcel','auto']
   otp = '2345'
-  extraMarkers:any
+  token:any
   
 
   priceChart:any = {
@@ -52,44 +55,12 @@ export class RideSelectionComponent  implements OnInit {
     }
   }
   
-  tripOptions = [
-    {
-      "type": 'bike',
-      "image_url": 'assets/icon/ChatGPT Image Oct 14, 2025, 07_41_18 PM.png',
-      "max_person": "max 1 person",
-      "estimated_time": "4 mins",
-      "estimated_reach_time": "4:10 pm",
-      "price": 245
-    },
-    {
-      "type": 'cab',
-      "image_url": 'assets/icon/ChatGPT Image Oct 14, 2025, 07_41_18 PM.png',
-      "max_person": "max 4 persons",
-      "estimated_time": "4 mins",
-      "estimated_reach_time": "4:10 pm",
-      "price": 245
-    },
-    {
-      "type": 'auto',
-      "image_url": 'assets/icon/ChatGPT Image Oct 14, 2025, 07_41_18 PM.png',
-      "max_person": "max 3 persons",
-      "estimated_time": "4 mins",
-      "estimated_reach_time": "4:10 pm",
-      "price": 245
-    },
-    {
-      "type": 'parcel',
-      "image_url": '/assets/icon/ChatGPT Image Oct 14, 2025, 07_41_18 PM.png',
-      "max_person": "20 kgs",
-      "estimated_time": "4 mins",
-      "estimated_reach_time": "4:10 pm",
-      "price": 245
-    },
-  ]
+    tripOptions:any;
 
   activeRide: any;
 
-  selected_service = this.tripOptions[0].type
+  selected_service:any
+  rideUpdate:any
   selected_service_details:any;
 distance: any = '';
 estimatedDistance: any = '';
@@ -99,12 +70,14 @@ estimatedDistance: any = '';
   estimatedTimeinMins: any = '';
   estimatedDisplayTime: any = '';
   error: any = '';
-   randomLocations:any;
-  constructor(private navCtrl: NavController, private rideService: RideService, private socketService: SocketService) {
+  isToastOpen: boolean = false;
+  toastMessage: any;
+  constructor(private navCtrl: NavController, private rideService: RideService, private socketService: SocketService, private authService: AuthService) {
    
    }
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.token = await this.authService.getToken()
      this.socketService.onMessage((msg) => {
       console.log('📩 Received from server:', msg);
     });
@@ -113,28 +86,57 @@ estimatedDistance: any = '';
     this.socketService.sendMessage('Hello from Ionic client 👋');
 
     this.socketService.rideUpdate((msg) => {
-      this.activeRide = msg
-      if(this.activeRide){
+      console.log('cancelled', this.rideUpdate)
+      this.rideUpdate = msg
+      if(this.rideUpdate.status == 'cancelled'){
+        console.log('cancelled', this.rideUpdate)
+        this.searching = false
+        this.isToastOpen = true;
+          this.toastMessage = this.rideUpdate.message;
+          setTimeout(() => {
+            this.isToastOpen = false;
+          }, 3000);
+        // this.loadMap()
+      } else if(this.rideUpdate.status == 'assigned'){
         this.searching = true
+        this.activeRide.raider_details = this.rideUpdate.raider_details
       }
-      if(this.activeRide.status == 'assigned' || this.activeRide.status == 'cancelled'){
-        const origin = { lat: this.activeRide?.raider_details?.current_location.lat, lng: this.activeRide?.raider_details?.current_location.lng };
-    const destination = { lat: this.tripData['origin'].coords.lat, lng: this.tripData['origin'].coords.lng };
-        this.getRiderDistanceandTime(origin, destination)
-        this.loadMap()
-      } else {
-        this.loadMap()
-      }
-      console.log('ride update:', msg);
     });
-    this.randomLocations = [
-  { lat: this.tripData['origin'].coords.lat + 0.001, lng: this.tripData['origin'].coords.lat + 0.001 },
-  { lat: this.tripData['origin'].coords.lat - 0.001, lng: this.tripData['origin'].coords.lat - 0.001 },
-  { lat: this.tripData['origin'].coords.lat + 0.002, lng: this.tripData['origin'].coords.lat - 0.001 },
-];
-    this.getDistanceandTime()
+
+this.getTripOptions()
+    // this.getDistanceandTime()
     console.log(this.tripData)
   }
+
+  getTripOptions(){
+    this.isCalculating = true
+    let params = {
+      "origin": {
+        "coords": {
+          "lat": this.tripData['origin'].coords.lat,
+          "lng": this.tripData['origin'].coords.lng
+        }
+      },
+      "drop": {
+        "coords": {
+          "lat": this.tripData['drop'].coords.lat,
+          "lng": this.tripData['drop'].coords.lng
+        }
+    }
+    }
+    this.rideService.getTripOptions(params).subscribe({
+      next: (response) => {
+        console.log(response)
+        this.tripOptions = response
+        this.isCalculating = false
+        this.selected_service = this.tripOptions[0].type
+        this.selected_service_details = this.tripOptions[0]
+      },
+      error: (err) => {
+        this.isCalculating = false
+      },
+  })
+}
 
   ngAfterViewInit(): void {
     this.loadMap();
@@ -210,24 +212,6 @@ estimatedDistance: any = '';
     }
   ]
 };
-
-this.extraMarkers?.forEach((marker: any) => marker.setMap(null));
-this.extraMarkers = [];
-
-this.randomLocations.forEach((location: any, index: number) => {
-  const marker = new google.maps.Marker({
-    position: location,
-    map: this.map,
-    title: `Extra Marker ${index + 1}`,
-    icon: {
-      url: 'assets/gif/Holi special (1).gif', // Your custom icon (optional)
-      scaledSize: new google.maps.Size(30, 30)
-    }
-  });
-  
-
-  this.extraMarkers.push(marker);
-});
 
   this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
 
@@ -307,12 +291,6 @@ this.randomLocations.forEach((location: any, index: number) => {
     }
   });
 }
-
-
-
-
-
-
   goback(){
     this.navCtrl.back()
   }
@@ -323,20 +301,20 @@ this.randomLocations.forEach((location: any, index: number) => {
     console.log(item)
   }
 
-  estimateTripOptions(){
-    this.tripOptions = []
-    this.availableServices.forEach(async (item)=>{
-      let object = {
-      "type": item,
-      "image_url": '/assets/icon/ChatGPT Image Oct 14, 2025, 07_41_18 PM.png',
-      "max_person": await this.getMaxPerson(item),
-      "estimated_time": this.timeInMins,
-      "estimated_reach_time": this.distance,
-      "price": await this.calculateFare(item)
-    }
-      this.tripOptions.push(object)
-    })
-  }
+  // estimateTripOptions(){
+  //   this.tripOptions = []
+  //   this.availableServices.forEach(async (item)=>{
+  //     let object = {
+  //     "type": item,
+  //     "image_url": '/assets/icon/ChatGPT Image Oct 14, 2025, 07_41_18 PM.png',
+  //     "max_person": await this.getMaxPerson(item),
+  //     "estimated_time": this.timeInMins,
+  //     "estimated_reach_time": this.distance,
+  //     "price": await this.calculateFare(item)
+  //   }
+  //     this.tripOptions.push(object)
+  //   })
+  // }
 
   max_person:any = {
     "bike": 'max 1 person',
@@ -384,13 +362,13 @@ this.randomLocations.forEach((location: any, index: number) => {
       }
     });
     
-    let intervalId = setInterval(()=>{
-      console.log('jjgjgrg')
-      if(this.distance !== ''){
-        this.estimateTripOptions()
-        clearInterval(intervalId)
-      }
-    },50)
+    // let intervalId = setInterval(()=>{
+    //   console.log('jjgjgrg')
+    //   if(this.distance !== ''){
+    //     this.estimateTripOptions()
+    //     clearInterval(intervalId)
+    //   }
+    // },50)
   }
 
   async getRiderDistanceandTime(origin:any, destination: any ){
@@ -431,36 +409,28 @@ this.randomLocations.forEach((location: any, index: number) => {
   }
 
   rideId: any;
-  bookRide(){
+   bookRide(){
     let params:any = {
-      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMiwicGhvbmUiOiIrOTE3NDA2OTg0MzA4IiwidXNlcl9uYW1lIjoiU2FtbWVkIFBhdGlsIFZJIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NTgyMTc2NjJ9.J2j66IfijcfkojEV-TBbfmiDKKTGD9b7amWRbZ4ldxQ",
+      "token": this.token,
       "trip_details": this.tripData,
       "service_details": this.selected_service_details,
     }
     console.log(params)
-    // this.rideService.createRide(this.tripData, this.selected_service_details).subscribe(response => {
-    //   console.log('Ride created:', response);
-    //   this.rideId = response.rideId;
- 
-    //   // Now connect to the WebSocket to listen for ride updates
-    //   this.listenForRideUpdates(this.rideId);
-    // }, error => {
-    //   console.error('Error creating ride:', error);
-    // });
-    this.socketService.createRide(params)
-    this.socketService.rideUpdate((msg) => {
-      this.activeRide = msg
-      if(this.activeRide){
+    this.rideService.createRide(params).subscribe((response:any) => {
+        console.log(response)
+        this.rideId = response.id
+        this.activeRide = response.ride
+
         this.searching = true
-      }
-      console.log('ride update:', msg);
-    });
+    },error =>{
+      console.log(error)
+      this.searching = false
+    })
   }
 
   cancelRide(){
     let params:any = {
-      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMiwicGhvbmUiOiIrOTE3NDA2OTg0MzA4IiwidXNlcl9uYW1lIjoiU2FtbWVkIFBhdGlsIFZJIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NTgyMTc2NjJ9.J2j66IfijcfkojEV-TBbfmiDKKTGD9b7amWRbZ4ldxQ",
-      "id": this.activeRide.id
+      "rideId": this.activeRide.id
     }
     this.socketService.cancelRide(params)
     this.socketService.rideUpdate((msg) => {

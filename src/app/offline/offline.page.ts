@@ -15,7 +15,8 @@ export class OfflinePage {
   async retry() {
     const status = await Network.getStatus();
     if (status.connected) {
-      window.location.replace(this.remoteUrl);
+      
+      // window.location.replace(this.remoteUrl);
     }
   }
 }

@@ -56,13 +56,13 @@ export class AppComponent implements OnInit {
     this.isOnline = status.connected;
 
     // ✅ ADDED LOGIC
-    if (this.isOnline) {
-      console.log('🌐 Online → loading remote UI');
-      window.location.replace(this.remoteUrl);
-    } else {
-      console.log('📴 Offline → loading local offline page');
-      this.router.navigateByUrl('/offline'); // make sure offline route exists
-    }
+    // if (this.isOnline) {
+    //   console.log('🌐 Online → loading remote UI');
+    //   // window.location.replace(this.remoteUrl);
+    // } else {
+    //   console.log('📴 Offline → loading local offline page');
+    //   this.navCtrl.navigateRoot('/offline'); // make sure offline route exists
+    // }
   }
 
   listenToNetwork() {
@@ -70,10 +70,11 @@ export class AppComponent implements OnInit {
       this.isOnline = status.connected;
 
       // ✅ ADDED LOGIC
-      if (status.connected) {
-        console.log('🌐 Internet back → loading remote UI');
-        window.location.replace(this.remoteUrl);
-      }
+      // if (status.connected) {
+      //   console.log('🌐 Internet back → loading remote UI');
+      //   // window.location.replace(this.remoteUrl);
+      //   this.navCtrl.navigateRoot('/login');
+      // }
     });
   }
 

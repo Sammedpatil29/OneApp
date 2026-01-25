@@ -9,6 +9,7 @@ export class RideService {
 private apiUrl = 'https://routes.googleapis.com/directions/v2:computeRoutes';
 private apiKey = 'AIzaSyA85HFedGjgP12MG_dvR-MVgooWTcJNIb0';
 private createRideUrl = 'https://oneapp-express-singapore.onrender.com/api/ride/create';
+url = 'https://oneapp-express-singapore.onrender.com';
 
   constructor(private http: HttpClient) { }
 
@@ -43,17 +44,18 @@ getRoute(origin: { lat: number, lng: number }, destination: { lat: number, lng: 
     return this.http.post<any>(this.apiUrl, body, { headers });
   }
 
-    createRide(tripDetails: any, serviceDetails: any): Observable<any> {
-    return this.http.post<any>(this.createRideUrl, {
-      trip_details: tripDetails,
-      service_details: serviceDetails
-    });
-  }
+ createRide(params:any){
+    return this.http.post<any>(`${this.url}/api/ride/create`, params);
+ }
 
   // Method to establish a WebSocket connection to listen for updates
   connectToRideSocket(rideId: number): WebSocket {
-    const socket = new WebSocket(`ws://oneapp-express.onrender.com/ws/ride/${rideId}`); // WebSocket URL for the ride
+    const socket = new WebSocket(`ws://oneapp-express-singapore.onrender.com/ws/ride/${rideId}`); // WebSocket URL for the ride
     return socket;
+  }
+
+  getTripOptions(params: any) {
+    return this.http.post<any>(`${this.url}/api/ride/estimate`, params)
   }
 
 

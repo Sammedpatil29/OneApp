@@ -11,6 +11,10 @@ export const routes: Routes = [
     loadComponent: () =>import('./pages/login/login.page').then(m => m.LoginPage)
   },
   {
+    path: 'offline',
+    loadComponent: () => import('./offline/offline.page').then( m => m.OfflinePage)
+  },
+  {
     path: 'layout',
     loadComponent: () => import('./pages/layout/layout.page').then( m => m.LayoutPage),
     children: [
@@ -125,10 +129,7 @@ export const routes: Routes = [
     path: 'ride-selection-page',
     loadComponent: () => import('./pages/ride-selection-page/ride-selection-page.page').then( m => m.RideSelectionPagePage)
   },
-  {
-    path: 'offline',
-    loadComponent: () => import('./offline/offline.page').then( m => m.OfflinePage)
-  },
+  
       {
         path: '',
         redirectTo: 'example/home',
