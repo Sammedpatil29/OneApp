@@ -1,87 +1,184 @@
-.list-side {
-    margin: 0;
-    list-style-type: none;
-    padding: 20px;
+/* Variables */
+$primary: #3d0374;
+$accent: #ff3269;
+$sidebar-bg: #f3f4f8; /* Slightly darker than white */
+$content-bg: #ffffff;
+
+ion-toolbar {
+  --background: #fff;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  
+  h3 { font-weight: 800; font-size: 20px; margin: 0; color: #333; }
+  .header-icons ion-icon { font-size: 24px; color: #333; }
+}
+
+/* --- SPLIT LAYOUT --- */
+.split-layout {
+  display: flex;
+  height: 100%; /* Fill the ion-content */
+  overflow: hidden; /* Prevent body scroll */
+}
+
+/* 1. LEFT SIDEBAR */
+.sidebar {
+  width: 20%; /* Sidebar takes ~30% width */
+  background: $sidebar-bg;
+  height: 100%;
+  overflow-y: auto;
+  border-right: 1px solid #e5e5e5;
+  
+  /* Hide Scrollbar */
+  &::-webkit-scrollbar { display: none; }
+
+  .cat-tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 5px;
+    position: relative;
     text-align: center;
-    background-color: white !important;
-    margin-bottom: 3px;
-}
+    transition: background 0.2s;
 
-ul {
-    text-decoration: none;
-    margin-bottom: 0px;
-    padding: 0px;
-    margin-top: 10px;
-    gap: 0px;
-}
+    .img-circle {
+      width: 50px;
+      height: 50px;
+      background: #fff; /* White circle behind icon */
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 6px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      
+      img { width: 30px; height: 30px; object-fit: contain; }
+    }
 
-.list-active {
-border-radius: 10px 0px 0px 10px;
-  background-color: rgb(255, 255, 255);
-  small {
-    font-weight: 700;
+    span {
+      font-size: 11px;
+      color: #666;
+      font-weight: 500;
+      line-height: 1.2;
+    }
+
+    /* Active State Styling */
+    &.active {
+      background: #fff;
+      
+      span { color: $primary; font-weight: 700; }
+      
+      .img-circle {
+        background: #e9dff5; /* Light Purple tint */
+        img { transform: scale(1.1); }
+      }
+
+      .active-strip {
+        position: absolute;
+        right: 0;
+        top: 10%;
+        bottom: 10%;
+        width: 4px;
+        background: $primary;
+        border-radius: 4px 0 0 4px;
+      }
+    }
   }
 }
 
-.side-box {
-  background-color: rgb(217, 250, 217);
+/* 2. RIGHT CONTENT */
+.main-content {
+  width: 80%; /* Rest of the width */
+  background: $content-bg;
+  height: 100%;
+  overflow-y: auto;
+  padding: 15px;
+
+  /* Hide Scrollbar */
+  &::-webkit-scrollbar { display: none; }
+
+  .content-header {
+    margin-bottom: 15px;
+    h4 { margin: 0; font-weight: 800; font-size: 18px; color: #222; }
+    small { color: #888; font-size: 12px; }
+  }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 Columns */
+    gap: 12px;
+  }
 }
 
-.bubble {
-    bottom: 15px !important;
-    right: 15px;
+/* Product Card (Compact for Grid) */
+.product-card {
+  border: 1px solid #f0f0f0;
+  border-radius: 12px;
+  padding: 8px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .img-box {
+    position: relative;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+
+    img { max-height: 80px; width: auto; }
+
+    .offer-tag {
+      position: absolute;
+      top: -4px; left: -4px;
+      background: #5c6bc0;
+      color: white;
+      font-size: 8px;
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+  }
+
+  .details {
+    .name { font-size: 13px; font-weight: 600; color: #333; line-height: 1.2; margin-bottom: 2px;}
+    .weight { font-size: 11px; color: #888; margin-bottom: 8px;}
+
+    .price-action {
+      display: flex;
+      flex-direction: column; /* Stack price and button on small cards */
+      gap: 6px;
+
+      .price {
+        display: flex;
+        gap: 4px;
+        align-items: baseline;
+        .curr { font-weight: 700; font-size: 13px; }
+        .old { font-size: 10px; text-decoration: line-through; color: #999; }
+      }
+
+      .add-btn {
+        width: 100%;
+        background: #fff;
+        color: $accent;
+        border: 1px solid $accent;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 4px 0;
+        border-radius: 6px;
+        text-transform: uppercase;
+        
+        &:active { background: $accent; color: #fff; }
+      }
+    }
+  }
 }
-
-.floating-button {
-    background-color: black;
-    padding: 10px;
-    color: white;
-    border-radius: 10px;
-    // box-shadow: 0px 0px 8px black;
-}
-
-.quantity-button {
-    background-color: green;
-    padding: 0px;
-    color: white;
-    border-radius: 8px;
-    border: 2px solid green;
-    bottom: 5px !important;
-    right: 3px !important;
-    font-weight: 400;
-}
-
-.background-cart {
-background-image: linear-gradient(to top, #0ba360 0%, #3cba92 100%);
-}
-
-ion-modal#example-modal {
-  --width: fit-content;
-  --min-width: 250px;
-  --height: fit-content;
-  --border-radius: 6px;
-  --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
-}
-
-ion-modal#example-modal h1 {
-  margin: 20px 20px 10px 20px;
-}
-
-ion-modal#example-modal ion-icon {
-  margin-right: 6px;
-
-  width: 48px;
-  height: 48px;
-
-  padding: 4px 0;
-
-  color: #aaaaaa;
-}
-
-ion-modal#example-modal .wrapper {
-  margin-bottom: 10px;
-}
-
-// .sc-ion-searchbar-md-h {
-//   --box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
-// }

@@ -1,13 +1,86 @@
-<ion-header [translucent]="true">
+<ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-title>{{categoryRoute}}</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" color="dark" icon="arrow-back"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{categoryInfo.name}}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button color="dark">
+        <ion-icon name="search-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">grocery-special</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="bg-light">
+
+  <div class="hero-banner" [style.background]="categoryInfo.color">
+    <div class="text-content">
+      <h5>Fresh Picks</h5>
+      <h2>{{categoryInfo.name}}</h2>
+      <span class="offer-badge">{{categoryInfo.offerText}}</span>
+    </div>
+    <div class="img-content">
+      <img [src]="categoryInfo.bannerImg" />
+    </div>
+  </div>
+
+  <div class="filter-scroll">
+    <div 
+      class="chip" 
+      *ngFor="let f of filters" 
+      [class.active]="selectedFilter === f"
+      (click)="setFilter(f)">
+      {{f}}
+    </div>
+  </div>
+
+  <div class="product-grid">
+    <div class="product-card" *ngFor="let p of products">
+      
+      <div class="img-box">
+        <img [src]="p.img" />
+        <span class="discount-tag" *ngIf="p.discount > 0">{{p.discount}}% OFF</span>
+      </div>
+
+      <div class="details">
+        <div class="time-row">8 mins</div>
+        <div class="name">{{p.name}}</div>
+        <div class="weight">{{p.weight}}</div>
+
+        <div class="price-action">
+          <div class="prices">
+            <span class="curr">₹{{p.price}}</span>
+            <span class="old" *ngIf="p.discount > 0">₹{{p.oldPrice}}</span>
+          </div>
+
+          <div class="action-btn">
+            <button class="add-btn" *ngIf="p.qty === 0" (click)="updateQty(p, 1)">ADD</button>
+            
+            <div class="counter" *ngIf="p.qty > 0">
+              <span (click)="updateQty(p, -1)">-</span>
+              <span class="count">{{p.qty}}</span>
+              <span (click)="updateQty(p, 1)">+</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="height: 100px;"></div>
+
 </ion-content>
+
+<ion-footer class="cart-footer">
+  <div class="cart-bar">
+    <div class="cart-info">
+      <small>3 ITEMS</small>
+      <h6>₹120 <small class="tax">+ taxes</small></h6>
+    </div>
+    <div class="view-cart-btn">
+      View Cart <ion-icon name="caret-forward-outline"></ion-icon>
+    </div>
+  </div>
+</ion-footer>

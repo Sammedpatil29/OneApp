@@ -1,115 +1,69 @@
-<ion-header>
-  <ion-toolbar class="pt-4">
-    <ion-buttons slot="start">
-      <ion-button (click)="goBack()">
-        <ion-icon name="arrow-back"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-title>Explore by Category</ion-title>
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <div class="header-container">
+      <h3>All Categories</h3>
+      <div class="header-icons">
+        <ion-icon name="search-outline"></ion-icon>
+      </div>
+    </div>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-
-    @if (!isLoading) {
-      <div class="row g-0">
-      <div class="col-2 side-box" style="height: 87vh; overflow-y: hidden; scrollbar-width: none; -ms-overflow-style: none;">
-        <ul style="margin-bottom: 100px;">
-          @for (item of Categories; track $index) {
-            <li class="text-center py-1 mb-1 ms-1" [ngClass]="currentCategory == item.category_name? 'list-active':''" (click)="currentCategory = item.category_name">
-            <img style="width: 40px; border-radius: 50%" [src]="item.image_url" alt=""><br>
-            <small style="font-size: 12px; line-height: 1.2; display: inline-block;">{{item.category_name}}</small>
-          </li>
-          }
-        </ul>
-      </div>
-
-      <div class="col-10" style="height: 87vh; overflow-y: scroll; scrollbar-width: none; -ms-overflow-style: none; overflow-x: hidden">
-        <div class="d-flex align-items-center justify-content-between">
-            <ion-searchbar class="position-sticky w-100" style="top: 0; z-index: 99; background-color: white"></ion-searchbar>
-            <div style="padding: 8px;"><i class="bi bi-funnel fs-2"></i></div>
-        </div>
-         <!-- <input type="text"> -->
-        <div>
-      <div class="row p-2 g-2">
-      @for (item of filteredGroceryList; track $index) {
-      <div class="col-4 rounded">
-        <div class="position-relative">
-
-          <img style="border-radius: 15px;" [src]="item.image_url" alt="">
-            @if (!keys.includes(item.id)) {
-              <div class="quantity-add-button position-absolute" style="right: 5px;" (click)="addItemToCart(item.id)">Add</div>
-            } @else {
-              <!-- <div class="quantity-add-button position-absolute" style="right: 5px;" (click)="addItemToCart(item.id, item)">{{item.id}}</div>
-                @for (cartItem of cartItems.items; track $index) {
-                  @if (cartItem.item_details.id === item.id) { -->
-                    <div class="quantity-button position-absolute" style="right: 5px;">
-    <div class="d-flex align-items-center justify-content-center">
-      <span class="bttn px-2" (click)="decrement(item.id)">&#8722;</span>
-      <span class="bttn px-2">{{cartItems1[item.id]}}</span>
-      <span class="bttn px-2" (click)="increment(item.id)">&#43;</span>
-    </div>
-  </div>
-                  <!-- }
-                } -->
-            }
-           <!-- <div class="px-3"> -->
-  <!-- <ion-button size="small" color="dark" class="quantity-button position-absolute bottom-0" style="right: 5px;">
-    <div class="d-flex align-items-center justify-content-center">
-      <span class="bttn px-2" (click)="decrement()">&#8722;</span>
-      <span class="bttn px-2">4</span>
-      <span class="bttn px-2" (click)="increment()">&#43;</span>
-    </div>
-  </ion-button> -->
-<!-- </div> -->
-        </div>
-        <div class="px-1">
-          <div><small
-              style="font-size: 10px !important; color: rgb(111, 111, 241)">{{item.quantity.amount}}&nbsp;{{item.quantity.unit}}</small>
-          </div>
-          <span>
-            <small>
-              <strong>{{item.name}}</strong></small>
-        </span>
-        <div class="">
-          <small style="font-size: 10px;" class="mb-0 d-block text-success">10% OFF</small>
-          <small><strong class="me-1">&#8377;{{item.price.ourPrice}}</strong> <span class="text-decoration-line-through">&#8377;{{item.price.mrp}}</span></small>
-        </div>
-        </div>
-      </div>
-      }
-    </div>
-    </div>
-    <div style="height: 100px"></div>
-      </div>
-    </div>
+<ion-content [fullscreen]="true" class="bg-light">
+  
+  <div class="split-layout">
     
-
-    <div class="w-100 position-fixed px-2 pb-2 slide-top-normal" style="bottom: 30px">
-      @if (showCart && totalItems > 0) {
-      <div class="background-cart w-100 d-flex justify-content-between align-items-center p-3 text-center" style="z-index: 999 !important; border-radius: 15px" (click)="openCart()">
-      <h5 class="mb-0">{{totalItems}} 
-        @if (totalItems !== 1) {
-          <span>Items</span>
-        } @else {
-          <span>Item</span>
-        }
-        in cart</h5>
-      <div class="d-flex align-items-center">
-        <h5 class="mb-0 me-1">View cart</h5>
-        <i class="bi bi-arrow-right-short fs-3"></i>
+    <div class="sidebar">
+      <div 
+        class="cat-tab" 
+        *ngFor="let cat of categories" 
+        [class.active]="selectedCategory === cat.id"
+        (click)="selectCategory(cat.id)">
+        
+        <div class="img-circle">
+          <img [src]="cat.img" />
+        </div>
+        <span>{{cat.name}}</span>
+        
+        <div class="active-strip" *ngIf="selectedCategory === cat.id"></div>
       </div>
+      <div style="height: 50px"></div>
+    </div>
+
+    <div class="main-content">
+      
+      <div class="content-header">
+        <h4>{{getCategoryName()}}</h4>
+        <small>{{products.length}} items</small>
+      </div>
+
+      <div class="product-grid">
+        <div class="product-card" *ngFor="let p of products">
+          
+          <div class="img-box">
+            <img [src]="p.img" />
+            <span class="offer-tag" *ngIf="p.discount > 0">{{p.discount}}% OFF</span>
+          </div>
+
+          <div class="details">
+            <div class="name">{{p.name}}</div>
+            <div class="weight">{{p.weight}}</div>
+            
+            <div class="price-action">
+              <div class="price">
+                <span class="curr">₹{{p.price}}</span>
+                <span class="old" *ngIf="p.discount > 0">₹{{p.oldPrice}}</span>
+              </div>
+              <button class="add-btn">ADD</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      
+      <div style="height: 80px"></div>
+    </div>
+
   </div>
-}
-    </div>
 
-    <div class="position-fixed p-1 text-center w-100" style="background-color: rgb(225, 185, 248); border-radius: 5px 5px 0px 0px; bottom: env(safe-area-inset-bottom);">
-      <small><b>Free Delivery</b> on order above <b>Rs.199</b></small>
-    </div>
-
-    } @else {
-      <div class="d-flex justify-content-center align-items-center h-100">
-        <ion-spinner  name="crescent"></ion-spinner>
-      </div>
-    }
 </ion-content>

@@ -19,8 +19,7 @@ import {
   IonInfiniteScrollContent,
   IonItem,
   IonInput,
-  IonSpinner,
-} from '@ionic/angular/standalone';
+  IonSpinner, IonFooter } from '@ionic/angular/standalone';
 import { NavController } from '@ionic/angular';
 import { GroceryService } from '../services/grocery.service';
 import { AuthService } from '../services/auth.service';
@@ -35,7 +34,7 @@ import { forkJoin } from 'rxjs'
   templateUrl: './grocery.page.html',
   styleUrls: ['./grocery.page.scss'],
   standalone: true,
-  imports: [
+  imports: [IonFooter, 
     IonSpinner,
     IonInput,
     IonItem,
@@ -431,6 +430,10 @@ export class GroceryPage implements OnInit {
     this.navCtrl.navigateForward('layout/grocery-by-category');
   }
 
+  goToDetails() {
+    this.navCtrl.navigateForward('layout/grocery-item-details');
+  }
+
   goTo(route:any) {
     this.navCtrl.navigateForward(`${route}`);
   }
@@ -505,7 +508,11 @@ export class GroceryPage implements OnInit {
     });
   }
 
-  goToSpecialCategory(route:any){
-    this.navCtrl.navigateForward(`/layout/grocery-special/${route}`)
+  goToSpecialCategory(){
+    this.navCtrl.navigateForward(`/layout/grocery-special`)
+  }
+
+  goToCart(){
+    this.navCtrl.navigateForward(`/layout/cart`)
   }
 }

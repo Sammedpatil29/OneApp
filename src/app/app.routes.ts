@@ -118,7 +118,7 @@ export const routes: Routes = [
     loadComponent: () => import('./grocery-by-category/grocery-by-category.page').then( m => m.GroceryByCategoryPage)
   },
   {
-    path: 'grocery-special/:route',
+    path: 'grocery-special',
     loadComponent: () => import('./pages/grocery-special/grocery-special.page').then( m => m.GrocerySpecialPage)
   },
    {
