@@ -1,0 +1,110 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <div class="search-header">
+      <ion-icon name="arrow-back" class="back-icon" routerLink="/home"></ion-icon>
+      <div class="input-wrapper">
+        <ion-searchbar 
+          placeholder='Search "paneer"' 
+          inputmode="search" 
+          (ionInput)="onSearchChange($event)"
+          [debounce]="250"
+          animated="true"
+          showCancelButton="never">
+        </ion-searchbar>
+      </div>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="bg-light">
+
+  <div *ngIf="query.length === 0">
+    
+    <div class="section" *ngIf="recentSearches.length > 0">
+      <div class="sec-head">
+        <h5>Recent Searches</h5>
+        <span (click)="clearHistory()">Clear</span>
+      </div>
+      <div class="history-list">
+        <div class="h-item" *ngFor="let item of recentSearches">
+          <ion-icon name="time-outline"></ion-icon>
+          <span>{{item}}</span>
+          <ion-icon name="close-circle-outline" class="remove"></ion-icon>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sec-head">
+        <h5>Trending Categories</h5>
+        <ion-icon name="trending-up-outline" color="primary"></ion-icon>
+      </div>
+      <div class="trending-grid">
+        <div class="t-card" *ngFor="let t of trending">
+          <img [src]="t.img">
+          <span>{{t.name}}</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="results-container" *ngIf="query.length > 0">
+    
+    <div class="result-count" *ngIf="results.length > 0">
+      Found {{results.length}} results for "{{query}}"
+    </div>
+    
+    <div class="empty-state" *ngIf="results.length === 0">
+      <img src="https://cdn-icons-png.flaticon.com/512/6134/6134065.png" alt="No Data">
+      <h3>No items found</h3>
+      <p>Try searching for 'Milk' or 'Bread'</p>
+    </div>
+
+    <div class="product-list">
+      <div class="p-item" *ngFor="let p of results">
+        
+        <div class="img-box">
+          <img [src]="p.img">
+          <div class="disc" *ngIf="p.discount > 0">{{p.discount}}% OFF</div>
+        </div>
+
+        <div class="info">
+          <h6>{{p.name}}</h6>
+          <small>{{p.weight}}</small>
+          <div class="price-box">
+            <span class="curr">₹{{p.price}}</span>
+            <span class="old" *ngIf="p.discount > 0">₹{{p.oldPrice}}</span>
+          </div>
+        </div>
+
+        <div class="action-box">
+          <button class="add-btn" *ngIf="p.qty === 0" (click)="updateQty(p, 1)">ADD</button>
+          
+          <div class="counter" *ngIf="p.qty > 0">
+            <span (click)="updateQty(p, -1)">-</span>
+            <span class="val">{{p.qty}}</span>
+            <span (click)="updateQty(p, 1)">+</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div style="height: 100px;"></div>
+
+</ion-content>
+
+<ion-footer class="cart-footer">
+  <div class="cart-bar">
+    <div class="cart-info">
+      <small>1 ITEM</small>
+      <h6>₹45 <small class="tax">+ taxes</small></h6>
+    </div>
+    <div class="view-cart-btn">
+      View Cart <ion-icon name="caret-forward-outline"></ion-icon>
+    </div>
+  </div>
+</ion-footer>

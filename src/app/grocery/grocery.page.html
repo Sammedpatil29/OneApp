@@ -2,19 +2,19 @@
   <ion-toolbar class="header-toolbar pt-5">
     <div class="header-top">
       <div class="location-box">
-        <h2 class="brand-time">10 mins</h2>
+        <h2 class="brand-time">{{deliveryTime}}</h2>
         <div class="address-row">
-          <small>Home - Indiranagar, Bengaluru</small>
+          <small>{{currentLocation}}</small>
           <ion-icon name="chevron-down-outline"></ion-icon>
         </div>
       </div>
       <ion-icon name="home-outline" class="profile-icon"></ion-icon>
     </div>
 
-    <div class="search-container">
+    <div class="search-container" (click)="gotoSearch()">
       <div class="search-box">
         <ion-icon name="search"></ion-icon>
-        <input type="text" placeholder='Search "milk"' />
+        <input type="text" placeholder='Search "milk"' readonly />
       </div>
     </div>
   </ion-toolbar>
@@ -23,19 +23,15 @@
 <ion-content [fullscreen]="true" class="bg-light">
   
   <div class="banner-scroll">
-    <div class="banner" (click)="goToSpecialCategory()" style="background: linear-gradient(to right, #6a11cb 0%, #2575fc 100%);">
+    <div class="banner" 
+         *ngFor="let banner of banners" 
+         (click)="goToSpecialCategory()" 
+         [style.background]="banner.bg">
       <div class="text">
-        <h3>50% OFF</h3>
-        <p>On First Order</p>
+        <h3>{{banner.title}}</h3>
+        <p>{{banner.subtitle}}</p>
       </div>
-      <img src="https://cdn-icons-png.flaticon.com/512/3081/3081986.png" alt="">
-    </div>
-    <div class="banner" style="background: linear-gradient(to right, #ff9966 0%, #ff5e62 100%);">
-      <div class="text">
-        <h3>Fresh</h3>
-        <p>Vegetables</p>
-      </div>
-      <img src="https://cdn-icons-png.flaticon.com/512/2909/2909808.png" alt="">
+      <img [src]="banner.img" alt="">
     </div>
   </div>
 
@@ -44,165 +40,76 @@
   </div>
   
   <div class="category-grid">
-    <div class="cat-item" (click)="goToGrocerybyCategory()">
-      <div class="cat-img" style="background: #e3f2fd;">
-        <img src="https://cdn-icons-png.flaticon.com/512/1625/1625048.png" />
+    <div class="cat-item" 
+         *ngFor="let cat of categories" 
+         (click)="goToGrocerybyCategory(cat.name)">
+      <div class="cat-img" [style.background]="cat.bg">
+        <img [src]="cat.img" />
       </div>
-      <span>Fruits</span>
-    </div>
-    <div class="cat-item">
-      <div class="cat-img" style="background: #e8f5e9;">
-        <img src="https://cdn-icons-png.flaticon.com/512/2329/2329865.png" />
-      </div>
-      <span>Veggies</span>
-    </div>
-    <div class="cat-item">
-      <div class="cat-img" style="background: #fff3e0;">
-        <img src="https://cdn-icons-png.flaticon.com/512/3050/3050158.png" />
-      </div>
-      <span>Dairy</span>
-    </div>
-    <div class="cat-item">
-      <div class="cat-img" style="background: #fce4ec;">
-        <img src="https://cdn-icons-png.flaticon.com/512/2553/2553691.png" />
-      </div>
-      <span>Snacks</span>
-    </div>
-    <div class="cat-item">
-      <div class="cat-img" style="background: #e0f7fa;">
-        <img src="https://cdn-icons-png.flaticon.com/512/2405/2405479.png" />
-      </div>
-      <span>Drinks</span>
-    </div>
-    <div class="cat-item">
-      <div class="cat-img" style="background: #fff8e1;">
-        <img src="https://cdn-icons-png.flaticon.com/512/992/992747.png" />
-      </div>
-      <span>Bakery</span>
-    </div>
-    <div class="cat-item">
-      <div class="cat-img" style="background: #f3e5f5;">
-        <img src="https://cdn-icons-png.flaticon.com/512/135/135620.png" />
-      </div>
-      <span>Instant</span>
-    </div>
-    <div class="cat-item">
-      <div class="cat-img" style="background: #eefebe;">
-        <img src="https://cdn-icons-png.flaticon.com/512/633/633652.png" />
-      </div>
-      <span>Tea</span>
+      <span>{{cat.name}}</span>
     </div>
   </div>
 
-  <div class="product-section">
+  <div class="product-section" *ngFor="let section of productSections">
     <div class="section-header">
       <div>
-        <h4>Fresh Vegetables</h4>
-        <small>Farm fresh to your door</small>
+        <h4>{{section.title}}</h4>
+        <small>{{section.subtitle}}</small>
       </div>
-      <span class="see-all">See all</span>
+      <span class="see-all" (click)="goToGrocerybyCategory()">See all</span>
     </div>
 
     <div class="product-scroll">
-      <div class="product-card" (click)="goToDetails()">
-        <div class="img-wrapper">
-          <img src="https://cdn-icons-png.flaticon.com/512/1202/1202125.png" />
-          <span class="discount">20% OFF</span>
-        </div>
-        <div class="p-details">
-          <div class="time-tag"><ion-icon name="time-outline"></ion-icon> 8 mins</div>
-          <h5>Fresh Tomato</h5>
-          <small>500 g</small>
-          <div class="price-row">
-            <div class="prices">
-              <span class="current">₹24</span>
-              <span class="original">₹30</span>
-            </div>
-            <button class="add-btn">ADD</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="product-card">
-        <div class="img-wrapper">
-          <img src="https://cdn-icons-png.flaticon.com/512/765/765580.png" />
-          <span class="discount">15% OFF</span>
-        </div>
-        <div class="p-details">
-          <div class="time-tag"><ion-icon name="time-outline"></ion-icon> 12 mins</div>
-          <h5>Onion Red</h5>
-          <small>1 kg</small>
-          <div class="price-row">
-            <div class="prices">
-              <span class="current">₹45</span>
-              <span class="original">₹60</span>
-            </div>
-            <div class="qty-counter">
-              <div class="minus">-</div>
-              <div class="count">2</div>
-              <div class="plus">+</div>
-            </div>
-          </div>
-        </div>
-      </div>
       
-       <div class="product-card">
+      <div class="product-card" *ngFor="let p of section.products" (click)="goToDetails(p)">
+        
         <div class="img-wrapper">
-          <img src="https://cdn-icons-png.flaticon.com/512/765/765544.png" />
+          <img [src]="p.img" />
+          <span class="discount" *ngIf="p.discount > 0">{{p.discount}}% OFF</span>
         </div>
+
         <div class="p-details">
-          <div class="time-tag"><ion-icon name="time-outline"></ion-icon> 9 mins</div>
-          <h5>Potato</h5>
-          <small>1 kg</small>
+          <div class="time-tag">
+            <ion-icon name="time-outline"></ion-icon> {{p.time}}
+          </div>
+          
+          <h5>{{p.name}}</h5>
+          <small>{{p.weight}}</small>
+          
           <div class="price-row">
             <div class="prices">
-              <span class="current">₹35</span>
-              <span class="original">₹40</span>
+              <span class="current">₹{{p.price}}</span>
+              <span class="original" *ngIf="p.discount > 0">₹{{p.originalPrice}}</span>
             </div>
-            <button class="add-btn">ADD</button>
+
+            <button class="add-btn" 
+                    *ngIf="p.qty === 0" 
+                    (click)="add(p, $event)">
+              ADD
+            </button>
+
+            <div class="qty-counter" *ngIf="p.qty > 0">
+              <div class="minus" (click)="remove(p, $event)">-</div>
+              <div class="count">{{p.qty}}</div>
+              <div class="plus" (click)="add(p, $event)">+</div>
+            </div>
+
           </div>
         </div>
-      </div>
-    </div>
-  </div>
 
-  <div class="product-section">
-    <div class="section-header">
-      <div>
-        <h4>Summer Drinks</h4>
-        <small>Beat the heat</small>
       </div>
-      <span class="see-all">See all</span>
-    </div>
-
-    <div class="product-scroll">
-      <div class="product-card">
-        <div class="img-wrapper">
-          <img src="https://cdn-icons-png.flaticon.com/512/2405/2405536.png" />
-        </div>
-        <div class="p-details">
-          <div class="time-tag"><ion-icon name="time-outline"></ion-icon> 15 mins</div>
-          <h5>Coca Cola</h5>
-          <small>750 ml</small>
-          <div class="price-row">
-            <div class="prices">
-              <span class="current">₹40</span>
-              <span class="original">₹45</span>
-            </div>
-            <button class="add-btn">ADD</button>
-          </div>
-        </div>
       </div>
-    </div>
   </div>
   
-  <div style="height: 100px;"></div> </ion-content>
+  <div style="height: 100px;"></div> 
 
-<ion-footer class="cart-footer">
+</ion-content>
+
+<ion-footer class="cart-footer" *ngIf="totalItems > 0">
   <div class="cart-bar" (click)="goToCart()">
     <div class="cart-info">
-      <small>2 ITEMS</small>
-      <h6>₹90 <small class="tax">+ taxes</small></h6>
+      <small>{{totalItems}} ITEMS</small>
+      <h6>₹{{totalPrice}} <small class="tax">+ taxes</small></h6>
     </div>
     <div class="view-cart-btn">
       View Cart <ion-icon name="caret-forward-outline"></ion-icon>

@@ -122,6 +122,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/grocery-special/grocery-special.page').then( m => m.GrocerySpecialPage)
   },
    {
+    path: 'grocery-search',
+    loadComponent: () => import('./pages/grocery-search/grocery-search.page').then( m => m.GrocerySearchPage)
+  },
+   {
     path: 'ride',
     loadComponent: () => import('./pages/ride/ride.page').then( m => m.RidePage)
   },
@@ -138,6 +142,8 @@ export const routes: Routes = [
       
     ],
   },
+ 
+
   
 
   

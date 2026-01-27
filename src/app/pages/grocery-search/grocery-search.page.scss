@@ -1,0 +1,232 @@
+/* Variables */
+$primary: #3d0374;
+$accent: #ff3269;
+$bg-light: #ffffff;
+$text-dark: #222;
+
+ion-content { --background: #f5f7fd; }
+
+/* 1. Header Styling */
+ion-toolbar {
+  --background: #fff;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 5px;
+}
+
+.search-header {
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  gap: 10px;
+
+  .back-icon {
+    font-size: 24px;
+    color: #333;
+  }
+
+  .input-wrapper {
+    flex: 1;
+    ion-searchbar {
+      --box-shadow: none;
+      --background: #f1f2f6;
+      --border-radius: 12px;
+      --placeholder-color: #888;
+      --color: #222;
+      padding: 0;
+      height: 45px;
+    }
+  }
+}
+
+/* 2. Empty State (History & Trending) */
+.section {
+  background: #fff;
+  padding: 15px;
+  margin-bottom: 10px;
+
+  .sec-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    h5 { font-size: 15px; font-weight: 700; color: #444; margin: 0; }
+    span { font-size: 12px; color: $accent; font-weight: 600; cursor: pointer;}
+  }
+
+  /* History List */
+  .history-list {
+    .h-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid #f9f9f9;
+      color: #555;
+      
+      ion-icon { font-size: 18px; color: #999; }
+      span { flex: 1; font-size: 14px; }
+      .remove { color: #ccc; }
+      
+      &:last-child { border: none; }
+    }
+  }
+
+  /* Trending Grid */
+  .trending-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+
+    .t-card {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      text-align: center;
+      
+      img { width: 40px; height: 40px; object-fit: contain; }
+      span { font-size: 10px; font-weight: 600; color: #555; line-height: 1.2;}
+    }
+  }
+}
+
+
+/* 3. Search Results */
+.results-container {
+  padding: 15px;
+
+  .result-count {
+    font-size: 12px;
+    color: #777;
+    margin-bottom: 15px;
+  }
+
+  .empty-state {
+    text-align: center;
+    margin-top: 50px;
+    img { width: 100px; opacity: 0.5; margin-bottom: 20px;}
+    h3 { font-size: 18px; color: #333; margin: 0; font-weight: 700; }
+    p { color: #888; font-size: 14px; }
+  }
+
+  .product-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .p-item {
+      background: #fff;
+      border-radius: 12px;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid #eee;
+
+      .img-box {
+        width: 60px;
+        height: 60px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        img { max-height: 50px; max-width: 100%; object-fit: contain; }
+        
+        .disc {
+          position: absolute;
+          top: -5px; left: -5px;
+          background: #5c6bc0;
+          color: white;
+          font-size: 8px;
+          padding: 2px 4px;
+          border-radius: 4px;
+          font-weight: 700;
+        }
+      }
+
+      .info {
+        flex: 1;
+        h6 { margin: 0 0 4px; font-size: 14px; font-weight: 600; color: #222; }
+        small { color: #888; font-size: 12px; display: block; margin-bottom: 4px; }
+        
+        .price-box {
+          .curr { font-weight: 700; font-size: 14px; color: #222; margin-right: 6px;}
+          .old { font-size: 11px; text-decoration: line-through; color: #999; }
+        }
+      }
+
+      .action-box {
+        .add-btn {
+          background: #fff;
+          border: 1px solid $accent;
+          color: $accent;
+          font-size: 12px;
+          font-weight: 800;
+          padding: 6px 16px;
+          border-radius: 6px;
+          text-transform: uppercase;
+        }
+
+        .counter {
+          display: flex;
+          align-items: center;
+          background: $accent;
+          border-radius: 6px;
+          height: 30px;
+          min-width: 75px;
+          justify-content: space-between;
+          padding: 0 5px;
+          color: white;
+          font-weight: bold;
+          font-size: 16px;
+          box-shadow: 0 2px 5px rgba(255, 50, 105, 0.2);
+
+          .val { font-size: 13px; }
+        }
+      }
+    }
+  }
+}
+
+/* 4. Cart Footer (Reuse) */
+.cart-footer {
+  padding: 10px 15px 20px;
+  background: transparent;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  pointer-events: none;
+
+  .cart-bar {
+    pointer-events: auto;
+    background: $primary;
+    border-radius: 12px;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    box-shadow: 0 10px 20px rgba(61, 3, 116, 0.3);
+
+    .cart-info {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+      small { font-size: 10px; font-weight: 700; opacity: 0.8; letter-spacing: 0.5px;}
+      h6 { margin: 0; font-size: 16px; font-weight: 700; }
+      .tax { font-size: 10px; font-weight: 400; opacity: 0.7; }
+    }
+
+    .view-cart-btn {
+      font-weight: 700;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+  }
+}

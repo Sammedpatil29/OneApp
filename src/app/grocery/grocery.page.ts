@@ -1,518 +1,130 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {
-  IonContent,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
-  IonSearchbar,
-  IonCard,
-  IonModal,
-  IonButton,
-  IonButtons,
-  IonIcon,
-  IonRefresher,
-  IonRefresherContent,
-  IonCardSubtitle,
-  IonInfiniteScroll,
-  IonInfiniteScrollContent,
-  IonItem,
-  IonInput,
-  IonSpinner, IonFooter } from '@ionic/angular/standalone';
-import { NavController } from '@ionic/angular';
-import { GroceryService } from '../services/grocery.service';
-import { AuthService } from '../services/auth.service';
-import { InfiniteScrollCustomEvent } from '@ionic/angular';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonIcon, IonFooter, IonButtons, IonButton } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { chevronDownOutline, homeOutline, search, timeOutline, caretForwardOutline, add, remove } from 'ionicons/icons';
 import { Router } from '@angular/router';
-import { NodataComponent } from '../components/nodata/nodata.component';
-import { Subject } from 'rxjs';
-import { debounceTime, switchMap, takeUntil } from 'rxjs/operators';
-import { forkJoin } from 'rxjs'
+
 @Component({
   selector: 'app-grocery',
-  templateUrl: './grocery.page.html',
-  styleUrls: ['./grocery.page.scss'],
+  templateUrl: 'grocery.page.html',
+  styleUrls: ['grocery.page.scss'],
   standalone: true,
-  imports: [IonFooter, 
-    IonSpinner,
-    IonInput,
-    IonItem,
-    IonInfiniteScrollContent,
-    IonInfiniteScroll,
-    IonCardSubtitle,
-    IonRefresherContent,
-    IonRefresher,
-    IonIcon,
-    IonButtons,
-    IonButton,
-    IonModal,
-    IonCard,
-    IonSearchbar,
-    IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
-    CommonModule,
-    FormsModule,
-    NodataComponent,
-  ],
+  imports: [IonButton, IonButtons, IonFooter, IonIcon, IonToolbar, IonTitle, IonHeader, IonContent, CommonModule, FormsModule]
 })
-export class GroceryPage implements OnInit {
-  address = '';
-  label = '';
-  token: any;
-  groceryList: any;
-  data: any;
-  filteredGroceryList: any;
-  isModalOpen: boolean = false;
-  isLoading: boolean = false;
-  showCart: boolean = false;
-  clickedItem: any;
-  searchedItems: any = [];
-  searchTerm = '';
-  cartItems: any = {
-    2: 3,
-    4: 5,
-  };
-  cartItems1: { [itemId: number]: number } = {};
-  keys: any = Object.keys(this.cartItems);
-  miniBanner: any;
+export class GroceryPage implements OnInit, OnDestroy {
 
-  cartItemCount: any;
-  Categories: any;
-  private updateCart$ = new Subject<any>();
-  private destroy$ = new Subject<void>();
+  // Header Data
+  deliveryTime = '10 mins';
+  currentLocation = 'Home - Indiranagar, Bengaluru';
 
-  constructor(
-    private navCtrl: NavController,
-    private router: Router,
-    private authService: AuthService,
-    private groceryService: GroceryService
-  ) {}
-
-  ngOnInit() {
-    this.keys = Object.keys(this.cartItems1).map((key) => Number(key));
-    console.log(this.keys);
-    const locationData = localStorage.getItem('location');
-    if (locationData) {
-      const location = JSON.parse(locationData);
-      this.address = location.address;
-      this.label = location.label;
+  // 1. Dynamic Banners
+  banners = [
+    { 
+      title: '50% OFF', 
+      subtitle: 'On First Order', 
+      img: 'https://cdn-icons-png.flaticon.com/512/3081/3081986.png',
+      bg: 'linear-gradient(to right, #6a11cb 0%, #2575fc 100%)'
+    },
+    { 
+      title: 'Fresh', 
+      subtitle: 'Vegetables', 
+      img: 'https://cdn-icons-png.flaticon.com/512/2909/2909808.png',
+      bg: 'linear-gradient(to right, #ff9966 0%, #ff5e62 100%)'
     }
-    this.authService
-      .getToken()
-      .then((token) => {
-        this.token = token;
-        console.log('Token:', this.token);
-        this.updateCart$
-          .pipe(
-            debounceTime(500), // Optional: avoid rapid firing
-            switchMap((params) => this.groceryService.updateCartItems(params)),
-            takeUntil(this.destroy$)
-          )
-          .subscribe({
-            next: (res: any) => {
-              console.log('✅ Cart updated:', res);
-              this.cartItems1 = Object.entries(res).reduce(
-                (acc: any, [key, value]) => {
-                  acc[+key] = value; // Convert string key to number
-                  return acc;
-                },
-                {} as { [key: number]: number }
-              );
-              this.keys = Object.keys(this.cartItems1).map((key) =>
-                Number(key)
-              );
-              console.log(this.cartItems1);
-              if (Object.keys(this.cartItems1).length > 0) {
-                this.showCart = true;
-              } else {
-                this.showCart = false;
-              }
-            },
-            error: (err) => {
-              console.error('❌ Error updating cart:', err);
-            },
-          });
+  ];
 
-        let params = {
-          token: this.token,
-        };
-        // this.updateCart$.next(params);
-        this.combineGroceryAndCart(params);
-      })
-      .catch((error) => {
-        console.error('Failed to get token:', error);
-      });
-  }
+  // 2. Dynamic Categories
+  categories = [
+    { name: 'Fruits', img: 'https://cdn-icons-png.flaticon.com/512/1625/1625048.png', bg: '#e3f2fd' },
+    { name: 'Veggies', img: 'https://cdn-icons-png.flaticon.com/512/2329/2329865.png', bg: '#e8f5e9' },
+    { name: 'Dairy', img: 'https://cdn-icons-png.flaticon.com/512/3050/3050158.png', bg: '#fff3e0' },
+    { name: 'Snacks', img: 'https://cdn-icons-png.flaticon.com/512/2553/2553691.png', bg: '#fce4ec' },
+    { name: 'Drinks', img: 'https://cdn-icons-png.flaticon.com/512/2405/2405479.png', bg: '#e0f7fa' },
+    { name: 'Bakery', img: 'https://cdn-icons-png.flaticon.com/512/992/992747.png', bg: '#fff8e1' },
+    { name: 'Instant', img: 'https://cdn-icons-png.flaticon.com/512/135/135620.png', bg: '#f3e5f5' },
+    { name: 'Teas', img: 'https://cdn-icons-png.flaticon.com/512/633/633652.png', bg: '#eefebe' },
+  ];
 
-   ionViewWillEnter() {
-    this.cartItems1 = this.groceryService.getCartItems1()
-    console.log(this.cartItems1)
-    this.keys = Object.keys(this.cartItems1).map((key) => Number(key));
-    this.totalItems = Object.values(this.cartItems1).reduce(
-      (sum, qty) => sum + qty,
-      0
-    );
-    if (this.totalItems > 0) {
-      this.showCart = true;
-    } else {
-      this.showCart = false;
+  // 3. Dynamic Products organized by Sections
+  productSections = [
+    {
+      title: 'Fresh Vegetables',
+      subtitle: 'Farm fresh to your door',
+      products: [
+        { id: 1, name: 'Fresh Tomato', weight: '500 g', price: 24, originalPrice: 30, discount: 20, time: '8 mins', img: 'https://cdn-icons-png.flaticon.com/512/1202/1202125.png', qty: 0 },
+        { id: 2, name: 'Onion Red', weight: '1 kg', price: 45, originalPrice: 60, discount: 15, time: '12 mins', img: 'https://cdn-icons-png.flaticon.com/512/765/765580.png', qty: 2 }, // Example with initial qty
+        { id: 3, name: 'Potato', weight: '1 kg', price: 35, originalPrice: 40, discount: 0, time: '9 mins', img: 'https://cdn-icons-png.flaticon.com/512/765/765544.png', qty: 0 },
+      ]
+    },
+    {
+      title: 'Summer Drinks',
+      subtitle: 'Beat the heat',
+      products: [
+        { id: 4, name: 'Coca Cola', weight: '750 ml', price: 40, originalPrice: 45, discount: 0, time: '15 mins', img: 'https://cdn-icons-png.flaticon.com/512/2405/2405536.png', qty: 0 },
+        { id: 5, name: 'Orange Juice', weight: '1 L', price: 110, originalPrice: 130, discount: 15, time: '10 mins', img: 'https://cdn-icons-png.flaticon.com/512/931/931613.png', qty: 0 }
+      ]
     }
+  ];
+
+  constructor(private router: Router) { 
+    addIcons({ chevronDownOutline, homeOutline, search, timeOutline, caretForwardOutline, add, remove });
   }
 
-  backToHome() {
-    this.navCtrl.navigateBack('/layout/example/home');
+  ngOnInit() {}
+
+  ngOnDestroy() {}
+  
+  // --- Cart Logic ---
+  
+  add(item: any, event: Event) {
+    event.stopPropagation(); // Prevent opening details page
+    item.qty++;
   }
 
-  openMap() {
-    this.navCtrl.navigateForward('/layout/map');
+  remove(item: any, event: Event) {
+    event.stopPropagation();
+    if (item.qty > 0) item.qty--;
   }
 
-  getGroceryList() {
-    let params = {
-      token: this.token,
-    };
-    this.isLoading = true;
-    this.groceryService.getGroceryList(params).subscribe(
-      (res) => {
-        this.groceryList = res;
-        this.filteredGroceryList = this.groceryList;
-        this.isLoading = false;
-      },
-      (error) => {
-        this.isLoading = false;
-      }
-    );
-  }
-
-  onIonInfinite(event: InfiniteScrollCustomEvent) {
-    setTimeout(() => {
-      event.target.complete();
-    }, 500);
-  }
-
-  change() {
-    console.log('fbfbrhybbhdf');
-  }
-
-  startSearch() {
-    this.isModalOpen = true;
-  }
-
-  handleModalClose() {
-    this.isModalOpen = false;
-    this.clickedItem = [];
-  }
-
-  searchResult() {
-    const query = this.searchTerm.trim().toLowerCase();
-    if (query.length == 0) {
-      this.searchedItems = [];
-    } else {
-      this.searchedItems = this.groceryList.filter((item: any) => {
-        return (
-          item.name.toLowerCase().includes(query) ||
-          item.category.toLowerCase().includes(query)
-        );
-      });
-      console.log(this.searchedItems);
-    }
-  }
-
-  openCart() {
-    this.navCtrl.navigateForward('/layout/cart');
-  }
-
-  increment(id: any) {
-    console.log(id);
-    console.log(this.cartItems1[id]);
-    this.cartItems1[id] += 1;
-    let values:any = this.cartItems1
-    this.groceryService.updateCartItems1(values)
-    console.log(this.cartItems1);
-    this.keys = Object.keys(this.cartItems1).map((key) => Number(key));
-    this.totalItems = Object.values(this.cartItems1).reduce(
-      (sum, qty) => sum + qty,
-      0
-    );
-    if (this.totalItems > 0) {
-      this.showCart = true;
-    } else {
-      this.showCart = false;
-    }
-
-    let params = {
-      token: this.token,
-      item: this.cartItems1,
-    };
-    this.updateCart$.next(params);
-    // console.log(id);
-    // const index = this.cartItems.items.findIndex((item: any) => item.id === id);
-    // if (index !== -1) {
-    //   const currentItem = this.cartItems.items[index];
-    //   const availableStock = currentItem.item_details.stock;
-    //   const currentQty = currentItem.quantity;
-
-    //   if (currentQty < availableStock) {
-    //     currentItem.quantity += 1;
-
-    //     const updateItem = {
-    //       item: currentItem.item_details.id,
-    //       quantity: currentItem.quantity
-    //     };
-
-    //     this.countItemsInCart();
-    //     this.updateCartItems(updateItem);
-    //   } else {
-    //     console.log('⚠️ Cannot add more. Stock limit reached.');
-    //     // Optionally show toast or alert to user
-    //   }
-    // } else {
-    //   console.log('❌ Item not found');
-    // }
-  }
-
-  decrement(id: any) {
-    if (this.cartItems1[id] == 1) {
-      delete this.cartItems1[id];
-      this.keys = Object.keys(this.cartItems1).map((key) => Number(key));
-    } else {
-      console.log(id);
-      console.log(this.cartItems1[id]);
-      this.cartItems1[id] -= 1;
-      let values:any = this.cartItems1
-    this.groceryService.updateCartItems1(values)
-      console.log(this.cartItems1);
-      this.keys = Object.keys(this.cartItems1).map((key) => Number(key));
-    }
-    this.totalItems = Object.values(this.cartItems1).reduce(
-      (sum, qty) => sum + qty,
-      0
-    );
-    if (this.totalItems > 0) {
-      this.showCart = true;
-    } else {
-      this.showCart = false;
-    }
-
-    let params = {
-      token: this.token,
-      item: this.cartItems1,
-    };
-    this.updateCart$.next(params);
-    // console.log(id);
-    // const index = this.cartItems.items.findIndex((item: any) => item.id === id);
-    // if (index !== -1) {
-    //   const currentItem = this.cartItems.items[index];
-
-    //   if (currentItem.quantity > 0) {
-    //     currentItem.quantity -= 1;
-
-    //     const updateItem = {
-    //       item: currentItem.item_details.id,
-    //       quantity: currentItem.quantity
-    //     };
-
-    //     // Remove item from cart if quantity is now 0
-    //     if (currentItem.quantity === 0) {
-    //       this.cartItems.items.splice(index, 1);
-    //     }
-
-    //     this.countItemsInCart();
-    //     this.updateCartItems(updateItem);
-    //   } else {
-    //     console.log('⚠️ Quantity is already zero');
-    //   }
-    // } else {
-    //   console.log('❌ Item not found');
-    // }
-  }
-
-  getcartItems() {
-    let params = {
-      token: this.token,
-    };
-    this.cartItems = [];
-    this.groceryService.getCartItems(params).subscribe((res: any) => {
-      console.log(res.length);
-      if (res.length == 0) {
-        this.cartItems = [];
-        let params = {
-          token: this.token,
-        };
-        this.groceryService.createCart(params).subscribe(
-          (res) => {
-            console.log('cart created');
-          },
-          (error) => {
-            console.log('error creating cart');
-          }
-        );
-        this.showCart = false;
-      } else {
-        this.showCart = true;
-        this.cartItems = res[0];
-        this.countItemsInCart();
-        console.log(this.cartItems);
-      }
+  // Computed Properties for Footer
+  get totalItems() {
+    let count = 0;
+    this.productSections.forEach(sec => {
+      sec.products.forEach(p => count += p.qty);
     });
+    return count;
   }
 
-  cartIncludes(itemId: string): boolean {
-    return (
-      this.cartItems?.items?.some(
-        (cartItem: any) =>
-          cartItem?.item_details?.id === itemId && cartItem?.quantity !== 0
-      ) ?? false
-    );
-  }
-
-  totalItems = 0;
-  countItemsInCart() {
-    let temp: any[] = [];
-    this.totalItems = 0;
-    this.cartItems.items.forEach((item: any) => {
-      temp.push(item.quantity);
+  get totalPrice() {
+    let total = 0;
+    this.productSections.forEach(sec => {
+      sec.products.forEach(p => total += (p.price * p.qty));
     });
-    for (let i = 0; i < temp.length; i++) {
-      this.totalItems = this.totalItems + temp[i];
-    }
-    console.log(this.totalItems);
+    return total;
   }
 
-  addItemToCart(id: any) {
-    this.cartItems1[id] = 1;
-    this.keys = Object.keys(this.cartItems1).map((key) => Number(key));
-    console.log(this.cartItems1);
-    let values:any = this.cartItems1
-    this.groceryService.updateCartItems1(values)
-    console.log(id);
-    this.totalItems = Object.values(this.cartItems1).reduce(
-      (sum, qty) => sum + qty,
-      0
-    );
-    if (this.totalItems > 0) {
-      this.showCart = true;
-    } else {
-      this.showCart = false;
-    }
-    // let itemsInCart = this.cartItems?.items.length
-    // console.log(itemsInCart)
-    // let temp: any[] = []
-    // this.cartItems?.items.forEach((item:any) => {
-    //   temp.push(item.id)
-    // });
-    // const max = Math.max(...temp);
-    // let newItemforLocal = {
-    //   id: max + 1,
-    //   item: max + 1,
-    //   item_details: item,
-    //   quantity: 1
-    // }
-    // console.log(newItemforLocal.id)
-    // this.cartItems.items.push(newItemforLocal)
-    //  let newItem = {
-    //   item: id,
-    //   quantity: 1
-    // }
-    let params = {
-      token: this.token,
-      item: this.cartItems1,
-    };
-    this.updateCart$.next(params);
-    // this.countItemsInCart()
-    // console.log(this.cartItems.items)
+  // --- Navigation ---
+
+  gotoSearch() {
+    this.router.navigate(['/layout/grocery-search']);
   }
 
-  goToGrocerybyCategory() {
-    this.navCtrl.navigateForward('layout/grocery-by-category');
+  goToSpecialCategory() {
+    this.router.navigate(['/layout/grocery-special']);
   }
 
-  goToDetails() {
-    this.navCtrl.navigateForward('layout/grocery-item-details');
+  goToGrocerybyCategory(catName?: string) {
+    this.router.navigate(['/layout/grocery-by-category'], { state: { category: catName } });
   }
 
-  goTo(route:any) {
-    this.navCtrl.navigateForward(`${route}`);
+  goToDetails(product?: any) {
+    this.router.navigate(['/layout/grocery-item-details'], { state: { product } });
   }
 
-  updateCartItems(updateItem: any) {
-    let result = this.cartItems.items.filter((item: any) => {
-      console.log(item);
-      return item.quantity === 0;
-    });
-    console.log(result);
-    let params = {
-      token: this.token,
-      items: [updateItem],
-    };
-    console.log(params);
-    this.groceryService.updateCartItems(params).subscribe((res: any) => {
-      console.log('items updated in cart');
-      this.cartItems1 = res;
-      // console.log(this.cartItems)
-    });
+  goToCart() {
+    this.router.navigate(['/layout/cart']);
   }
 
-  combineGroceryAndCart(updateItem: any) {
-    const groceryParams = {
-      token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMiwicGhvbmUiOiIrOTE3NDA2OTg0MzA4IiwidXNlcl9uYW1lIjoiU2FtbWVkIFBhdGlsIFZJIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NTgyMTc2NjJ9.J2j66IfijcfkojEV-TBbfmiDKKTGD9b7amWRbZ4ldxQ",
-    };
-
-    const cartParams = {
-      token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMiwicGhvbmUiOiIrOTE3NDA2OTg0MzA4IiwidXNlcl9uYW1lIjoiU2FtbWVkIFBhdGlsIFZJIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NTgyMTc2NjJ9.J2j66IfijcfkojEV-TBbfmiDKKTGD9b7amWRbZ4ldxQ",
-      items: [updateItem],
-    };
-
-    this.isLoading = true;
-
-    forkJoin({
-      groceryList: this.groceryService.getGroceryList(groceryParams),
-      cartUpdate: this.groceryService.updateCartItems(cartParams),
-      categories: this.groceryService.getCategories(),
-      miniBanner: this.groceryService.getBanner('mini')
-    }).subscribe({
-      next: (res: any) => {
-        // Handle grocery list
-        this.groceryList = res.groceryList;
-        this.filteredGroceryList = this.groceryList;
-        this.Categories = res.categories
-        this.miniBanner = res.miniBanner
-        // Handle updated cart
-        console.log('items updated in cart');
-        this.cartItems1 = res.cartUpdate;
-        let value:any = this.cartItems1
-        this.groceryService.updateCartItems1(value)
-        this.keys = Object.keys(this.cartItems1).map((key) =>
-          Number(key)
-        );
-        this.totalItems = Object.values(this.cartItems1).reduce(
-      (sum, qty) => sum + qty,
-      0
-    );
-        console.log(this.cartItems1);
-          if (this.totalItems > 0) {
-          this.showCart = true;
-        } else {
-          this.showCart = false;
-        }
-
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Error in one of the requests', err);
-        this.isLoading = false;
-      }
-    });
-  }
-
-  goToSpecialCategory(){
-    this.navCtrl.navigateForward(`/layout/grocery-special`)
-  }
-
-  goToCart(){
-    this.navCtrl.navigateForward(`/layout/cart`)
-  }
 }
