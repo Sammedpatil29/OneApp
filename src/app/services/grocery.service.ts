@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { tap, switchMap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 
-// 1. Define the Interface based on your requested pattern
 export interface CartItem {
   productId: string;
   quantity: number;
@@ -14,95 +13,94 @@ export interface CartItem {
 })
 export class GroceryService {
 
-  private apiUrl = 'https://your-api.com/api/cart'; // Replace with your API
+  private apiUrl = 'https://oneapp-express-singapore.onrender.com';
 
-  // 2. Initialize BehaviorSubject with an empty array
+  // Initialize with empty array
   private _cartSubject = new BehaviorSubject<CartItem[]>([]);
-  
-  // 3. Expose as Observable for components to subscribe to
   public cart$ = this._cartSubject.asObservable();
 
   constructor(private http: HttpClient) { }
 
   /**
-   * GET: Fetch initial cart items
-   * Updates Subject on success
+   * GET CART:
+   * Fetches cart and normalizes data to ensure 'productId' and 'quantity' exist.
    */
-  getCartItems() {
-    return this.http.get<CartItem[]>(this.apiUrl).pipe(
-      tap((responseItems) => {
-        // Update the BehaviorSubject with data from API
-        this._cartSubject.next(responseItems);
-      })
-    );
-  }
+  getCartItems(token: any) {
+  let headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+  });
 
-  /**
-   * LOGIC: Increase Quantity
-   * 1. Check current local value to find item.
-   * 2. Calculate new qty.
-   * 3. Call API.
-   * 4. Update Subject ON RESPONSE.
-   */
-  increaseQty(productId: string) {
+  return this.http.get<any>(`${this.apiUrl}/api/grocery-home`, { headers }).pipe(
+    tap((responseItems: any) => {
+      const rawCart = (responseItems.data && responseItems.data.cart) ? responseItems.data.cart : [];
+      
+      // FIX: Handle { "PRODUCT_ID": QUANTITY } structure
+      const cartData = rawCart.map((item: any) => {
+        const keys = Object.keys(item); // Get keys like ["9"]
+        if (keys.length > 0) {
+           const id = keys[0];      // "9"
+           const qty = item[id];    // 1
+           return {
+             productId: String(id),
+             quantity: Number(qty)
+           };
+        }
+        return null;
+      }).filter((item: any) => item !== null); // Remove any empty/null objects
+
+      console.log('📦 API Cart Data Normalized:', cartData);
+      this._cartSubject.next(cartData);
+    })
+  );
+}
+
+  increaseQty(productId: any, token: any) {
     const currentItems = this._cartSubject.value;
-    const item = currentItems.find(i => i.productId === productId);
+    // Robust match using String comparison
+    const item = currentItems.find(i => String(i.productId) === String(productId));
     
-    // If item exists, add 1. If not, start at 1.
     const newQty = item ? item.quantity + 1 : 1;
-
-    return this.updateCartApi(productId, newQty);
+    return this.updateCartApi(productId, newQty, token);
   }
 
-  /**
-   * LOGIC: Decrease Quantity
-   * 1. Check current local value.
-   * 2. Calculate new qty.
-   * 3. Call API.
-   */
-  decreaseQty(productId: string) {
+  decreaseQty(productId: any, token: any) {
     const currentItems = this._cartSubject.value;
-    const item = currentItems.find(i => i.productId === productId);
+    const item = currentItems.find(i => String(i.productId) === String(productId));
 
-    if (!item) return; // Item not in cart, do nothing
+    if (!item) return; 
 
     const newQty = item.quantity - 1;
-    
-    // If Qty becomes 0, usually we remove it, handled in updateCartApi
-    return this.updateCartApi(productId, newQty);
+    return this.updateCartApi(productId, newQty, token);
   }
 
-  /**
-   * SHARED HELPER: Calls API and updates State
-   */
-  private updateCartApi(productId: string, quantity: number) {
+  private updateCartApi(productId: any, quantity: number, token: any) {
     const payload = { productId, quantity };
+    
+    let headers = new HttpHeaders({
+       'Authorization': `Bearer ${token}`
+    });
 
-    // Assuming your API endpoint is POST /cart/update or similar
-    return this.http.post<any>(`${this.apiUrl}/update`, payload).pipe(
+    return this.http.post<any>(`${this.apiUrl}/api/grocery/cart/update`, payload, { headers }).pipe(
       tap(() => {
-        // ✅ THIS CODE RUNS ONLY AFTER API SUCCESS RESPONSE
-        
         const currentItems = this._cartSubject.value;
-        const index = currentItems.findIndex(i => i.productId === productId);
+        const index = currentItems.findIndex(i => String(i.productId) === String(productId));
         
-        // Clone array to ensure immutability
+        // Clone array
         let updatedItems = [...currentItems];
 
         if (quantity <= 0) {
-          // Remove item if quantity is 0
-          updatedItems = updatedItems.filter(i => i.productId !== productId);
+          // Remove item
+          updatedItems = updatedItems.filter(i => String(i.productId) !== String(productId));
         } else {
           if (index > -1) {
-            // Update existing item
+            // Update existing
             updatedItems[index] = { ...updatedItems[index], quantity: quantity };
           } else {
-            // Add new item (if it was an 'Add' action from 0)
-            updatedItems.push({ productId, quantity });
+            // Add new
+            updatedItems.push({ productId: String(productId), quantity: quantity });
           }
         }
 
-        // 🚀 Push new state to BehaviorSubject
         this._cartSubject.next(updatedItems);
       })
     );

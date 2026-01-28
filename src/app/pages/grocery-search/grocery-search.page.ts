@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonToolbar, IonSearchbar, IonButtons, IonButton, IonIcon, IonFooter, IonTitle } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { arrowBack, timeOutline, closeCircleOutline, caretForwardOutline, trendingUpOutline } from 'ionicons/icons';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-grocery-search',
@@ -40,7 +41,7 @@ export class GrocerySearchPage implements OnInit {
   // 4. Live Results
   results: any[] = [];
 
-  constructor() { 
+  constructor(private navCtrl: NavController) { 
     addIcons({ arrowBack, timeOutline, closeCircleOutline, caretForwardOutline, trendingUpOutline });
   }
 
@@ -69,5 +70,9 @@ export class GrocerySearchPage implements OnInit {
   updateQty(item: any, change: number) {
     if(change === 1) item.qty++;
     else if(item.qty > 0) item.qty--;
+  }
+
+  back() {
+    this.navCtrl.back();
   }
 }
