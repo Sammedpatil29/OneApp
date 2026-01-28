@@ -5,6 +5,7 @@ import { IonContent, IonHeader, IonTitle, IonToolbar, IonIcon, IonFooter, IonBut
 import { addIcons } from 'ionicons';
 import { chevronDownOutline, homeOutline, search, timeOutline, caretForwardOutline, add, remove } from 'ionicons/icons';
 import { Router } from '@angular/router';
+import { GroceryService } from '../services/grocery.service';
 
 @Component({
   selector: 'app-grocery',
@@ -18,6 +19,9 @@ export class GroceryPage implements OnInit, OnDestroy {
   // Header Data
   deliveryTime = '10 mins';
   currentLocation = 'Home - Indiranagar, Bengaluru';
+  
+  // LIVE CART STATE (Single Source of Truth)
+  cartItems: any[] = [];
 
   // 1. Dynamic Banners
   banners = [
@@ -47,65 +51,99 @@ export class GroceryPage implements OnInit, OnDestroy {
     { name: 'Teas', img: 'https://cdn-icons-png.flaticon.com/512/633/633652.png', bg: '#eefebe' },
   ];
 
-  // 3. Dynamic Products organized by Sections
-  productSections = [
+  // 3. Products (REMOVED 'qty' property from here)
+  productSections:any = [
     {
       title: 'Fresh Vegetables',
       subtitle: 'Farm fresh to your door',
       products: [
-        { id: 1, name: 'Fresh Tomato', weight: '500 g', price: 24, originalPrice: 30, discount: 20, time: '8 mins', img: 'https://cdn-icons-png.flaticon.com/512/1202/1202125.png', qty: 0 },
-        { id: 2, name: 'Onion Red', weight: '1 kg', price: 45, originalPrice: 60, discount: 15, time: '12 mins', img: 'https://cdn-icons-png.flaticon.com/512/765/765580.png', qty: 2 }, // Example with initial qty
-        { id: 3, name: 'Potato', weight: '1 kg', price: 35, originalPrice: 40, discount: 0, time: '9 mins', img: 'https://cdn-icons-png.flaticon.com/512/765/765544.png', qty: 0 },
+        { id: 1, name: 'Fresh Tomato', weight: '500 g', price: 24, originalPrice: 30, discount: 20, time: '8 mins', img: 'https://cdn-icons-png.flaticon.com/512/1202/1202125.png' },
+        { id: 2, name: 'Onion Red', weight: '1 kg', price: 45, originalPrice: 60, discount: 15, time: '12 mins', img: 'https://cdn-icons-png.flaticon.com/512/765/765580.png' }, 
+        { id: 3, name: 'Potato', weight: '1 kg', price: 35, originalPrice: 40, discount: 0, time: '9 mins', img: 'https://cdn-icons-png.flaticon.com/512/765/765544.png' },
       ]
     },
     {
       title: 'Summer Drinks',
       subtitle: 'Beat the heat',
       products: [
-        { id: 4, name: 'Coca Cola', weight: '750 ml', price: 40, originalPrice: 45, discount: 0, time: '15 mins', img: 'https://cdn-icons-png.flaticon.com/512/2405/2405536.png', qty: 0 },
-        { id: 5, name: 'Orange Juice', weight: '1 L', price: 110, originalPrice: 130, discount: 15, time: '10 mins', img: 'https://cdn-icons-png.flaticon.com/512/931/931613.png', qty: 0 }
+        { id: 4, name: 'Coca Cola', weight: '750 ml', price: 40, originalPrice: 45, discount: 0, time: '15 mins', img: 'https://cdn-icons-png.flaticon.com/512/2405/2405536.png' },
+        { id: 5, name: 'Orange Juice', weight: '1 L', price: 110, originalPrice: 130, discount: 15, time: '10 mins', img: 'https://cdn-icons-png.flaticon.com/512/931/931613.png' }
       ]
     }
   ];
 
-  constructor(private router: Router) { 
+  constructor(private router: Router, private cartService: GroceryService) { 
     addIcons({ chevronDownOutline, homeOutline, search, timeOutline, caretForwardOutline, add, remove });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    // 1. Subscribe to Cart Changes
+    this.cartService.cart$.subscribe(items => {
+      this.cartItems = items;
+    });
+
+    // 2. Fetch Initial Data
+    this.cartService.getCartItems().subscribe();
+  }
 
   ngOnDestroy() {}
   
-  // --- Cart Logic ---
-  
-  add(item: any, event: Event) {
-    event.stopPropagation(); // Prevent opening details page
-    item.qty++;
-  }
+  // --- ACTIONS ---
 
-  remove(item: any, event: Event) {
-    event.stopPropagation();
-    if (item.qty > 0) item.qty--;
-  }
-
-  // Computed Properties for Footer
-  get totalItems() {
-    let count = 0;
-    this.productSections.forEach(sec => {
-      sec.products.forEach(p => count += p.qty);
+  increase(productId: string) {
+    this.cartService.increaseQty(productId).subscribe({
+      next: () => console.log('Increase Success'),
+      error: (err) => console.error('API Failed', err)
     });
-    return count;
+  }
+
+  decrease(productId: string) {
+    this.cartService.decreaseQty(productId)?.subscribe({
+      next: () => console.log('Decrease Success'),
+      error: (err) => console.error('API Failed', err)
+    });
+  }
+
+  // --- HELPERS (Single Source of Truth) ---
+
+  // Check the Live Cart to see how many of this product we have
+  getQty(productId: number): number {
+    // Note: Ensure types match (string vs number) depending on your API
+    const item = this.cartItems.find(i => i.productId == productId); 
+    return item ? item.quantity : 0;
+  }
+
+  // --- COMPUTED PROPERTIES (From Cart Service Data) ---
+
+  get totalItems() {
+    // Calculate sum from the LIVE cart items, not the product list
+    return this.cartItems.reduce((acc, item) => acc + item.quantity, 0);
   }
 
   get totalPrice() {
-    let total = 0;
-    this.productSections.forEach(sec => {
-      sec.products.forEach(p => total += (p.price * p.qty));
-    });
-    return total;
+    // Calculate price from the LIVE cart items
+    // Note: If cartItems only has {id, qty}, you might need a lookup map for price.
+    // Assuming cartItems contains price, or we look it up from productSections:
+    
+    return this.cartItems.reduce((acc, item) => {
+      // Lookup price from local product list if cart item doesn't have it
+      // (Or assume cartItem has 'price' if your API sends it)
+      const product = this.findProductById(item.productId);
+      const price = product ? product.price : 0; 
+      return acc + (price * item.quantity);
+    }, 0);
   }
 
-  // --- Navigation ---
+  // Helper to find product details from ID
+  private findProductById(id: any) {
+    for (const section of this.productSections) {
+      const found = section.products.find((p: any) => p.id == id);
+      if (found) return found;
+    }
+    return null;
+  }
+
+  // --- NAVIGATION ---
 
   gotoSearch() {
     this.router.navigate(['/layout/grocery-search']);
@@ -126,5 +164,4 @@ export class GroceryPage implements OnInit, OnDestroy {
   goToCart() {
     this.router.navigate(['/layout/cart']);
   }
-
 }

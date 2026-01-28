@@ -11,11 +11,12 @@
       <ion-icon name="home-outline" class="profile-icon"></ion-icon>
     </div>
 
-    <div class="search-container" (click)="gotoSearch()">
-      <div class="search-box">
+    <div class="search-container" style="display: flex; align-items: stretch; gap: 10px; padding-right: 0; margin-right: 0;">
+      <div class="search-box" (click)="gotoSearch()" style="flex: 1;">
         <ion-icon name="search"></ion-icon>
         <input type="text" placeholder='Search "milk"' readonly />
       </div>
+      <!-- <img src="https://placehold.co/80x40" style="width: 80px; height: auto; border-radius: 8px; object-fit: cover;" /> -->
     </div>
   </ion-toolbar>
 </ion-header>
@@ -83,22 +84,22 @@
             </div>
 
             <button class="add-btn" 
-                    *ngIf="p.qty === 0" 
-                    (click)="add(p, $event)">
+                    *ngIf="getQty(p.id) === 0" 
+                    (click)="$event.stopPropagation(); increase(p.id)">
               ADD
             </button>
 
-            <div class="qty-counter" *ngIf="p.qty > 0">
-              <div class="minus" (click)="remove(p, $event)">-</div>
-              <div class="count">{{p.qty}}</div>
-              <div class="plus" (click)="add(p, $event)">+</div>
+            <div class="qty-counter" *ngIf="getQty(p.id) > 0">
+              <div class="minus" (click)="$event.stopPropagation(); decrease(p.id)">-</div>
+              <div class="count">{{ getQty(p.id) }}</div>
+              <div class="plus" (click)="$event.stopPropagation(); increase(p.id)">+</div>
             </div>
 
           </div>
         </div>
 
       </div>
-      </div>
+    </div>
   </div>
   
   <div style="height: 100px;"></div> 

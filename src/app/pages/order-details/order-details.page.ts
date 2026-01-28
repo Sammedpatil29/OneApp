@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonCardSubtitle, IonInput, IonItem, IonSpinner, IonSelect, IonSelectOption, IonText, IonToast } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonCardSubtitle, IonInput, IonItem, IonSpinner, IonSelect, IonSelectOption, IonText, IonToast, IonRange } from '@ionic/angular/standalone';
 import { NavController, Platform } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { arrowBack, checkmarkCircle, calendarOutline, timeOutline, locationOutline, alertCircleOutline, downloadOutline, shareSocialOutline, mapOutline } from 'ionicons/icons';
+import { arrowBack, checkmarkCircle, calendarOutline, timeOutline, locationOutline, alertCircleOutline, downloadOutline, shareSocialOutline, mapOutline, homeOutline } from 'ionicons/icons';
 import { Router } from '@angular/router';
 import { EventsService } from 'src/app/services/events.service';
 import { AuthService } from 'src/app/services/auth.service';
@@ -18,7 +18,7 @@ declare var window: any;
   templateUrl: './order-details.page.html',
   styleUrls: ['./order-details.page.scss'],
   standalone: true,
-  imports: [IonToast, IonText, IonSelect, IonSelectOption, IonSpinner, IonItem, IonInput, IonCardSubtitle, IonIcon, IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonRange, IonToast, IonText, IonSelect, IonSelectOption, IonSpinner, IonItem, IonInput, IonCardSubtitle, IonIcon, IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
 export class OrderDetailsPage implements OnInit, OnDestroy {
   
@@ -54,7 +54,7 @@ export class OrderDetailsPage implements OnInit, OnDestroy {
     private zone: NgZone,
     private platform: Platform
   ) {
-    addIcons({arrowBack,checkmarkCircle,calendarOutline,timeOutline,locationOutline,alertCircleOutline,downloadOutline,shareSocialOutline,mapOutline});
+    addIcons({arrowBack,homeOutline,checkmarkCircle,calendarOutline,timeOutline,locationOutline,alertCircleOutline,downloadOutline,shareSocialOutline,mapOutline});
   }
 
   async ngOnInit() {
