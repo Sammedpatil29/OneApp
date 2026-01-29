@@ -140,4 +140,13 @@ export class GroceryService {
     let params = { searchTerm: term };
     return this.http.post<any>(`${this.apiUrl}/api/grocery-home/search`,  params );   
   }
+
+  getCartdata(token: any, couponCode:any): Observable<any> {
+    let headers = new HttpHeaders({
+       'Authorization': `Bearer ${token}`
+    });
+    return this.http.get<any>(`${this.apiUrl}/api/grocery/cart?coupon=${couponCode}`, { headers });
+  }
+
+
 }

@@ -1,0 +1,250 @@
+@if (!isOrderPlaced) {
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back" color="dark"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>My Cart</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="bg-light">
+
+  @if(!isLoading && cartData) {
+    
+    @if(items.length > 0) {
+      <div class="delivery-bar mx-3 mt-2 p-2 text-center rounded-3">
+        <span [innerHTML]="billDetails.deliveryMessage"></span>
+      </div>
+    }
+
+    <div class="section-card mt-3">
+      <div class="header">
+        Item Details ({{items.length}})
+      </div>
+      <div class="body pb-2">
+        @if(items.length > 0) {
+          @for (item of items; track $index) {
+            <div class="cart-item-wrapper d-flex align-items-center">
+              
+              <div class="item-img-box">
+                <img [src]="item.image" alt="">
+              </div>
+
+              <div class="item-details-box flex-grow-1">
+                <h6>{{item.name}}</h6>
+                <span class="sub-text">{{item.weight}}</span>
+                <span class="price-text">&#8377;{{item.sellingPrice}}</span>
+              </div>
+
+              <div class="qty-btn-group">
+                <div class="action-btn" (click)="decrease(item.productId)">&#8722;</div>
+                <span>{{item.quantity}}</span>
+                <div class="action-btn" (click)="increase(item.productId)">&#43;</div>
+              </div>
+
+            </div>
+          }
+        } @else {
+          <div class="text-center py-5">
+            <h6 class="text-secondary">Cart is empty</h6>
+            <ion-button size="small" fill="outline" color="dark" (click)="goBack()">Add Items</ion-button>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="section-card swiper-section">
+      <div class="header">
+        You might need
+      </div>
+      <div class="body">
+        <swiper-container [slidesPerView]="2.4" [spaceBetween]="12" [freeMode]="true">
+          @for (sug of suggestions; track $index) {
+            <swiper-slide>
+              <div class="suggestion-card">
+                @if(sug.discount > 0) {
+                  <div class="discount-tag">{{sug.discount}}% OFF</div>
+                }
+                <div class="sug-img-wrapper">
+                  <img [src]="sug.img" alt="">
+                </div>
+                <!-- <div class="time-badge">
+                  <ion-icon name="time-outline"></ion-icon> 10 mins
+                </div> -->
+                <h6>{{sug.name}}</h6>
+                <span class="weight-text">{{sug.weight}}</span>
+                <div class="bottom-row">
+                  <div class="price-box" *ngIf="sug.stock !== 0">
+                    <span class="current-price">&#8377;{{sug.price}}</span>
+                    <span class="original-price" *ngIf="sug.originalPrice > sug.price">&#8377;{{sug.originalPrice}}</span>
+                  </div>
+                   <button class="add-btn" 
+                    *ngIf="sug.stock === 0" 
+                    disabled
+                    style="opacity: 0.7; background-color: #dcdcdc; color: #555; border: none;">
+              OUT OF STOCK
+            </button>
+
+            <button class="add-btn" 
+                    *ngIf="sug.stock !== 0 && getQty(sug.id) === 0" 
+                    (click)="$event.stopPropagation(); increase(sug.id)">
+              ADD
+            </button>
+
+            <div class="qty-counter" *ngIf="sug.stock !== 0 && getQty(sug.id) > 0">
+              <div class="minus" (click)="$event.stopPropagation(); decrease(sug.id)">-</div>
+              <div class="count">{{ getQty(sug.id) }}</div>
+              <div class="plus" (click)="$event.stopPropagation(); increase(sug.id)">+</div>
+            </div>
+                </div>
+              </div>
+            </swiper-slide>
+          }
+        </swiper-container>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="header d-flex justify-content-between align-items-center">
+        <span>Coupon Code</span>
+        <ion-icon name="pricetag-outline" color="primary"></ion-icon>
+      </div>
+      <div class="body py-3">
+        @if(!isCouponApplied) {
+          <div class="d-flex gap-2">
+            <input type="text" [(ngModel)]="couponCode" placeholder="Enter Code (e.g. WELCOME50)" class="coupon-input flex-grow-1">
+            <button class="apply-btn" (click)="applyCoupon()">APPLY</button>
+          </div>
+        } @else {
+          <div class="applied-coupon d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-2">
+              <ion-icon name="checkmark-circle" color="success"></ion-icon>
+              <div>
+                <b class="text-success">{{couponCode | uppercase}} Applied</b>
+                <div style="font-size: 10px; color: #666;">You saved {{billDetails.couponDiscount}}</div>
+              </div>
+            </div>
+            <small class="text-danger fw-bold" (click)="removeCoupon()">REMOVE</small>
+          </div>
+        }
+      </div>
+    </div>
+
+    @if(items.length > 0) {
+      <div class="section-card">
+        <div class="header">Bill Details</div>
+        <div class="body py-3">
+          <div class="bill-row">
+            <span>Item Total (MRP)</span>
+            <span class="value">&#8377;{{billDetails.mrpTotal}}</span>
+          </div>
+          <div class="bill-row">
+            <span>Product Discount</span>
+            <span class="discount">- &#8377;{{ (billDetails.mrpTotal - billDetails.itemTotal) | number:'1.2-2' }}</span>
+          </div>
+          <div class="bill-row">
+            <span>Handling Charge</span>
+            <span class="value">&#8377;{{billDetails.handlingCharge}}</span>
+          </div>
+          <div class="bill-row">
+            <span>Delivery Fee</span>
+            <span class="value">&#8377;{{billDetails.deliveryFee}}</span>
+          </div>
+          @if(billDetails.lateNightCharge > 0) {
+            <div class="bill-row">
+              <span>Late Night Charge</span>
+              <span class="value">&#8377;{{billDetails.lateNightCharge}}</span>
+            </div>
+          }
+          @if(isCouponApplied) {
+             <div class="bill-row">
+              <span class="text-success">Coupon Discount</span>
+              <span class="discount">- &#8377;{{billDetails.couponDiscount}}</span>
+            </div>
+          }
+          
+          <div class="bill-row total">
+            <span>To Pay</span>
+            <span>&#8377;{{billDetails.toPay}}</span>
+          </div>
+          
+          <div class="mt-2 p-2 rounded text-center" style="background: #e8f5e9; color: #2e7d32; font-size: 12px; font-weight: 600;">
+            You are saving &#8377;{{billDetails.totalSavings}} on this order
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card mb-5">
+        <div class="header">Payment Method</div>
+        <div class="body py-3">
+          
+          <div class="payment-option" [class.selected]="selectedPayment === 'cod'" (click)="selectedPayment = 'cod'">
+            <div class="d-flex align-items-center gap-2">
+              <div class="radio-circle"></div>
+              <span>Cash on Delivery</span>
+            </div>
+            @if(billDetails.toPay > 1500) {
+               <small class="text-danger d-block mt-1 ms-4" style="font-size: 10px;">Not available for orders > ₹1500</small>
+            }
+          </div>
+
+          <div class="payment-option mt-2" [class.selected]="selectedPayment === 'online'" (click)="selectedPayment = 'online'">
+            <div class="d-flex align-items-center gap-2">
+              <div class="radio-circle"></div>
+              <div>
+                <span>Pay Online</span>
+                <div style="font-size: 10px; color: #666;">UPI, Cards, Netbanking</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      
+      <div style="height: 120px;"></div>
+    }
+
+  } @else {
+    <div class="mx-3 mt-3 skeleton-box" style="height: 150px; border-radius: 12px;"></div>
+    <div class="mx-3 mt-3 skeleton-box" style="height: 200px; border-radius: 12px;"></div>
+  }
+
+</ion-content>
+
+@if(!isLoading && items.length > 0) {
+  <div class="payment-footer">
+    <div class="d-flex align-items-center mb-3">
+      <ion-icon name="location" style="color: #ff3269; font-size: 18px;"></ion-icon>
+      <div class="ms-2 flex-grow-1">
+        <div class="fw-bold" style="font-size: 13px;">Delivering to Home</div>
+        <div class="text-truncate text-secondary" style="font-size: 11px;">{{address}}</div>
+      </div>
+      <div class="text-uppercase fw-bold" style="font-size: 11px; color: #ff3269;" (click)="openMap()">Change</div>
+    </div>
+
+    <button class="pay-btn" (click)="pay()" [disabled]="selectedPayment === 'cod' && billDetails.toPay > 1500">
+      <div class="d-flex flex-column align-items-start">
+        <span style="font-size: 14px; font-weight: 500;">&#8377;{{billDetails.toPay}}</span>
+        <span style="font-size: 10px; opacity: 0.7;">TOTAL</span>
+      </div>
+      <div class="d-flex align-items-center">
+        {{ selectedPayment === 'cod' ? 'Place Order' : 'Proceed to Pay' }} 
+        <ion-icon name="arrow-forward" class="ms-2"></ion-icon>
+      </div>
+    </button>
+  </div>
+}
+
+} @else {
+  <ion-content>
+    <div class="h-100 d-flex flex-column justify-content-center align-items-center">
+      <ion-icon name="checkmark-circle" style="font-size: 80px; color: #28a745;"></ion-icon>
+      <h4 class="mt-3">Order Placed!</h4>
+      <p class="text-secondary">Your order has been received.</p>
+      <ion-button fill="outline" color="dark" class="mt-4" (click)="trackOrder()">Track Order</ion-button>
+    </div>
+  </ion-content>
+}

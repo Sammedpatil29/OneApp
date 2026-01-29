@@ -60,6 +60,10 @@ export const routes: Routes = [
           import('./pages/about/about.page').then(m => m.AboutPage),
       },
       {
+    path: 'cart',
+    loadComponent: () => import('./pages/cart/cart.page').then( m => m.CartPage)
+  },
+      {
             path: 'support',
             loadComponent: () =>
               import('./pages/support/support.page').then(m => m.SupportPage),
@@ -113,10 +117,6 @@ export const routes: Routes = [
 {
     path: 'grocery-order-details',
     loadComponent: () => import('./pages/grocery-order-details/grocery-order-details.page').then( m => m.GroceryOrderDetailsPage)
-  },
-  {
-    path: 'cart',
-    loadComponent: () => import('./pages/cart/cart.page').then( m => m.CartPage)
   },
   {
     path: 'grocery-item-details',

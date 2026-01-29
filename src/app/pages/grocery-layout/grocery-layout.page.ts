@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonApp, IonRouterOutlet, IonFooter, IonIcon } from '@ionic/angular/standalone';
 import { GroceryService } from 'src/app/services/grocery.service';
 import { Router, NavigationEnd } from '@angular/router';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-grocery-layout',
@@ -18,7 +19,7 @@ export class GroceryLayoutPage implements OnInit {
   totalItems: number = 0;
   currentRoute: string = '';
 
-  constructor(private groceryService: GroceryService, private router: Router) {
+  constructor(private groceryService: GroceryService, private router: Router, private navCtrl: NavController) {
     // 1. Initialize Route (Check current URL immediately)
     this.currentRoute = this.router.url;
 
@@ -38,6 +39,10 @@ export class GroceryLayoutPage implements OnInit {
       this.totalItems = summary.itemCount;
       console.log('Updated Summary:', summary);
     });
+  }
+
+  goToCart(){
+    this.navCtrl.navigateForward('/layout/cart');
   }
 
 }
