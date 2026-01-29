@@ -1,7 +1,7 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
     <div class="search-header">
-      <ion-icon name="arrow-back" class="back-icon" (click)="back()"></ion-icon>
+      <ion-icon name="arrow-back" class="back-icon"></ion-icon>
       <div class="input-wrapper">
         <ion-searchbar 
           placeholder='Search "paneer"' 
@@ -18,7 +18,7 @@
 
 <ion-content [fullscreen]="true" class="bg-light">
 
-  <div *ngIf="query.length === 0">
+  <!-- <div *ngIf="query.length === 0">
     
     <div class="section" *ngIf="recentSearches.length > 0">
       <div class="sec-head">
@@ -47,7 +47,7 @@
       </div>
     </div>
 
-  </div>
+  </div> -->
 
 
   <div class="results-container" *ngIf="query.length > 0">
@@ -80,13 +80,24 @@
         </div>
 
         <div class="action-box">
-          <button class="add-btn" *ngIf="p.qty === 0" (click)="updateQty(p, 1)">ADD</button>
-          
-          <div class="counter" *ngIf="p.qty > 0">
-            <span (click)="updateQty(p, -1)">-</span>
-            <span class="val">{{p.qty}}</span>
-            <span (click)="updateQty(p, 1)">+</span>
-          </div>
+          <button class="add-btn" 
+                    *ngIf="p.stock === 0" 
+                    disabled
+                    style="opacity: 0.7; background-color: #dcdcdc; color: #555; border: none;">
+              OUT OF STOCK
+            </button>
+
+            <button class="add-btn" 
+                    *ngIf="p.stock !== 0 && getQty(p.id) === 0" 
+                    (click)="$event.stopPropagation(); increase(p.id)">
+              ADD
+            </button>
+
+            <div class="qty-counter" *ngIf="p.stock !== 0 && getQty(p.id) > 0">
+              <div class="minus" (click)="$event.stopPropagation(); decrease(p.id)">-</div>
+              <div class="count">{{ getQty(p.id) }}</div>
+              <div class="plus" (click)="$event.stopPropagation(); increase(p.id)">+</div>
+            </div>
         </div>
 
       </div>
@@ -96,15 +107,3 @@
   <div style="height: 100px;"></div>
 
 </ion-content>
-
-<ion-footer class="cart-footer">
-  <div class="cart-bar">
-    <div class="cart-info">
-      <small>1 ITEM</small>
-      <h6>₹45 <small class="tax">+ taxes</small></h6>
-    </div>
-    <div class="view-cart-btn">
-      View Cart <ion-icon name="caret-forward-outline"></ion-icon>
-    </div>
-  </div>
-</ion-footer>

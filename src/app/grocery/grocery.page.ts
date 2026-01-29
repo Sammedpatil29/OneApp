@@ -13,86 +13,110 @@ import { AuthService } from '../services/auth.service';
   templateUrl: 'grocery.page.html',
   styleUrls: ['grocery.page.scss'],
   standalone: true,
-  imports: [IonButton, IonButtons, IonFooter, IonIcon, IonToolbar, IonTitle, IonHeader, IonContent, CommonModule, FormsModule]
+  imports: [
+    IonButton,
+    IonButtons,
+    IonFooter,
+    IonIcon,
+    IonToolbar,
+    IonTitle,
+    IonHeader,
+    IonContent,
+    CommonModule,
+    FormsModule,
+  ],
 })
 export class GroceryPage implements OnInit, OnDestroy {
-
-  deliveryTime = '10 mins';
+  deliveryTime = 'Delivery Location';
   currentLocation = 'Home - Indiranagar, Bengaluru';
   token: any;
-  
+
   // LIVE CART STATE
   cartItems: any[] = [];
 
   // Data Containers
-  banners = [
-    { 
-      title: '50% OFF', 
-      subtitle: 'On First Order', 
+  banners:any = [
+    {
+      title: '50% OFF',
+      subtitle: 'On First Order',
       img: 'https://cdn-icons-png.flaticon.com/512/3081/3081986.png',
-      bg: 'linear-gradient(to right, #6a11cb 0%, #2575fc 100%)'
+      bg: 'linear-gradient(to right, #6a11cb 0%, #2575fc 100%)',
+      term: 'under_100'
     },
-    { 
-      title: 'Fresh', 
-      subtitle: 'Vegetables', 
+    {
+      title: 'Fresh',
+      subtitle: 'Vegetables',
       img: 'https://cdn-icons-png.flaticon.com/512/2909/2909808.png',
-      bg: 'linear-gradient(to right, #ff9966 0%, #ff5e62 100%)'
-    }
+      bg: 'linear-gradient(to right, #ff9966 0%, #ff5e62 100%)',
+      term: 'new_arrivals'
+    },
   ];
   categories: any = [];
   productSections: any = [];
 
+  corousalBanners: any = []
+  miniBanner: any = []
+
   constructor(
-    private router: Router, 
-    private cartService: GroceryService, 
+    private router: Router,
+    private cartService: GroceryService,
     private authService: AuthService,
-    private cdr: ChangeDetectorRef // Inject ChangeDetectorRef
-  ) { 
-    addIcons({ chevronDownOutline, homeOutline, search, timeOutline, caretForwardOutline, add, remove });
+    private cdr: ChangeDetectorRef, // Inject ChangeDetectorRef
+  ) {
+    addIcons({
+      chevronDownOutline,
+      homeOutline,
+      search,
+      timeOutline,
+      caretForwardOutline,
+      add,
+      remove,
+    });
   }
 
   async ngOnInit() {
     this.token = await this.authService.getToken();
 
     // 1. Subscribe to Cart Changes
-    this.cartService.cart$.subscribe(items => {
+    this.cartService.cart$.subscribe((items) => {
       this.cartItems = items;
       console.log('🛒 UI Cart Updated:', this.cartItems);
-      
+
       // Force UI Update
-      this.cdr.detectChanges(); 
+      this.cdr.detectChanges();
     });
 
     // 2. Fetch Initial Data
     this.cartService.getCartItems(this.token).subscribe({
       next: (res: any) => {
-        if(res.data) {
+        if (res.data) {
           this.categories = res.data.categories;
           this.productSections = res.data.productSections;
-          
+          this.corousalBanners = res.data.carouselBanners;
+          this.miniBanner = res.data.miniBanner;
           // FIX: Force change detection once products are loaded so getQty() updates in HTML
           this.cdr.detectChanges();
         }
       },
-      error: (err) => console.error('Initial Load Error:', err)
+      error: (err) => console.error('Initial Load Error:', err),
     });
   }
 
   ngOnDestroy() {}
-  
+
   // --- ACTIONS ---
 
   increase(productId: any) {
     this.cartService.increaseQty(productId, this.token).subscribe({
       next: () => console.log('Increase Success'),
-      error: (err) => console.error('API Failed', err)
+      error: (err) => console.error('API Failed', err),
     });
   }
 
   decrease(productId: any) {
     this.cartService.decreaseQty(productId, this.token)?.subscribe({
       next: () => console.log('Decrease Success'),
-      error: (err) => console.error('API Failed', err)
+      error: (err) => console.error('API Failed', err),
     });
   }
 
@@ -102,41 +126,41 @@ export class GroceryPage implements OnInit, OnDestroy {
     if (!this.cartItems || this.cartItems.length === 0) return 0;
 
     // Robust Match: Convert both to String
-    const item = this.cartItems.find((i: any) => String(i.productId) === String(productId));
+    const item = this.cartItems.find(
+      (i: any) => String(i.productId) === String(productId),
+    );
 
     return item ? item.quantity : 0;
   }
 
-  // --- COMPUTED PROPERTIES ---
-
-  get totalItems() {
-    if (!this.cartItems) return 0;
-    return this.cartItems.reduce((acc, item) => acc + (item.quantity || 0), 0);
+  gotoSearch() {
+    this.router.navigate(['/layout/grocery-layout/grocery-search']);
   }
 
-  get totalPrice() {
-    if (!this.cartItems) return 0;
-    return this.cartItems.reduce((acc, item) => {
-      const product = this.findProductById(item.productId);
-      const price = product ? product.price : 0; 
-      return acc + (price * (item.quantity || 0));
-    }, 0);
+  goToSpecialCategory(term:any) {
+    this.router.navigate(['/layout/grocery-layout/grocery-special'],{
+      state: {term: term}
+    });
   }
 
-  private findProductById(id: any) {
-    for (const section of this.productSections) {
-      const found = section.products.find((p: any) => String(p.id) === String(id));
-      if (found) return found;
-    }
-    return null;
+  goToGrocerybyCategory(catName?: string) {
+    this.router.navigate(['/layout/grocery-layout/grocery-by-category'], {
+      state: { category: catName },
+    });
   }
 
-  // --- NAVIGATION ---
+  goToDetails(product?: any) {
+    this.router.navigate(['/layout/grocery-layout/grocery-item-details'], {
+      state: { productId: product?.id },
+    });
+  }
 
-  gotoSearch() { this.router.navigate(['/layout/grocery-search']); }
-  goToSpecialCategory() { this.router.navigate(['/layout/grocery-special']); }
-  goToGrocerybyCategory(catName?: string) { this.router.navigate(['/layout/grocery-by-category'], { state: { category: catName } }); }
-  goToDetails(product?: any) { this.router.navigate(['/layout/grocery-item-details'], { state: { product } }); }
-  goToCart() { this.router.navigate(['/layout/cart']); }
-  goToHome() { this.router.navigate(['/layout/example/home']); }
+  goToCart() {
+    this.router.navigate(['/layout/grocery-layout/cart']);
+  }
+
+  goToHome() {
+    this.router.navigate(['/layout/example/home']);
+  }
+
 }

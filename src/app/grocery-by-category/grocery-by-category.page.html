@@ -3,7 +3,7 @@
     <div class="header-container">
       <h3>All Categories</h3>
       <div class="header-icons">
-        <ion-icon name="search-outline"></ion-icon>
+        <ion-icon name="search-outline" (click)="gotoSearch()"></ion-icon>
       </div>
     </div>
   </ion-toolbar>
@@ -17,15 +17,15 @@
       <div 
         class="cat-tab" 
         *ngFor="let cat of categories" 
-        [class.active]="selectedCategory === cat.id"
-        (click)="selectCategory(cat.id)">
+        [class.active]="selectedCategory === cat.name"
+        (click)="selectCategory(cat.name)">
         
         <div class="img-circle">
           <img [src]="cat.img" />
         </div>
         <span>{{cat.name}}</span>
         
-        <div class="active-strip" *ngIf="selectedCategory === cat.id"></div>
+        <div class="active-strip" *ngIf="selectedCategory === cat.name"></div>
       </div>
       <div style="height: 50px"></div>
     </div>
@@ -33,12 +33,12 @@
     <div class="main-content">
       
       <div class="content-header">
-        <h4>{{getCategoryName()}}</h4>
+        <h4>{{selectedCategory | titlecase}}</h4>
         <small>{{products.length}} items</small>
       </div>
 
       <div class="product-grid">
-        <div class="product-card" *ngFor="let p of products">
+        <div class="product-card" *ngFor="let p of products" (click)="goToDetails(p)">
           
           <div class="img-box">
             <img [src]="p.img" />
@@ -52,9 +52,26 @@
             <div class="price-action">
               <div class="price">
                 <span class="curr">₹{{p.price}}</span>
-                <span class="old" *ngIf="p.discount > 0">₹{{p.oldPrice}}</span>
+                <span class="old" *ngIf="p.discount > 0">₹{{p.originalPrice}}</span>
               </div>
-              <button class="add-btn">ADD</button>
+              <button class="add-btn" 
+                    *ngIf="p.stock === 0" 
+                    disabled
+                    style="opacity: 0.7; background-color: #dcdcdc; color: #555; border: none;">
+              OUT OF STOCK
+            </button>
+
+            <button class="add-btn" 
+                    *ngIf="p.stock !== 0 && getQty(p.id) === 0" 
+                    (click)="$event.stopPropagation(); increase(p.id)">
+              ADD
+            </button>
+
+            <div class="qty-counter" *ngIf="p.stock !== 0 && getQty(p.id) > 0">
+              <div class="minus" (click)="$event.stopPropagation(); decrease(p.id)">-</div>
+              <div class="count">{{ getQty(p.id) }}</div>
+              <div class="plus" (click)="$event.stopPropagation(); increase(p.id)">+</div>
+            </div>
             </div>
           </div>
 

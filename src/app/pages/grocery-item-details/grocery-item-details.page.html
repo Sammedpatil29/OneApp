@@ -19,7 +19,7 @@
   
   <div class="image-container">
     <div class="main-img">
-      <img [src]="product.images[0]" />
+      <img [src]="product.image_url" />
     </div>
     <div class="trust-badges">
       <div class="badge"><ion-icon name="leaf-outline" color="success"></ion-icon> Organic</div>
@@ -30,20 +30,23 @@
   <div class="info-section">
     <div class="d-flex justify-content-between align-items-start">
       <div>
-        <small class="brand text-muted">Fresho</small>
+        <small class="brand text-muted">{{product.brand}}</small>
         <h1>{{product.name}}</h1>
       </div>
-      <div class="time-pill">
+      <!-- <div class="time-pill">
         <ion-icon name="time-outline"></ion-icon> 8 mins
-      </div>
+      </div> -->
     </div>
 
-    <div class="weight-row">{{product.weight}}</div>
+    <div class="weight-row">{{product.unit_value | number:'1.0-0'}} {{product.unit}}</div>
 
     <div class="price-block">
-      <span class="curr">₹{{product.price}}</span>
-      <span class="old">₹{{product.originalPrice}}</span>
-      <span class="disc-tag">{{product.discount}}% OFF</span>
+      <span class="curr">₹{{product.price - product.discount}}</span>
+      
+      @if (product.discount > 0) {
+        <span class="old">₹{{product.price}}</span>
+        <span class="disc-tag">{{(product.discount/product.price)*100 | number:'1.0-0'}}% OFF</span>
+      }
     </div>
     <p class="tax-note">(Inclusive of all taxes)</p>
   </div>
@@ -96,23 +99,25 @@
 <ion-footer class="sticky-footer">
   <div class="action-container" *ngIf="qty === 0">
     <div class="unit-toggle">
-      <span>{{product.weight}}</span>
+      <span>{{product.unit_value | number:'1.0-0'}} {{product.unit}}</span>
       <small>₹{{product.price}}</small>
     </div>
-    <button class="big-add-btn" (click)="toggleQty('add')">
-      ADD TO CART
-    </button>
+    <button class="big-add-btn" 
+                    *ngIf="product.stock === 0" 
+                    disabled
+                    style="opacity: 0.7; background-color: #dcdcdc; color: #555; border: none;">
+              OUT OF STOCK
+            </button>
+    <button class="big-add-btn" 
+                    *ngIf="product.stock !== 0 && getQty(product.id) === 0" 
+                    (click)="$event.stopPropagation(); increase(product.id)">
+              ADD TO CART
+            </button>
+            <div class="big-add-btn d-flex gap-5" *ngIf="product.stock !== 0 && getQty(product.id) > 0">
+              <div class="minus" (click)="$event.stopPropagation(); decrease(product.id)">-</div>
+              <div class="count">{{ getQty(product.id) }}</div>
+              <div class="plus" (click)="$event.stopPropagation(); increase(product.id)">+</div>
+            </div>
   </div>
 
-  <div class="action-container active-state" *ngIf="qty > 0">
-    <div class="item-total">
-      <small>Item Total</small>
-      <strong>₹{{qty * product.price}}</strong>
-    </div>
-    <div class="big-counter">
-      <div class="btn" (click)="toggleQty('remove')">-</div>
-      <div class="val">{{qty}}</div>
-      <div class="btn" (click)="toggleQty('add')">+</div>
-    </div>
-  </div>
 </ion-footer>

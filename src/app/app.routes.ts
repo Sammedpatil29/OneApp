@@ -86,10 +86,6 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/events/events.page').then( m => m.EventsPage)
   },
   {
-    path: 'grocery',
-    loadComponent: () => import('./grocery/grocery.page').then( m => m.GroceryPage)
-  },
-  {
     path: 'payment',
     loadComponent: () => import('./pages/payment/payment.page').then( m => m.PaymentPage)
   },
@@ -101,7 +97,20 @@ export const routes: Routes = [
     path: 'track-order',
     loadComponent: () => import('./pages/track-order/track-order.page').then( m => m.TrackOrderPage)
   },
+  
+   {
+    path: 'ride',
+    loadComponent: () => import('./pages/ride/ride.page').then( m => m.RidePage)
+  },
   {
+    path: 'ride-selection-page',
+    loadComponent: () => import('./pages/ride-selection-page/ride-selection-page.page').then( m => m.RideSelectionPagePage)
+  },
+  {
+    path: 'grocery-layout',
+    loadComponent: () => import('./pages/grocery-layout/grocery-layout.page').then( m => m.GroceryLayoutPage),
+    children: [
+{
     path: 'grocery-order-details',
     loadComponent: () => import('./pages/grocery-order-details/grocery-order-details.page').then( m => m.GroceryOrderDetailsPage)
   },
@@ -125,13 +134,16 @@ export const routes: Routes = [
     path: 'grocery-search',
     loadComponent: () => import('./pages/grocery-search/grocery-search.page').then( m => m.GrocerySearchPage)
   },
-   {
-    path: 'ride',
-    loadComponent: () => import('./pages/ride/ride.page').then( m => m.RidePage)
+  {
+    path: 'grocery',
+    loadComponent: () => import('./grocery/grocery.page').then( m => m.GroceryPage)
   },
   {
-    path: 'ride-selection-page',
-    loadComponent: () => import('./pages/ride-selection-page/ride-selection-page.page').then( m => m.RideSelectionPagePage)
+        path: '',
+        redirectTo: 'grocery',
+        pathMatch: 'full',
+      },
+    ]
   },
   
       {
@@ -142,11 +154,4 @@ export const routes: Routes = [
       
     ],
   },
- 
-
-  
-
-  
-
- 
 ];

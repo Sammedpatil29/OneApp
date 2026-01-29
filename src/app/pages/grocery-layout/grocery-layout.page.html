@@ -1,0 +1,17 @@
+<ion-app>
+  <ion-router-outlet></ion-router-outlet>
+</ion-app>
+
+@if (currentRoute !== '/layout/grocery-layout/grocery-item-details') {
+  <ion-footer class="cart-footer" *ngIf="totalItems > 0">
+  <div class="cart-bar" >
+    <div class="cart-info">
+      <small>{{totalItems}} ITEMS</small>
+      <h6>₹{{totalPrice}} <small class="tax">+ taxes</small></h6>
+    </div>
+    <div class="view-cart-btn">
+      View Cart <ion-icon name="caret-forward-outline"></ion-icon>
+    </div>
+  </div>
+</ion-footer>
+}
