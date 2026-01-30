@@ -2,7 +2,7 @@
   <ion-router-outlet></ion-router-outlet>
 </ion-app>
 
-@if (currentRoute !== '/layout/grocery-layout/grocery-item-details') {
+@if (!currentRoute.includes('/layout/grocery-layout/grocery-item-details')) {
   <ion-footer class="cart-footer" *ngIf="totalItems > 0" (click)="goToCart()">
   <div class="cart-bar" >
     <div class="cart-info">

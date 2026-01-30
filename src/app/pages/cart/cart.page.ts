@@ -19,6 +19,7 @@ import { ProductCardComponent } from "../../components/product-card/product-card
 export class CartPage implements OnInit {
 
   isLoading = true;
+  isError: boolean = false;
   isOrderPlaced = false;
   
   // Data Containers
@@ -59,6 +60,7 @@ export class CartPage implements OnInit {
 
   fetchCartData() {
     this.isLoading = true;
+    this.isError = false;
      this.groceryService.getCartdata(this.token, this.couponCode).subscribe(apiResponse => {
         console.log('📦 Cart API Response:', apiResponse);
 
@@ -75,6 +77,7 @@ export class CartPage implements OnInit {
   }, error =>{
       console.error('Error fetching cart data:', error);
       this.isLoading = false;
+      this.isError = true;
   })
 }
 

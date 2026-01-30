@@ -2,3 +2,19 @@
     width: 100%;
     height: 100vh !important;
 }
+
+.icon-circle {
+    width: 80px;
+    height: 80px;
+    background-color: #fdecea; /* Light red bg */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+
+    ion-icon {
+      font-size: 40px;
+      color: #eb445a; /* Ionic Danger Color */
+    }
+  }

@@ -1,3 +1,6 @@
+$primary: #3d0374; 
+$accent: #a000e2;
+
 /* Floating Cart Footer */
 .cart-footer {
   padding: 10px 15px 20px;
@@ -9,7 +12,7 @@
 
   .cart-bar {
     pointer-events: auto;
-    background: #3d0374; /* Deep Purple */
+    background: $accent; /* Deep Purple */
     border-radius: 12px;
     padding: 12px 16px;
     display: flex;

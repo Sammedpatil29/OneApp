@@ -42,6 +42,7 @@
     --secondary-color: white;
     --ion-font-family: 'Roboto', sans-serif;
     --swiper-theme-color: red !important;
+    --grocery-theme-color: #a000e2;
 }
 
 :host {
@@ -51,6 +52,7 @@
 ::ng-deep.ionicon {
     stroke: black !important;
 }
+
 
 ion-header {
     border-bottom-left-radius: 10px;

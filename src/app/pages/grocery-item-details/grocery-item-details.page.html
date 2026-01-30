@@ -1,17 +1,17 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/" color="dark" icon="arrow-back"></ion-back-button>
+      <ion-back-button defaultHref="/" icon="arrow-back"></ion-back-button>
     </ion-buttons>
     
-    <ion-buttons slot="end">
-      <ion-button color="dark">
+    <!-- <ion-buttons slot="end">
+      <ion-button>
         <ion-icon name="share-social-outline"></ion-icon>
       </ion-button>
-      <ion-button color="dark">
+      <ion-button>
         <ion-icon name="heart-outline"></ion-icon>
       </ion-button>
-    </ion-buttons>
+    </ion-buttons> -->
   </ion-toolbar>
 </ion-header>
 
@@ -19,166 +19,145 @@
   
   @if (isLoading) {
     <div>
-    <!-- Image Skeleton -->
-    <div style="height: 300px; width: 100%; background: #f4f4f4;">
-      <ion-skeleton-text animated style="width: 100%; height: 100%; margin: 0;"></ion-skeleton-text>
-    </div>
+      <div style="height: 45vh; width: 100%; background: #f4f4f4;">
+        <ion-skeleton-text animated style="width: 100%; height: 100%; margin: 0;"></ion-skeleton-text>
+      </div>
 
-    <!-- Info Section Skeleton -->
-    <div style="padding: 16px;">
-      <ion-skeleton-text animated style="width: 30%; height: 14px; border-radius: 4px;"></ion-skeleton-text>
-      <ion-skeleton-text animated style="width: 80%; height: 28px; margin-top: 8px; border-radius: 4px;"></ion-skeleton-text>
-      <ion-skeleton-text animated style="width: 40%; height: 16px; margin-top: 12px; border-radius: 4px;"></ion-skeleton-text>
+      <div style="padding: 16px;">
+        <ion-skeleton-text animated style="width: 30%; height: 14px; border-radius: 4px;"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width: 80%; height: 28px; margin-top: 8px; border-radius: 4px;"></ion-skeleton-text>
+        <div style="margin-top: 16px; display: flex; align-items: center; gap: 10px;">
+          <ion-skeleton-text animated style="width: 80px; height: 24px; border-radius: 4px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 60px; height: 18px; border-radius: 4px;"></ion-skeleton-text>
+        </div>
+      </div>
       
-      <div style="margin-top: 16px; display: flex; align-items: center; gap: 10px;">
-        <ion-skeleton-text animated style="width: 80px; height: 24px; border-radius: 4px;"></ion-skeleton-text>
-        <ion-skeleton-text animated style="width: 60px; height: 18px; border-radius: 4px;"></ion-skeleton-text>
+      <hr class="divider">
+      
+      <div style="padding: 16px;">
+        <ion-skeleton-text animated style="width: 40%; height: 20px; margin-bottom: 12px; border-radius: 4px;"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width: 100%; height: 14px; margin-bottom: 6px; border-radius: 4px;"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width: 70%; height: 14px; margin-bottom: 6px; border-radius: 4px;"></ion-skeleton-text>
       </div>
     </div>
 
-    <hr class="divider">
-
-    <!-- Details Skeleton -->
-    <div style="padding: 16px;">
-      <ion-skeleton-text animated style="width: 40%; height: 20px; margin-bottom: 12px; border-radius: 4px;"></ion-skeleton-text>
-      <ion-skeleton-text animated style="width: 100%; height: 14px; margin-bottom: 6px; border-radius: 4px;"></ion-skeleton-text>
-      <ion-skeleton-text animated style="width: 100%; height: 14px; margin-bottom: 6px; border-radius: 4px;"></ion-skeleton-text>
-      <ion-skeleton-text animated style="width: 70%; height: 14px; margin-bottom: 6px; border-radius: 4px;"></ion-skeleton-text>
-
-      <div style="display: flex; justify-content: space-between; margin-top: 20px;">
-        <div *ngFor="let i of [1,2,3]" style="width: 30%;">
-          <ion-skeleton-text animated style="width: 60%; height: 12px; margin-bottom: 4px; border-radius: 4px;"></ion-skeleton-text>
-          <ion-skeleton-text animated style="width: 80%; height: 16px; border-radius: 4px;"></ion-skeleton-text>
-        </div>
-      </div>
-    </div>
-
-    <hr class="divider">
-
-    <!-- Similar Products Skeleton -->
-    <div style="padding: 16px;">
-      <ion-skeleton-text animated style="width: 50%; height: 20px; margin-bottom: 16px; border-radius: 4px;"></ion-skeleton-text>
-      <div style="display: flex; overflow: hidden;">
-        <div *ngFor="let i of [1,2,3]" style="margin-right: 12px; width: 120px; flex-shrink: 0;">
-          <ion-skeleton-text animated style="width: 100%; height: 120px; border-radius: 8px;"></ion-skeleton-text>
-          <ion-skeleton-text animated style="width: 90%; height: 14px; margin-top: 8px; border-radius: 4px;"></ion-skeleton-text>
-          <ion-skeleton-text animated style="width: 60%; height: 14px; margin-top: 4px; border-radius: 4px;"></ion-skeleton-text>
-        </div>
-      </div>
-    </div>
-  </div>
   } @else if (isError) {
     <app-error 
       title="Oops! Item details failed to load" 
       (reload)="getDetails()">
     </app-error>
+
   } @else {
     <div>
-  <div class="image-container">
-    <div class="main-img">
-      <img [src]="product.image_url" />
-    </div>
-    <div class="trust-badges">
-      <div class="badge"><ion-icon name="leaf-outline" color="success"></ion-icon> Organic</div>
-      <div class="badge"><ion-icon name="shield-checkmark-outline" color="primary"></ion-icon> Best Quality</div>
-    </div>
-  </div>
-
-  <div class="info-section">
-    <div class="d-flex justify-content-between align-items-start">
-      <div>
-        <small class="brand text-muted">{{product.brand}}</small>
-        <h1>{{product.name}}</h1>
-      </div>
-      <!-- <div class="time-pill">
-        <ion-icon name="time-outline"></ion-icon> 8 mins
-      </div> -->
-    </div>
-
-    <div class="weight-row">{{product.unit_value | number:'1.0-0'}} {{product.unit}}</div>
-
-    <div class="price-block">
-      <span class="curr">₹{{product.price - product.discount}}</span>
       
-      @if (product.discount > 0) {
-        <span class="old">₹{{product.price}}</span>
-        <span class="disc-tag">{{(product.discount/product.price)*100 | number:'1.0-0'}}% OFF</span>
-      }
+      <div class="image-container">
+        <div class="main-img">
+          <img [src]="product.image_url" alt="{{product.name}}" />
+        </div>
+        </div>
+
+      <div class="info-section">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <small class="brand text-muted">{{product.brand}}</small>
+            <h1>{{product.name}}</h1>
+          </div>
+        </div>
+
+        <div class="weight-row">{{product.unit_value | number:'1.0-0'}} {{product.unit}}</div>
+
+        <div class="price-block">
+          <span class="curr">₹{{product.price - product.discount}}</span>
+          
+          @if (product.discount > 0) {
+            <span class="old">₹{{product.price}}</span>
+            <span class="disc-tag">{{(product.discount/product.price)*100 | number:'1.0-0'}}% OFF</span>
+          }
+        </div>
+        <p class="tax-note">(Inclusive of all taxes)</p>
+      </div>
+
+      <hr class="divider">
+
+      <div class="details-section">
+        <h4>Product Details</h4>
+        <p [class.collapsed]="!isExpanded">
+          {{product.description}}
+        </p>
+        <span class="read-more" (click)="isExpanded = !isExpanded">
+          {{ isExpanded ? 'Read Less' : 'Read More' }}
+        </span>
+
+        <div class="highlights">
+          <div class="hl-item">
+            <ion-icon name="leaf-outline" class="hl-icon text-success"></ion-icon>
+            <strong>Hybrid</strong>
+          </div>
+          <div class="hl-item">
+            <ion-icon name="hourglass-outline" class="hl-icon text-warning"></ion-icon>
+            <strong>3 Days</strong>
+          </div>
+          <div class="hl-item">
+            <ion-icon name="globe-outline" class="hl-icon text-primary"></ion-icon>
+            <strong>Indian</strong>
+          </div>
+          <div class="hl-item">
+            <ion-icon name="alert-circle-outline" class="hl-icon text-danger"></ion-icon>
+            <strong>No Return</strong>
+          </div>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <div class="similar-section">
+        <h4>You might also like</h4>
+        <div class="product-scroll">
+            <app-product-card 
+              *ngFor="let p of similarProducts"
+              [product]="p"
+              [qty]="getQty(p.id)"
+              (increase)="increase($event)"
+              (decrease)="decrease($event)"
+              (itemClicked)="goToDetails($event)">
+          </app-product-card>
+        </div>
+      </div>
+
+      <div style="height: 100px;"></div>
     </div>
-    <p class="tax-note">(Inclusive of all taxes)</p>
-  </div>
-
-  <hr class="divider">
-
-  <div class="details-section">
-    <h4>Product Details</h4>
-    <p [class.collapsed]="!isExpanded">
-      {{product.description}}
-    </p>
-    <span class="read-more" (click)="isExpanded = !isExpanded">
-      {{ isExpanded ? 'Read Less' : 'Read More' }}
-    </span>
-
-    <div class="highlights">
-      <div class="hl-item">
-        <small>Type</small>
-        <strong>Hybrid</strong>
-      </div>
-      <div class="hl-item">
-        <small>Shelf Life</small>
-        <strong>3 Days</strong>
-      </div>
-      <div class="hl-item">
-        <small>Origin</small>
-        <strong>Local Farm</strong>
-      </div>
-    </div>
-  </div>
-
-  <hr class="divider">
-
-  <div class="similar-section">
-    <h4>You might also like</h4>
-    <div class="scroll-x">
-      <div class="mini-card" *ngFor="let item of similarProducts">
-        <div class="img-box"><img [src]="item.img"></div>
-        <div class="name">{{item.name}}</div>
-        <div class="price">₹{{item.price}}</div>
-        <button class="add-mini">ADD</button>
-      </div>
-    </div>
-  </div>
-
-  <div style="height: 100px;"></div>
-  </div>
   }
-
-  
 
 </ion-content>
 
-<ion-footer class="sticky-footer">
-  <div class="action-container" *ngIf="!isLoading && qty === 0">
-    <div class="unit-toggle">
-      <span>{{product.unit_value | number:'1.0-0'}} {{product.unit}}</span>
-      <small>₹{{product.price}}</small>
-    </div>
-    <button class="big-add-btn" 
-                    *ngIf="product.stock === 0" 
-                    disabled
-                    style="opacity: 0.7; background-color: #dcdcdc; color: #555; border: none;">
-              OUT OF STOCK
-            </button>
-    <button class="big-add-btn" 
-                    *ngIf="product.stock !== 0 && getQty(product.id) === 0" 
-                    (click)="$event.stopPropagation(); increase(product.id)">
-              ADD TO CART
-            </button>
-            <div class="big-add-btn d-flex gap-5" *ngIf="product.stock !== 0 && getQty(product.id) > 0">
-              <div class="minus" (click)="$event.stopPropagation(); decrease(product.id)">-</div>
-              <div class="count">{{ getQty(product.id) }}</div>
-              <div class="plus" (click)="$event.stopPropagation(); increase(product.id)">+</div>
-            </div>
-  </div>
+@if (!isLoading && !isError && product) {
+  <ion-footer class="sticky-footer">
+    <div class="action-container">
+      
+      <div class="unit-toggle">
+        <span>{{product.unit_value | number:'1.0-0'}} {{product.unit}}</span>
+        <small>₹{{product.price - product.discount}}</small>
+      </div>
 
-</ion-footer>
+      <button class="big-add-btn" 
+              *ngIf="product.stock === 0" 
+              disabled
+              style="opacity: 0.7; background-color: #dcdcdc; color: #555; border: none;">
+        OUT OF STOCK
+      </button>
+
+      <button class="big-add-btn" 
+              *ngIf="product.stock !== 0 && getQty(product.id) === 0" 
+              (click)="$event.stopPropagation(); increase(product.id)">
+        ADD TO CART
+      </button>
+
+      <div class="big-counter" *ngIf="product.stock !== 0 && getQty(product.id) > 0">
+        <div class="btn" (click)="$event.stopPropagation(); decrease(product.id)">-</div>
+        <div class="val">{{ getQty(product.id) }}</div>
+        <div class="btn" (click)="$event.stopPropagation(); increase(product.id)">+</div>
+      </div>
+
+    </div>
+  </ion-footer>
+}

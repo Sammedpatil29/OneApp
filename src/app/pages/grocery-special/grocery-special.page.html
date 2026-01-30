@@ -14,7 +14,8 @@
 
 <ion-content [fullscreen]="true" class="bg-light">
 
-  <div *ngIf="isLoading">
+ @if (isLoading) {
+   <div>
     <div style="margin: 16px; height: 180px; border-radius: 20px; overflow: hidden;">
       <ion-skeleton-text animated style="width: 100%; height: 100%; margin: 0;"></ion-skeleton-text>
     </div>
@@ -35,8 +36,15 @@
       </div>
     </div>
   </div>
-
-  <div *ngIf="!isLoading">
+ } @else if (isError) {
+    <app-error 
+      title="Failed to Load Products" 
+      subtitle="Please check your internet connection and try again."
+      buttonText="Retry"
+      (retry)="getProductsByTerm()">
+    </app-error>
+ } @else {
+  <div>
   <div class="hero-banner" [style.background]="categoryInfo.color">
     <div class="text-content">
       <h5>Fresh Picks</h5>
@@ -48,7 +56,7 @@
     </div>
   </div>
 
-  <div class="filter-scroll">
+  <!-- <div class="filter-scroll">
     <div 
       class="chip" 
       *ngFor="let f of filters" 
@@ -56,7 +64,7 @@
       (click)="setFilter(f)">
       {{f}}
     </div>
-  </div>
+  </div> -->
 
   <div class="product-grid px-3">
     <app-product-card 
@@ -71,5 +79,6 @@
 
   <div style="height: 200px;"></div>
   </div>
+ }
 
 </ion-content>

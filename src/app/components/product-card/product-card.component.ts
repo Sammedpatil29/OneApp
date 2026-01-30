@@ -21,6 +21,41 @@ export class ProductCardComponent {
   @Output() increase = new EventEmitter<any>();
   @Output() decrease = new EventEmitter<any>();
 
+  readonly backgroundColors = [
+  // --- Warm Off-Whites (Rose, Peach, Cream) ---
+  '#FFF5F5', // Very Pale Red
+  '#FFF0F5', // Lavender Blush
+  '#FFFAFA', // Snow
+  '#FFF8E1', // Cosmic Latte
+  '#FFF3E0', // Bleached Almond
+  '#FFF5E5', // Warm Cream
+  '#FFF9F0', // Floral White
+  '#FAF0E6', // Linen
+
+  // --- Cool Off-Whites (Ice, Mist, Sky) ---
+  '#F0F8FF', // Alice Blue
+  '#F5F9FF', // Whisper Blue
+  '#E6F7FF', // Pale Sky
+  '#F0FFFF', // Azure Mist
+  '#E0FFFF', // Light Cyan (Very faint)
+  '#F2FDFF', // Ice Water
+  '#F5FFFA', // Mint Cream
+
+  // --- Nature Off-Whites (Lime, Mint, Tea) ---
+  '#F1F8E9', // Pale Green
+  '#F0FFF0', // Honeydew
+  '#F5FFF5', // White Smoke Green
+  '#F9FBE7', // Lime Tint
+  '#FFFFF0', // Ivory
+
+  // --- Elegant Neutrals (Lavender, Grey) ---
+  '#F3E5F5', // Pale Lavender
+  '#F8F5FF', // Magnolia
+  '#FAFAFA', // Alabaster (Very Light Grey)
+  '#F5F5F5', // White Smoke
+  '#F2F2F2'  // Concrete (Light)
+];
+
   constructor() {
     addIcons({ timeOutline });
   }
@@ -37,5 +72,10 @@ export class ProductCardComponent {
   onDecrease(event: Event) {
     event.stopPropagation();
     this.decrease.emit(this.product.id);
+  }
+
+  getRandomColor() {
+    const randomIndex = Math.floor(Math.random() * this.backgroundColors.length);
+    return this.backgroundColors[randomIndex];
   }
 }

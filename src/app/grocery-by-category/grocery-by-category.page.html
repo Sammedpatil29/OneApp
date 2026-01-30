@@ -1,5 +1,8 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
+    <ion-buttons slot="start" (click)="back()">
+      <ion-back-button defaultHref="/" color="dark" icon="arrow-back"></ion-back-button>
+    </ion-buttons>
     <div class="header-container">
       <h3>All Categories</h3>
       <div class="header-icons">
@@ -11,7 +14,8 @@
 
 <ion-content [fullscreen]="true" class="bg-light">
   
-  <div class="split-layout" *ngIf="isLoading">
+  @if (isLoading) {
+    <div class="split-layout">
     <div class="sidebar">
       <div class="cat-tab" *ngFor="let i of [1,2,3,4,5,6,7,8,9,10]">
         <div class="img-circle" style="background: transparent;">
@@ -40,8 +44,15 @@
       </div>
     </div>
   </div>
-
-  <div class="split-layout" *ngIf="!isLoading">
+  } @else if (isError) {
+    <app-error 
+      title="Failed to Load Categories" 
+      subtitle="Please check your internet connection and try again."
+      buttonText="Retry"
+      (retry)="getCategories()">
+    </app-error>
+  } @else {
+    <div class="split-layout">
     
     <div class="sidebar">
       <div 
@@ -82,5 +93,6 @@
     </div>
 
   </div>
+  }
 
 </ion-content>

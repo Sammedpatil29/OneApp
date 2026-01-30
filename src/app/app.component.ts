@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IonApp, IonRouterOutlet, IonButton, IonHeader, IonTitle, IonContent } from '@ionic/angular/standalone';
+import { IonApp, IonRouterOutlet, IonButton, IonHeader, IonTitle, IonContent, IonIcon } from '@ionic/angular/standalone';
 import { ScreenOrientation } from '@capacitor/screen-orientation';
 import { Network } from '@capacitor/network';
 import { Platform } from '@ionic/angular';
@@ -16,7 +16,7 @@ import { Location } from '@angular/common';
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
-  imports: [IonContent, IonTitle, IonHeader, IonApp, IonRouterOutlet, IonToast, IonButton, IonApp, IonRouterOutlet],
+  imports: [IonIcon, IonContent, IonTitle, IonHeader, IonApp, IonRouterOutlet, IonToast, IonButton, IonApp, IonRouterOutlet],
 })
 export class AppComponent implements OnInit {
 
@@ -33,13 +33,14 @@ export class AppComponent implements OnInit {
     private location: Location,
     private router: Router
   ) {
-    this.initializeApp();
+    
   }
 
   ngOnInit() {
     this.lockOrientation();
     this.listenToNotificationClicks();
     this.initializeBackButtonCustomHandler();
+    this.initializeApp();
   }
 
   async initializeApp() {
@@ -47,7 +48,7 @@ export class AppComponent implements OnInit {
     await SplashScreen.hide();
 
     // ✅ MODIFIED
-    await this.checkNetworkStatus();
+    // await this.checkNetworkStatus();
     this.listenToNetwork();
   }
 

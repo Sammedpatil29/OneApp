@@ -8,13 +8,14 @@ import { Router } from '@angular/router';
 import { GroceryService } from '../services/grocery.service';
 import { AuthService } from '../services/auth.service';
 import { ProductCardComponent } from "../components/product-card/product-card.component";
+import { ErrorComponent } from "../components/error/error.component";
 
 @Component({
   selector: 'app-grocery',
   templateUrl: 'grocery.page.html',
   styleUrls: ['grocery.page.scss'],
   standalone: true,
-  imports: [IonSkeletonText, 
+  imports: [IonSkeletonText,
     IonButton,
     IonButtons,
     IonFooter,
@@ -25,14 +26,14 @@ import { ProductCardComponent } from "../components/product-card/product-card.co
     IonContent,
     CommonModule,
     FormsModule,
-    ProductCardComponent
-],
+    ProductCardComponent, ErrorComponent],
 })
 export class GroceryPage implements OnInit, OnDestroy {
   deliveryTime = 'Delivery Location';
   currentLocation = 'Home - Indiranagar, Bengaluru';
   token: any;
   isLoading: boolean = false;
+  isError: boolean = false;
 
   // LIVE CART STATE
   cartItems: any[] = [];
@@ -90,21 +91,7 @@ export class GroceryPage implements OnInit, OnDestroy {
     });
 
     // 2. Fetch Initial Data
-    this.isLoading = true;
-    this.cartService.getCartItems(this.token).subscribe({
-      next: (res: any) => {
-        if (res.data) {
-          this.categories = res.data.categories;
-          this.productSections = res.data.productSections;
-          this.corousalBanners = res.data.carouselBanners;
-          this.miniBanner = res.data.miniBanner;
-          // FIX: Force change detection once products are loaded so getQty() updates in HTML
-          this.cdr.detectChanges();
-          this.isLoading = false;
-        }
-      },
-      error: (err) => console.error('Initial Load Error:', err),
-    });
+    this.getGroceryHomeData();
   }
 
   ngOnDestroy() {}
@@ -155,7 +142,7 @@ export class GroceryPage implements OnInit, OnDestroy {
   }
 
   goToDetails(product?: any) {
-    this.router.navigate(['/layout/grocery-layout/grocery-item-details'], {
+    this.router.navigate([`/layout/grocery-layout/grocery-item-details/${product?.id}`], {
       state: { productId: product?.id },
     });
   }
@@ -166,6 +153,29 @@ export class GroceryPage implements OnInit, OnDestroy {
 
   goToHome() {
     this.router.navigate(['/layout/example/home']);
+  }
+
+  getGroceryHomeData(){
+ this.isLoading = true;
+    this.isError = false;
+    this.cartService.getCartItems(this.token).subscribe({
+      next: (res: any) => {
+        if (res.data) {
+          this.categories = res.data.categories;
+          this.productSections = res.data.productSections;
+          this.corousalBanners = res.data.carouselBanners;
+          this.miniBanner = res.data.miniBanner;
+          // FIX: Force change detection once products are loaded so getQty() updates in HTML
+          this.cdr.detectChanges();
+          this.isLoading = false;
+        }
+      },
+      error: (err:any) => {
+        console.error('API Failed', err);
+        this.isLoading = false;
+        this.isError = true;
+      },
+    });
   }
 
 }

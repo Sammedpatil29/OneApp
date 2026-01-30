@@ -119,7 +119,7 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/grocery-order-details/grocery-order-details.page').then( m => m.GroceryOrderDetailsPage)
   },
   {
-    path: 'grocery-item-details',
+    path: 'grocery-item-details/:id',
     loadComponent: () => import('./pages/grocery-item-details/grocery-item-details.page').then( m => m.GroceryItemDetailsPage)
   },
   {

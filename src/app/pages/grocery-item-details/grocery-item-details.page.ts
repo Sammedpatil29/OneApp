@@ -3,18 +3,20 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonFooter, IonBackButton, IonSkeletonText } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { arrowBack, heartOutline, shareSocialOutline, timeOutline, shieldCheckmarkOutline, leafOutline, star } from 'ionicons/icons';
+import { arrowBack, heartOutline, shareSocialOutline, timeOutline, shieldCheckmarkOutline, leafOutline, star, hourglassOutline, globeOutline, alertCircleOutline } from 'ionicons/icons';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { GroceryService } from 'src/app/services/grocery.service';
 import { ErrorComponent } from "src/app/components/error/error.component";
+import { ProductCardComponent } from "src/app/components/product-card/product-card.component";
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-grocery-item-details',
   templateUrl: './grocery-item-details.page.html',
   styleUrls: ['./grocery-item-details.page.scss'],
   standalone: true,
-  imports: [IonSkeletonText, IonBackButton, IonFooter, IonIcon, IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, ErrorComponent]
+  imports: [IonSkeletonText, IonBackButton, IonFooter, IonIcon, IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, ErrorComponent, ProductCardComponent]
 })
 export class GroceryItemDetailsPage implements OnInit {
 
@@ -42,14 +44,16 @@ export class GroceryItemDetailsPage implements OnInit {
   // };
 
   // Similar Products
-  similarProducts = [
-    { name: 'Red Onion', weight: '1kg', price: 45, img: 'https://cdn-icons-png.flaticon.com/512/765/765580.png' },
-    { name: 'Potato', weight: '1kg', price: 35, img: 'https://cdn-icons-png.flaticon.com/512/765/765544.png' },
-    { name: 'Cucumber', weight: '500g', price: 18, img: 'https://cdn-icons-png.flaticon.com/512/2329/2329921.png' },
-  ];
+  similarProducts:any = []
+  
+  // [
+  //   { name: 'Red Onion', weight: '1kg', price: 45, img: 'https://cdn-icons-png.flaticon.com/512/765/765580.png' },
+  //   { name: 'Potato', weight: '1kg', price: 35, img: 'https://cdn-icons-png.flaticon.com/512/765/765544.png' },
+  //   { name: 'Cucumber', weight: '500g', price: 18, img: 'https://cdn-icons-png.flaticon.com/512/2329/2329921.png' },
+  // ];
 
-  constructor(private router: Router, private groceryService: GroceryService, private authService: AuthService, private cdr: ChangeDetectorRef,) { 
-    addIcons({ arrowBack, heartOutline, shareSocialOutline, timeOutline, shieldCheckmarkOutline, leafOutline, star });
+  constructor(private router: Router, private groceryService: GroceryService, private authService: AuthService, private cdr: ChangeDetectorRef, private navCtrl: NavController) { 
+    addIcons({shareSocialOutline,heartOutline,leafOutline,hourglassOutline,globeOutline,alertCircleOutline,arrowBack,timeOutline,shieldCheckmarkOutline,star});
   }
 
   async ngOnInit() {
@@ -101,6 +105,8 @@ export class GroceryItemDetailsPage implements OnInit {
     this.isError = false
     this.groceryService.getItemDetails(this.productId).subscribe((res)=>{
       this.product = res.data;
+      this.similarProducts = res.suggestions;
+      this.cdr.detectChanges();
       this.isLoading = false;
     }, error => {
       this.isLoading = false;
@@ -108,4 +114,10 @@ export class GroceryItemDetailsPage implements OnInit {
     });
   }
 
+  goToDetails(product?: any) {
+    console.log('clicked product:', product);
+    this.router.navigate([`/layout/grocery-layout/grocery-item-details/${product?.id}`], {
+      state: { productId: product?.id },
+    });
+  }
 }

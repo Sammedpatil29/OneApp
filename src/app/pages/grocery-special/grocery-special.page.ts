@@ -8,13 +8,14 @@ import { GroceryService } from 'src/app/services/grocery.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
 import { ProductCardComponent } from "src/app/components/product-card/product-card.component";
+import { ErrorComponent } from "src/app/components/error/error.component";
 
 @Component({
   selector: 'app-grocery-special',
   templateUrl: './grocery-special.page.html',
   styleUrls: ['./grocery-special.page.scss'],
   standalone: true,
-  imports: [IonSkeletonText, IonButton, IonFooter, IonIcon, IonBackButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, ProductCardComponent]
+  imports: [IonSkeletonText, IonButton, IonFooter, IonIcon, IonBackButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, ProductCardComponent, ErrorComponent]
 })
 export class GrocerySpecialPage implements OnInit {
 
@@ -34,6 +35,7 @@ export class GrocerySpecialPage implements OnInit {
   cartItems: any[] = [];
   title: string = '';
   isLoading: boolean = false;
+  isError: boolean = false;
 
 
   // Products List
@@ -104,6 +106,7 @@ export class GrocerySpecialPage implements OnInit {
 
   getProductsByTerm() {
     this.isLoading = true;
+    this.isError = false;
     this.groceryService.getProductsByTerm(this.term).subscribe({
       next: (response:any) => {
         console.log('Products by term:', response);
@@ -115,12 +118,13 @@ export class GrocerySpecialPage implements OnInit {
       error: (error:any) => {
         console.error('Error fetching products by term:', error);
         this.isLoading = false;
+        this.isError = true;
       }
     });
   }
 
   goToDetails(product?: any) {
-    this.router.navigate(['/layout/grocery-layout/grocery-item-details'], {
+    this.router.navigate([`/layout/grocery-layout/grocery-item-details/${product?.id}`], {
       state: { productId: product?.id }
     });
   }

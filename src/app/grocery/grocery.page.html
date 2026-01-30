@@ -23,7 +23,8 @@
 
 <ion-content [fullscreen]="true" class="bg-light">
   
-  <div *ngIf="isLoading">
+  @if(isLoading){
+    <div>
     <div class="banner-scroll">
       <div *ngFor="let i of [1,2,3]" style="margin-right: 16px; flex-shrink: 0;">
         <ion-skeleton-text animated style="width: 320px; height: 160px; border-radius: 16px;"></ion-skeleton-text>
@@ -63,8 +64,13 @@
       </div>
     </div>
   </div>
-
-  <div *ngIf="!isLoading">
+  } @else if (isError) {
+    <app-error 
+      title="Oops! Home page failed to load" 
+      (reload)="getGroceryHomeData()">
+    </app-error>
+  } @else {
+    <div>
   <div class="banner-scroll">
     <!-- <div class="banner" 
          *ngFor="let banner of banners" 
@@ -109,7 +115,6 @@
     </div>
 
     <div class="product-scroll">
-      
       <app-product-card 
           *ngFor="let p of section.products"
           [product]="p"
@@ -123,5 +128,5 @@
   
   <div style="height: 100px;"></div> 
   </div>
-
+  }
 </ion-content>

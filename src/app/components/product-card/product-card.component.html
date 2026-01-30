@@ -1,14 +1,14 @@
 <div class="product-card" (click)="onCardClick()">
         
-  <div class="img-wrapper">
-    <img [src]="product.img" />
+  <div class="img-wrapper" [style.background]="getRandomColor()">
+    <img [src]="product.img" style="width: 100%; height: 100%; object-fit: cover;border-radius: 15px 15px 0 0;" />
     <span class="discount" *ngIf="product.discount > 0">{{product.discount}}% OFF</span>
   </div>
 
-  <div class="p-details">
-    <div class="time-tag">
+  <div class="p-details px-2 pb-2">
+    <!-- <div class="time-tag">
       <ion-icon name="time-outline"></ion-icon> {{product.time}}
-    </div>
+    </div> -->
     
     <h5>{{product.name}}</h5>
     <small>{{product.weight}}</small>

@@ -1,14 +1,52 @@
 <ion-app>
-  <!-- @if (isOnline) { -->
+  @if (isOnline) {
     <ion-router-outlet></ion-router-outlet>
     
     
-  <!-- } @else {
+  } @else {
     <ion-content>
       <div class="no-internet h-100 d-flex flex-column justify-content-center align-items-center">
-        <img (click)="onRefreshClick()" class="p-0" style="width: 150px" src="../assets/icons/wired-flat-11-link-unlink-hover-bounce.gif" alt="">
+        <svg
+  width="180"
+  height="180"
+  viewBox="0 0 256 256"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <!-- Background -->
+  <rect width="256" height="256" fill="white"/>
+
+  <!-- Signal bars -->
+  <rect x="40" y="140" width="30" height="60" rx="15" fill="#cfd8dc"/>
+  <rect x="80" y="110" width="30" height="90" rx="15" fill="#b0bec5"/>
+  <rect x="120" y="80" width="30" height="120" rx="15" fill="#90a4ae"/>
+  <rect x="160" y="50" width="30" height="150" rx="15" fill="#78909c"/>
+
+  <!-- Red forbidden circle -->
+  <circle
+    cx="140"
+    cy="140"
+    r="45"
+    fill="none"
+    stroke="#e53935"
+    stroke-width="14"
+  />
+
+  <!-- Diagonal slash -->
+  <line
+    x1="110"
+    y1="170"
+    x2="170"
+    y2="110"
+    stroke="#e53935"
+    stroke-width="14"
+    stroke-linecap="round"
+  />
+</svg>
+
+        <h4>No Internet Connection</h4>
         <p class="p-0"><strong>ಸ್ವಲ್ಪ ನೆಟ್ವರ್ಕ್ ಚೆಕ್ ಮಾಡ್ಕೋರಿ ಬರ್ತತಿ!</strong></p>
+        <button (click)="onRefreshClick()" class="btn btn-dark btn-sm">Refresh</button>
     </div>
     </ion-content>
-  } -->
+  }
 </ion-app>

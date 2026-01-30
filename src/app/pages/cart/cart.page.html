@@ -12,8 +12,17 @@
 
 <ion-content [fullscreen]="true" class="bg-light">
 
-  @if(!isLoading && cartData) {
-    
+  @if(isLoading) {
+    <div class="mx-3 mt-3 skeleton-box" style="height: 150px; border-radius: 12px;"></div>
+    <div class="mx-3 mt-3 skeleton-box" style="height: 200px; border-radius: 12px;"></div>
+  } @else if (isError){
+    <app-error 
+      title="Failed to Load Cart" 
+      subtitle="Please check your internet connection and try again."
+      buttonText="Retry"
+      (retry)="fetchCartData()">
+    </app-error>
+  } @else {
     @if(items.length > 0) {
       <div class="delivery-bar mx-3 mt-2 p-2 text-center rounded-3">
         <span [innerHTML]="billDetails.deliveryMessage"></span>
@@ -30,7 +39,7 @@
             <div class="cart-item-wrapper d-flex align-items-center">
               
               <div class="item-img-box">
-                <img [src]="item.image" alt="">
+                <img [src]="item.image" style="border-radius: 10px" alt="">
               </div>
 
               <div class="item-details-box flex-grow-1">
@@ -173,10 +182,6 @@
       
       <div style="height: 120px;"></div>
     }
-
-  } @else {
-    <div class="mx-3 mt-3 skeleton-box" style="height: 150px; border-radius: 12px;"></div>
-    <div class="mx-3 mt-3 skeleton-box" style="height: 200px; border-radius: 12px;"></div>
   }
 
 </ion-content>

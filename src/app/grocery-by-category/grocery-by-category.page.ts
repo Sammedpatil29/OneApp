@@ -1,20 +1,22 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonSearchbar, IonIcon, IonButtons, IonButton, IonSkeletonText } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonSearchbar, IonIcon, IonButtons, IonButton, IonSkeletonText, IonBackButton } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { searchOutline, cartOutline, add, remove } from 'ionicons/icons';
 import { Router } from '@angular/router';
 import { GroceryService } from '../services/grocery.service';
 import { AuthService } from '../services/auth.service';
 import { ProductCardComponent } from "../components/product-card/product-card.component";
+import { NavController } from '@ionic/angular';
+import { ErrorComponent } from "../components/error/error.component";
 
 @Component({
   selector: 'app-grocery-by-category',
   templateUrl: './grocery-by-category.page.html',
   styleUrls: ['./grocery-by-category.page.scss'],
   standalone: true,
-  imports: [IonSkeletonText, IonButton, IonButtons, IonIcon, IonSearchbar, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, ProductCardComponent]
+  imports: [IonBackButton, IonSkeletonText, IonButton, IonButtons, IonIcon, IonSearchbar, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, ProductCardComponent, ErrorComponent]
 })
 export class GroceryByCategoryPage implements OnInit {
 
@@ -25,6 +27,7 @@ export class GroceryByCategoryPage implements OnInit {
   cartItems: any[] = [];
   token: any;
   isLoading: boolean = false;
+  isError: boolean = false;
   
   // [
   //   { id: 'veggies', name: 'Vegetables', img: 'https://cdn-icons-png.flaticon.com/512/2329/2329865.png' },
@@ -50,7 +53,7 @@ export class GroceryByCategoryPage implements OnInit {
   //   { id: 6, stock: '', name: 'Spinach', weight: '1 bunch', price: 15, oldPrice: 20, discount: 0, img: 'https://cdn-icons-png.flaticon.com/512/2329/2329937.png' },
   // ];
 
-  constructor(private router: Router, private groceryService: GroceryService, private authService: AuthService, private cdr: ChangeDetectorRef,) { 
+  constructor(private router: Router, private groceryService: GroceryService, private authService: AuthService, private cdr: ChangeDetectorRef, private navCtrl: NavController) { 
     addIcons({ searchOutline, cartOutline, add, remove });
 
     const navigation = this.router.getCurrentNavigation();
@@ -91,6 +94,7 @@ export class GroceryByCategoryPage implements OnInit {
       selectedCategory: this.selectedCategory
     }
     this.isLoading = true;
+    this.isError = false;
     this.groceryService.getCategories(params).subscribe((res:any)=>{
       console.log('Categories:', res);
       this.categories = res.data.categories;
@@ -99,6 +103,7 @@ export class GroceryByCategoryPage implements OnInit {
       this.isLoading = false;
     }, error => {
       this.isLoading = false;
+      this.isError = true;
     })
   }
 
@@ -113,7 +118,7 @@ export class GroceryByCategoryPage implements OnInit {
   }
 
   goToDetails(product?: any) {
-    this.router.navigate(['/layout/grocery-layout/grocery-item-details'], {
+    this.router.navigate([`/layout/grocery-layout/grocery-item-details/${product?.id}`], {
       state: { productId: product?.id }
     });
   }
@@ -148,4 +153,9 @@ export class GroceryByCategoryPage implements OnInit {
   gotoSearch() {
     this.router.navigate(['/layout/grocery-layout/grocery-search']);
   }
+
+  back() {
+    this.navCtrl.back();
+  }
+
 }
