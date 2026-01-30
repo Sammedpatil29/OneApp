@@ -18,9 +18,34 @@
 
 <ion-content [fullscreen]="true" class="bg-light">
 
-  <!-- <div *ngIf="query.length === 0">
+  <div *ngIf="isLoading" class="results-container" style="padding-top: 10px;">
+    <div class="product-list">
+      <div class="p-item" *ngFor="let i of [1,2,3,4,5,6,7,8]">
+        <div class="img-box" style="background: #f4f4f4;">
+          <ion-skeleton-text animated style="width: 100%; height: 100%; margin: 0;"></ion-skeleton-text>
+        </div>
+        <div class="info" style="width: 100%; padding-right: 10px;">
+          <ion-skeleton-text animated style="width: 70%; height: 16px; border-radius: 4px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 40%; height: 12px; margin-top: 8px; border-radius: 4px;"></ion-skeleton-text>
+          <div style="margin-top: 10px;">
+            <ion-skeleton-text animated style="width: 60px; height: 18px; border-radius: 4px;"></ion-skeleton-text>
+          </div>
+        </div>
+        <div class="action-box">
+           <ion-skeleton-text animated style="width: 70px; height: 32px; border-radius: 6px;"></ion-skeleton-text>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!isLoading && query.length === 0">
+      <div class="d-flex align-items-center justify-content-center mt-5">
+      <!-- <img src="https://cdn-icons-png.flaticon.com/512/6134/6134065.png" alt="No Data"> -->
+      <!-- <h3>No items found</h3> -->
+      <p>Try searching for 'Milk' or 'Bread'</p>
+    </div>
     
-    <div class="section" *ngIf="recentSearches.length > 0">
+    <!-- <div class="section" *ngIf="recentSearches.length > 0">
       <div class="sec-head">
         <h5>Recent Searches</h5>
         <span (click)="clearHistory()">Clear</span>
@@ -45,12 +70,12 @@
           <span>{{t.name}}</span>
         </div>
       </div>
-    </div>
+    </div> -->
 
-  </div> -->
+  </div>
 
 
-  <div class="results-container" *ngIf="query.length > 0">
+  <div class="results-container" *ngIf="!isLoading && query.length > 0">
     
     <div class="result-count" *ngIf="results.length > 0">
       Found {{results.length}} results for "{{query}}"

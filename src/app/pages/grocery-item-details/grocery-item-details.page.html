@@ -17,6 +17,63 @@
 
 <ion-content [fullscreen]="true" class="bg-white">
   
+  @if (isLoading) {
+    <div>
+    <!-- Image Skeleton -->
+    <div style="height: 300px; width: 100%; background: #f4f4f4;">
+      <ion-skeleton-text animated style="width: 100%; height: 100%; margin: 0;"></ion-skeleton-text>
+    </div>
+
+    <!-- Info Section Skeleton -->
+    <div style="padding: 16px;">
+      <ion-skeleton-text animated style="width: 30%; height: 14px; border-radius: 4px;"></ion-skeleton-text>
+      <ion-skeleton-text animated style="width: 80%; height: 28px; margin-top: 8px; border-radius: 4px;"></ion-skeleton-text>
+      <ion-skeleton-text animated style="width: 40%; height: 16px; margin-top: 12px; border-radius: 4px;"></ion-skeleton-text>
+      
+      <div style="margin-top: 16px; display: flex; align-items: center; gap: 10px;">
+        <ion-skeleton-text animated style="width: 80px; height: 24px; border-radius: 4px;"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width: 60px; height: 18px; border-radius: 4px;"></ion-skeleton-text>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Details Skeleton -->
+    <div style="padding: 16px;">
+      <ion-skeleton-text animated style="width: 40%; height: 20px; margin-bottom: 12px; border-radius: 4px;"></ion-skeleton-text>
+      <ion-skeleton-text animated style="width: 100%; height: 14px; margin-bottom: 6px; border-radius: 4px;"></ion-skeleton-text>
+      <ion-skeleton-text animated style="width: 100%; height: 14px; margin-bottom: 6px; border-radius: 4px;"></ion-skeleton-text>
+      <ion-skeleton-text animated style="width: 70%; height: 14px; margin-bottom: 6px; border-radius: 4px;"></ion-skeleton-text>
+
+      <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+        <div *ngFor="let i of [1,2,3]" style="width: 30%;">
+          <ion-skeleton-text animated style="width: 60%; height: 12px; margin-bottom: 4px; border-radius: 4px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 80%; height: 16px; border-radius: 4px;"></ion-skeleton-text>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Similar Products Skeleton -->
+    <div style="padding: 16px;">
+      <ion-skeleton-text animated style="width: 50%; height: 20px; margin-bottom: 16px; border-radius: 4px;"></ion-skeleton-text>
+      <div style="display: flex; overflow: hidden;">
+        <div *ngFor="let i of [1,2,3]" style="margin-right: 12px; width: 120px; flex-shrink: 0;">
+          <ion-skeleton-text animated style="width: 100%; height: 120px; border-radius: 8px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 90%; height: 14px; margin-top: 8px; border-radius: 4px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 60%; height: 14px; margin-top: 4px; border-radius: 4px;"></ion-skeleton-text>
+        </div>
+      </div>
+    </div>
+  </div>
+  } @else if (isError) {
+    <app-error 
+      title="Oops! Item details failed to load" 
+      (reload)="getDetails()">
+    </app-error>
+  } @else {
+    <div>
   <div class="image-container">
     <div class="main-img">
       <img [src]="product.image_url" />
@@ -93,11 +150,15 @@
   </div>
 
   <div style="height: 100px;"></div>
+  </div>
+  }
+
+  
 
 </ion-content>
 
 <ion-footer class="sticky-footer">
-  <div class="action-container" *ngIf="qty === 0">
+  <div class="action-container" *ngIf="!isLoading && qty === 0">
     <div class="unit-toggle">
       <span>{{product.unit_value | number:'1.0-0'}} {{product.unit}}</span>
       <small>₹{{product.price}}</small>

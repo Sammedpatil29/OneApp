@@ -1,19 +1,20 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonFooter, IonBackButton } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonFooter, IonBackButton, IonSkeletonText } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { arrowBack, heartOutline, shareSocialOutline, timeOutline, shieldCheckmarkOutline, leafOutline, star } from 'ionicons/icons';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { GroceryService } from 'src/app/services/grocery.service';
+import { ErrorComponent } from "src/app/components/error/error.component";
 
 @Component({
   selector: 'app-grocery-item-details',
   templateUrl: './grocery-item-details.page.html',
   styleUrls: ['./grocery-item-details.page.scss'],
   standalone: true,
-  imports: [IonBackButton, IonFooter, IonIcon, IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonSkeletonText, IonBackButton, IonFooter, IonIcon, IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, ErrorComponent]
 })
 export class GroceryItemDetailsPage implements OnInit {
 
@@ -25,6 +26,8 @@ export class GroceryItemDetailsPage implements OnInit {
   // Dummy Product Data
   product:any = {}
   cartItems: any[] = [];
+  isLoading: boolean = false;
+  isError: boolean = false;
   
   // {
   //   id: 101,
@@ -94,8 +97,14 @@ export class GroceryItemDetailsPage implements OnInit {
   }
 
   getDetails(){
+    this.isLoading = true;
+    this.isError = false
     this.groceryService.getItemDetails(this.productId).subscribe((res)=>{
       this.product = res.data;
+      this.isLoading = false;
+    }, error => {
+      this.isLoading = false;
+      this.isError = true
     });
   }
 

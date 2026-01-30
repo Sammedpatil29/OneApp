@@ -23,6 +23,48 @@
 
 <ion-content [fullscreen]="true" class="bg-light">
   
+  <div *ngIf="isLoading">
+    <div class="banner-scroll">
+      <div *ngFor="let i of [1,2,3]" style="margin-right: 16px; flex-shrink: 0;">
+        <ion-skeleton-text animated style="width: 320px; height: 160px; border-radius: 16px;"></ion-skeleton-text>
+      </div>
+    </div>
+
+    <div class="section-title">
+      <ion-skeleton-text animated style="width: 150px; height: 24px; border-radius: 4px;"></ion-skeleton-text>
+    </div>
+    
+    <div class="category-grid">
+      <div class="cat-item" *ngFor="let i of [1,2,3,4,5,6,7,8]">
+        <div class="cat-img" style="background: transparent;">
+          <ion-skeleton-text animated style="width: 100%; height: 100%; border-radius: 50%;"></ion-skeleton-text>
+        </div>
+        <ion-skeleton-text animated style="width: 60px; height: 12px; margin-top: 8px; border-radius: 4px;"></ion-skeleton-text>
+      </div>
+    </div>
+
+    <div class="product-section" *ngFor="let i of [1,2]">
+      <div class="section-header">
+        <div style="width: 100%;">
+          <ion-skeleton-text animated style="width: 120px; height: 20px; border-radius: 4px; margin-bottom: 4px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 80px; height: 14px; border-radius: 4px;"></ion-skeleton-text>
+        </div>
+      </div>
+      <div class="product-scroll">
+        <div *ngFor="let p of [1,2,3]" style="width: 150px; margin-right: 12px; flex-shrink: 0;">
+          <ion-skeleton-text animated style="width: 100%; height: 150px; border-radius: 12px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 90%; height: 14px; margin-top: 8px; border-radius: 4px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 60%; height: 14px; margin-top: 4px; border-radius: 4px;"></ion-skeleton-text>
+          <div class="d-flex justify-content-between align-items-center mt-2">
+            <ion-skeleton-text animated style="width: 40%; height: 18px; border-radius: 4px;"></ion-skeleton-text>
+            <ion-skeleton-text animated style="width: 60px; height: 30px; border-radius: 6px;"></ion-skeleton-text>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!isLoading">
   <div class="banner-scroll">
     <!-- <div class="banner" 
          *ngFor="let banner of banners" 
@@ -68,56 +110,18 @@
 
     <div class="product-scroll">
       
-      <div class="product-card" *ngFor="let p of section.products" (click)="goToDetails(p)">
-        
-        <div class="img-wrapper">
-          <img [src]="p.img" />
-          <span class="discount" *ngIf="p.discount > 0">{{p.discount}}% OFF</span>
-        </div>
-
-        <div class="p-details">
-          <div class="time-tag">
-            <ion-icon name="time-outline"></ion-icon> {{p.time}}
-          </div>
-          
-          <h5>{{p.name}}</h5>
-          <small>{{p.weight}}</small>
-          
-          <div class="price-row">
-            @if (p.stock > 0) {
-              <div class="prices">
-              <span class="current">₹{{p.price}}</span>
-              <span class="original" *ngIf="p.discount > 0">₹{{p.originalPrice}}</span>
-            </div>
-            }
-
-            <button class="add-btn" 
-                    *ngIf="p.stock === 0" 
-                    disabled
-                    style="opacity: 0.7; background-color: #dcdcdc; color: #555; border: none;">
-              OUT OF STOCK
-            </button>
-
-            <button class="add-btn" 
-                    *ngIf="p.stock !== 0 && getQty(p.id) === 0" 
-                    (click)="$event.stopPropagation(); increase(p.id)">
-              ADD
-            </button>
-
-            <div class="qty-counter" *ngIf="p.stock !== 0 && getQty(p.id) > 0">
-              <div class="minus" (click)="$event.stopPropagation(); decrease(p.id)">-</div>
-              <div class="count">{{ getQty(p.id) }}</div>
-              <div class="plus" (click)="$event.stopPropagation(); increase(p.id)">+</div>
-            </div>
-
-          </div>
-        </div>
-
-      </div>
+      <app-product-card 
+          *ngFor="let p of section.products"
+          [product]="p"
+          [qty]="getQty(p.id)"
+          (increase)="increase($event)"
+          (decrease)="decrease($event)"
+          (itemClicked)="goToDetails($event)">
+      </app-product-card>
     </div>
   </div>
   
   <div style="height: 100px;"></div> 
+  </div>
 
 </ion-content>
-

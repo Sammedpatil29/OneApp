@@ -1,19 +1,20 @@
 import { Component, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonIcon, IonFooter, IonButtons, IonButton } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonIcon, IonFooter, IonButtons, IonButton, IonSkeletonText } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { chevronDownOutline, homeOutline, search, timeOutline, caretForwardOutline, add, remove } from 'ionicons/icons';
 import { Router } from '@angular/router';
 import { GroceryService } from '../services/grocery.service';
 import { AuthService } from '../services/auth.service';
+import { ProductCardComponent } from "../components/product-card/product-card.component";
 
 @Component({
   selector: 'app-grocery',
   templateUrl: 'grocery.page.html',
   styleUrls: ['grocery.page.scss'],
   standalone: true,
-  imports: [
+  imports: [IonSkeletonText, 
     IonButton,
     IonButtons,
     IonFooter,
@@ -24,12 +25,14 @@ import { AuthService } from '../services/auth.service';
     IonContent,
     CommonModule,
     FormsModule,
-  ],
+    ProductCardComponent
+],
 })
 export class GroceryPage implements OnInit, OnDestroy {
   deliveryTime = 'Delivery Location';
   currentLocation = 'Home - Indiranagar, Bengaluru';
   token: any;
+  isLoading: boolean = false;
 
   // LIVE CART STATE
   cartItems: any[] = [];
@@ -87,6 +90,7 @@ export class GroceryPage implements OnInit, OnDestroy {
     });
 
     // 2. Fetch Initial Data
+    this.isLoading = true;
     this.cartService.getCartItems(this.token).subscribe({
       next: (res: any) => {
         if (res.data) {
@@ -96,6 +100,7 @@ export class GroceryPage implements OnInit, OnDestroy {
           this.miniBanner = res.data.miniBanner;
           // FIX: Force change detection once products are loaded so getQty() updates in HTML
           this.cdr.detectChanges();
+          this.isLoading = false;
         }
       },
       error: (err) => console.error('Initial Load Error:', err),

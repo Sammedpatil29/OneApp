@@ -1,19 +1,20 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonSearchbar, IonIcon, IonButtons, IonButton } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonSearchbar, IonIcon, IonButtons, IonButton, IonSkeletonText } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { searchOutline, cartOutline, add, remove } from 'ionicons/icons';
 import { Router } from '@angular/router';
 import { GroceryService } from '../services/grocery.service';
 import { AuthService } from '../services/auth.service';
+import { ProductCardComponent } from "../components/product-card/product-card.component";
 
 @Component({
   selector: 'app-grocery-by-category',
   templateUrl: './grocery-by-category.page.html',
   styleUrls: ['./grocery-by-category.page.scss'],
   standalone: true,
-  imports: [IonButton, IonButtons, IonIcon, IonSearchbar, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonSkeletonText, IonButton, IonButtons, IonIcon, IonSearchbar, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, ProductCardComponent]
 })
 export class GroceryByCategoryPage implements OnInit {
 
@@ -23,6 +24,7 @@ export class GroceryByCategoryPage implements OnInit {
   categories:any = []
   cartItems: any[] = [];
   token: any;
+  isLoading: boolean = false;
   
   // [
   //   { id: 'veggies', name: 'Vegetables', img: 'https://cdn-icons-png.flaticon.com/512/2329/2329865.png' },
@@ -88,11 +90,15 @@ export class GroceryByCategoryPage implements OnInit {
     let params = {
       selectedCategory: this.selectedCategory
     }
+    this.isLoading = true;
     this.groceryService.getCategories(params).subscribe((res:any)=>{
       console.log('Categories:', res);
       this.categories = res.data.categories;
       this.products = res.data.products;
       this.selectCategory(this.selectedCategory);
+      this.isLoading = false;
+    }, error => {
+      this.isLoading = false;
     })
   }
 

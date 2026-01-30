@@ -1,3 +1,9 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 /* Variables */
 $primary: #3d0374;
 $accent: #ff3269;
@@ -71,9 +77,17 @@ ion-content { --background: #{$bg-light}; }
 /* 3. Product Grid */
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  padding: 0 15px;
+  
+  /* FIX: Use minmax(0, 1fr) to force strict equal width regardless of content */
+  grid-template-columns: repeat(2, minmax(0, 1fr)); 
+  
+  gap: 12px; 
+  padding-bottom: 20px;
+
+  /* Tablet/Desktop */
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
 
   .product-card {
     background: #fff;

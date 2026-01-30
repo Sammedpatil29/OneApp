@@ -11,7 +11,37 @@
 
 <ion-content [fullscreen]="true" class="bg-light">
   
-  <div class="split-layout">
+  <div class="split-layout" *ngIf="isLoading">
+    <div class="sidebar">
+      <div class="cat-tab" *ngFor="let i of [1,2,3,4,5,6,7,8,9,10]">
+        <div class="img-circle" style="background: transparent;">
+          <ion-skeleton-text animated style="width: 100%; height: 100%; border-radius: 50%;"></ion-skeleton-text>
+        </div>
+        <ion-skeleton-text animated style="width: 40px; height: 10px; margin-top: 8px; border-radius: 4px;"></ion-skeleton-text>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div class="content-header">
+        <ion-skeleton-text animated style="width: 150px; height: 24px; border-radius: 4px;"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width: 80px; height: 14px; margin-top: 4px; border-radius: 4px;"></ion-skeleton-text>
+      </div>
+
+      <div class="product-grid">
+        <div *ngFor="let i of [1,2,3,4,5,6]" style="margin-bottom: 16px;">
+          <ion-skeleton-text animated style="width: 100%; height: 140px; border-radius: 12px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 90%; height: 14px; margin-top: 8px; border-radius: 4px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 60%; height: 14px; margin-top: 4px; border-radius: 4px;"></ion-skeleton-text>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+            <ion-skeleton-text animated style="width: 40%; height: 18px; border-radius: 4px;"></ion-skeleton-text>
+            <ion-skeleton-text animated style="width: 60px; height: 30px; border-radius: 6px;"></ion-skeleton-text>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="split-layout" *ngIf="!isLoading">
     
     <div class="sidebar">
       <div 
@@ -27,7 +57,7 @@
         
         <div class="active-strip" *ngIf="selectedCategory === cat.name"></div>
       </div>
-      <div style="height: 50px"></div>
+      <div style="height: 200px"></div>
     </div>
 
     <div class="main-content">
@@ -38,44 +68,14 @@
       </div>
 
       <div class="product-grid">
-        <div class="product-card" *ngFor="let p of products" (click)="goToDetails(p)">
-          
-          <div class="img-box">
-            <img [src]="p.img" />
-            <span class="offer-tag" *ngIf="p.discount > 0">{{p.discount}}% OFF</span>
-          </div>
-
-          <div class="details">
-            <div class="name">{{p.name}}</div>
-            <div class="weight">{{p.weight}}</div>
-            
-            <div class="price-action">
-              <div class="price">
-                <span class="curr">₹{{p.price}}</span>
-                <span class="old" *ngIf="p.discount > 0">₹{{p.originalPrice}}</span>
-              </div>
-              <button class="add-btn" 
-                    *ngIf="p.stock === 0" 
-                    disabled
-                    style="opacity: 0.7; background-color: #dcdcdc; color: #555; border: none;">
-              OUT OF STOCK
-            </button>
-
-            <button class="add-btn" 
-                    *ngIf="p.stock !== 0 && getQty(p.id) === 0" 
-                    (click)="$event.stopPropagation(); increase(p.id)">
-              ADD
-            </button>
-
-            <div class="qty-counter" *ngIf="p.stock !== 0 && getQty(p.id) > 0">
-              <div class="minus" (click)="$event.stopPropagation(); decrease(p.id)">-</div>
-              <div class="count">{{ getQty(p.id) }}</div>
-              <div class="plus" (click)="$event.stopPropagation(); increase(p.id)">+</div>
-            </div>
-            </div>
-          </div>
-
-        </div>
+        <app-product-card 
+          *ngFor="let p of products"
+          [product]="p"
+          [qty]="getQty(p.id)"
+          (increase)="increase($event)"
+          (decrease)="decrease($event)"
+          (itemClicked)="goToDetails($event)">
+      </app-product-card>
       </div>
       
       <div style="height: 80px"></div>

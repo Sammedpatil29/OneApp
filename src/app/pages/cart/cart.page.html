@@ -61,49 +61,16 @@
         You might need
       </div>
       <div class="body">
-        <swiper-container [slidesPerView]="2.4" [spaceBetween]="12" [freeMode]="true">
-          @for (sug of suggestions; track $index) {
-            <swiper-slide>
-              <div class="suggestion-card">
-                @if(sug.discount > 0) {
-                  <div class="discount-tag">{{sug.discount}}% OFF</div>
-                }
-                <div class="sug-img-wrapper">
-                  <img [src]="sug.img" alt="">
-                </div>
-                <!-- <div class="time-badge">
-                  <ion-icon name="time-outline"></ion-icon> 10 mins
-                </div> -->
-                <h6>{{sug.name}}</h6>
-                <span class="weight-text">{{sug.weight}}</span>
-                <div class="bottom-row">
-                  <div class="price-box" *ngIf="sug.stock !== 0">
-                    <span class="current-price">&#8377;{{sug.price}}</span>
-                    <span class="original-price" *ngIf="sug.originalPrice > sug.price">&#8377;{{sug.originalPrice}}</span>
-                  </div>
-                   <button class="add-btn" 
-                    *ngIf="sug.stock === 0" 
-                    disabled
-                    style="opacity: 0.7; background-color: #dcdcdc; color: #555; border: none;">
-              OUT OF STOCK
-            </button>
-
-            <button class="add-btn" 
-                    *ngIf="sug.stock !== 0 && getQty(sug.id) === 0" 
-                    (click)="$event.stopPropagation(); increase(sug.id)">
-              ADD
-            </button>
-
-            <div class="qty-counter" *ngIf="sug.stock !== 0 && getQty(sug.id) > 0">
-              <div class="minus" (click)="$event.stopPropagation(); decrease(sug.id)">-</div>
-              <div class="count">{{ getQty(sug.id) }}</div>
-              <div class="plus" (click)="$event.stopPropagation(); increase(sug.id)">+</div>
-            </div>
-                </div>
-              </div>
-            </swiper-slide>
-          }
-        </swiper-container>
+        <div class="product-scroll">
+      
+      <app-product-card 
+          *ngFor="let p of suggestions"
+          [product]="p"
+          [qty]="getQty(p.id)"
+          (increase)="increase($event)"
+          (decrease)="decrease($event)">
+      </app-product-card>
+    </div>
       </div>
     </div>
 

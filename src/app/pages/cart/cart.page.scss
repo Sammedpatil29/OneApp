@@ -201,3 +201,22 @@ $primary: #3d0374; /* Zepto-ish Purple */
 /* Skeleton */
 .skeleton-box { background: #e0e0e0; animation: pulse 1.5s infinite; }
 @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+
+.product-scroll {
+  display: flex;
+  overflow-x: auto;
+  padding: 0 15px;
+  gap: 12px; /* Space between cards */
+  scroll-behavior: smooth;
+  
+  /* Hide scrollbar */
+  &::-webkit-scrollbar { display: none; }
+
+  /* --- THE FIX IS HERE --- */
+  app-product-card {
+    /* flex: grow shrink basis */
+    /* 0 0 145px means: Do not grow, Do not shrink, Lock width at 145px */
+    flex: 0 0 145px; 
+    width: 145px; 
+  }
+}

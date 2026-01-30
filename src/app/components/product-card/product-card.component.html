@@ -1,0 +1,46 @@
+<div class="product-card" (click)="onCardClick()">
+        
+  <div class="img-wrapper">
+    <img [src]="product.img" />
+    <span class="discount" *ngIf="product.discount > 0">{{product.discount}}% OFF</span>
+  </div>
+
+  <div class="p-details">
+    <div class="time-tag">
+      <ion-icon name="time-outline"></ion-icon> {{product.time}}
+    </div>
+    
+    <h5>{{product.name}}</h5>
+    <small>{{product.weight}}</small>
+    
+    <div class="price-row">
+      @if (product.stock > 0) {
+        <div class="prices">
+          <span class="current">₹{{product.price}}</span>
+          <span class="original" *ngIf="product.discount > 0">₹{{product.originalPrice}}</span>
+        </div>
+      }
+
+      <button class="add-btn" 
+              *ngIf="product.stock === 0" 
+              disabled
+              style="opacity: 0.7; background-color: #dcdcdc; color: #555; border: none;">
+        OUT OF STOCK
+      </button>
+
+      <button class="add-btn" 
+              *ngIf="product.stock !== 0 && qty === 0" 
+              (click)="onIncrease($event)">
+        ADD
+      </button>
+
+      <div class="qty-counter" *ngIf="product.stock !== 0 && qty > 0">
+        <div class="minus" (click)="onDecrease($event)">-</div>
+        <div class="count">{{ qty }}</div>
+        <div class="plus" (click)="onIncrease($event)">+</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>

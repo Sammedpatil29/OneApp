@@ -1,7 +1,13 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 /* Variables */
 $primary: #3d0374;
 $accent: #ff3269;
-$sidebar-bg: #f3f4f8; /* Slightly darker than white */
+$sidebar-bg: #f3f4f8; 
 $content-bg: #ffffff;
 
 ion-toolbar {
@@ -26,9 +32,9 @@ ion-toolbar {
   overflow: hidden; /* Prevent body scroll */
 }
 
-/* 1. LEFT SIDEBAR */
+/* 1. LEFT SIDEBAR (Unchanged) */
 .sidebar {
-  width: 20%; /* Sidebar takes ~30% width */
+  width: 20%; /* Slightly wider for better touch targets */
   background: $sidebar-bg;
   height: 100%;
   overflow-y: auto;
@@ -46,11 +52,12 @@ ion-toolbar {
     position: relative;
     text-align: center;
     transition: background 0.2s;
+    cursor: pointer;
 
     .img-circle {
-      width: 50px;
-      height: 50px;
-      background: #fff; /* White circle behind icon */
+      width: 45px;
+      height: 45px;
+      background: #fff; 
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -58,11 +65,11 @@ ion-toolbar {
       margin-bottom: 6px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.05);
       
-      img { width: 30px; height: 30px; object-fit: contain; }
+      img { width: 28px; height: 28px; object-fit: contain; }
     }
 
     span {
-      font-size: 11px;
+      font-size: 10px;
       color: #666;
       font-weight: 500;
       line-height: 1.2;
@@ -82,8 +89,8 @@ ion-toolbar {
       .active-strip {
         position: absolute;
         right: 0;
-        top: 10%;
-        bottom: 10%;
+        top: 20%;
+        bottom: 20%;
         width: 4px;
         background: $primary;
         border-radius: 4px 0 0 4px;
@@ -94,120 +101,34 @@ ion-toolbar {
 
 /* 2. RIGHT CONTENT */
 .main-content {
-  width: 80%; /* Rest of the width */
+  width: 80%; /* Remaining width */
   background: $content-bg;
   height: 100%;
   overflow-y: auto;
-  padding: 15px;
+  padding: 10px 10px 80px 10px; /* Added bottom padding for footer space */
 
   /* Hide Scrollbar */
   &::-webkit-scrollbar { display: none; }
 
   .content-header {
     margin-bottom: 15px;
+    padding-left: 5px;
     h4 { margin: 0; font-weight: 800; font-size: 18px; color: #222; }
     small { color: #888; font-size: 12px; }
   }
 
   .product-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2 Columns */
-    gap: 12px;
+  display: grid;
+  
+  /* FIX: Use minmax(0, 1fr) to force strict equal width regardless of content */
+  grid-template-columns: repeat(2, minmax(0, 1fr)); 
+  
+  gap: 12px; 
+  padding-bottom: 20px;
+
+  /* Tablet/Desktop */
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   }
 }
-
-/* Product Card (Compact for Grid) */
-.product-card {
-  border: 1px solid #f0f0f0;
-  border-radius: 12px;
-  padding: 8px;
-  background: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-
-  .img-box {
-    position: relative;
-    height: 90px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 8px;
-
-    img { max-height: 80px; width: auto; }
-
-    .offer-tag {
-      position: absolute;
-      top: -4px; left: -4px;
-      background: #5c6bc0;
-      color: white;
-      font-size: 8px;
-      padding: 2px 5px;
-      border-radius: 4px;
-      font-weight: 700;
-    }
-  }
-
-  .details {
-    .name { font-size: 13px; font-weight: 600; color: #333; line-height: 1.2; margin-bottom: 2px;}
-    .weight { font-size: 11px; color: #888; margin-bottom: 8px;}
-
-    .price-action {
-      display: flex;
-      flex-direction: column; /* Stack price and button on small cards */
-      gap: 6px;
-
-      .price {
-        display: flex;
-        gap: 4px;
-        align-items: baseline;
-        .curr { font-weight: 700; font-size: 13px; }
-        .old { font-size: 10px; text-decoration: line-through; color: #999; }
-      }
-
-      .add-btn {
-        width: 100%;
-        background: #fff;
-        color: $accent;
-        border: 1px solid $accent;
-        font-size: 12px;
-        font-weight: 700;
-        padding: 4px 0;
-        border-radius: 6px;
-        text-transform: uppercase;
-        
-        &:active { background: $accent; color: #fff; }
-      }
-    }
-  }
 }
-
-.qty-counter {
-        display: flex;
-        align-items: center;
-        background: $accent;
-        border-radius: 6px;
-        height: 28px;
-        box-shadow: 0 2px 5px rgba(255, 50, 105, 0.3);
-        justify-content: space-around;
-        
-        .minus, .plus {
-          width: 25px;
-          height: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: white;
-          font-weight: bold;
-          font-size: 16px;
-        }
-        .count {
-          color: white;
-          font-weight: 700;
-          font-size: 12px;
-          min-width: 15px;
-          text-align: center;
-        }
-      }
-    

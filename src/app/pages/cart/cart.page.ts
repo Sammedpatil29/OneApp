@@ -7,13 +7,13 @@ import { arrowBack, locationOutline, timeOutline, checkmarkCircle, arrowForward,
 import { GroceryService } from 'src/app/services/grocery.service';
 import { AuthService } from 'src/app/services/auth.service';
 // import { CartResponse, CartItem, Suggestion } from './cart.models'; // Ensure you have the interface file
-
+import { ProductCardComponent } from "../../components/product-card/product-card.component";
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.page.html',
   styleUrls: ['./cart.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule],
+  imports: [IonicModule, CommonModule, FormsModule, ProductCardComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class CartPage implements OnInit {

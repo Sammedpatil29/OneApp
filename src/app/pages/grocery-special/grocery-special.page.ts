@@ -1,19 +1,20 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, IonIcon, IonFooter, IonButton } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, IonIcon, IonFooter, IonButton, IonSkeletonText } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { searchOutline, filterOutline, caretForwardOutline } from 'ionicons/icons';
 import { GroceryService } from 'src/app/services/grocery.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
+import { ProductCardComponent } from "src/app/components/product-card/product-card.component";
 
 @Component({
   selector: 'app-grocery-special',
   templateUrl: './grocery-special.page.html',
   styleUrls: ['./grocery-special.page.scss'],
   standalone: true,
-  imports: [IonButton, IonFooter, IonIcon, IonBackButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonSkeletonText, IonButton, IonFooter, IonIcon, IonBackButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, ProductCardComponent]
 })
 export class GrocerySpecialPage implements OnInit {
 
@@ -32,6 +33,8 @@ export class GrocerySpecialPage implements OnInit {
   term:any = '';
   cartItems: any[] = [];
   title: string = '';
+  isLoading: boolean = false;
+
 
   // Products List
   products:any = []
@@ -100,15 +103,18 @@ export class GrocerySpecialPage implements OnInit {
   }
 
   getProductsByTerm() {
+    this.isLoading = true;
     this.groceryService.getProductsByTerm(this.term).subscribe({
       next: (response:any) => {
         console.log('Products by term:', response);
         this.products = response.data.products;
         this.title = response.data.title;
         this.cdr.detectChanges();
+        this.isLoading = false;
       },
       error: (error:any) => {
         console.error('Error fetching products by term:', error);
+        this.isLoading = false;
       }
     });
   }

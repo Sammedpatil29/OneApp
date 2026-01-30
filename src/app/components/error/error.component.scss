@@ -1,0 +1,48 @@
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 40px 20px;
+  text-align: center;
+  background-color: transparent; /* Allows it to sit on any bg */
+
+  .icon-circle {
+    width: 80px;
+    height: 80px;
+    background-color: #fdecea; /* Light red bg */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+
+    ion-icon {
+      font-size: 40px;
+      color: #eb445a; /* Ionic Danger Color */
+    }
+  }
+
+  h3 {
+    margin: 0 0 8px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+  }
+
+  p {
+    margin: 0 0 25px;
+    font-size: 14px;
+    color: #666;
+    max-width: 250px;
+    line-height: 1.5;
+  }
+
+  ion-button {
+    --border-radius: 8px;
+    --border-width: 1px;
+    font-weight: 600;
+    min-width: 140px;
+  }
+}

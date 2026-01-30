@@ -1,0 +1,13 @@
+<div class="error-container">
+  <div class="icon-circle">
+    <ion-icon name="alert-circle-outline"></ion-icon>
+  </div>
+  
+  <h3>{{ title }}</h3>
+  <p>{{ subtitle }}</p>
+
+  <ion-button mode="ios" color="danger" fill="outline" (click)="onRetry()">
+    <ion-icon name="refresh-outline" slot="start"></ion-icon>
+    {{ buttonText }}
+  </ion-button>
+</div>
