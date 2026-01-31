@@ -1,102 +1,215 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, NavController } from '@ionic/angular';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { addIcons } from 'ionicons';
+import { register } from 'swiper/element/bundle';
 import { 
   arrowBack, shareSocialOutline, heartOutline, heart,
   star, timeOutline, callOutline, locationOutline,
-  navigateOutline, imagesOutline, chevronDownOutline, chevronUpOutline,
+  navigateOutline, imagesOutline, chevronDownOutline, chevronUpOutline, closeOutline,
   informationCircleOutline, wifiOutline, snowOutline,
-  carOutline, wineOutline, musicalNotesOutline, cardOutline
+  carOutline, wineOutline, musicalNotesOutline, cardOutline, keyOutline, pawOutline, laptopOutline, bicycleOutline, tvOutline, leafOutline
 } from 'ionicons/icons';
+import { DineoutService } from 'src/app/services/dineout.service';
+
+register();
 
 @Component({
   selector: 'app-dineout-hotel-details',
   templateUrl: './dineout-hotel-details.page.html',
   styleUrls: ['./dineout-hotel-details.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule]
+  imports: [IonicModule, CommonModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class DineoutHotelDetailsPage implements OnInit {
 
   // Active Tab State
   activeSegment = 'offers';
   showHours = false;
+  isLoading = true;
+  isError:boolean = false
+
+  // Image Viewer State
+  isViewerOpen = false;
+  viewerImages: string[] = [];
+  viewerInitialIndex = 0;
+
+  restaurantId: any;
 
   // Dummy Data matching the screenshot
-  restaurant = {
-    name: 'Poco A Poco - Crescendo',
-    image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-    galleryCount: 20,
-    distance: '8.5 km',
-    location: 'Akshay Nagar, Bangalore',
-    tags: 'Continental, North Indian',
-    price: '₹1200 for two',
-    rating: 5.0,
-    ratingCount: 14,
-    isOpen: true,
-    openTime: '7:30AM',
-    contact: '+91 9876543210',
-    coords: { lat: 12.9352, lng: 77.6245 },
-    isFav: false,
-    isVeg: true,
-    openingHours: [
-      { day: 'Monday', slots: ['12:00 PM - 04:00 PM', '07:00 PM - 12:00 AM'] },
-      { day: 'Tuesday', slots: ['12:00 PM - 04:00 PM', '07:00 PM - 12:00 AM'] },
-      { day: 'Wednesday', slots: ['12:00 PM - 04:00 PM', '07:00 PM - 12:00 AM'] },
-      { day: 'Thursday', slots: ['12:00 PM - 04:00 PM', '07:00 PM - 12:00 AM'] },
-      { day: 'Friday', slots: ['12:00 PM - 04:00 PM', '07:00 PM - 01:00 AM'] },
-      { day: 'Saturday', slots: ['12:00 PM - 01:00 PM', '07:00 PM - 01:00 AM'] },
-      { day: 'Sunday', slots: ['12:00 PM - 12:00 AM'] }
-    ],
-    address: '123, 4th Cross, Indiranagar, Bangalore - 560038',
-    mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31120.256132278104!2d77.68693908173829!3d12.841207627641785!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae6d6289e4d8e9%3A0x5ad05b7fa73638e4!2sM5%20Ecity%20Mall!5e0!3m2!1sen!2sin!4v1769839022454!5m2!1sen!2sin',
-    offers: [
-      {
-    type: 'FLAT',
-    value: 150, // "Flat ₹150 OFF"
-    min_bill_amount: 600,
-    max_discount: 150,
-    title: 'Flat ₹150 OFF',
-    description: 'on orders above ₹600',
-    applicable_for: 'NEW_USER'
-  },
-  {
-    type: 'PERCENTAGE',
-    value: 10, // "Flat ₹150 OFF"
-    min_bill_amount: 300,
-    max_discount: null,
-    title: '10% Cashback',
-    description: 'on all dineout bills',
-    applicable_for: 'ALL_USER'
-  }
-    ],
-    menuItems: [
-    { title: 'Main Course', img: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&q=80' },
-    { title: 'Starters', img: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=200&q=80' },
-    { title: 'Drinks', img: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=200&q=80' },
-    { title: 'Desserts', img: 'https://images.unsplash.com/photo-1563729768-7491b31b7b93?w=200&q=80' },
-  ],
-  restaurantPhotos: [
-    'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500&q=80',
-    'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=500&q=80',
-    'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=500&q=80',
-    'https://images.unsplash.com/photo-1550966871-3ed3c47e2ce2?w=500&q=80',
-    'https://images.unsplash.com/photo-1554679665-f5537f187268?w=500&q=80',
-    'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=500&q=80',
-    'https://images.unsplash.com/photo-1551218808-94e220e084d2?w=500&q=80',
-    'https://images.unsplash.com/photo-1560624052-449f5ddf0c31?w=500&q=80',
-  ],
-  amenities: [
-    { name: 'Wifi', icon: 'wifi-outline' },
-    { name: 'AC', icon: 'snow-outline' },
-    { name: 'Parking', icon: 'car-outline' },
-    { name: 'Bar', icon: 'wine-outline' },
-    { name: 'Music', icon: 'musical-notes-outline' },
-    { name: 'Card', icon: 'card-outline' },
-  ]
-  };
+  restaurant:any = {}
+  
+  // {
+  //       "id": 1,
+  //       "name": "Poco A Poco - Crescendo",
+  //       "image": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+  //       "galleryCount": 20,
+  //       "distance": "8.5 km",
+  //       "location": "Akshay Nagar, Bangalore",
+  //       "tags": "Continental, North Indian",
+  //       "price": "₹1200 for two",
+  //       "rating": 5,
+  //       "city": "Athani",
+  //       "ratingCount": 14,
+  //       "isOpen": true,
+  //       "openTime": "7:30AM",
+  //       "contact": "+91 9876543210",
+  //       "lat": 12.9352,
+  //       "lng": 77.6245,
+  //       "isVeg": true,
+  //       "openingHours": [
+  //           {
+  //               "day": "Monday",
+  //               "slots": [
+  //                   "12:00 PM - 04:00 PM",
+  //                   "07:00 PM - 12:00 AM"
+  //               ]
+  //           },
+  //           {
+  //               "day": "Tuesday",
+  //               "slots": [
+  //                   "12:00 PM - 04:00 PM",
+  //                   "07:00 PM - 12:00 AM"
+  //               ]
+  //           },
+  //           {
+  //               "day": "Wednesday",
+  //               "slots": [
+  //                   "12:00 PM - 04:00 PM",
+  //                   "07:00 PM - 12:00 AM"
+  //               ]
+  //           },
+  //           {
+  //               "day": "Thursday",
+  //               "slots": [
+  //                   "12:00 PM - 04:00 PM",
+  //                   "07:00 PM - 12:00 AM"
+  //               ]
+  //           },
+  //           {
+  //               "day": "Friday",
+  //               "slots": [
+  //                   "12:00 PM - 04:00 PM",
+  //                   "07:00 PM - 01:00 AM"
+  //               ]
+  //           },
+  //           {
+  //               "day": "Saturday",
+  //               "slots": [
+  //                   "12:00 PM - 01:00 PM",
+  //                   "07:00 PM - 01:00 AM"
+  //               ]
+  //           },
+  //           {
+  //               "day": "Sunday",
+  //               "slots": [
+  //                   "12:00 PM - 12:00 AM"
+  //               ]
+  //           }
+  //       ],
+  //       "address": "123, 4th Cross, Indiranagar, Bangalore - 560038",
+  //       "mapEmbedUrl": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31120.256132278104!2d77.68693908173829!3d12.841207627641785!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae6d6289e4d8e9%3A0x5ad05b7fa73638e4!2sM5%20Ecity%20Mall!5e0!3m2!1sen!2sin!4v1769839022454!5m2!1sen!2sin",
+  //       "offers": [
+  //           {
+  //               "type": "FLAT",
+  //               "title": "Flat ₹150 OFF",
+  //               "value": 150,
+  //               "description": "on orders above ₹600",
+  //               "max_discount": 150,
+  //               "applicable_for": "NEW_USER",
+  //               "min_bill_amount": 600
+  //           },
+  //           {
+  //               "type": "PERCENTAGE",
+  //               "title": "10% Cashback",
+  //               "value": 10,
+  //               "description": "on all dineout bills",
+  //               "max_discount": null,
+  //               "applicable_for": "ALL_USER",
+  //               "min_bill_amount": 300
+  //           }
+  //       ],
+  //       "menuItems": [
+  //           {
+  //               "img": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&q=80",
+  //               "title": "Main Course"
+  //           },
+  //           {
+  //               "img": "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=200&q=80",
+  //               "title": "Starters"
+  //           },
+  //           {
+  //               "img": "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=200&q=80",
+  //               "title": "Drinks"
+  //           },
+  //           {
+  //               "img": "https://images.unsplash.com/photo-1563729768-7491b31b7b93?w=200&q=80",
+  //               "title": "Desserts"
+  //           }
+  //       ],
+  //       "restaurantPhotos": [
+  //           "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500&q=80",
+  //           "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=500&q=80",
+  //           "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=500&q=80",
+  //           "https://images.unsplash.com/photo-1550966871-3ed3c47e2ce2?w=500&q=80",
+  //           "https://images.unsplash.com/photo-1554679665-f5537f187268?w=500&q=80",
+  //           "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=500&q=80",
+  //           "https://images.unsplash.com/photo-1551218808-94e220e084d2?w=500&q=80",
+  //           "https://images.unsplash.com/photo-1560624052-449f5ddf0c31?w=500&q=80"
+  //       ],
+  //       "amenities": [
+  //           {
+  //               "icon": "snow-outline",
+  //               "name": "AC"
+  //           },
+  //           {
+  //               "icon": "car-outline",
+  //               "name": "Parking"
+  //           },
+  //           {
+  //               "icon": "wine-outline",
+  //               "name": "Bar"
+  //           },
+  //           {
+  //               "icon": "musical-notes-outline",
+  //               "name": "Music"
+  //           },
+  //           {
+  //               "icon": "tv-outline",
+  //               "name": "Live Sports"
+  //           },
+  //           {
+  //               "icon": "leaf-outline",
+  //               "name": "Outdoor"
+  //           },
+  //           {
+  //               "icon": "laptop-outline",
+  //               "name": "Work Friendly"
+  //           },
+  //           {
+  //               "icon": "paw-outline",
+  //               "name": "Pet Friendly"
+  //           },
+  //           {
+  //               "icon": "card-outline",
+  //               "name": "Card"
+  //           },
+  //           {
+  //               "icon": "key-outline",
+  //               "name": "Valet"
+  //           }
+  //       ],
+  //       "is_active": true,
+  //       "createdAt": "2026-01-31T08:57:07.786Z",
+  //       "updatedAt": "2026-01-31T08:57:07.786Z",
+  //       "coords": {
+  //           "lat": 12.9352,
+  //           "lng": 77.6245
+  //       },
+  //       "isFav": false
+  //   };
 
     
 
@@ -106,19 +219,19 @@ export class DineoutHotelDetailsPage implements OnInit {
 
   safeMapUrl!: SafeResourceUrl;
 
-  constructor(private sanitizer: DomSanitizer) {
+  constructor(private sanitizer: DomSanitizer, private dineoutService: DineoutService, private navCtrl: NavController) {
     addIcons({ 
       arrowBack, shareSocialOutline, heartOutline, heart,
       star, timeOutline, callOutline, locationOutline,
-      navigateOutline, imagesOutline, chevronDownOutline, chevronUpOutline,
+      navigateOutline, imagesOutline, chevronDownOutline, chevronUpOutline, closeOutline,
       informationCircleOutline, wifiOutline, snowOutline,
-      carOutline, wineOutline, musicalNotesOutline, cardOutline
+      carOutline, wineOutline, musicalNotesOutline, cardOutline, keyOutline, pawOutline, laptopOutline, bicycleOutline, tvOutline, leafOutline
     });
   }
 
   ngOnInit() {
-    this.safeMapUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.restaurant.mapEmbedUrl);
-    this.checkRestaurantStatus();
+    this.restaurantId = window.location.pathname.split('/').pop();
+    this.loadRestaurantDetails();
   }
 
   callRestaurant(){
@@ -148,7 +261,7 @@ export class DineoutHotelDetailsPage implements OnInit {
     let isOpen = false;
 
     // 1. Check Today's Schedule
-    const todaySchedule = this.restaurant.openingHours.find(h => h.day === currentDay);
+    const todaySchedule = this.restaurant?.openingHours.find((h: any) => h.day === currentDay);
     if (todaySchedule) {
       for (const slot of todaySchedule.slots) {
         if (this.isTimeInSlot(now, slot)) {
@@ -162,7 +275,7 @@ export class DineoutHotelDetailsPage implements OnInit {
     if (!isOpen) {
       const yesterdayIndex = (now.getDay() + 6) % 7;
       const yesterdayDay = days[yesterdayIndex];
-      const yesterdaySchedule = this.restaurant.openingHours.find(h => h.day === yesterdayDay);
+      const yesterdaySchedule = this.restaurant.openingHours.find((h: any) => h.day === yesterdayDay);
       if (yesterdaySchedule) {
         for (const slot of yesterdaySchedule.slots) {
            if (this.isTimeInSlot(now, slot, true)) {
@@ -213,7 +326,7 @@ export class DineoutHotelDetailsPage implements OnInit {
     const dayIndex = days.indexOf(currentDay);
 
     // Check remaining slots today
-    const todaySchedule = this.restaurant.openingHours.find(h => h.day === currentDay);
+    const todaySchedule = this.restaurant.openingHours.find((h: any) => h.day === currentDay);
     if (todaySchedule) {
       for (const slot of todaySchedule.slots) {
         const [startStr] = slot.split(' - ');
@@ -229,7 +342,7 @@ export class DineoutHotelDetailsPage implements OnInit {
     for (let i = 1; i <= 7; i++) {
       const nextDayIndex = (dayIndex + i) % 7;
       const nextDay = days[nextDayIndex];
-      const schedule = this.restaurant.openingHours.find(h => h.day === nextDay);
+      const schedule = this.restaurant.openingHours.find((h: any) => h.day === nextDay);
       if (schedule && schedule.slots.length > 0) {
         const firstSlot = schedule.slots[0];
         const [startStr] = firstSlot.split(' - ');
@@ -237,5 +350,38 @@ export class DineoutHotelDetailsPage implements OnInit {
         return;
       }
     }
+  }
+
+  openViewer(source: any[], index: number, key?: string) {
+    if (key) {
+      this.viewerImages = source.map(item => item[key]);
+    } else {
+      this.viewerImages = source;
+    }
+    this.viewerInitialIndex = index;
+    this.isViewerOpen = true;
+  }
+
+  closeViewer() {
+    this.isViewerOpen = false;
+  }
+
+  goBack(){
+    this.navCtrl.back()
+  }
+
+  loadRestaurantDetails() {
+   this.isLoading = true;
+   this.isError = false
+   this.dineoutService.getRestaurantDetails(this.restaurantId).subscribe((res:any)=>{
+      console.log(res);
+      this.restaurant = res.data;
+      this.safeMapUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.restaurant.mapEmbedUrl);
+      this.checkRestaurantStatus();
+      this.isLoading = false;
+    }, () => {
+      this.isLoading = false;
+      this.isError = true
+    });
   }
 }

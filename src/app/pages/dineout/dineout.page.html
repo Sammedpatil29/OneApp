@@ -2,19 +2,15 @@
   <ion-toolbar class="header-toolbar">
     
     <div class="location-header">
-      <div class="loc-icon">
-        <ion-icon name="location-outline"></ion-icon>
-      </div>
+      
       <div class="loc-details">
-        <small>DELIVER TO</small>
-        <div class="selector-row">
-          <ion-select [(ngModel)]="selectedCity" interface="popover" class="city-select">
-            <ion-select-option *ngFor="let city of cities" [value]="city">{{city}}</ion-select-option>
-          </ion-select>
-          </div>
+        <!-- <div class="loc-icon">
+        <ion-icon name="location-outline"></ion-icon>
+      </div> -->
+        <button class="btn btn-sm d-flex align-items-center gap-1" style="background-color: var(--grocery-theme-color-light); width: 80px; color: var(--grocery-theme-color)"><ion-icon name="location-outline"></ion-icon>Athani</button>
       </div>
-      <div class="profile-icon">
-        <img src="https://i.pravatar.cc/100?img=3" alt="Profile">
+      <div class="profile-icon" (click)="gotohome()">
+        <ion-icon name="home-outline" style="width: 20px; height: 20px; color: var(--grocery-theme-color);"></ion-icon>
       </div>
     </div>
 
@@ -39,23 +35,52 @@
 
 <ion-content class="bg-light">
   
+  @if (isLoading) {
+    <div class="list-header">
+      <ion-skeleton-text animated style="width: 60%; height: 24px; border-radius: 4px; margin-bottom: 4px;"></ion-skeleton-text>
+      <ion-skeleton-text animated style="width: 40%; height: 14px; border-radius: 4px;"></ion-skeleton-text>
+    </div>
+
+    <div class="card-list">
+      <div class="rest-card" *ngFor="let i of [1,2,3,4]">
+        <div class="img-wrapper">
+          <ion-skeleton-text animated style="width: 100%; height: 180px; margin: 0;"></ion-skeleton-text>
+        </div>
+        <div class="info-wrapper">
+          <div class="header-row" style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <ion-skeleton-text animated style="width: 60%; height: 20px; border-radius: 4px;"></ion-skeleton-text>
+            <ion-skeleton-text animated style="width: 40px; height: 20px; border-radius: 4px;"></ion-skeleton-text>
+          </div>
+          <div class="details-row">
+            <ion-skeleton-text animated style="width: 40%; height: 14px; margin-bottom: 6px; border-radius: 4px;"></ion-skeleton-text>
+            <ion-skeleton-text animated style="width: 80%; height: 14px; border-radius: 4px;"></ion-skeleton-text>
+          </div>
+        </div>
+      </div>
+    </div>
+  } @else if (isError) {
+    <app-error 
+      title="Oops! Home page failed to load" 
+      (reload)="getRestaurantList()">
+    </app-error>
+  }@else {
   <div class="list-header">
     <h3>{{restaurants.length}} restaurants to explore</h3>
     <small>Based on your preferences</small>
   </div>
 
   <div class="card-list">
-    <div class="rest-card" *ngFor="let item of restaurants" (click)="gotodetails()">
+    <div class="rest-card" *ngFor="let item of restaurants" (click)="gotodetails(item.id)">
       
       <div class="img-wrapper">
         <img [src]="item.image" alt="food" />
         
         <div class="top-overlays">
-          <span class="ad-badge" *ngIf="item.isAd">AD</span>
+          <span class="ad-badge" *ngIf="item.isVeg">Pure Veg</span>
           <div class="spacer"></div>
-          <div class="fav-btn" (click)="item.isFav = !item.isFav">
+          <!-- <div class="fav-btn" (click)="item.isFav = !item.isFav">
             <ion-icon [name]="item.isFav ? 'heart' : 'heart-outline'" [class.active]="item.isFav"></ion-icon>
-          </div>
+          </div> -->
         </div>
 
         <div class="curve-divider"></div>
@@ -78,7 +103,7 @@
       <div class="offer-footer" *ngIf="item.offers.length > 0">
         <div class="offer-left">
           <img src="assets/icon/discount-fire.png" style="width:16px; margin-right:6px;" *ngIf="false"> <ion-icon name="flame" style="color: var(--grocery-theme-color); margin-right: 6px;"></ion-icon>
-          <span class="offer-text">{{item.offers[0].text}}</span>
+          <span class="offer-text text-truncate">{{item.offers[0].title}} • {{item.offers[0].description}}</span>
         </div>
         <div class="offer-right" *ngIf="item.offers.length > 1">
           +{{item.offers.length - 1}} offers
@@ -87,6 +112,7 @@
 
     </div>
   </div>
+  }
 
   <div style="height: 50px;"></div>
 </ion-content>

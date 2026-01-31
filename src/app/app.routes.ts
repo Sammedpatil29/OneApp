@@ -201,7 +201,7 @@ export const routes: Routes = [
               import('./pages/dineout/dineout.page').then((m) => m.DineoutPage),
           },
           {
-            path: 'dineout-hotel-details',
+            path: 'dineout-hotel-details/:id',
             loadComponent: () =>
               import('./pages/dineout-hotel-details/dineout-hotel-details.page').then(
                 (m) => m.DineoutHotelDetailsPage,

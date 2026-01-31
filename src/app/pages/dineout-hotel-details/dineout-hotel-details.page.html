@@ -1,21 +1,82 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/" icon="arrow-back"></ion-back-button>
+    <ion-buttons slot="start" (click)="goBack()">
+      <ion-back-button icon="arrow-back"></ion-back-button>
     </ion-buttons>
-    <ion-buttons slot="end">
+    <!-- <ion-buttons slot="end">
       <ion-button>
         <ion-icon name="heart-outline"></ion-icon>
       </ion-button>
       <ion-button>
         <ion-icon name="share-social-outline"></ion-icon>
       </ion-button>
-    </ion-buttons>
+    </ion-buttons> -->
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="bg-light">
 
+  @if (isLoading) {
+    <div>
+    <div class="hero-container">
+      <ion-skeleton-text animated style="width: 100%; height: 100%; margin: 0;"></ion-skeleton-text>
+    </div>
+
+    <div class="floating-card-wrapper">
+      <div class="info-card">
+        <div class="card-body">
+          <div class="flex-row">
+            <ion-skeleton-text animated style="width: 60%; height: 24px; border-radius: 4px;"></ion-skeleton-text>
+            <ion-skeleton-text animated style="width: 40px; height: 24px; border-radius: 4px;"></ion-skeleton-text>
+          </div>
+          <ion-skeleton-text animated style="width: 40%; height: 16px; margin-top: 12px; border-radius: 4px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 30%; height: 16px; margin-top: 8px; margin-bottom: 16px; border-radius: 4px;"></ion-skeleton-text>
+          
+          <div class="action-row">
+            <ion-skeleton-text animated style="width: 140px; height: 40px; border-radius: 8px;"></ion-skeleton-text>
+            <div class="icon-actions">
+              <ion-skeleton-text animated style="width: 36px; height: 36px; border-radius: 10px;"></ion-skeleton-text>
+              <ion-skeleton-text animated style="width: 36px; height: 36px; border-radius: 10px;"></ion-skeleton-text>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-content" style="margin-top: 20px;">
+      <ion-skeleton-text animated style="width: 120px; height: 20px; margin-bottom: 12px; border-radius: 4px;"></ion-skeleton-text>
+      <div style="display: flex; gap: 16px; overflow: hidden;">
+        <ion-skeleton-text animated style="min-width: 280px; height: 100px; border-radius: 16px;"></ion-skeleton-text>
+        <ion-skeleton-text animated style="min-width: 280px; height: 100px; border-radius: 16px;"></ion-skeleton-text>
+      </div>
+    </div>
+
+    <div class="section-content" style="margin-top: 20px;">
+      <ion-skeleton-text animated style="width: 80px; height: 20px; margin-bottom: 12px; border-radius: 4px;"></ion-skeleton-text>
+      <div style="display: flex; gap: 15px; overflow: hidden;">
+        <div *ngFor="let i of [1,2,3,4]">
+          <ion-skeleton-text animated style="width: 100px; height: 100px; border-radius: 12px; margin-bottom: 8px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 60px; height: 12px; margin: 0 auto; border-radius: 4px;"></ion-skeleton-text>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-content" style="margin-top: 20px;">
+      <ion-skeleton-text animated style="width: 80px; height: 20px; margin-bottom: 12px; border-radius: 4px;"></ion-skeleton-text>
+      <div class="bento-grid">
+        <ion-skeleton-text animated style="grid-column: span 2; grid-row: span 2; width: 100%; height: 100%; border-radius: 12px;"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width: 100%; height: 100%; border-radius: 12px;"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width: 100%; height: 100%; border-radius: 12px;"></ion-skeleton-text>
+      </div>
+    </div>
+  </div>
+  } @else if (isError) {
+    <app-error 
+      title="Oops! Home page failed to load" 
+      (reload)="loadRestaurantDetails()">
+    </app-error>
+  } @else {
+    <ng-container>
   <div class="hero-container">
     <img [src]="restaurant.image" class="hero-img" alt="Restaurant Cover">
     
@@ -96,12 +157,12 @@
     </div>
   </div> -->
 
-  @if (restaurant.offers.length > 0) {
+  @if (restaurant?.offers?.length > 0) {
       <div class="section-content">
     <h3 class="mt-3">Offers for you</h3>
     <div class="offers-scroll-container">
      @for (item of restaurant.offers; track $index) {
-    <div class="offer-item" [class.full-width]="restaurant.offers.length === 1">
+    <div class="offer-item" [class.full-width]="restaurant?.offers?.length === 1">
     <div class="green-banner text-center" [style.background]="getOfferBgStyle()">
       <div class="banner-content">
         <h2><span >{{item.title}}</span></h2>
@@ -118,7 +179,7 @@
   <div class="section-content">
     <h3 class="mt-3">Menu</h3>
     <div class="menu-scroll-container">
-      <div class="menu-item" *ngFor="let menu of restaurant.menuItems">
+      <div class="menu-item" *ngFor="let menu of restaurant.menuItems; let i = index" (click)="openViewer(restaurant.menuItems, i, 'img')">
         <div class="img-wrapper">
           <img [src]="menu.img" alt="Menu">
         </div>
@@ -131,7 +192,7 @@
     <h3 class="mt-3">Photos</h3>
     <div class="bento-grid">
       <div class="photo-item" *ngFor="let photo of restaurant.restaurantPhotos | slice:0:6; let i = index; let last = last" 
-           [class.large]="i === 0">
+           [class.large]="i === 0" (click)="openViewer(restaurant.restaurantPhotos, i)">
         <img [src]="photo" alt="Restaurant Photo">
         <div class="more-overlay" *ngIf="last && restaurant.restaurantPhotos.length > 6">
           <span>+{{restaurant.restaurantPhotos.length - 6}} Photos</span>
@@ -166,8 +227,30 @@
       </div>
     </div>
   </div>
+  </ng-container>
+  }
+
+  
 
   <div style="height: 100px;"></div> </ion-content>
+
+  <!-- Image Viewer Modal -->
+  <ion-modal [isOpen]="isViewerOpen" class="image-viewer-modal" (didDismiss)="closeViewer()">
+    <ng-template>
+      <ion-content class="viewer-content">
+        <div class="close-btn" (click)="closeViewer()">
+          <ion-icon name="close-outline"></ion-icon>
+        </div>
+        <swiper-container *ngIf="isViewerOpen" [initialSlide]="viewerInitialIndex" zoom="true" navigation="true" pagination="true" style="height: 100%">
+          <swiper-slide *ngFor="let img of viewerImages">
+            <div class="swiper-zoom-container">
+              <img [src]="img" />
+            </div>
+          </swiper-slide>
+        </swiper-container>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 
 <ion-footer class="dual-footer">
   <div class="footer-inner">
