@@ -1,0 +1,255 @@
+/* --- Variables --- */
+$primary-orange: #ff4500; /* Deep Orange for Pay Bill */
+$light-orange: #fff0e6;   /* Pale Orange for Book Table */
+$text-orange: #d94900;
+$dark: #1a1a1a;
+$gray: #666;
+$green-rating: #1b8040;
+$green-banner: #0a4d2e;
+
+/* --- Header --- */
+ion-header {
+  position: absolute;
+  top: 0; left: 0; width: 100%;
+  z-index: 10;
+
+  ion-toolbar {
+    --background: transparent;
+    padding-top: var(--ion-safe-area-top);
+
+    ion-buttons ion-button, ion-back-button {
+      --color: #fff;
+      background: rgba(0,0,0,0.3);
+      border-radius: 50%;
+      width: 40px; height: 40px;
+      backdrop-filter: blur(4px);
+      margin: 0 4px;
+    }
+  }
+}
+
+.bg-light { --background: #f4f5f8; }
+
+/* --- 1. Hero Image --- */
+.hero-container {
+  height: 38vh;
+  position: relative;
+  background: #ddd;
+
+  .hero-img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+
+  .gallery-pill {
+    position: absolute;
+    bottom: 50px; /* Pushed up to clear the card overlap */
+    right: 16px;
+    background: rgba(255,255,255,0.8);
+    backdrop-filter: blur(4px);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex; align-items: center; gap: 6px;
+    z-index: 2;
+  }
+}
+
+/* --- 2. Floating Info Card --- */
+.floating-card-wrapper {
+  padding: 0 16px;
+  margin-top: -40px; /* Overlap the hero image */
+  position: relative;
+  z-index: 5;
+
+  .info-card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    overflow: hidden;
+
+    /* Top Strip */
+    .badge-strip {
+      background: #e6fcf5; /* Light mint green */
+      padding: 8px 16px;
+      display: flex; align-items: center; gap: 10px;
+      
+      .gold-hex {
+        background: linear-gradient(135deg, #d4a04d, #b8860b);
+        color: white;
+        font-weight: 800;
+        font-size: 11px;
+        padding: 4px;
+        clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+        width: 28px; height: 26px;
+        display: flex; align-items: center; justify-content: center;
+      }
+      span { font-size: 12px; font-weight: 600; color: #0f5132; }
+    }
+
+    .card-body {
+      padding: 16px;
+
+      .flex-row {
+        display: flex; justify-content: space-between; align-items: flex-start;
+        
+        .rest-name {
+          font-size: 20px; font-weight: 800; color: $dark;
+          margin: 0; width: 75%; line-height: 1.2;
+        }
+
+        .rating-box {
+          background: $green-rating;
+          color: white;
+          border-radius: 6px;
+          padding: 4px 6px;
+          text-align: center;
+          display: flex; flex-direction: column; align-items: center;
+
+          .score { font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 2px; }
+          .source { font-size: 8px; opacity: 0.9; }
+          .count { font-size: 8px; border-top: 1px solid rgba(255,255,255,0.3); margin-top: 2px; padding-top: 2px; width: 100%;}
+        }
+      }
+
+      .meta-info {
+        font-size: 13px; color: $dark; margin-top: 8px;
+        display: flex; align-items: center; gap: 4px;
+        .dist { font-weight: 600; }
+        ion-icon { font-size: 14px; color: $primary-orange; }
+      }
+
+      .cuisine { font-size: 13px; color: $gray; margin: 4px 0 16px; }
+
+      .action-row {
+        display: flex; justify-content: space-between; align-items: center;
+
+        .status-pill {
+          background: #f8f9fa;
+          padding: 8px 12px;
+          border-radius: 8px;
+          font-size: 12px;
+          color: $gray;
+          display: flex; align-items: center; gap: 4px;
+          
+          &.closed span { color: #dc3545; font-weight: 700; }
+        }
+
+        .icon-actions {
+          display: flex; gap: 12px;
+          .action-btn {
+            width: 36px; height: 36px;
+            background: #f4f5f8;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            color: $dark;
+            font-size: 18px;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* --- 3. Banner --- */
+.banner-section {
+  padding: 20px 16px;
+  .green-banner {
+    background: linear-gradient(to right, #0e4d2a, #15663a);
+    border-radius: 16px;
+    padding: 20px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+
+    h2 { margin: 0; font-size: 22px; font-weight: 800; }
+    .strike { text-decoration: line-through; opacity: 0.7; font-weight: 400; font-size: 18px; margin-right: 4px;}
+    p { margin: 4px 0 0; font-size: 14px; opacity: 0.9; }
+  }
+}
+
+/* --- 4. Segments --- */
+.segment-scroll {
+  display: flex;
+  overflow-x: auto;
+  padding: 0 16px;
+  gap: 15px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+
+  &::-webkit-scrollbar { display: none; }
+
+  .segment-btn {
+    white-space: nowrap;
+    font-size: 14px;
+    font-weight: 600;
+    color: $gray;
+    padding: 6px 12px;
+    border-radius: 20px;
+    transition: all 0.2s;
+
+    &.active {
+      background: $dark;
+      color: white;
+    }
+  }
+}
+
+/* --- 5. Content Section --- */
+.section-content {
+  padding: 0 16px;
+  h3 { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
+
+  .dine-cash-strip {
+    background: linear-gradient(90deg, #eafff5, #f0fff8);
+    border: 1px solid #cbfbdd;
+    border-radius: 12px;
+    padding: 12px;
+    display: flex; align-items: center; gap: 10px;
+
+    .gold-hex-small {
+      /* Reusing the hex shape logic, smaller */
+      background: linear-gradient(135deg, #d4a04d, #b8860b);
+      color: white;
+      font-weight: 800;
+      font-size: 9px;
+      clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+      width: 24px; height: 22px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    
+    p { margin: 0; font-size: 13px; font-weight: 600; color: #0a4d2e; flex: 1; }
+    ion-icon { color: #aaa; font-size: 16px; }
+  }
+}
+
+/* --- 6. Dual Footer --- */
+.dual-footer {
+  background: white;
+  padding: 12px 16px 20px; /* Safe area padding */
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+
+  .footer-inner {
+    display: flex; gap: 12px;
+    
+    button {
+      flex: 1;
+      height: 48px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 15px;
+      border: none;
+    }
+
+    .btn-book {
+      background: $light-orange;
+      color: $text-orange;
+    }
+
+    .btn-pay {
+      background: $primary-orange;
+      color: white;
+    }
+  }
+}

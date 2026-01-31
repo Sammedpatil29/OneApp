@@ -1,0 +1,105 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/" icon="arrow-back"></ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon name="heart-outline"></ion-icon>
+      </ion-button>
+      <ion-button>
+        <ion-icon name="share-social-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="bg-light">
+
+  <div class="hero-container">
+    <img [src]="restaurant.image" class="hero-img" alt="Restaurant Cover">
+    
+    <div class="gallery-pill">
+      <ion-icon name="images-outline"></ion-icon> 6/{{restaurant.galleryCount}}
+    </div>
+  </div>
+
+  <div class="floating-card-wrapper">
+    <div class="info-card">
+      
+      <div class="badge-strip">
+        <div class="gold-hex">2X</div>
+        <span>Earn & Redeem 2X DineCash</span>
+      </div>
+
+      <div class="card-body">
+        <div class="flex-row">
+          <h1 class="rest-name">{{restaurant.name}}</h1>
+          
+          <div class="rating-box">
+            <span class="score">{{restaurant.rating}} <ion-icon name="star"></ion-icon></span>
+            <small class="source">Google</small>
+            <small class="count">{{restaurant.ratingCount}} ratings</small>
+          </div>
+        </div>
+
+        <div class="meta-info">
+          <span class="dist">{{restaurant.distance}}</span> • {{restaurant.location}} <ion-icon name="chevron-down-outline" color="primary"></ion-icon>
+        </div>
+
+        <p class="cuisine">{{restaurant.tags}} | {{restaurant.price}}</p>
+
+        <div class="action-row">
+          <div class="status-pill closed">
+            <span>Closed,</span> Opens at {{restaurant.openTime}} <ion-icon name="chevron-down-outline"></ion-icon>
+          </div>
+
+          <div class="icon-actions">
+            <div class="action-btn">
+              <ion-icon name="navigate-outline"></ion-icon>
+            </div>
+            <div class="action-btn">
+              <ion-icon name="call-outline"></ion-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="banner-section">
+    <div class="green-banner">
+      <div class="banner-content">
+        <h2><span class="strike">10%</span> 20% Cashback</h2>
+        <p>on every dining bill.</p>
+      </div>
+      </div>
+  </div>
+
+  <div class="segment-scroll">
+    <div 
+      class="segment-btn" 
+      *ngFor="let seg of segments" 
+      [class.active]="activeSegment === seg"
+      (click)="activeSegment = seg">
+      {{seg}}
+    </div>
+  </div>
+
+  <div class="section-content">
+    <h3>Offers for you</h3>
+    <div class="dine-cash-strip">
+      <div class="gold-hex-small">2X</div>
+      <p>Earn 20% DineCash on bill payment</p>
+      <ion-icon name="information-circle-outline"></ion-icon>
+    </div>
+  </div>
+
+  <div style="height: 100px;"></div> </ion-content>
+
+<ion-footer class="dual-footer">
+  <div class="footer-inner">
+    <button class="btn-book">Book a table</button>
+    <button class="btn-pay">Pay bill now</button>
+  </div>
+</ion-footer>

@@ -1,0 +1,271 @@
+/* --- Header Styles --- */
+ion-toolbar {
+  --background: #fff;
+  padding: 5px 16px 10px;
+}
+
+/* 1. Location Header */
+.location-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+
+  .loc-icon {
+    font-size: 24px;
+    color: var(--grocery-theme-color);
+    margin-right: 8px;
+  }
+
+  .loc-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    
+    small {
+      font-size: 10px;
+      color: #9ca3af;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .selector-row {
+      display: flex;
+      align-items: center;
+      
+      /* Styling the Ionic Select to look like text */
+      .city-select {
+        --padding-start: 0;
+        --padding-end: 0;
+        --padding-top: 0;
+        --padding-bottom: 0;
+        --placeholder-color: #111;
+        --placeholder-opacity: 1;
+        font-weight: 700;
+        font-size: 16px;
+        color: #1c1c1c;
+        min-height: auto;
+      }
+    }
+  }
+
+  .profile-icon img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+}
+
+/* 2. Search Bar */
+.search-container {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+  transition: box-shadow 0.2s;
+
+  &:focus-within {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border-color: #d1d5db;
+  }
+
+  ion-icon { font-size: 20px; color: #ff3269; margin-right: 12px; }
+  .mic-icon { color: #6b7280; border-left: 1px solid #eee; padding-left: 10px; margin-right: 0;}
+  
+  input {
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 14px;
+    color: #333;
+    &::placeholder { color: #9ca3af; font-weight: 400;}
+  }
+}
+
+/* 3. Filter Row */
+.filter-row {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 12px 16px 16px;
+  background: #fff;
+  border-bottom: 1px solid #f0f0f0;
+
+  &::-webkit-scrollbar { display: none; }
+
+  .chip {
+    white-space: nowrap;
+    padding: 8px 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    font-size: 12px;
+    color: #374151;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+
+    &.filter-btn {
+      border-color: #d1d5db;
+      font-weight: 700;
+      color: #111;
+    }
+  }
+}
+
+/* --- Content Styles --- */
+.list-header {
+  padding: 24px 16px 16px;
+  h3 { font-size: 18px; font-weight: 800; color: #111; margin: 0 0 4px; letter-spacing: -0.5px; }
+  small { color: #6b7280; font-size: 13px; }
+}
+
+.card-list {
+  padding: 0 16px;
+}
+
+/* Card Container */
+.rest-card {
+  background: #fff;
+  border-radius: 24px; /* Big rounded corners for the whole card */
+  overflow: hidden;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08); /* Subtle shadow */
+  border: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+
+  /* IMAGE AREA */
+  .img-wrapper {
+    height: 220px;
+    width: 100%;
+    position: relative;
+    
+    img { 
+      width: 100%; 
+      height: 100%; 
+      object-fit: cover; 
+    }
+
+    /* Top Badges & Heart */
+    .top-overlays {
+      position: absolute;
+      top: 15px; left: 15px; right: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+
+      .ad-badge {
+        background: rgba(0,0,0,0.6);
+        color: white;
+        font-size: 10px;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+      }
+
+      .fav-btn {
+        width: 32px; height: 32px;
+        background: rgba(0,0,0,0.3); /* Transparent dark circle */
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        backdrop-filter: blur(2px);
+        
+        ion-icon { font-size: 20px; color: #fff; }
+        ion-icon.active { color: #ff3269; }
+      }
+    }
+
+    /* THE CURVE EFFECT */
+    .curve-divider {
+      position: absolute;
+      bottom: -1px; /* Overlap slightly to hide pixel gaps */
+      left: 0;
+      width: 100%;
+      height: 25px;
+      background: #fff;
+      /* This creates the convex 'hill' curve */
+      border-top-left-radius: 100% 50% ;
+      border-top-right-radius: 100% 50% ;
+    }
+  }
+
+  /* TEXT CONTENT */
+  .info-wrapper {
+    background: #fff;
+    padding: 5px 16px 16px; /* Less top padding because curve takes space */
+    position: relative;
+    z-index: 2;
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 6px;
+
+      .name {
+        font-size: 18px;
+        font-weight: 800;
+        color: #111;
+        margin: 0;
+        line-height: 1.2;
+      }
+
+      .rating-badge {
+        background: #24963f; /* Standard green */
+        color: white;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 4px 6px;
+        border-radius: 6px;
+        display: flex; align-items: center; gap: 4px;
+        
+        ion-icon { font-size: 10px; }
+      }
+    }
+
+    .details-row {
+      p {
+        margin: 2px 0;
+        font-size: 13px;
+        color: #6b7280; /* Muted grey text */
+        line-height: 1.4;
+      }
+    }
+  }
+
+  /* OFFER FOOTER (Peach Section) */
+  .offer-footer {
+    background: #fff5f3; /* Light peach/orange background */
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px dashed #ffe0d6; /* Subtle separator */
+
+    .offer-left {
+      display: flex;
+      align-items: center;
+      
+      ion-icon { font-size: 16px; }
+
+      .offer-text {
+        font-size: 12px;
+        font-weight: 600;
+        color: #4b5563; /* Dark grey for readability */
+      }
+    }
+
+    .offer-right {
+      font-size: 12px;
+      font-weight: 700;
+      color: #ff6d00; /* Orange accent text */
+    }
+  }
+}

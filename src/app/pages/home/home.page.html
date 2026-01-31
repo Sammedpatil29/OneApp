@@ -116,10 +116,10 @@
             <div class="col-6 p-2">
               <div class="swiggy-card" (click)="navigateTo(item.route)">
                 <div class="card-content">
-                  <h3 class="swiggy-title">{{ item.title }}</h3>
+                  <h3 class="swiggy-title text-nowrap">{{ item.title }}</h3>
                   <p class="swiggy-subtitle">{{ item.subtitle || 'FROM RESTAURANTS' }}</p>
                   @if (item.offers && item.offers !== 'Nothing') {
-                    <span class="swiggy-offer">{{ item.offers }}</span>
+                    <span class="swiggy-offer text-nowrap">{{ item.offers }}</span>
                   }
                 </div>
                 <div class="swiggy-image-container">
