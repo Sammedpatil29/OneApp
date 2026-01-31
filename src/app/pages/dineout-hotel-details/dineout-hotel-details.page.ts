@@ -384,4 +384,8 @@ export class DineoutHotelDetailsPage implements OnInit {
       this.isError = true
     });
   }
+
+  bookTable(){
+    this.navCtrl.navigateForward('/layout/dineout-layout/dineout-select-time');
+  }
 }

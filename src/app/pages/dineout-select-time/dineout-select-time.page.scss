@@ -1,0 +1,325 @@
+/* --- Theme Variables --- */
+:host {
+  /* Fallback if --grocery-theme-color isn't in global.scss */
+  --green-accent: #24963f;
+}
+
+ion-toolbar {
+  --background: #fff;
+  .header-title {
+    padding-left: 0;
+    .main-text { font-size: 18px; font-weight: 700; color: #111; line-height: 1.2;}
+    .sub-text { font-size: 11px; color: #666; font-weight: 400; overflow: hidden; text-overflow: ellipsis; }
+  }
+}
+
+.bg-white { --background: #fff; }
+
+.green-banner {
+  background: #e8f8ee;
+  color: #0f5132;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 16px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  img { filter: invert(26%) sepia(13%) saturate(1966%) hue-rotate(94deg) brightness(96%) contrast(93%); }
+}
+
+.content-padding { padding: 20px 16px; }
+
+h3 { font-size: 16px; font-weight: 700; color: #111; margin: 0 0 12px 0; }
+.section { margin-bottom: 28px; }
+
+/* --- 1. Horizontal Scrolls --- */
+.scroll-row {
+  display: flex; overflow-x: auto; gap: 10px; padding-bottom: 5px; padding-right: 5px;
+  &::-webkit-scrollbar { display: none; }
+}
+
+/* Guests */
+.guest-chip {
+  min-width: 50px; height: 45px;
+  border: 1px solid #e0e0e0; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 600; color: #333; font-size: 16px;
+  transition: all 0.2s;
+  
+  &.selected {
+    border-color: var(--grocery-theme-color);
+    background: var(--grocery-theme-color-light);
+    color: var(--grocery-theme-color);
+  }
+}
+
+/* Dates */
+.dates-row { align-items: center; }
+
+.date-card-wrapper {
+  display: flex; align-items: center; gap: 8px;
+}
+
+.month-separator {
+  writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg);
+  background: #f4f5f8; padding: 8px 4px; border-radius: 20px;
+  font-size: 10px; color: #666; height: 60px; text-align: center;
+}
+
+.date-card {
+  min-width: 72px; padding: 10px 0;
+  border: 1px solid #e0e0e0; border-radius: 12px;
+  display: flex; flex-direction: column; align-items: center;
+  position: relative;
+  
+  .d-val { font-size: 18px; font-weight: 700; color: var(--grocery-theme-color); }
+  .d-day { font-size: 12px; color: #666; margin-bottom: 6px; }
+  .d-offer {
+    background: var(--green-accent); color: white;
+    font-size: 10px; padding: 2px 6px; border-radius: 10px; font-weight: 700;
+  }
+
+  &.selected {
+    background: var(--grocery-theme-color-light); border-color: var(--grocery-theme-color);
+    .d-val { color: var(--grocery-theme-color); }
+    .d-day { color: #333; }
+  }
+}
+
+/* --- 2. Slots Grid --- */
+.slots-container {
+  background: #f9f9f9; padding: 16px; border-radius: 16px;
+}
+.slot-header {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 14px; font-weight: 700; color: #111; margin-bottom: 12px;
+}
+.slots-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+}
+
+.time-chip {
+  background: white; border: 1px solid transparent; border-radius: 8px;
+  padding: 8px 2px; text-align: center;
+  display: flex; flex-direction: column; align-items: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+
+  .t-val { font-size: 12px; font-weight: 700; color: #333; margin-bottom: 2px; }
+  .t-off { font-size: 10px; color: #666; }
+
+  &.selected {
+    border-color: var(--grocery-theme-color); background: var(--grocery-theme-color-light);
+    .t-val, .t-off { color: var(--grocery-theme-color); }
+  }
+
+  &.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+    background: #f0f0f0;
+  }
+}
+.no-slots { font-size: 13px; color: #888; text-align: center; width: 100%; padding: 10px;}
+.view-more {
+  text-align: center; font-size: 12px; color: var(--grocery-theme-color);
+  font-weight: 700; margin-top: 15px;
+  display: flex; align-items: center; justify-content: center; gap: 4px;
+}
+
+/* --- 3. Exclusive Card --- */
+.offer-card {
+  border: 1px solid #e0e0e0; border-radius: 12px; padding: 16px; position: relative;
+  
+  &.selected { border-color: var(--grocery-theme-color); box-shadow: 0 4px 12px rgba(0,0,0,0.05);}
+
+  .card-header { margin-bottom: 10px; 
+    .brand-logo { color: #de5646; font-weight: 800; font-style: italic; font-size: 16px;
+      span { color: #de5646; font-weight: 400; letter-spacing: 1px; font-size: 12px; }
+    }
+  }
+  .radio-row { display: flex; align-items: flex-start; gap: 10px; }
+  .custom-radio {
+    width: 18px; height: 18px; border: 2px solid var(--grocery-theme-color);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-top: 2px;
+    .dot { width: 10px; height: 10px; background: var(--grocery-theme-color); border-radius: 50%; }
+  }
+  .text-col {
+    .main-offer { font-size: 14px; font-weight: 700; color: #111; margin-bottom: 4px; }
+    .sub-offer { font-size: 12px; color: #666; }
+  }
+}
+
+/* --- 4. Sticky Footer --- */
+.sticky-footer {
+  background: white; padding: 12px 16px 20px; box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
+  .proceed-btn {
+    width: 100%; background: var(--grocery-theme-color); color: white;
+    border: none; padding: 14px; border-radius: 8px;
+    font-size: 16px; font-weight: 700; letter-spacing: 0.5px;
+    &:active { opacity: 0.9; transform: scale(0.98); }
+  }
+}
+
+.offer-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 16px;
+  position: relative;
+  background: #fff;
+  transition: all 0.2s ease;
+  margin-bottom: 12px; /* Space between multiple offers */
+  
+  /* Selected State */
+  &.selected {
+    border-color: var(--grocery-theme-color);
+    background-color: var(--grocery-theme-color-light); /* Very subtle tint */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+
+    /* Enforce radio border color when selected */
+    .custom-radio {
+      border-color: var(--grocery-theme-color);
+    }
+  }
+
+  .card-header {
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed #eee;
+    
+    .brand-logo {
+      color: #de5646; 
+      font-weight: 800; 
+      font-style: italic; 
+      font-size: 14px;
+      
+      span { 
+        color: #de5646; 
+        font-weight: 600; 
+        letter-spacing: 1px; 
+        font-size: 10px; 
+        background: #ffebe9;
+        padding: 2px 6px;
+        border-radius: 4px;
+        margin-left: 4px;
+      }
+    }
+  }
+
+  .radio-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .custom-radio {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ccc; /* Default gray border */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+    flex-shrink: 0;
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      background: var(--grocery-theme-color);
+      border-radius: 50%;
+    }
+  }
+
+  .text-col {
+    flex: 1;
+    .main-offer {
+      font-size: 15px;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 4px;
+    }
+
+    .sub-offer {
+      font-size: 12px;
+      color: #666;
+      line-height: 1.4;
+      
+      .dot-sep { margin: 0 4px; color: #ccc; }
+    }
+
+    .tag-row {
+      margin-top: 6px;
+      .user-tag {
+        font-size: 10px;
+        background: #e3f2fd;
+        color: #1565c0;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+.offer-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: #f8f9fa;
+  border: 1px dashed #ced4da;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-top: 16px;
+
+  ion-icon {
+    font-size: 18px;
+    color: #6c757d;
+    min-width: 18px;
+    margin-top: 2px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 11px;
+    color: #555;
+    line-height: 1.4;
+    strong { color: #333; }
+  }
+}
+
+/* --- No Offers State --- */
+.no-offer-card {
+  text-align: center;
+  padding: 24px 16px;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+
+  .icon-circle {
+    width: 48px;
+    height: 48px;
+    background: var(--grocery-theme-color-light); /* Light tint of theme */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+
+    ion-icon {
+      font-size: 24px;
+      color: var(--grocery-theme-color);
+    }
+  }
+
+  h4 {
+    margin: 0 0 6px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #111;
+  }
+
+  p {
+    margin: 0;
+    font-size: 12px;
+    color: #666;
+    line-height: 1.5;
+  }
+}

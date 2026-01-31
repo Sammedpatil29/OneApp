@@ -208,6 +208,10 @@ export const routes: Routes = [
               ),
           },
           {
+    path: 'dineout-select-time',
+    loadComponent: () => import('./pages/dineout-select-time/dineout-select-time.page').then( m => m.DineoutSelectTimePage)
+  },
+          {
             path: '',
             redirectTo: 'dineout',
             pathMatch: 'full',
