@@ -21,8 +21,8 @@
     <div class="search-container">
       <ion-icon name="search-outline"></ion-icon>
       <input type="text" placeholder="Search 'Biryani' or 'Pizza'..." />
-      <div class="search-divider"></div>
-      <ion-icon name="mic-outline" class="mic-icon"></ion-icon>
+      <!-- <div class="search-divider"></div> -->
+      <!-- <ion-icon name="mic-outline" class="mic-icon"></ion-icon> -->
     </div>
 
   </ion-toolbar>
@@ -77,7 +77,7 @@
 
       <div class="offer-footer" *ngIf="item.offers.length > 0">
         <div class="offer-left">
-          <img src="assets/icon/discount-fire.png" style="width:16px; margin-right:6px;" *ngIf="false"> <ion-icon name="flame" style="color: #ff6d00; margin-right: 6px;"></ion-icon>
+          <img src="assets/icon/discount-fire.png" style="width:16px; margin-right:6px;" *ngIf="false"> <ion-icon name="flame" style="color: var(--grocery-theme-color); margin-right: 6px;"></ion-icon>
           <span class="offer-text">{{item.offers[0].text}}</span>
         </div>
         <div class="offer-right" *ngIf="item.offers.length > 1">

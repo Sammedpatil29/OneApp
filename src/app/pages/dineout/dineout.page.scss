@@ -73,7 +73,7 @@ ion-toolbar {
     border-color: #d1d5db;
   }
 
-  ion-icon { font-size: 20px; color: #ff3269; margin-right: 12px; }
+  ion-icon { font-size: 20px; color: var(--grocery-theme-color); margin-right: 12px; }
   .mic-icon { color: #6b7280; border-left: 1px solid #eee; padding-left: 10px; margin-right: 0;}
   
   input {
@@ -242,12 +242,12 @@ ion-toolbar {
 
   /* OFFER FOOTER (Peach Section) */
   .offer-footer {
-    background: #fff5f3; /* Light peach/orange background */
+    background: #f7ecfc; /* Light peach/orange background */
     padding: 12px 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-top: 1px dashed #ffe0d6; /* Subtle separator */
+    border-top: 1px dashed #e6b3fc; /* Subtle separator */
 
     .offer-left {
       display: flex;
@@ -265,7 +265,7 @@ ion-toolbar {
     .offer-right {
       font-size: 12px;
       font-weight: 700;
-      color: #ff6d00; /* Orange accent text */
+      color: var(--grocery-theme-color); /* Orange accent text */
     }
   }
 }
