@@ -5,137 +5,180 @@
     </ion-buttons>
     <ion-title class="header-title">
       <div class="main-text">Book table</div>
-      <div class="sub-text">{{restaurantName}}</div>
+      <div class="sub-text" *ngIf="!isLoading">{{restaurantName}}</div>
+      <ion-skeleton-text animated style="width: 50%; height: 12px; border-radius: 4px;" *ngIf="isLoading"></ion-skeleton-text>
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="bg-white">
 
-  @if(offers.length > 0){
-    <div class="green-banner">
-    <img src="https://cdn-icons-png.flaticon.com/512/2534/2534204.png" width="16" /> 
-    Get {{offers[0].title}} on your bill payment
-  </div>
-  }
-
-  <div class="content-padding">
-    
-    <div class="section">
-      <h3>Number of guest(s)</h3>
-      <div class="scroll-row">
-        <div 
-          class="guest-chip" 
-          *ngFor="let g of guests" 
-          [class.selected]="selectedGuest === g"
-          (click)="selectGuest(g)">
-          {{g}}
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <h3>When are you visiting?</h3>
-      <div class="scroll-row dates-row">
-        
-        <div 
-          class="date-card-wrapper" 
-          *ngFor="let d of dates; let i = index"
-          (click)="selectDate(i)">
-
-          <div class="month-separator" *ngIf="d.date === '01' || (i === 0 && d.day !== 'Today')">
-            <span>{{d.month}}</span>
-          </div>
-
-          <div class="date-card" [class.selected]="selectedDateIdx === i">
-            <div class="d-val">{{d.date}}</div>
-            <div class="d-day">{{d.day}}</div>
-          </div>
-
-        </div>
-
-      </div>
-    </div>
-
-    <div class="section slots-container">
-      <div class="slot-header">Select Slot</div>
-
-      <div class="slots-grid" *ngIf="timeSlots.length > 0">
-        <div 
-          class="time-chip" 
-          *ngFor="let t of timeSlots" 
-          [class.selected]="selectedTimeSlot === t.time"
-          [class.disabled]="t.disabled"
-          (click)="!t.disabled && selectTime(t.time)">
-          <span class="t-val">{{t.time}}</span>
-        </div>
-      </div>
-
-      <div *ngIf="timeSlots.length === 0" class="no-slots">
-        No slots available for this date.
-      </div>
-    </div>
-
-    <div class="section" *ngIf="selectedTimeSlot">
+  @if (isLoading) {
+    <div class="content-padding">
       
-      <ng-container *ngIf="offers.length > 0">
-        <h3>Select offer for {{selectedTimeSlot}}</h3>
-        
-        <div 
-          class="offer-card" 
-          *ngFor="let off of offers"
-          [class.selected]="selectedOffer === off"
-          (click)="selectOffer(off)">
-          
-          <div class="radio-row">
-            <div class="custom-radio">
-              <div class="dot" *ngIf="selectedOffer === off"></div>
-            </div>
+      <ion-skeleton-text animated style="width: 100%; height: 36px; border-radius: 4px; margin-bottom: 24px; opacity: 0.5;"></ion-skeleton-text>
 
-            <div class="text-col">
-              <div class="main-offer">{{off.title}}</div>
-              <div class="sub-offer">
-                {{off.description}} 
-                <span class="dot-sep">•</span> 
-                Cover charge: ₹{{coverCharge}}/guest
-              </div>
-              
-              <div class="tag-row" *ngIf="off.applicable_for === 'NEW_USER'">
-                <span class="user-tag">New Users Only</span>
-              </div>
-            </div>
-          </div>
+      <div class="section">
+        <ion-skeleton-text animated style="width: 40%; height: 20px; margin-bottom: 12px; border-radius: 4px;"></ion-skeleton-text>
+        <div style="display: flex; gap: 10px; overflow: hidden;">
+          <ion-skeleton-text animated style="width: 50px; height: 45px; border-radius: 8px;" *ngFor="let i of [1,2,3,4,5]"></ion-skeleton-text>
         </div>
+      </div>
 
-        <div class="offer-note">
-          <ion-icon name="information-circle-outline"></ion-icon>
-          <p>
-            <strong>Note:</strong> Selecting an offer here is for reference. 
-            You can apply the actual offer while paying your bill at the restaurant.
-          </p>
+      <div class="section">
+        <ion-skeleton-text animated style="width: 50%; height: 20px; margin-bottom: 12px; border-radius: 4px;"></ion-skeleton-text>
+        <div style="display: flex; gap: 10px; overflow: hidden;">
+          <ion-skeleton-text animated style="min-width: 72px; height: 75px; border-radius: 12px;" *ngFor="let i of [1,2,3,4]"></ion-skeleton-text>
         </div>
-      </ng-container>
+      </div>
 
-      <ng-container *ngIf="offers.length === 0">
-        <h3>Offers for {{selectedTimeSlot}}</h3>
-        <div class="no-offer-card">
-          <div class="icon-circle">
-            <ion-icon name="gift-outline"></ion-icon>
-          </div>
-          <h4>Great food needs no discount!</h4>
-          <p>While there are no active offers for this slot, we promise a dining experience worth every penny.</p>
+      <div class="section">
+        <ion-skeleton-text animated style="width: 30%; height: 20px; margin-bottom: 12px; border-radius: 4px;"></ion-skeleton-text>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+          <ion-skeleton-text animated style="height: 40px; border-radius: 8px;" *ngFor="let i of [1,2,3,4,5,6,7,8]"></ion-skeleton-text>
         </div>
-      </ng-container>
+      </div>
+      
+      <div class="section">
+         <ion-skeleton-text animated style="width: 60%; height: 20px; margin-bottom: 12px; border-radius: 4px;"></ion-skeleton-text>
+         <ion-skeleton-text animated style="width: 100%; height: 90px; border-radius: 12px;"></ion-skeleton-text>
+      </div>
 
     </div>
+  } @else if (isError) {
+    <app-error 
+      title="Oops! Slots Selection failed to load" 
+      (reload)="loadRestaurantData()">
+    </app-error>
+  }
+  
+  @else {
+    
+    @if(offers.length > 0){
+      <div class="green-banner">
+      <img src="https://cdn-icons-png.flaticon.com/512/2534/2534204.png" width="16" /> 
+      Get {{offers[0].title}} on your bill payment
+    </div>
+    }
 
-  </div> 
-  <div style="height: 100px;"></div>
+    <div class="content-padding">
+      
+      <div class="section">
+        <h3>Number of guest(s)</h3>
+        <div class="scroll-row">
+          <div 
+            class="guest-chip" 
+            *ngFor="let g of guests" 
+            [class.selected]="selectedGuest === g"
+            (click)="selectGuest(g)">
+            {{g}}
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>When are you visiting?</h3>
+        <div class="scroll-row dates-row">
+          
+          <div 
+            class="date-card-wrapper" 
+            *ngFor="let d of dates; let i = index"
+            (click)="selectDate(i)">
+
+            <div class="month-separator" *ngIf="d.date === '01' || (i === 0 && d.day !== 'Today')">
+              <span>{{d.month}}</span>
+            </div>
+
+            <div class="date-card" [class.selected]="selectedDateIdx === i">
+              <div class="d-val">{{d.date}}</div>
+              <div class="d-day">{{d.day}}</div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <div class="section slots-container">
+        <div class="slot-header">Select Slot</div>
+
+        <div class="slots-grid" *ngIf="timeSlots.length > 0">
+          <div 
+            class="time-chip" 
+            *ngFor="let t of timeSlots" 
+            [class.selected]="selectedTimeSlot === t.time"
+            [class.disabled]="t.disabled"
+            (click)="!t.disabled && selectTime(t.time)">
+            <span class="t-val">{{t.time}}</span>
+          </div>
+        </div>
+
+        <div *ngIf="timeSlots.length === 0" class="no-slots">
+          No slots available for this date.
+        </div>
+      </div>
+
+      <div class="section" *ngIf="selectedTimeSlot">
+        
+        <ng-container *ngIf="offers.length > 0">
+          <h3>Select offer for {{selectedTimeSlot}}</h3>
+          
+          <div 
+            class="offer-card" 
+            *ngFor="let off of offers"
+            [class.selected]="selectedOffer === off"
+            (click)="selectOffer(off)">
+            
+            <div class="radio-row">
+              <div class="custom-radio">
+                <div class="dot" *ngIf="selectedOffer === off"></div>
+              </div>
+
+              <div class="text-col">
+                <div class="main-offer">{{off.title}}</div>
+                <div class="sub-offer">
+                  {{off.description}} 
+                  <span class="dot-sep">•</span> 
+                  Cover charge: ₹{{coverCharge}}/guest
+                </div>
+                
+                <div class="tag-row" *ngIf="off.applicable_for === 'NEW_USER'">
+                  <span class="user-tag">New Users Only</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="offer-note">
+            <ion-icon name="information-circle-outline"></ion-icon>
+            <p>
+              <strong>Note:</strong> Selecting an offer here is for reference. 
+              You can apply the actual offer while paying your bill at the restaurant.
+            </p>
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="offers.length === 0">
+          <h3>Offers for {{selectedTimeSlot}}</h3>
+          <div class="no-offer-card">
+            <div class="icon-circle">
+              <ion-icon name="gift-outline"></ion-icon>
+            </div>
+            <h4>Great food needs no discount!</h4>
+            <p>While there are no active offers for this slot, we promise a dining experience worth every penny.</p>
+          </div>
+        </ng-container>
+
+      </div>
+
+    </div> 
+    <div style="height: 100px;"></div>
+  }
 
 </ion-content>
 
 <ion-footer class="sticky-footer">
-  <button class="proceed-btn" (click)="proceed()">
+  <button class="proceed-btn" (click)="proceed()" [disabled]="isLoading">
     Book Slot Now
   </button>
 </ion-footer>

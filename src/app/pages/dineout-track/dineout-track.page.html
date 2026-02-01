@@ -1,0 +1,120 @@
+<ion-content class="bg-light">
+
+  <div class="success-header">
+    <div class="icon-circle">
+      <ion-icon name="checkmark-circle"></ion-icon>
+    </div>
+    <h1>Booking Confirmed!</h1>
+    <p>Your table is reserved successfully.</p>
+  </div>
+
+  <div class="ticket-card" *ngIf="booking">
+    
+    <div class="rest-header">
+      <h2>{{booking.restaurantName}}</h2>
+      <p class="id-text">Booking ID: #{{bookingId}}</p>
+    </div>
+
+    <div class="divider dashed"></div>
+
+    <div class="details-grid">
+      <div class="detail-item">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <div class="text">
+          <label>Date</label>
+          <span>{{booking.date | date: 'mediumDate'}}</span>
+        </div>
+      </div>
+      <div class="detail-item">
+        <ion-icon name="time-outline"></ion-icon>
+        <div class="text">
+          <label>Time</label>
+          <span>{{booking.timeSlot}}</span>
+        </div>
+      </div>
+      <div class="detail-item">
+        <ion-icon name="people-outline"></ion-icon>
+        <div class="text">
+          <label>Guests</label>
+          <span>{{booking.guestCount}} Adults</span>
+        </div>
+      </div>
+      <div class="detail-item">
+        <ion-icon name="wallet-outline"></ion-icon>
+        <div class="text">
+          <label>Amount Paid</label>
+          <span class="price">₹{{booking.billDetails.totalAmount}}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="offer-strip" *ngIf="booking.offerApplied">
+      <ion-icon name="ticket-outline"></ion-icon>
+      <span>{{getOfferText()}}</span>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="qr-section">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{bookingId}}" alt="QR Code">
+      <small>Show this QR at the restaurant</small>
+    </div>
+
+  </div>
+
+  <div class="bill-action-card" *ngIf="isBillWindowOpen">
+    
+    <div class="pay-section">
+      <div class="pay-header">
+        <ion-icon name="receipt-outline"></ion-icon>
+        <h3>Pay bill via Dineout</h3>
+      </div>
+      <p>Get instant discounts & extra cashback</p>
+      <button class="pay-btn" (click)="payBillNow()">
+        Pay Bill Now
+      </button>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="upload-section">
+      <div class="left">
+        <h4>Already paid the bill?</h4>
+        <small>Upload bill within 24 hrs to claim cashback</small>
+      </div>
+      <button class="upload-btn" (click)="uploadBill()">
+        <ion-icon name="cloud-upload-outline"></ion-icon> Upload
+      </button>
+    </div>
+
+  </div>
+  
+  <div style="height: 100px;"></div>
+
+</ion-content>
+
+<ion-footer class="action-footer">
+  <div class="grid-actions">
+    
+    <div class="action-btn" (click)="goHome()">
+      <div class="icon-box"><ion-icon name="home-outline"></ion-icon></div>
+      <span>Home</span>
+    </div>
+
+    <div class="action-btn" (click)="callRestaurant()">
+      <div class="icon-box"><ion-icon name="call-outline"></ion-icon></div>
+      <span>Call</span>
+    </div>
+
+    <div class="action-btn" (click)="getDirections()">
+      <div class="icon-box"><ion-icon name="location-outline"></ion-icon></div>
+      <span>Map</span>
+    </div>
+
+    <div class="action-btn danger">
+      <div class="icon-box"><ion-icon name="close-circle-outline"></ion-icon></div>
+      <span>Cancel</span>
+    </div>
+
+  </div>
+</ion-footer>

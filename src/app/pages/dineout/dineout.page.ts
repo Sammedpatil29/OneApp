@@ -1,14 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, NavController } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { addIcons } from 'ionicons';
 import { 
   searchOutline, optionsOutline, heartOutline, star, heart, 
   bookmarkOutline, locationOutline, chevronDownOutline, pricetagOutline,
-  bicycleOutline, timeOutline, flame, homeOutline
+  bicycleOutline, timeOutline, flame, homeOutline, closeCircle
 } from 'ionicons/icons';
-import { NavController } from '@ionic/angular';
 import { DineoutService } from 'src/app/services/dineout.service';
 import { ErrorComponent } from "src/app/components/error/error.component";
 
@@ -24,126 +23,29 @@ export class DineoutPage implements OnInit {
   // City Dropdown Data
   cities = ['Bangalore', 'Mumbai', 'Delhi', 'Hyderabad', 'Chennai'];
   selectedCity = 'Bangalore';
-  isLoading: boolean = false
-  isError: boolean = false
+  isLoading: boolean = false;
+  isError: boolean = false;
 
-  // Filters
-  filters = ['Sort by', 'Pure Veg', 'Fast Delivery', 'Rated 4.0+', 'New Arrivals'];
-
-  // Expanded Professional Data
-  restaurants:any = []
+  // Filters UI State
+  // REMOVED: 'Fast Delivery'
+  filters = ['Sort by', 'Pure Veg', 'Rated 4.0+', 'New Arrivals'];
+  activeFilters: string[] = [];
   
-  // [
-  //   {
-  //     id: 1,
-  //     name: 'Truffles - Ice & Spice',
-  //     image: 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-  //     location: 'Koramangala, 5th Block',
-  //     distance: '2.5 km',
-  //     time: '35 mins',
-  //     tags: ['American', 'Burgers', 'Cafe'],
-  //     price_for_two: '₹800 for two',
-  //     rating: 4.5,
-  //     ratingCount: '15K+',
-  //     offers: [
-  //       { icon: 'pricetag', text: 'Flat 20% off on orders above ₹500' }
-  //     ],
-  //     isFav: false,
-  //     isVeg: false
-  //   },
-  //   {
-  //     id: 2,
-  //     name: 'Meghana Foods',
-  //     image: 'https://images.unsplash.com/photo-1633945274405-b6c8069047b0?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-  //     location: 'Indiranagar',
-  //     distance: '4.2 km',
-  //     time: '45 mins',
-  //     tags: 'Biryani, Andhra, North Indian',
-  //     price_for_two: '₹950 for two',
-  //     rating: 4.4,
-  //     ratingCount: '22K+',
-  //     offers: [],
-  //     isAd: false,
-  //     isFav: true,
-  //     isVeg: false
-  //   },
-  //   {
-  //     id: 3,
-  //     name: 'Brahmin\'s Thatte Idli',
-  //     image: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-  //     location: 'Malleshwaram',
-  //     distance: '6.0 km',
-  //     time: '50 mins',
-  //     tags: 'South Indian, Breakfast',
-  //     price_for_two: '₹200 for two',
-  //     rating: 4.8,
-  //     ratingCount: '5K+',
-  //     offers: [
-  //       { icon: 'bicycle', text: 'Free Delivery' }
-  //     ],
-  //     isAd: false,
-  //     isFav: false,
-  //     isVeg: true // Pure Veg
-  //   },
-  //   {
-  //     id: 4,
-  //     name: 'Chianti - Italian Kitchen',
-  //     image: 'https://images.unsplash.com/photo-1595295333158-4742f28fbd85?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-  //     location: 'Indiranagar',
-  //     distance: '3.8 km',
-  //     time: '40 mins',
-  //     tags: 'Italian, Pasta, Pizza',
-  //     price_for_two: '₹1400 for two',
-  //     rating: 4.2,
-  //     ratingCount: '1.2K+',
-  //     offers: [
-  //       { icon: 'pricetag', text: 'Free Dessert with Pizza' }
-  //     ],
-  //     isAd: true,
-  //     isFav: true,
-  //     isVeg: false
-  //   },
-  //   {
-  //     id: 5,
-  //     name: 'Empire Restaurant',
-  //     image: 'https://images.unsplash.com/photo-1606471191009-63994c53433b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-  //     location: 'Church Street',
-  //     distance: '1.2 km',
-  //     time: '25 mins',
-  //     tags: 'North Indian, Kebab, Mughlai',
-  //     price_for_two: '₹700 for two',
-  //     rating: 4.1,
-  //     ratingCount: '50K+',
-  //     offers: [],
-  //     isAd: false,
-  //     isFav: false,
-  //     isVeg: false
-  //   },
-  //   {
-  //     id: 6,
-  //     name: 'Kapoor\'s Cafe',
-  //     image: 'https://images.unsplash.com/photo-1626074353765-517a681e40be?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-  //     location: 'Whitefield',
-  //     distance: '8 km',
-  //     time: '60 mins',
-  //     tags: 'Punjabi, Paratha, Lassi',
-  //     price_for_two: '₹600 for two',
-  //     rating: 4.3,
-  //     ratingCount: '8K+',
-  //     offers: [
-  //       { icon: 'pricetag', text: 'Flat ₹100 OFF' }
-  //     ],
-  //     isAd: false,
-  //     isFav: true,
-  //     isVeg: true
-  //   }
-  // ];
+  // Sorting State
+  currentSort = ''; // '' | 'rating' | 'cost_low'
+
+  // Search State
+  searchTerm = '';
+
+  // Data
+  allRestaurants: any[] = []; // Master copy
+  restaurants: any[] = [];    // Display copy
 
   constructor(private navCtrl: NavController, private dineoutService: DineoutService) {
     addIcons({ 
       searchOutline, optionsOutline, heartOutline, star, heart, 
       bookmarkOutline, locationOutline, chevronDownOutline, pricetagOutline,
-      bicycleOutline, timeOutline, flame, homeOutline
+      bicycleOutline, timeOutline, flame, homeOutline, closeCircle
     });
   }
 
@@ -151,28 +53,120 @@ export class DineoutPage implements OnInit {
     this.getRestaurantList();
   }
 
-  getRestaurantList(){
+  getRestaurantList() {
     this.isLoading = true;
-    this.isError = false
-    this.dineoutService.getRestaurants().subscribe((res:any)=>{
-      console.log(res);
-      this.restaurants = res.data;
-      this.isLoading = false
+    this.isError = false;
+    this.dineoutService.getRestaurants().subscribe((res: any) => {
+      // Store Master Copy
+      this.allRestaurants = res.data;
+      // Initialize Display Copy
+      this.restaurants = [...this.allRestaurants];
+      this.isLoading = false;
     }, () => {
       this.isLoading = false;
-      this.isError = true
+      this.isError = true;
     });
   }
 
-gotodetails(restaurantId: number){
-    this.navCtrl.navigateForward(`/layout/dineout-layout/dineout-hotel-details/${restaurantId}`);
-}
+  // --- 1. Search Logic ---
+  onSearchChange(event: any) {
+    this.searchTerm = event.target.value.toLowerCase();
+    this.applyAllFilters();
+  }
 
-  goHome(){
+  // --- 2. Filter Button Logic ---
+  toggleFilter(filterName: string) {
+    // Special Case: Sort By
+    if (filterName === 'Sort by') {
+      this.toggleSort();
+      return;
+    }
+
+    // Toggle other filters
+    if (this.activeFilters.includes(filterName)) {
+      this.activeFilters = this.activeFilters.filter(f => f !== filterName);
+    } else {
+      this.activeFilters.push(filterName);
+    }
+    
+    this.applyAllFilters();
+  }
+
+  toggleSort() {
+    // Cycle: '' -> 'rating' -> 'cost_low' -> ''
+    if (this.currentSort === '') this.currentSort = 'rating';
+    else if (this.currentSort === 'rating') this.currentSort = 'cost_low';
+    else this.currentSort = '';
+    
+    this.applyAllFilters();
+  }
+
+  // --- 3. Master Filter Function ---
+  applyAllFilters() {
+    let temp = [...this.allRestaurants];
+
+    // A. Apply Search
+    if (this.searchTerm && this.searchTerm.trim() !== '') {
+      const term = this.searchTerm.toLowerCase();
+      
+      temp = temp.filter(r => {
+        // 1. Safe Name Check
+        const nameMatch = (r.name || '').toLowerCase().includes(term);
+        
+        // 2. Safe Tags Check (Handles Array OR String)
+        let tagMatch = false;
+        if (Array.isArray(r.tags)) {
+          // If tags is ['Pizza', 'Burger']
+          tagMatch = r.tags.join(' ').toLowerCase().includes(term);
+        } else if (typeof r.tags === 'string') {
+          // If tags is "Pizza, Burger"
+          tagMatch = r.tags.toLowerCase().includes(term);
+        }
+
+        return nameMatch || tagMatch;
+      });
+    }
+
+    // B. Apply "Pure Veg"
+    if (this.activeFilters.includes('Pure Veg')) {
+      temp = temp.filter(r => r.isVeg === true);
+    }
+
+    // C. Apply "Rated 4.0+"
+    if (this.activeFilters.includes('Rated 4.0+')) {
+      temp = temp.filter(r => r.rating >= 4.0);
+    }
+
+    // D. Apply "New Arrivals"
+    if (this.activeFilters.includes('New Arrivals')) {
+      // Add logic if you have an 'isNew' flag, otherwise this does nothing
+    }
+
+    // E. Apply Sorting
+    if (this.currentSort === 'rating') {
+      temp.sort((a, b) => b.rating - a.rating); // High to Low
+    } else if (this.currentSort === 'cost_low') {
+      temp.sort((a, b) => {
+        // Extract numbers from string "₹800 for two" -> 800
+        const priceA = parseInt((a.price_for_two || '0').toString().replace(/[^0-9]/g, '')) || 0;
+        const priceB = parseInt((b.price_for_two || '0').toString().replace(/[^0-9]/g, '')) || 0;
+        return priceA - priceB;
+      });
+    }
+
+    this.restaurants = temp;
+  }
+
+  // --- Navigation ---
+  gotodetails(restaurantId: number) {
+    this.navCtrl.navigateForward(`/layout/dineout-layout/dineout-hotel-details/${restaurantId}`);
+  }
+
+  goHome() {
     this.navCtrl.navigateBack(['/home']);
   }
 
-  gotohome(){
+  gotohome() {
     this.navCtrl.navigateForward('/layout/example/home');
   }
 }

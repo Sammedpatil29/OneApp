@@ -208,9 +208,19 @@ export const routes: Routes = [
               ),
           },
           {
-    path: 'dineout-select-time',
-    loadComponent: () => import('./pages/dineout-select-time/dineout-select-time.page').then( m => m.DineoutSelectTimePage)
-  },
+            path: 'dineout-select-time/:id',
+            loadComponent: () =>
+              import('./pages/dineout-select-time/dineout-select-time.page').then(
+                (m) => m.DineoutSelectTimePage,
+              ),
+          },
+          {
+            path: 'dineout-track',
+            loadComponent: () =>
+              import('./pages/dineout-track/dineout-track.page').then(
+                (m) => m.DineoutTrackPage,
+              ),
+          },
           {
             path: '',
             redirectTo: 'dineout',

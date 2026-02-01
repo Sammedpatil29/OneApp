@@ -43,7 +43,7 @@ h3 { font-size: 16px; font-weight: 700; color: #111; margin: 0 0 12px 0; }
   display: flex; align-items: center; justify-content: center;
   font-weight: 600; color: #333; font-size: 16px;
   transition: all 0.2s;
-  
+  color: var(--grocery-theme-color);
   &.selected {
     border-color: var(--grocery-theme-color);
     background: var(--grocery-theme-color-light);

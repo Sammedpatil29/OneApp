@@ -386,6 +386,6 @@ export class DineoutHotelDetailsPage implements OnInit {
   }
 
   bookTable(){
-    this.navCtrl.navigateForward('/layout/dineout-layout/dineout-select-time');
+    this.navCtrl.navigateForward(`/layout/dineout-layout/dineout-select-time/${this.restaurantId}`);
   }
 }

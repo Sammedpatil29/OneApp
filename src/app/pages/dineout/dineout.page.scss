@@ -110,7 +110,13 @@ ion-toolbar {
     gap: 4px;
     background: #fff;
     box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-
+transition: all 0.2s ease;
+&.active-chip {
+    background-color: var(--grocery-theme-color); /* or black #111 */
+    color: white;
+    border-color: transparent;
+    font-weight: 600;
+  }
     &.filter-btn {
       border-color: #d1d5db;
       font-weight: 700;

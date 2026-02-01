@@ -4,9 +4,6 @@
     <div class="location-header">
       
       <div class="loc-details">
-        <!-- <div class="loc-icon">
-        <ion-icon name="location-outline"></ion-icon>
-      </div> -->
         <button class="btn btn-sm d-flex align-items-center gap-1" style="background-color: var(--grocery-theme-color-light); width: 80px; color: var(--grocery-theme-color)"><ion-icon name="location-outline"></ion-icon>Athani</button>
       </div>
       <div class="profile-icon" (click)="gotohome()">
@@ -16,9 +13,13 @@
 
     <div class="search-container">
       <ion-icon name="search-outline"></ion-icon>
-      <input type="text" placeholder="Search 'Biryani' or 'Pizza'..." />
-      <!-- <div class="search-divider"></div> -->
-      <!-- <ion-icon name="mic-outline" class="mic-icon"></ion-icon> -->
+      <input 
+        type="text" 
+        placeholder="Search restaurant name and more.." 
+        [ngModel]="searchTerm"
+        (input)="onSearchChange($event)"
+      />
+      <ion-icon name="close-circle" *ngIf="searchTerm" (click)="searchTerm=''; onSearchChange({target:{value:''}})" style="color: #999"></ion-icon>
     </div>
 
   </ion-toolbar>
@@ -27,8 +28,19 @@
     <div class="chip filter-btn">
       <ion-icon name="options-outline"></ion-icon> Filter
     </div>
-    <div class="chip" *ngFor="let f of filters">
-      {{f}} <ion-icon name="chevron-down-outline" *ngIf="f === 'Sort by'"></ion-icon>
+    
+    <div 
+      class="chip" 
+      *ngFor="let f of filters"
+      [class.active-chip]="activeFilters.includes(f) || (f === 'Sort by' && currentSort !== '')"
+      (click)="toggleFilter(f)">
+      
+      <span *ngIf="f !== 'Sort by'">{{f}}</span>
+      <span *ngIf="f === 'Sort by'">
+        {{ currentSort === 'rating' ? 'Rating High' : (currentSort === 'cost_low' ? 'Cost Low' : 'Sort by') }}
+      </span>
+
+      <ion-icon name="chevron-down-outline" *ngIf="f === 'Sort by'"></ion-icon>
     </div>
   </div>
 </ion-header>
@@ -63,55 +75,58 @@
       title="Oops! Home page failed to load" 
       (reload)="getRestaurantList()">
     </app-error>
-  }@else {
-  <div class="list-header">
-    <h3>{{restaurants.length}} restaurants to explore</h3>
-    <small>Based on your preferences</small>
-  </div>
+  } @else {
+    
+    <div class="list-header">
+      <h3>{{restaurants.length}} restaurants to explore</h3>
+      <small>Based on your preferences</small>
+    </div>
 
-  <div class="card-list">
-    <div class="rest-card" *ngFor="let item of restaurants" (click)="gotodetails(item.id)">
-      
-      <div class="img-wrapper">
-        <img [src]="item.image" alt="food" />
+    <div class="no-results" *ngIf="restaurants.length === 0" style="text-align: center; padding: 40px; color: #666;">
+      <ion-icon name="search-outline" style="font-size: 40px; margin-bottom: 10px; opacity: 0.5;"></ion-icon>
+      <p>No restaurants found matching your search.</p>
+    </div>
+
+    <div class="card-list">
+      <div class="rest-card" *ngFor="let item of restaurants" (click)="gotodetails(item.id)">
         
-        <div class="top-overlays">
-          <span class="ad-badge" *ngIf="item.isVeg">Pure Veg</span>
-          <div class="spacer"></div>
-          <!-- <div class="fav-btn" (click)="item.isFav = !item.isFav">
-            <ion-icon [name]="item.isFav ? 'heart' : 'heart-outline'" [class.active]="item.isFav"></ion-icon>
-          </div> -->
+        <div class="img-wrapper">
+          <img [src]="item.image" alt="food" />
+          
+          <div class="top-overlays">
+            <span class="ad-badge" *ngIf="item.isVeg">Pure Veg</span>
+            <div class="spacer"></div>
+          </div>
+
+          <div class="curve-divider"></div>
         </div>
 
-        <div class="curve-divider"></div>
-      </div>
+        <div class="info-wrapper">
+          <div class="header-row">
+            <h2 class="name">{{item.name}}</h2>
+            <div class="rating-badge">
+              {{item.rating}} <ion-icon name="star"></ion-icon>
+            </div>
+          </div>
 
-      <div class="info-wrapper">
-        <div class="header-row">
-          <h2 class="name">{{item.name}}</h2>
-          <div class="rating-badge">
-            {{item.rating}} <ion-icon name="star"></ion-icon>
+          <div class="details-row">
+            <p>{{item.location}}, {{item.distance}}</p>
+            <p>{{item.tags}} • {{item.price_for_two}}</p>
           </div>
         </div>
 
-        <div class="details-row">
-          <p>{{item.location}}, {{item.distance}}</p>
-          <p>{{item.tags}} • {{item.price_for_two}}</p>
+        <div class="offer-footer" *ngIf="item.offers.length > 0">
+          <div class="offer-left">
+            <ion-icon name="flame" style="color: var(--grocery-theme-color); margin-right: 6px;"></ion-icon>
+            <span class="offer-text text-truncate">{{item.offers[0].title}} • {{item.offers[0].description}}</span>
+          </div>
+          <div class="offer-right" *ngIf="item.offers.length > 1">
+            +{{item.offers.length - 1}} offers
+          </div>
         </div>
-      </div>
 
-      <div class="offer-footer" *ngIf="item.offers.length > 0">
-        <div class="offer-left">
-          <img src="assets/icon/discount-fire.png" style="width:16px; margin-right:6px;" *ngIf="false"> <ion-icon name="flame" style="color: var(--grocery-theme-color); margin-right: 6px;"></ion-icon>
-          <span class="offer-text text-truncate">{{item.offers[0].title}} • {{item.offers[0].description}}</span>
-        </div>
-        <div class="offer-right" *ngIf="item.offers.length > 1">
-          +{{item.offers.length - 1}} offers
-        </div>
       </div>
-
     </div>
-  </div>
   }
 
   <div style="height: 50px;"></div>

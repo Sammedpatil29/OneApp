@@ -1,0 +1,270 @@
+/* Theme Variables */
+:host {
+//   --grocery-theme-color: #ff4500;
+  --success-green: #24963f;
+  --bg-color: #f4f6f8;
+}
+
+.bg-light { --background: var(--bg-color); }
+
+/* 1. Success Header */
+.success-header {
+  background: var(--success-green);
+  color: white;
+  text-align: center;
+  padding: 40px 20px 80px; /* Extra bottom padding for overlap */
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+
+  .icon-circle {
+    background: rgba(255,255,255,0.2);
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 12px;
+    
+    ion-icon { font-size: 32px; color: #fff; }
+  }
+
+  h1 { margin: 0; font-size: 22px; font-weight: 700; }
+  p { margin: 4px 0 0; opacity: 0.9; font-size: 14px; }
+}
+
+/* 2. Ticket Card */
+.ticket-card {
+  background: white;
+  margin: -50px 20px 20px; /* Negative margin to pull up */
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  position: relative;
+
+  .rest-header {
+    text-align: center;
+    h2 { font-size: 18px; font-weight: 800; color: #111; margin: 0 0 4px; }
+    .id-text { font-size: 12px; color: #666; font-family: monospace; letter-spacing: 1px; }
+  }
+
+  .divider {
+    height: 1px;
+    background: #eee;
+    margin: 16px 0;
+    
+    &.dashed {
+      background: none;
+      border-top: 1px dashed #ddd;
+    }
+  }
+
+  /* Grid Layout for Details */
+  .details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+
+    .detail-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      
+      ion-icon { 
+        color: var(--grocery-theme-color); 
+        background: var(--grocery-theme-color-light); 
+        padding: 6px; 
+        border-radius: 8px;
+        font-size: 18px;
+      }
+
+      .text {
+        display: flex; flex-direction: column;
+        label { font-size: 11px; color: #888; margin-bottom: 2px; }
+        span { font-size: 14px; font-weight: 600; color: #333; }
+        .price { color: var(--success-green); font-weight: 700; }
+      }
+    }
+  }
+
+  .offer-strip {
+    margin-top: 16px;
+    background: #e8f8ee;
+    color: var(--success-green);
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+
+  .qr-section {
+    text-align: center;
+    img { width: 100px; height: 100px; mix-blend-mode: multiply; }
+    small { display: block; color: #999; font-size: 11px; margin-top: 8px; }
+  }
+}
+
+/* 3. Actions */
+.actions-container {
+  padding: 0 20px;
+
+  .row-btns {
+    display: flex; gap: 12px; margin-bottom: 12px;
+    
+    .outline-btn {
+      flex: 1;
+      background: white;
+      border: 1px solid #ddd;
+      color: #333;
+      padding: 12px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+      
+      &:active { background: #f9f9f9; }
+    }
+  }
+
+  .home-btn {
+    width: 100%;
+    background: #111;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 15px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+}
+
+/* ... Existing Styles ... */
+
+/* New Bill Action Card */
+.bill-action-card {
+  background: white;
+  margin: 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+  border: 1px solid #e0e0e0;
+  overflow: hidden;
+
+  /* Pay Section */
+  .pay-section {
+    padding: 16px;
+    background: var(--grocery-theme-color-light); /* Slight yellow tint */
+    
+    .pay-header {
+      display: flex; align-items: center; gap: 8px;
+      ion-icon { color: var(--grocery-theme-color); font-size: 20px; }
+      h3 { margin: 0; font-size: 16px; font-weight: 700; color: #333; }
+    }
+    
+    p { margin: 4px 0 12px; font-size: 12px; color: #666; padding-left: 28px; }
+
+    .pay-btn {
+      width: 100%;
+      background: var(--grocery-theme-color);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 14px;
+      box-shadow: var(--grocery-theme-color-light);
+      
+      &:active { opacity: 0.9; }
+    }
+  }
+
+  .divider {
+    height: 1px;
+    background: #eee;
+  }
+
+  /* Upload Section */
+  .upload-section {
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+
+    .left {
+      h4 { margin: 0 0 4px; font-size: 14px; font-weight: 700; color: #111; }
+      small { font-size: 10px; color: #888; display: block; max-width: 150px; line-height: 1.3; }
+    }
+
+    .upload-btn {
+      background: white;
+      border: 1px solid var(--grocery-theme-color);
+      color: var(--grocery-theme-color);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      display: flex; align-items: center; gap: 6px;
+
+      ion-icon { font-size: 16px; }
+    }
+  }
+}
+
+/* --- Fixed Action Footer --- */
+.action-footer {
+  background: white;
+  border-top: 1px solid #eee;
+  padding: 10px 0 20px; /* Safe area padding */
+  box-shadow: 0 -4px 15px rgba(0,0,0,0.03);
+
+  .grid-actions {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    padding: 0 16px;
+
+    .action-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+
+      .icon-box {
+        width: 44px;
+        height: 44px;
+        background: var(--grocery-theme-color-light);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+
+        ion-icon {
+          font-size: 22px;
+          color: var(--grocery-theme-color);
+        }
+      }
+
+      span {
+        font-size: 11px;
+        font-weight: 600;
+        color: #555;
+      }
+
+      /* Active State */
+      &:active .icon-box {
+        background: #eee;
+        transform: scale(0.95);
+      }
+
+      /* Danger (Cancel) Style */
+      &.danger {
+        .icon-box {
+          background: #fff5f5;
+          ion-icon { color: #dc3545; }
+        }
+        span { color: #dc3545; }
+      }
+    }
+  }
+}
