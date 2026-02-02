@@ -215,7 +215,7 @@ export const routes: Routes = [
               ),
           },
           {
-            path: 'dineout-track',
+            path: 'dineout-track/:id',
             loadComponent: () =>
               import('./pages/dineout-track/dineout-track.page').then(
                 (m) => m.DineoutTrackPage,

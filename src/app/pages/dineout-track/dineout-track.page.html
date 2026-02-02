@@ -1,18 +1,56 @@
 <ion-content class="bg-light">
 
-  <div class="success-header">
-    <div class="icon-circle">
-      <ion-icon name="checkmark-circle"></ion-icon>
+  @if (isLoading) {
+    <div class="success-header">
+      <ion-skeleton-text animated style="width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 16px;"></ion-skeleton-text>
+      <ion-skeleton-text animated style="width: 60%; height: 32px; margin: 0 auto 8px; border-radius: 4px;"></ion-skeleton-text>
+      <ion-skeleton-text animated style="width: 40%; height: 16px; margin: 0 auto; border-radius: 4px;"></ion-skeleton-text>
     </div>
-    <h1>Booking Confirmed!</h1>
-    <p>Your table is reserved successfully.</p>
+
+    <div class="ticket-card">
+      <div class="rest-header">
+        <ion-skeleton-text animated style="width: 70%; height: 24px; margin-bottom: 8px; border-radius: 4px;"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width: 40%; height: 14px; border-radius: 4px;"></ion-skeleton-text>
+      </div>
+
+      <div class="divider dashed"></div>
+
+      <div class="details-grid">
+        <div class="detail-item" *ngFor="let i of [1,2,3,4]">
+          <ion-skeleton-text animated style="width: 24px; height: 24px; border-radius: 4px; margin-right: 12px;"></ion-skeleton-text>
+          <div style="flex: 1;">
+            <ion-skeleton-text animated style="width: 50%; height: 12px; margin-bottom: 6px; border-radius: 4px;"></ion-skeleton-text>
+            <ion-skeleton-text animated style="width: 80%; height: 16px; border-radius: 4px;"></ion-skeleton-text>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="qr-section">
+        <ion-skeleton-text animated style="width: 150px; height: 150px; margin: 0 auto 10px; border-radius: 8px;"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width: 180px; height: 14px; margin: 0 auto; border-radius: 4px;"></ion-skeleton-text>
+      </div>
+    </div>
+  } @else if (isError) {
+    <app-error 
+      title="Oops! Failed to load your booking" 
+      (reload)="loadBookingFromApi(bookingId)">
+    </app-error>
+  } @else {
+    <div class="success-header" [ngClass]="booking.info.color">
+    <div class="icon-circle">
+      <ion-icon [name]="booking.info.icon"></ion-icon>
+    </div>
+    <h1>{{booking.info.message}}</h1>
+    <p>{{booking.info.sub}}</p>
   </div>
 
   <div class="ticket-card" *ngIf="booking">
     
     <div class="rest-header">
-      <h2>{{booking.restaurantName}}</h2>
-      <p class="id-text">Booking ID: #{{bookingId}}</p>
+      <h2>{{booking.restaurant_name}}</h2>
+      <p class="id-text">Booking ID: #{{booking.id}}</p>
     </div>
 
     <div class="divider dashed"></div>
@@ -22,43 +60,45 @@
         <ion-icon name="calendar-outline"></ion-icon>
         <div class="text">
           <label>Date</label>
-          <span>{{booking.date | date: 'mediumDate'}}</span>
+          <span>{{booking.booking_date | date: 'mediumDate'}}</span>
         </div>
       </div>
       <div class="detail-item">
         <ion-icon name="time-outline"></ion-icon>
         <div class="text">
           <label>Time</label>
-          <span>{{booking.timeSlot}}</span>
+          <span>{{booking.time_slot}}</span>
         </div>
       </div>
       <div class="detail-item">
         <ion-icon name="people-outline"></ion-icon>
         <div class="text">
           <label>Guests</label>
-          <span>{{booking.guestCount}} Adults</span>
+          <span>{{booking.guest_count}} Adults</span>
         </div>
       </div>
       <div class="detail-item">
         <ion-icon name="wallet-outline"></ion-icon>
         <div class="text">
           <label>Amount Paid</label>
-          <span class="price">₹{{booking.billDetails.totalAmount}}</span>
+          <span class="price">₹{{booking.bill_details.totalAmount}}</span>
         </div>
       </div>
     </div>
 
-    <div class="offer-strip" *ngIf="booking.offerApplied">
+    <div class="offer-strip" *ngIf="booking.offer_applied">
       <ion-icon name="ticket-outline"></ion-icon>
       <span>{{getOfferText()}}</span>
     </div>
 
-    <div class="divider"></div>
+   @if (booking.status !== 'CANCELLED') {
+     <div class="divider"></div>
 
-    <div class="qr-section">
-      <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{bookingId}}" alt="QR Code">
+    <div class="qr-section" *ngIf="bookingId">
+      <img [src]="'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + bookingId" alt="QR Code">
       <small>Show this QR at the restaurant</small>
     </div>
+   }
 
   </div>
 
@@ -88,33 +128,42 @@
     </div>
 
   </div>
+  }
   
   <div style="height: 100px;"></div>
 
 </ion-content>
 
-<ion-footer class="action-footer">
+@if (!isLoading && !isError) {
+  <ion-footer class="action-footer">
+  @if(!isLoading){
   <div class="grid-actions">
     
-    <div class="action-btn" (click)="goHome()">
+    <div class="action-btn" (click)="goBack()">
       <div class="icon-box"><ion-icon name="home-outline"></ion-icon></div>
       <span>Home</span>
     </div>
 
-    <div class="action-btn" (click)="callRestaurant()">
-      <div class="icon-box"><ion-icon name="call-outline"></ion-icon></div>
-      <span>Call</span>
-    </div>
+    @if(booking?.status !== 'CANCELLED'){
+      <div class="action-btn" (click)="callRestaurant()">
+        <div class="icon-box"><ion-icon name="call-outline"></ion-icon></div>
+        <span>Call</span>
+      </div>
 
-    <div class="action-btn" (click)="getDirections()">
-      <div class="icon-box"><ion-icon name="location-outline"></ion-icon></div>
-      <span>Map</span>
-    </div>
+      <div class="action-btn" (click)="getDirections()">
+        <div class="icon-box"><ion-icon name="location-outline"></ion-icon></div>
+        <span>Map</span>
+      </div>
+    }
 
-    <div class="action-btn danger">
-      <div class="icon-box"><ion-icon name="close-circle-outline"></ion-icon></div>
-      <span>Cancel</span>
-    </div>
+    @if(booking?.status === 'CONFIRMED'){
+      <div class="action-btn danger" (click)="confirmCancel()">
+        <div class="icon-box"><ion-icon name="close-circle-outline"></ion-icon></div>
+        <span>Cancel</span>
+      </div>
+    }
 
   </div>
+  }
 </ion-footer>
+}

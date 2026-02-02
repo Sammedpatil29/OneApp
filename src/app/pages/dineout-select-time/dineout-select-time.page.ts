@@ -10,6 +10,7 @@ import {
 } from 'ionicons/icons';
 import { DineoutService } from 'src/app/services/dineout.service';
 import { ErrorComponent } from "src/app/components/error/error.component";
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-dineout-select-time',
@@ -41,13 +42,15 @@ export class DineoutSelectTimePage implements OnInit {
 
   isLoading = true;
   isError = false
+  token:any = ''
 
   constructor(
     private route: ActivatedRoute, 
     private navCtrl: NavController,
     private dineoutService: DineoutService,
     private toastCtrl: ToastController,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private authServcie: AuthService
   ) { 
     addIcons({ 
       arrowBack, calendarOutline, timeOutline, moonOutline, 
@@ -55,7 +58,8 @@ export class DineoutSelectTimePage implements OnInit {
     });
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.token = await this.authServcie.getToken()
     this.restaurantId = this.route.snapshot.paramMap.get('id');
     if(this.restaurantId) {
       this.loadRestaurantData();
@@ -196,65 +200,69 @@ export class DineoutSelectTimePage implements OnInit {
   selectTime(time: string) { this.selectedTimeSlot = time; }
   selectOffer(offer: any) { this.selectedOffer = offer; }
 
-  // --- BOOKING LOGIC ---
-  async proceed() {
+    proceed() {
     // 1. Validation
-    if (this.selectedDateIdx === undefined || this.selectedDateIdx === null) {
-      this.presentToast('Please select a date', 'warning');
-      return;
-    }
-    if (!this.selectedTimeSlot) {
-      this.presentToast('Please select a time slot', 'warning');
+    if (!this.selectedGuest || !this.selectedTimeSlot || this.selectedDateIdx === undefined || this.selectedDateIdx < 0) {
+      console.error('Please select guest count, date, and time slot.');
       return;
     }
 
-    // 2. Prepare Payload
-    const dateObj = this.dates[this.selectedDateIdx];
-    const bookingDate = dateObj.fullDate.toDateString(); 
-    const totalBill = this.coverCharge * this.selectedGuest;
+    this.isLoading = true;
+    this.isError = false;
 
-    const bookingPayload = {
-      restaurantId: this.restaurantId,
+    // 2. Prepare Data
+    // Assuming this.dates[this.selectedDateIdx] contains the date info. 
+    // You might need to format it to 'YYYY-MM-DD' if it isn't already.
+    const selectedDateObj = this.dates[this.selectedDateIdx];
+    const d = selectedDateObj.fullDate;
+    const year = d.getFullYear();
+    const month = (d.getMonth() + 1).toString().padStart(2, '0');
+    const day = d.getDate().toString().padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+
+    // const totalAmount = (this.coverCharge || 0) * this.selectedGuest;
+
+    // 3. Construct Payload
+    const payload = {
+      restaurantId: this.restaurantId || 1, // Ensure restaurantId is available in your class
       restaurantName: this.restaurantName,
       guestCount: this.selectedGuest,
-      date: bookingDate,
+      date: formattedDate,
       timeSlot: this.selectedTimeSlot,
-      offerApplied: this.selectedOffer ? this.selectedOffer : null,
+      offerApplied: this.selectedOffer ? {
+        type: this.selectedOffer.type || 'FLAT', // Ensure these properties exist on your offer object
+        title: this.selectedOffer.title,
+        value: this.selectedOffer.value || 0,
+        description: this.selectedOffer.description
+      } : null,
       billDetails: {
-        coverChargePerHead: this.coverCharge,
-        totalAmount: totalBill
-      },
-      status: 'PENDING',
-      userId: 'USER_MOCK_001' 
+        coverChargePerHead: this.coverCharge || 0,
+        totalAmount: this.coverCharge
+      }
     };
 
-    console.log('🚀 Booking Payload:', bookingPayload);
+    // 4. Call Service
+    // Retrieve token from your AuthService or LocalStorage
 
-    // 3. Show Loader
-    const loader = await this.loadingCtrl.create({
-      message: 'Confirming your slot...',
-      duration: 2000,
-      spinner: 'crescent'
+    this.dineoutService.createOrder(this.token, payload).subscribe({
+      next: (response: any) => {
+        this.isLoading = false;
+        console.log('Order Created Successfully', response);
+
+        this.navCtrl.navigateRoot(`/layout/dineout-layout/dineout-track/${response.data.id}`, {
+          state: {
+            from: 'time-slot'
+          }
+        })
+        // Navigate to the track page or success page
+        // this.router.navigate(['/dineout-track'], { state: { booking: response } });
+      },
+      error: (error: any) => {
+        this.isLoading = false;
+        this.isError = true; // This triggers the error view in your HTML
+        console.error('Failed to create order', error);
+      }
     });
-    await loader.present();
-
-    // 4. Simulate Success
-    setTimeout(async () => {
-      await loader.dismiss();
-      
-      const bookingId = Math.floor(Math.random() * 100000);
-      await this.presentToast(`Booking Confirmed! ID: #${bookingId}`, 'success');
-
-      setTimeout(async () => {
-    await loader.dismiss();
-    
-    // NAVIGATE TO TRACK PAGE WITH DATA
-    this.navCtrl.navigateForward(['/layout/dineout-layout/dineout-track'], {
-      state: { booking: bookingPayload }
-    });
-    
-  }, 2000);
-    }, 2000);
   }
 
   async presentToast(message: string, color: 'success' | 'warning' | 'danger') {

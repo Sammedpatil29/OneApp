@@ -1,30 +1,45 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule, NavController } from '@ionic/angular';
-import { Router } from '@angular/router';
+import { IonicModule, NavController, ActionSheetController, LoadingController, ToastController } from '@ionic/angular';
+import { ActivatedRoute, Router } from '@angular/router'; 
 import { addIcons } from 'ionicons';
 import { 
   checkmarkCircle, calendarOutline, timeOutline, 
   peopleOutline, locationOutline, callOutline, homeOutline,
   ticketOutline, walletOutline, cameraOutline, receiptOutline, cloudUploadOutline, closeCircleOutline
 } from 'ionicons/icons';
+import { DineoutService } from 'src/app/services/dineout.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { ErrorComponent } from "src/app/components/error/error.component";
 
 @Component({
   selector: 'app-dineout-track',
   templateUrl: './dineout-track.page.html',
   styleUrls: ['./dineout-track.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule]
+  imports: [IonicModule, CommonModule, ErrorComponent]
 })
 export class DineoutTrackPage implements OnInit {
 
   booking: any = null;
-  bookingId = 'DIN-882910'; // Default fallback
+  bookingId: string | null = null;
   
-  // Logic State
-  isBillWindowOpen = false; // Controls visibility of Pay/Upload section
+  isLoading = true;
+  isError = false;
+  isBillWindowOpen = false; 
+  routeSource = '';
+  token: any;
 
-  constructor(private router: Router, private navCtrl: NavController) { 
+  constructor(
+    private router: Router, 
+    private route: ActivatedRoute,
+    private navCtrl: NavController,
+    private dineoutService: DineoutService,
+    private authServcie: AuthService,
+    private actionSheetCtrl: ActionSheetController, 
+    private loadingCtrl: LoadingController, 
+    private toastCtrl: ToastController
+  ) { 
     addIcons({ 
       checkmarkCircle, calendarOutline, timeOutline, 
       peopleOutline, locationOutline, callOutline, homeOutline,
@@ -32,116 +47,179 @@ export class DineoutTrackPage implements OnInit {
     });
   }
 
-  ngOnInit() {
-    this.loadBookingData();
-  }
+  async ngOnInit() {
+    this.bookingId = this.route.snapshot.paramMap.get('id');
+    
+    if (history.state) {
+        this.routeSource = history.state.from;
+    }
 
-  loadBookingData() {
-    // 1. Try getting data from Router State (Immediate visual)
-    const nav = this.router.getCurrentNavigation();
-    if (nav && nav.extras && nav.extras.state) {
-      this.booking = nav.extras.state['booking'];
-      this.checkBillActionWindow();
+    this.token = await this.authServcie.getToken();
+
+    if (this.bookingId) {
+      this.loadBookingFromApi(this.bookingId);
     } else {
-      // 2. Fallback: If page refreshed, simulate API call or redirect
-      console.warn('No state found, using dummy data for demo');
-      this.mockDummyData();
+      console.error('No Order ID found');
+      this.isError = true;
+      this.isLoading = false;
     }
   }
 
-  // --- Core Logic: Check if within 30min before -> 24hrs after ---
+  loadBookingFromApi(id: any) {
+    this.isLoading = true;
+    this.isError = false;
+
+    this.dineoutService.orderById(id).subscribe({
+      next: (res: any) => {
+        this.booking = res?.data; 
+        // this.checkBillActionWindow();
+        this.isBillWindowOpen = this.booking.info.billWindow
+        this.isLoading = false;
+      },
+      error: (err: any) => {
+        console.error('Failed to load booking:', err);
+        this.isError = true;
+        this.isLoading = false;
+      }
+    });
+  }
+
   checkBillActionWindow() {
     if (!this.booking) return;
 
     try {
       const now = new Date();
+      const dateStr = this.booking.booking_date || this.booking.date; 
       
-      // 1. Combine Date + Time Slot into a Date Object
-      // booking.date format: "Tue Feb 14 2026"
-      // booking.timeSlot format: "07:30 PM - 08:00 PM"
-      const dateStr = this.booking.date; 
-      const timeStr = this.booking.timeSlot.split(' - ')[0]; // Take start time "07:30 PM"
+      const timeSlotStr = this.booking.time_slot || this.booking.timeSlot || ""; 
+      const timeStr = timeSlotStr.includes('-') ? timeSlotStr.split(' - ')[0] : timeSlotStr; 
+
+      if(!dateStr || !timeStr) return;
 
       const bookingDateTime = this.parseDateTime(dateStr, timeStr);
 
-      // 2. Define Windows
-      // Start: 30 mins before booking
       const windowStart = new Date(bookingDateTime);
       windowStart.setMinutes(windowStart.getMinutes() - 30);
 
-      // End: 24 hours after booking
       const windowEnd = new Date(bookingDateTime);
       windowEnd.setHours(windowEnd.getHours() + 24);
 
-      // 3. Compare
       this.isBillWindowOpen = now >= windowStart && now <= windowEnd;
-
-      console.log('Window Open?', this.isBillWindowOpen);
-
     } catch (e) {
       console.error('Error parsing date/time', e);
-      this.isBillWindowOpen = false; // Fail safe
+      this.isBillWindowOpen = false; 
     }
   }
 
-  // Helper: Combine Date String + Time String (Fixed)
   parseDateTime(dateString: string, timeString: string): Date {
-    const d = new Date(dateString); // Parses "Tue Feb 14 2026"
-    
-    // Split "07:30 PM" -> time="07:30", modifier="PM"
+    const d = new Date(dateString); 
     const [time, modifier] = timeString.split(' ');
     let [hoursStr, minsStr] = time.split(':');
-    
     let h = parseInt(hoursStr);
     let m = parseInt(minsStr);
 
-    // Convert 12h to 24h
-    if (h === 12 && modifier === 'AM') {
-      h = 0;
-    } else if (h !== 12 && modifier === 'PM') {
-      h += 12;
-    }
+    if (h === 12 && modifier === 'AM') h = 0;
+    else if (h !== 12 && modifier === 'PM') h += 12;
 
     d.setHours(h, m, 0, 0);
     return d;
   }
 
-  // Actions
-  payBillNow() {
-    console.log('Launching Payment Gateway...');
+  async confirmCancel() {
+    const actionSheet = await this.actionSheetCtrl.create({
+      header: 'Are you sure you want to cancel?',
+      subHeader: 'This action cannot be undone.',
+      buttons: [
+        {
+          text: 'Yes, Cancel Booking',
+          role: 'destructive',
+          icon: 'trash-outline',
+          handler: () => {
+            this.processCancellation();
+          }
+        },
+        {
+          text: 'No, Keep it',
+          role: 'cancel',
+          icon: 'close',
+          handler: () => {
+            console.log('Cancel aborted');
+          }
+        }
+      ]
+    });
+    await actionSheet.present();
   }
 
-  uploadBill() {
-    console.log('Opening Camera/Gallery...');
+  async processCancellation() {
+    const loader = await this.loadingCtrl.create({
+      message: 'Cancelling booking...',
+      spinner: 'crescent'
+    });
+    await loader.present();
+
+    this.dineoutService.cancelOrder(this.booking.id, this.token).subscribe({
+      next: async (res: any) => {
+        console.log('Cancellation Success:', res);
+        
+        // UPDATE LOCAL STATE DIRECTLY
+        // Assuming API returns the updated booking object in `res.data`
+        // If API returns just success message, set status manually: this.booking.status = 'CANCELLED';
+        if(res?.data) {
+            this.booking = res?.data; 
+        } else {
+            this.booking.status = 'CANCELLED'; // Fallback manual update
+        }
+        await loader.dismiss();
+        this.presentToast('Booking cancelled successfully', 'success');
+      },
+      error: async (error: any) => {
+        console.error('Cancellation Failed:', error);
+        await loader.dismiss();
+        this.presentToast('Failed to cancel booking. Try again.', 'danger');
+      }
+    });
   }
 
-  getOfferText() {
-    return this.booking?.offerApplied?.title || 'No offer applied';
+  async presentToast(msg: string, color: string) {
+    const toast = await this.toastCtrl.create({
+      message: msg,
+      duration: 2000,
+      color: color,
+      position: 'bottom'
+    });
+    toast.present();
   }
 
-  goHome() {
-    this.navCtrl.navigateRoot('/home'); 
+  payBillNow() { console.log('Payment...'); }
+  uploadBill() { console.log('Upload...'); }
+  
+  getOfferText() { 
+      if(this.booking?.offer_applied) return this.booking.offer_applied.title;
+      if(this.booking?.offerApplied) return this.booking.offerApplied.title;
+      return 'No offer applied'; 
   }
-
+  
+  goHome() { this.navCtrl.navigateRoot('/layout/example/home'); }
+  
   callRestaurant() {
-    console.log('Calling restaurant...');
+    // Replace with real phone number field from your API response
+    if(this.booking?.contact) window.open(`tel:${this.booking.contact}`, '_self');
   }
   
   getDirections() {
-    console.log('Opening maps...');
+     if(this.booking?.coords) {
+         const { lat, lng } = this.booking.coords;
+         const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+         window.open(url, '_system');
+     }
   }
 
-  // For development testing if router state is lost
-  mockDummyData() {
-    const today = new Date();
-    this.booking = {
-      restaurantName: "Club Destini - Destini Bar And Kitchen",
-      date: today.toDateString(), 
-      timeSlot: "12:00 PM - 04:00 PM", // Ensure this matches logic
-      guestCount: 2,
-      billDetails: { totalAmount: 40 },
-      offerApplied: { title: "Flat 10% Off" }
-    };
-    this.checkBillActionWindow();
+  goBack() {
+    if(this.routeSource === 'time-slot') {
+      this.navCtrl.navigateRoot('/layout/example/home');
+    } else {
+      this.navCtrl.back();
+    }
   }
 }

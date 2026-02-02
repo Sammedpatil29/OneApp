@@ -82,13 +82,13 @@ export class HistoryComponent implements OnInit {
   getHistory() {
     this.isloading = true;
     let params = {
-        type: 'event'
+        type: 'all'
     };
     this.historyService.getHistory(params, this.token).subscribe(
       (res) => {
         this.history = res.data;
         this.filteredHistory = this.history;
-        this.filteredHistory = this.filteredHistory.reverse();
+        this.filteredHistory = this.filteredHistory;
         let uniqueCategory = Array.from(
           new Set(this.history.map((item) => item.type))
         );
@@ -151,6 +151,12 @@ export class HistoryComponent implements OnInit {
     console.log(orderDetails);
     if (orderDetails.type == 'grocery') {
       this.navCtrl.navigateRoot('/layout/grocery-order-details', {
+        state: {
+          orderDetails: orderDetails,
+        },
+      });
+    } else if (orderDetails.type == 'dineout'){
+      this.navCtrl.navigateRoot(`/layout/dineout-layout/dineout-track/${orderDetails.id}`, {
         state: {
           orderDetails: orderDetails,
         },
