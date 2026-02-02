@@ -6,7 +6,9 @@ import { addIcons } from 'ionicons';
 import { 
   checkmarkCircle, calendarOutline, timeOutline, 
   peopleOutline, locationOutline, callOutline, homeOutline,
-  ticketOutline, walletOutline, cameraOutline, receiptOutline, cloudUploadOutline, closeCircleOutline
+  ticketOutline, walletOutline, cameraOutline, receiptOutline, cloudUploadOutline, closeCircleOutline,
+  trashOutline,
+  close
 } from 'ionicons/icons';
 import { DineoutService } from 'src/app/services/dineout.service';
 import { AuthService } from 'src/app/services/auth.service';
@@ -43,7 +45,7 @@ export class DineoutTrackPage implements OnInit {
     addIcons({ 
       checkmarkCircle, calendarOutline, timeOutline, 
       peopleOutline, locationOutline, callOutline, homeOutline,
-      ticketOutline, walletOutline, cameraOutline, receiptOutline, cloudUploadOutline, closeCircleOutline
+      ticketOutline, walletOutline, cameraOutline, receiptOutline, cloudUploadOutline, closeCircleOutline, trashOutline, close
     });
   }
 
