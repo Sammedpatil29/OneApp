@@ -31,6 +31,7 @@
     "@capacitor/android": "7.0.1",
     "@capacitor/app": "^7.0.0",
     "@capacitor/browser": "^7.0.2",
+    "@capacitor/camera": "^8.0.0",
     "@capacitor/core": "^7.2.0",
     "@capacitor/filesystem": "^7.1.4",
     "@capacitor/geolocation": "^7.1.2",

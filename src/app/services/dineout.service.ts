@@ -43,4 +43,12 @@ export class DineoutService {
     })
     return this.http.post(`${this.url}/api/dineout/orders/cancel`, params, {headers: headers});
   }
+
+  uploadBill(token:any, params:any){
+    let headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    })
+    return this.http.post(`${this.url}/api/dineout/orders/upload-bill`,params, {headers: headers})
+
+  }
 }

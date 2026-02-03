@@ -110,7 +110,7 @@
         <h3>Pay bill via Dineout</h3>
       </div>
       <p>Get instant discounts & extra cashback</p>
-      <button class="pay-btn" (click)="payBillNow()">
+      <button class="pay-btn" (click)="payBillNow()" [disabled]="booking.bill_image_url">
         Pay Bill Now
       </button>
     </div>
@@ -122,9 +122,17 @@
         <h4>Already paid the bill?</h4>
         <small>Upload bill within 24 hrs to claim cashback</small>
       </div>
-      <button class="upload-btn" (click)="uploadBill()">
-        <ion-icon name="cloud-upload-outline"></ion-icon> Upload
-      </button>
+      @if (isUploadingBill) {
+        <ion-spinner name="crescent" color="primary"></ion-spinner>
+      } @else if (booking?.bill_image_url) {
+        <div class="text-success" style="display: flex; align-items: center; gap: 5px; font-weight: 600;">
+          <ion-icon name="checkmark-circle" style="font-size: 20px;"></ion-icon> Uploaded
+        </div>
+      } @else {
+        <button class="upload-btn" (click)="uploadBill()">
+          <ion-icon name="cloud-upload-outline"></ion-icon> Upload
+        </button>
+      }
     </div>
 
   </div>

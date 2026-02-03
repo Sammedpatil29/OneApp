@@ -13,6 +13,7 @@ import {
 import { DineoutService } from 'src/app/services/dineout.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { ErrorComponent } from "src/app/components/error/error.component";
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
 @Component({
   selector: 'app-dineout-track',
@@ -29,6 +30,8 @@ export class DineoutTrackPage implements OnInit {
   isLoading = true;
   isError = false;
   isBillWindowOpen = false; 
+  isUploadingBill = false; 
+
   routeSource = '';
   token: any;
 
@@ -172,6 +175,7 @@ export class DineoutTrackPage implements OnInit {
         } else {
             this.booking.status = 'CANCELLED'; // Fallback manual update
         }
+        this.isBillWindowOpen = res.info.billWindow;
         await loader.dismiss();
         this.presentToast('Booking cancelled successfully', 'success');
       },
@@ -194,7 +198,44 @@ export class DineoutTrackPage implements OnInit {
   }
 
   payBillNow() { console.log('Payment...'); }
-  uploadBill() { console.log('Upload...'); }
+
+  async uploadBill() {
+    try {
+      const image = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.Base64,
+        source: CameraSource.Camera
+      });
+
+      if (image.base64String) {
+        console.log('Bill captured and ready to send to BE');
+        let params = {
+          "bookingId": this.bookingId,
+          "image": {
+            "format": image.format,
+            "base64String": image.base64String
+          }
+        }
+        this.isUploadingBill = true
+        this.dineoutService.uploadBill(this.token, params).subscribe({
+          next: (res: any) => {
+            this.booking = res.data;
+            this.isUploadingBill = false
+            this.isBillWindowOpen = res.info.billWindow;
+            this.presentToast('Bill uploaded successfully', 'success');
+          },
+          error: (err: any) => {
+            this.isUploadingBill = false
+            this.presentToast('Failed to upload bill. Try again.', 'danger');
+          }
+        })
+      }
+    } catch (error) {
+      console.error('Error capturing bill:', error);
+      this.isUploadingBill = false
+    }
+  }
   
   getOfferText() { 
       if(this.booking?.offer_applied) return this.booking.offer_applied.title;

@@ -1,51 +1,24 @@
-<div style="position: relative; height: 100%; width: 100%;">
-  <ion-tabs>
-    <div (click)="goToHome()"
-      style="
-        position: absolute;
-        bottom: 25px; 
-        left: 50%;
-        transform: translateX(-50%);
-        width: 65px;
-        height: 65px;
-        background: #000000;
-        border-radius: 50%;
-        z-index: 99999; 
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-        border: 4px solid #ffffff;
-        cursor: pointer;
-      ">
-      <ion-icon name="home" style="color: #ffffff; font-size: 26px; margin: 0;"></ion-icon>
-      <span style="color: #ffffff; font-size: 10px; font-weight: 700; margin-top: 2px;">Home</span>
-    </div>
+<ion-tabs>
+  
+  <ion-tab-bar slot="bottom" class="custom-tab-bar">
+    
+    <ion-tab-button tab="support">
+      <ion-icon name="help-circle-outline"></ion-icon>
+      <ion-label>Support</ion-label>
+    </ion-tab-button>
 
-    <ion-tab-bar slot="bottom" 
-      style="
-        height: 60px; 
-        --border: 0; 
-        --background: #ffffff; 
-        display: flex; 
-        justify-content: space-around; 
-        align-items: center;
-        overflow: visible;
-        contain: none;
-      ">
-      
-      <ion-tab-button tab="support" style="--color-selected: #000000;">
-        <ion-icon name="help-circle-outline" style="font-size: 22px;"></ion-icon>
-        <ion-label style="font-size: 10px; font-weight: 600;">Support</ion-label>
-      </ion-tab-button>
+    <div class="center-spacer"></div>
 
-      <div style="width: 70px;"></div>
+    <ion-tab-button tab="history">
+      <ion-icon name="time-outline"></ion-icon>
+      <ion-label>History</ion-label>
+    </ion-tab-button>
 
-      <ion-tab-button tab="history" style="--color-selected: #000000;">
-        <ion-icon name="time-outline" style="font-size: 22px;"></ion-icon>
-        <ion-label style="font-size: 10px; font-weight: 600;">History</ion-label>
-      </ion-tab-button>
-    </ion-tab-bar>
-  </ion-tabs>
+  </ion-tab-bar>
+
+</ion-tabs>
+
+<div class="floating-center-btn" (click)="goToHome()">
+  <ion-icon name="home"></ion-icon>
+  <span>Home</span>
 </div>

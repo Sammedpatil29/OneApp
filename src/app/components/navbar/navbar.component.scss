@@ -1,9 +1,74 @@
-ion-tab-bar {
-    --color: var(--ion-color-medium); 
-    --color-selected: var(--ion-color-dark);
+/* --- Tab Bar Styling --- */
+.custom-tab-bar {
+  height: 60px;
+  --border: 0;
+  --background: #ffffff;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.05); /* Subtle shadow for depth */
+  position: relative;
+  overflow: visible; /* Crucial for allowing the button to float above if nested */
+  contain: none;     /* Ensures child elements aren't clipped */
 }
 
-.orders-list{
-    background-color: rgba(113, 235, 113, 0);
-    border-radius: 10px;
+/* --- Tab Buttons --- */
+ion-tab-button {
+  --color: var(--grocery-theme-color);          /* Inactive Grey */
+  --color-selected: var(--grocery-theme-color-light); /* Active Black */
+  
+  ion-icon {
+    font-size: 24px;
+    margin-bottom: 2px;
+  }
+
+  ion-label {
+    font-size: 10px;
+    font-weight: 600;
+  }
+}
+
+/* --- Center Spacer --- */
+.center-spacer {
+  width: 80px; /* Space reserved for the floating button */
+  pointer-events: none; /* Clicks pass through */
+}
+
+/* --- Floating Home Button --- */
+.floating-center-btn {
+  position: fixed; /* Fixed to viewport bottom */
+  bottom: 25px;    /* Pulls it up to float over the bar */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 65px;
+  height: 65px;
+  background: var(--grocery-theme-color); /* Black Theme */
+  border-radius: 50%;
+  z-index: 1000;       /* Above everything */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  
+  /* Visual flair */
+  box-shadow: 0 4px 15px var(--grocery-theme-color-light);
+  border: 4px solid #ffffff; /* Creates the "cutout" effect */
+  cursor: pointer;
+  transition: transform 0.2s ease;
+
+  /* Icon styling inside button */
+  ion-icon {
+    color: #ffffff;
+    font-size: 26px;
+    margin: 0;
+  }
+
+  span {
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+
+  /* Click Animation */
+  &:active {
+    transform: translateX(-50%) scale(0.95);
+  }
 }
