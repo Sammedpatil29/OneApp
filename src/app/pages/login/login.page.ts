@@ -51,7 +51,10 @@ export class LoginPage implements OnInit {
   user: any = null;
 
   otpSent: boolean = false;
-  verifyingToken: boolean = true;
+  
+  // FIX: Initialize as true immediately to show loader while checking storage
+  verifyingToken: boolean = true; 
+  
   mobileNumber = '';
   otp = '';
   enteredOtp = '';
@@ -68,6 +71,7 @@ export class LoginPage implements OnInit {
   otpVerificationMessage: string = '';
   timer = 45
   tokenDecoded: any;
+  token: any;
 
   otpConfig = {
     length: 6,
@@ -90,40 +94,42 @@ export class LoginPage implements OnInit {
   }
 
   async ngOnInit() {
-    this.verifyingToken = true;
-    this.token = await this.authService.getToken()
-    console.log(this.token)
-    if(this.token){
-      setTimeout(()=>{
-        this.verifyToken()
-      },2000)
+    // FIX: Removed the 2000ms setTimeout. This was causing the slow startup.
+    this.token = await this.authService.getToken();
+    console.log(this.token);
+    
+    if (this.token) {
+      this.verifyToken();
     } else {
+      // No token found, stop loading and show login screen immediately
       this.verifyingToken = false;
     }
   }
 
-  token:any;
-  async verifyToken(){
-    
-    // this.loadingMessage = 'verifying user...'
-    // this.token = await this.authService.getToken()
-    console.log(this.token)
-    if(this.token){
-     
-    this.verifyingToken = true
-    this.authService.verifyToken(this.token).subscribe((res: any) => {
-      console.log(res)
-      if(res.valid == true){
-        this.navCtrl.navigateRoot('/layout/example/home')
-      } else {
-this.verifyingToken = false
-      }
-    }, error => {
-      this.navCtrl.navigateRoot('/login')
-      this.verifyingToken = false
-    })
+  async verifyToken() {
+    if (this.token) {
+      this.verifyingToken = true;
+      this.authService.verifyToken(this.token).subscribe(
+        (res: any) => {
+          console.log(res);
+          if (res.valid == true) {
+            // Token is valid, go to home. 
+            // verifyingToken stays true so user doesn't see login screen flash before nav.
+            this.navCtrl.navigateRoot('/layout/example/home');
+          } else {
+            // Token invalid, show login
+            this.verifyingToken = false;
+          }
+        },
+        (error) => {
+          // Error checking token, show login
+          console.error('Token verification failed', error);
+          this.verifyingToken = false;
+        }
+      );
+    } else {
+       this.verifyingToken = false;
     }
-    
   }
 
   async sendVerification() {
@@ -136,9 +142,6 @@ this.verifyingToken = false
     FirebaseAuthentication.addListener('phoneVerificationFailed', (event) => {
       console.error('❌ Verification failed event:', event);
       this.isSendingOtp = false;
-      console.log(
-        '❌ OTP send failed. Reason: ' + (event?.message || 'Unknown error')
-      );
       this.isToastOpen = true;
       this.toastMessage = `❌ OTP send failed. Reason: ${
         event?.message || 'Unknown error'
@@ -179,7 +182,6 @@ this.verifyingToken = false
       }, 100);
     } catch (e: any) {
       this.isSendingOtp = false;
-      // console.error('❌ Failed to send OTP:', e);
       this.isToastOpen = true;
       this.toastMessage = `Failed to send Otp, ${e}`;
       clearInterval(this.intervalId);
@@ -231,7 +233,7 @@ this.verifyingToken = false
       console.log('✅ OTP verification successful!', result);
       this.isLoading = false;
       this.otpVerificationMessage = '';
-      this.checkUser(); // Proceed to your login/registration logic
+      this.checkUser(); 
     } catch (error: any) {
       this.isLoading = false;
       this.otpVerificationMessage = '';
@@ -311,11 +313,7 @@ this.verifyingToken = false
     };
     this.authService.checkUser(params).subscribe(
       (res:any) => {
-        // console.log(res);
-        // this.users = res;
         console.log(res);
-        // let isRegistered = this.users.some((item: any) => item.phone.includes(this.mobileNumber));
-        // console.log(isRegistered);
 
         if (res.isNewUser == true) {
           this.isToastOpen = true;
@@ -326,27 +324,19 @@ this.verifyingToken = false
           this.isLoading = false;
           this.otpVerificationMessage = '';
           this.showRegisterForm = true
-          // this.authService.getUserId();
         } else {
           Preferences.set({
           key: 'auth-token',
           value: res.token,
         });
-        // this.authService.getUserId();
         console.log(Preferences.get({ key: 'auth-token' }));
         this.navCtrl.navigateRoot('/layout/example/home');
-        // setTimeout(() => {
-        //   this.navCtrl.navigateRoot(['/layout/example/home']);
-        //   this.isLoading = false;
-        // }, 500);
         }
       },
       (error) => {
-        // Handle error gracefully
         this.isLoading = false;
         this.otpVerificationMessage = '';
         console.error('Error fetching users:', error);
-        // Optionally, display an error message to the user
         this.isToastOpen = true;
         this.toastMessage = `Failed to check user!`;
         setTimeout(() => {
@@ -382,7 +372,7 @@ this.verifyingToken = false
         localStorage.setItem('userDetails', JSON.stringify(values))
 
         this.navCtrl.navigateRoot('/layout/example/home');
-this.isLoading = false;
+        this.isLoading = false;
         } else {
           this.isToastOpen = true
           this.toastMessage = `${res.message}`
@@ -393,10 +383,8 @@ this.isLoading = false;
         }
       },
       (error) => {
-        // Handle error gracefully
         this.isLoading = false;
         console.error('Error fetching users:', error);
-        // Optionally, display an error message to the user
         this.toastMessage = error;
         this.isToastOpen = true;
       }

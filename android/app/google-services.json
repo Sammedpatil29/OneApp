@@ -12,7 +12,20 @@
           "package_name": "io.ionic.oneapp"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "700270095510-u77abc94mlao7t602qd3ke5shgv3d6r5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.ionic.oneapp",
+            "certificate_hash": "7c0a733fc7ba9c71d03c54b87eee5e04e1e79bc8"
+          }
+        },
+        {
+          "client_id": "700270095510-e8j9sl8sv8m153rqhkvgl8bc9k0clkje.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDlqkiETdDG97Fpl9terCygvf4Zk0ICZGI"
@@ -20,7 +33,41 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "700270095510-e8j9sl8sv8m153rqhkvgl8bc9k0clkje.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:700270095510:android:582f7c8e25cb07fe9666b7",
+        "android_client_info": {
+          "package_name": "io.visit.starter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "700270095510-e8j9sl8sv8m153rqhkvgl8bc9k0clkje.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlqkiETdDG97Fpl9terCygvf4Zk0ICZGI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "700270095510-e8j9sl8sv8m153rqhkvgl8bc9k0clkje.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

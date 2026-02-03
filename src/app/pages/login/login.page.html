@@ -2,23 +2,16 @@
   <div class="bg-decoration"></div>
 
   @if(!verifyingToken){
+    
     @if (!showRegisterForm) {
     <ion-header class="ion-no-border pt-4">
       <ion-toolbar>
         <ion-buttons slot="start">
-          <!-- <ion-button (click)="goBack()" class="back-btn">
-            <ion-icon slot="icon-only" name="chevron-back"></ion-icon>
-          </ion-button> -->
-        </ion-buttons>
+          </ion-buttons>
       </ion-toolbar>
     </ion-header>
 
     <div class="login-wrapper main-container">
-      <!-- <div class="header-section">
-        <h1 class="brand-name">NIM</h1>
-        <p class="brand-tagline">Needs in Minutes</p>
-      </div> -->
-
       @if (!otpSent) {
         <div class="form-section mt-2">
           <h2 class="page-title">Welcome Back</h2>
@@ -137,12 +130,15 @@
       </ion-button>
     </div>
   }
+
   } @else {
-    <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center" style="background: url('assets/Untitled design (4).png') no-repeat center center / cover;">
-      <!-- <img style="width: 250px" src="assets/icon/ic_launcher_foreground.png" alt=""> -->
-      <div class="spinner-border text-white" role="status">
-  <span class="visually-hidden">Loading...</span>
-</div>
+    <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center" 
+         style="background: url('assets/Untitled design (4).png') no-repeat center center / cover;">
+      
+      <div class="spinner-border text-white" role="status" style="width: 3rem; height: 3rem;">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <!-- <div class="text-white mt-3" style="font-weight: 500;">Starting app...</div> -->
     </div>
   }
 
