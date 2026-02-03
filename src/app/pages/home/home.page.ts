@@ -123,9 +123,7 @@ export class HomePage implements OnInit {
     } catch (error) {
       console.error('❌ Error initializing home:', error);
     } finally {
-      this.isLoading = false;
-      this.isServiceLoading = false;
-      this.isBannerLoading = false;
+      // isLoading will be handled inside homeData to ensure sync with data
     }
   }
 
@@ -147,10 +145,14 @@ export class HomePage implements OnInit {
       this.slides = this.banners;
       this.addresses = res.data.addresses;
       this.groupedData = this.groupByCategory(this.allServices);
+      
+      this.resolveUserLocation();
+
+      // Delay slightly to allow DOM to paint properly
       setTimeout(()=>{
         this.isLoading = false;
-      }, 100)
-       this.resolveUserLocation();
+      }, 300)
+
     }, error => {
       this.isLoading = false;
     });
@@ -350,17 +352,19 @@ export class HomePage implements OnInit {
   // --- Helpers ---
 
   groupByCategory(data: any[]) {
-    this.isLoading = true
+    // Correct logic: Just return the reduced object
     return data.reduce((acc, item) => {
       const category = item.category;
       if (!acc[category]) {
         acc[category] = [];
       }
       acc[category].push(item);
-      const shuffledArray = this.shuffleArray(acc);
-      return shuffledArray;
+      
+      // If you want to shuffle the items WITHIN the category:
+      // this.shuffleArray(acc[category]); 
+      
+      return acc;
     }, {} as { [key: string]: any[] });
-    this.isLoading = false
   }
 
   shuffleArray(array: any[]) {

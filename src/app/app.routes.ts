@@ -222,6 +222,10 @@ export const routes: Routes = [
               ),
           },
           {
+    path: 'dineout-paybill',
+    loadComponent: () => import('./pages/dineout-paybill/dineout-paybill.page').then( m => m.dineoutPaybillPage)
+  },
+          {
             path: '',
             redirectTo: 'dineout',
             pathMatch: 'full',
@@ -236,4 +240,6 @@ export const routes: Routes = [
       },
     ],
   },
+  
+
 ];

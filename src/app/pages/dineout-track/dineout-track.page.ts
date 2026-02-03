@@ -197,7 +197,11 @@ export class DineoutTrackPage implements OnInit {
     toast.present();
   }
 
-  payBillNow() { console.log('Payment...'); }
+  payBillNow() {
+    this.navCtrl.navigateForward('/layout/dineout-layout/dineout-paybill', {
+      state: { bookingId: this.booking.id }
+    })
+  }
 
   async uploadBill() {
     try {

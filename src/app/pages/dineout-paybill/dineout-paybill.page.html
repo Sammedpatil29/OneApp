@@ -1,0 +1,93 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon slot="icon-only" name="arrow-back-outline" color="dark"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title color="dark">Pay Bill</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="bg-light">
+
+  <div class="content-wrapper">
+    
+    <div class="header-section">
+      <h2>Enter Bill Amount</h2>
+      <p>We'll calculate your discount instantly</p>
+    </div>
+
+    <div class="ticket-card input-section">
+      <div class="input-wrapper">
+        <span class="currency">₹</span>
+        <ion-input 
+          type="number" 
+          [(ngModel)]="enteredAmount" 
+          placeholder="0"
+          inputmode="decimal"
+          class="amount-input">
+        </ion-input>
+      </div>
+
+      <div class="divider dashed"></div>
+
+      <ion-button expand="block" class="action-btn" (click)="calculateBill()" [disabled]="isLoading">
+        <span *ngIf="!isLoading">Calculate Final Bill</span>
+        <ion-spinner name="dots" *ngIf="isLoading"></ion-spinner>
+      </ion-button>
+    </div>
+
+    <div *ngIf="billData" class="animate__animated animate__fadeInUp">
+      
+      <div class="section-title">Bill Breakdown</div>
+
+      <div class="ticket-card result-card">
+        
+        <div class="details-grid-custom">
+          <div class="detail-row">
+            <span class="label">Total Bill Amount</span>
+            <span class="value original">₹{{ billData.originalAmount | number:'1.2-2' }}</span>
+          </div>
+
+          <div class="detail-row discount">
+            <span class="label">
+              <ion-icon name="pricetag-outline"></ion-icon> Dineout Discount
+            </span>
+            <span class="value">- ₹{{ billData?.maxSavings | number:'1.2-2' }}</span>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="detail-row total">
+            <span class="label">To Pay</span>
+            <span class="value">₹{{ billData.finalAmount | number:'1.2-2' }}</span>
+          </div>
+        </div>
+
+        <div class="offer-strip">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+          <span>{{billData.bestOffer?.title}}{{billData.bestOffer?.description}}</span>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div style="height: 100px;"></div>
+
+</ion-content>
+
+<ion-footer class="action-footer" *ngIf="billData">
+  <div class="pay-footer-content">
+    <div class="total-info">
+      <small>Total Payable</small>
+      <h3>₹{{ billData.finalAmount}}</h3>
+    </div>
+    <ion-button class="pay-now-btn" (click)="processPayment()">
+      Pay Now <ion-icon slot="end" name="arrow-forward-circle-outline"></ion-icon>
+    </ion-button>
+  </div>
+</ion-footer>

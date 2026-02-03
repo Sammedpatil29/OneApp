@@ -1,0 +1,169 @@
+/* Theme Variables from your existing app */
+:host {
+  --bg-color: #f4f6f8;
+}
+
+.bg-light { --background: var(--bg-color); }
+
+.content-wrapper {
+  padding: 20px;
+}
+
+/* Header Section */
+.header-section {
+  margin-bottom: 20px;
+  h2 { font-size: 22px; font-weight: 800; color: #111; margin: 0 0 4px; }
+  p { font-size: 14px; color: #666; margin: 0; }
+}
+
+/* Section Title */
+.section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #555;
+  margin: 24px 0 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Reusing your Ticket Card Style */
+.ticket-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  border: 1px solid #fff; /* Slight border for neatness */
+
+  .divider {
+    height: 1px;
+    background: #eee;
+    margin: 16px 0;
+    
+    &.dashed {
+      background: none;
+      border-top: 1px dashed #ddd;
+    }
+  }
+}
+
+/* 1. Input Specific Styles */
+.input-section {
+  .input-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 10px;
+    
+    .currency {
+      font-size: 28px;
+      font-weight: 700;
+      color: #333;
+      margin-right: 4px;
+    }
+
+    .amount-input {
+      font-size: 32px;
+      font-weight: 800;
+      text-align: center;
+      --padding-top: 10px;
+      --padding-bottom: 10px;
+      --color: #111;
+      --placeholder-color: #ccc;
+    }
+  }
+
+  .action-btn {
+    --background: var(--grocery-theme-color); /* Dark button like your "Home" btn */
+    --border-radius: 10px;
+    height: 48px;
+    font-weight: 700;
+    font-size: 15px;
+    margin-top: 5px;
+  }
+}
+
+/* 2. Result Specific Styles */
+.result-card {
+  padding: 0; /* Remove padding for inner layout */
+  overflow: hidden;
+
+  .details-grid-custom {
+    padding: 20px;
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 15px;
+
+      .label { color: #555; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+      .value { color: #111; font-weight: 700; }
+
+      &.discount {
+        .label, .value { color: var(--grocery-theme-color); }
+      }
+
+      &.total {
+        margin-top: 4px;
+        margin-bottom: 0;
+        .label { font-size: 16px; font-weight: 700; color: #111; }
+        .value { font-size: 22px; font-weight: 800; color: #111; }
+      }
+    }
+  }
+
+  .offer-strip {
+    background: var(--grocery-theme-color-light);
+    color: var(--grocery-theme-color);
+    padding: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    border-top: 1px dashed #ccebc4;
+  }
+}
+
+/* 3. Footer Payment Bar */
+.action-footer {
+  background: white;
+  border-top: 1px solid #eee;
+  padding: 16px 20px 30px; /* Safe area padding */
+  box-shadow: 0 -4px 15px rgba(0,0,0,0.03);
+
+  .pay-footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .total-info {
+      display: flex; 
+      flex-direction: column;
+      small { font-size: 11px; color: #888; text-transform: uppercase; font-weight: 600; }
+      h3 { margin: 2px 0 0; font-size: 20px; font-weight: 800; color: #111; }
+    }
+
+    .pay-now-btn {
+      margin: 0;
+      height: 48px;
+      width: 160px;
+      --background: var(--grocery-theme-color);
+      --border-radius: 12px;
+      --box-shadow: 0 4px 12px var(--grocery-theme-color-light);
+      font-weight: 700;
+      font-size: 15px;
+    }
+  }
+}
+
+/* Animation */
+.animate__fadeInUp {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
