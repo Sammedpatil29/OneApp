@@ -237,7 +237,13 @@ export class DineoutSelectTimePage implements OnInit {
       } : null,
       billDetails: {
         coverChargePerHead: this.coverCharge || 0,
-        totalAmount: this.coverCharge
+        totalAmount: this.coverCharge,
+        verification: {
+                discount: "00.00",
+                verifiedAt: new Date(),
+                finalAmount: "0.00",
+                originalAmount: "0.00"
+            }
       }
     };
 

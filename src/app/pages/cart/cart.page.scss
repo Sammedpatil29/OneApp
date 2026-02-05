@@ -152,25 +152,25 @@ $primary: #3d0374; /* Zepto-ish Purple */
 }
 
 .payment-option {
-  border: 1px solid #eee;
+  border: 1px solid var(--grocery-theme-color);
   padding: 12px;
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s;
 
   .radio-circle {
-    width: 18px; height: 18px; border: 2px solid #ccc; border-radius: 50%;
+    width: 18px; height: 18px; border: 2px solid var(--grocery-theme-color-light); border-radius: 50%;
     position: relative;
   }
 
   &.selected {
-    border-color: #212121;
-    background: #fafafa;
+    border-color: var(--grocery-theme-color);
+    background: var(--grocery-theme-color-light);
     .radio-circle {
-      border-color: #212121;
+      border-color: var(--grocery-theme-color);
       &::after {
         content: ''; position: absolute; top: 3px; left: 3px; width: 8px; height: 8px;
-        background: #212121; border-radius: 50%;
+        background: var(--grocery-theme-color); border-radius: 50%;
       }
     }
   }
@@ -191,7 +191,7 @@ $primary: #3d0374; /* Zepto-ish Purple */
   border-top-left-radius: 20px; border-top-right-radius: 20px;
 
   .pay-btn {
-    background: #212121; color: white; border: none; width: 100%;
+    background: var(--grocery-theme-color); color: white; border: none; width: 100%;
     padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 700;
     display: flex; justify-content: space-between; align-items: center;
     &:disabled { opacity: 0.6; }

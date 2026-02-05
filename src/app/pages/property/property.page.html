@@ -1,0 +1,80 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()" mode="ios">
+        <ion-icon slot="icon-only" name="arrow-back-outline" color="dark"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title>Discover</ion-title> <ion-buttons slot="end">
+      <ion-button class="add-btn" (click)="listProperty()">
+        <ion-icon name="add" slot="start"></ion-icon>
+        List
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="bg-light">
+
+  <div class="category-section">
+    <div class="category-scroll-container">
+      @for (cat of categories; track cat.id) {
+        <div 
+          class="category-item" 
+          [class.active]="selectedCategory === cat.name"
+          (click)="selectCategory(cat.name)">
+          
+          <ion-icon [name]="cat.icon"></ion-icon>
+          <span class="cat-name">{{ cat.name }}</span>
+
+          @if (selectedCategory === cat.name) {
+            <div class="active-indicator"></div>
+          }
+          
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="listing-container">
+    <ion-grid class="ion-no-padding">
+      <ion-row>
+        @for (prop of properties; track prop.id) {
+          <ion-col size="6" class="pb-2">
+            <div class="property-card" (click)="openDetails(prop.id)">
+              
+              <div class="image-wrapper">
+                <img [src]="prop.image" loading="lazy" alt="property">
+                <div class="badge">{{ prop.type }}</div>
+                <div class="fav-btn" (click)="toggleFav(prop, $event)">
+                  <ion-icon [name]="prop.isFav ? 'heart' : 'heart-outline'" [color]="prop.isFav ? 'danger' : 'medium'"></ion-icon>
+                </div>
+              </div>
+
+              <div class="card-content">
+                <div>
+                  <h3 class="price">{{ prop.price }}</h3>
+                  <h4 class="title text-truncate">{{ prop.title }}</h4>
+                  
+                  <div class="location text-truncate">
+                    <ion-icon name="location-outline"></ion-icon>
+                    {{ prop.location }}
+                  </div>
+                </div>
+
+                <div class="specs">
+                  <ion-icon name="bed-outline"></ion-icon> {{ prop.specs }}
+                </div>
+              </div>
+
+            </div>
+          </ion-col>
+        }
+      </ion-row>
+    </ion-grid>
+  </div>
+
+  <div style="height: 60px;"></div>
+
+</ion-content>

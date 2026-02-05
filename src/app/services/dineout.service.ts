@@ -57,4 +57,18 @@ export class DineoutService {
     })
     return this.http.post(`${this.url}/api/dineout/orders/calculate-bill`, params, {headers: headers});
   }
+
+  initiatePayment(token: any, params: any) {
+    let headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.post(`${this.url}/api/dineout/orders/payment/create`, params, { headers: headers });
+  }
+
+  verifyPayment(token: any, params: any) {
+    let headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.post(`${this.url}/api/dineout/orders/payment/verify`, params, { headers: headers });
+  }
 }

@@ -12,9 +12,7 @@
         <ion-skeleton-text animated style="width: 70%; height: 24px; margin-bottom: 8px; border-radius: 4px;"></ion-skeleton-text>
         <ion-skeleton-text animated style="width: 40%; height: 14px; border-radius: 4px;"></ion-skeleton-text>
       </div>
-
       <div class="divider dashed"></div>
-
       <div class="details-grid">
         <div class="detail-item" *ngFor="let i of [1,2,3,4]">
           <ion-skeleton-text animated style="width: 24px; height: 24px; border-radius: 4px; margin-right: 12px;"></ion-skeleton-text>
@@ -24,118 +22,140 @@
           </div>
         </div>
       </div>
-
-      <div class="divider"></div>
-
-      <div class="qr-section">
-        <ion-skeleton-text animated style="width: 150px; height: 150px; margin: 0 auto 10px; border-radius: 8px;"></ion-skeleton-text>
-        <ion-skeleton-text animated style="width: 180px; height: 14px; margin: 0 auto; border-radius: 4px;"></ion-skeleton-text>
-      </div>
     </div>
+
   } @else if (isError) {
     <app-error 
       title="Oops! Failed to load your booking" 
       (reload)="loadBookingFromApi(bookingId)">
     </app-error>
+
   } @else {
+    
     <div class="success-header" [ngClass]="booking.info.color">
-    <div class="icon-circle">
-      <ion-icon [name]="booking.info.icon"></ion-icon>
-    </div>
-    <h1>{{booking.info.message}}</h1>
-    <p>{{booking.info.sub}}</p>
-  </div>
-
-  <div class="ticket-card" *ngIf="booking">
-    
-    <div class="rest-header">
-      <h2>{{booking.restaurant_name}}</h2>
-      <p class="id-text">Booking ID: #{{booking.id}}</p>
+      <div class="icon-circle">
+        <ion-icon [name]="booking.info.icon"></ion-icon>
+      </div>
+      <h1>{{booking.info.message}}</h1>
+      <p>{{booking.info.sub}}</p>
     </div>
 
-    <div class="divider dashed"></div>
+    <div class="ticket-card" *ngIf="booking">
+      
+      <div class="rest-header">
+        <h2>{{booking.restaurant_name}}</h2>
+        <p class="id-text">Booking ID: #{{booking.id}}</p>
+      </div>
 
-    <div class="details-grid">
-      <div class="detail-item">
-        <ion-icon name="calendar-outline"></ion-icon>
-        <div class="text">
-          <label>Date</label>
-          <span>{{booking.booking_date | date: 'mediumDate'}}</span>
+      <div class="divider dashed"></div>
+
+      <div class="details-grid">
+        <div class="detail-item">
+          <ion-icon name="calendar-outline"></ion-icon>
+          <div class="text">
+            <label>Date</label>
+            <span>{{booking.booking_date | date: 'mediumDate'}}</span>
+          </div>
+        </div>
+        <div class="detail-item">
+          <ion-icon name="time-outline"></ion-icon>
+          <div class="text">
+            <label>Time</label>
+            <span>{{booking.time_slot}}</span>
+          </div>
+        </div>
+        <div class="detail-item">
+          <ion-icon name="people-outline"></ion-icon>
+          <div class="text">
+            <label>Guests</label>
+            <span>{{booking.guest_count}} Adults</span>
+          </div>
+        </div>
+        <div class="detail-item">
+          <ion-icon name="wallet-outline"></ion-icon>
+          <div class="text">
+            <label>Amount Paid</label>
+            <span class="price">₹{{booking.bill_details?.verification?.finalAmount}} <span class="">₹{{booking.bill_details?.verification?.originalAmount}}</span></span>
+          </div>
         </div>
       </div>
-      <div class="detail-item">
-        <ion-icon name="time-outline"></ion-icon>
-        <div class="text">
-          <label>Time</label>
-          <span>{{booking.time_slot}}</span>
+
+      @if (booking.razorpay_order_id || booking.razorpay_payment_id) {
+        <div class="divider dashed"></div>
+        <div class="details-grid">
+          
+          @if(booking.razorpay_order_id) {
+            <div class="detail-item" style="grid-column: span 2;">
+              <ion-icon name="receipt-outline"></ion-icon>
+              <div class="text">
+                <label>Razorpay Order ID</label>
+                <span style="font-size: 11px; font-family: monospace; color: #555;">{{booking.razorpay_order_id}}</span>
+              </div>
+            </div>
+          }
+
+          @if(booking.razorpay_payment_id) {
+            <div class="detail-item" style="grid-column: span 2;">
+              <ion-icon name="card-outline"></ion-icon>
+              <div class="text">
+                <label>Payment ID</label>
+                <span style="font-size: 11px; font-family: monospace; color: #555;">{{booking.razorpay_payment_id}}</span>
+              </div>
+            </div>
+          }
         </div>
-      </div>
-      <div class="detail-item">
-        <ion-icon name="people-outline"></ion-icon>
-        <div class="text">
-          <label>Guests</label>
-          <span>{{booking.guest_count}} Adults</span>
-        </div>
-      </div>
-      <div class="detail-item">
-        <ion-icon name="wallet-outline"></ion-icon>
-        <div class="text">
-          <label>Amount Paid</label>
-          <span class="price">₹{{booking.bill_details.totalAmount}}</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="offer-strip" *ngIf="booking.offer_applied">
-      <ion-icon name="ticket-outline"></ion-icon>
-      <span>{{getOfferText()}}</span>
-    </div>
-
-   @if (booking.status !== 'CANCELLED') {
-     <div class="divider"></div>
-
-    <div class="qr-section" *ngIf="bookingId">
-      <img [src]="'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + bookingId" alt="QR Code">
-      <small>Show this QR at the restaurant</small>
-    </div>
-   }
-
-  </div>
-
-  <div class="bill-action-card" *ngIf="isBillWindowOpen">
-    
-    <div class="pay-section">
-      <div class="pay-header">
-        <ion-icon name="receipt-outline"></ion-icon>
-        <h3>Pay bill via Dineout</h3>
-      </div>
-      <p>Get instant discounts & extra cashback</p>
-      <button class="pay-btn" (click)="payBillNow()" [disabled]="booking.bill_image_url">
-        Pay Bill Now
-      </button>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="upload-section">
-      <div class="left">
-        <h4>Already paid the bill?</h4>
-        <small>Upload bill within 24 hrs to claim cashback</small>
-      </div>
-      @if (isUploadingBill) {
-        <ion-spinner name="crescent" color="primary"></ion-spinner>
-      } @else if (booking?.bill_image_url) {
-        <div class="text-success" style="display: flex; align-items: center; gap: 5px; font-weight: 600;">
-          <ion-icon name="checkmark-circle" style="font-size: 20px;"></ion-icon> Uploaded
-        </div>
-      } @else {
-        <button class="upload-btn" (click)="uploadBill()">
-          <ion-icon name="cloud-upload-outline"></ion-icon> Upload
-        </button>
       }
+
+      <div class="offer-strip" *ngIf="booking.offer_applied">
+        <ion-icon name="ticket-outline"></ion-icon>
+        <span>{{getOfferText()}}</span>
+      </div>
+
+      @if (booking.status !== 'CANCELLED') {
+        <div class="divider"></div>
+        <div class="qr-section" *ngIf="bookingId">
+          <img [src]="'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + bookingId" alt="QR Code">
+          <small>Show this QR at the restaurant</small>
+        </div>
+      }
+
     </div>
 
-  </div>
+    <div class="bill-action-card" *ngIf="isBillWindowOpen">
+      
+      <div class="pay-section">
+        <div class="pay-header">
+          <ion-icon name="receipt-outline"></ion-icon>
+          <h3>Pay bill via Dineout</h3>
+        </div>
+        <p>Get instant discounts & extra cashback</p>
+        <button class="pay-btn" (click)="payBillNow()" [disabled]="booking.bill_image_url">
+          Pay Bill Now
+        </button>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="upload-section">
+        <div class="left">
+          <h4>Already paid the bill?</h4>
+          <small>Upload bill within 24 hrs to claim cashback</small>
+        </div>
+        
+        @if (isUploadingBill) {
+          <ion-spinner name="crescent" color="primary"></ion-spinner>
+        } @else if (booking?.bill_image_url) {
+          <div class="text-success" style="display: flex; align-items: center; gap: 5px; font-weight: 600;">
+            <ion-icon name="checkmark-circle" style="font-size: 20px;"></ion-icon> Uploaded
+          </div>
+        } @else {
+          <button class="upload-btn" (click)="uploadBill()">
+            <ion-icon name="cloud-upload-outline"></ion-icon> Upload
+          </button>
+        }
+      </div>
+
+    </div>
   }
   
   <div style="height: 100px;"></div>
@@ -144,34 +164,34 @@
 
 @if (!isLoading && !isError) {
   <ion-footer class="action-footer">
-  @if(!isLoading){
-  <div class="grid-actions">
-    
-    <div class="action-btn" (click)="goBack()">
-      <div class="icon-box"><ion-icon name="home-outline"></ion-icon></div>
-      <span>Home</span>
-    </div>
+    @if(!isLoading){
+      <div class="grid-actions">
+        
+        <div class="action-btn" (click)="goBack()">
+          <div class="icon-box"><ion-icon name="home-outline"></ion-icon></div>
+          <span>Home</span>
+        </div>
 
-    @if(booking?.status !== 'CANCELLED'){
-      <div class="action-btn" (click)="callRestaurant()">
-        <div class="icon-box"><ion-icon name="call-outline"></ion-icon></div>
-        <span>Call</span>
-      </div>
+        @if(booking?.status !== 'CANCELLED'){
+          <div class="action-btn" (click)="callRestaurant()">
+            <div class="icon-box"><ion-icon name="call-outline"></ion-icon></div>
+            <span>Call</span>
+          </div>
 
-      <div class="action-btn" (click)="getDirections()">
-        <div class="icon-box"><ion-icon name="location-outline"></ion-icon></div>
-        <span>Map</span>
+          <div class="action-btn" (click)="getDirections()">
+            <div class="icon-box"><ion-icon name="location-outline"></ion-icon></div>
+            <span>Map</span>
+          </div>
+        }
+
+        @if(booking?.status === 'CONFIRMED'){
+          <div class="action-btn danger" (click)="confirmCancel()">
+            <div class="icon-box"><ion-icon name="close-circle-outline"></ion-icon></div>
+            <span>Cancel</span>
+          </div>
+        }
+
       </div>
     }
-
-    @if(booking?.status === 'CONFIRMED'){
-      <div class="action-btn danger" (click)="confirmCancel()">
-        <div class="icon-box"><ion-icon name="close-circle-outline"></ion-icon></div>
-        <span>Cancel</span>
-      </div>
-    }
-
-  </div>
-  }
-</ion-footer>
+  </ion-footer>
 }

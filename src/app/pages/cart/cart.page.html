@@ -189,15 +189,15 @@
 @if(!isLoading && items.length > 0) {
   <div class="payment-footer">
     <div class="d-flex align-items-center mb-3">
-      <ion-icon name="location" style="color: #ff3269; font-size: 18px;"></ion-icon>
+      <ion-icon name="location" style="color: var(--grocery-theme-color); font-size: 18px;"></ion-icon>
       <div class="ms-2 flex-grow-1">
         <div class="fw-bold" style="font-size: 13px;">Delivering to Home</div>
         <div class="text-truncate text-secondary" style="font-size: 11px;">{{address}}</div>
       </div>
-      <div class="text-uppercase fw-bold" style="font-size: 11px; color: #ff3269;" (click)="openMap()">Change</div>
+      <div class="text-uppercase fw-bold" style="font-size: 11px; color: var(--grocery-theme-color);" (click)="openMap()">Change</div>
     </div>
 
-    <button class="pay-btn" (click)="pay()" [disabled]="selectedPayment === 'cod' && billDetails.toPay > 1500">
+    <button class="pay-btn" (click)="checkBeforePayment()" [disabled]="selectedPayment === 'cod' && billDetails.toPay > 1500">
       <div class="d-flex flex-column align-items-start">
         <span style="font-size: 14px; font-weight: 500;">&#8377;{{billDetails.toPay}}</span>
         <span style="font-size: 10px; opacity: 0.7;">TOTAL</span>

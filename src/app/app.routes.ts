@@ -232,6 +232,21 @@ export const routes: Routes = [
           },
         ],
       },
+      {
+    path: 'property-layout',
+    loadComponent: () => import('./pages/property-layout/property-layout.page').then( m => m.PropertyLayoutPage),
+    children: [
+      {
+    path: 'property',
+    loadComponent: () => import('./pages/property/property.page').then( m => m.PropertyPage)
+  },
+  {
+        path: '',
+        redirectTo: 'property',
+        pathMatch: 'full',
+      },
+    ]
+  },
 
       {
         path: '',

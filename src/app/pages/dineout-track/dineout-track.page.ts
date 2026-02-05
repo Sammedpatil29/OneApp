@@ -8,7 +8,8 @@ import {
   peopleOutline, locationOutline, callOutline, homeOutline,
   ticketOutline, walletOutline, cameraOutline, receiptOutline, cloudUploadOutline, closeCircleOutline,
   trashOutline,
-  close
+  close,
+  cardOutline
 } from 'ionicons/icons';
 import { DineoutService } from 'src/app/services/dineout.service';
 import { AuthService } from 'src/app/services/auth.service';
@@ -48,7 +49,7 @@ export class DineoutTrackPage implements OnInit {
     addIcons({ 
       checkmarkCircle, calendarOutline, timeOutline, 
       peopleOutline, locationOutline, callOutline, homeOutline,
-      ticketOutline, walletOutline, cameraOutline, receiptOutline, cloudUploadOutline, closeCircleOutline, trashOutline, close
+      ticketOutline, walletOutline, cameraOutline, receiptOutline, cloudUploadOutline,cardOutline, closeCircleOutline, trashOutline, close
     });
   }
 
@@ -69,6 +70,13 @@ export class DineoutTrackPage implements OnInit {
       this.isLoading = false;
     }
   }
+
+  ionViewDidEnter() {
+    if (this.bookingId) {
+      this.loadBookingFromApi(this.bookingId);
+    }
+  }
+
 
   loadBookingFromApi(id: any) {
     this.isLoading = true;

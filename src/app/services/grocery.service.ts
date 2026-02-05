@@ -148,5 +148,20 @@ export class GroceryService {
     return this.http.get<any>(`${this.apiUrl}/api/grocery/cart?coupon=${couponCode}`, { headers });
   }
 
+  placeGroceryOrder(token: any, params:any): Observable<any> {
+    let headers = new HttpHeaders({
+       'Authorization': `Bearer ${token}`
+    })
+    return this.http.post<any>(`${this.apiUrl}/api/grocery-order/create`, params, { headers });
+  }
+
+  clearCart() {
+    this._cartSubject.next([]);
+    this._summarySubject.next({ itemCount: 0, totalAmount: 0 });
+  }
+
+  verifyPayment(params: any) {
+    return this.http.post(`${this.apiUrl}/api/grocery-order/verify-status`, params);
+  }
 
 }
