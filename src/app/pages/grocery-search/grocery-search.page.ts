@@ -107,7 +107,7 @@ export class GrocerySearchPage implements OnInit {
   }
 
   goToDetails(product?: any) {
-    this.router.navigate([`/layout/grocery-layout/grocery-item-details/${product?.id}`], {
+    this.navCtrl.navigateForward([`/layout/grocery-layout/grocery-item-details/${product?.id}`], {
       state: { productId: product?.id },
     });
   }

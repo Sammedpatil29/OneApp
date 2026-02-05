@@ -58,6 +58,7 @@ export class DineoutTrackPage implements OnInit {
     
     if (history.state) {
         this.routeSource = history.state.from;
+        console.log('route source',this.routeSource)
     }
 
     this.token = await this.authServcie.getToken();
@@ -271,10 +272,10 @@ export class DineoutTrackPage implements OnInit {
   }
 
   goBack() {
-    if(this.routeSource === 'time-slot') {
-      this.navCtrl.navigateRoot('/layout/example/home');
-    } else {
+    if(this.routeSource === 'history') {
       this.navCtrl.back();
+    } else {
+      this.navCtrl.navigateRoot('/layout/example/home');
     }
   }
 }

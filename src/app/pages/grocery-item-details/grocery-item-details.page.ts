@@ -116,7 +116,7 @@ export class GroceryItemDetailsPage implements OnInit {
 
   goToDetails(product?: any) {
     console.log('clicked product:', product);
-    this.router.navigate([`/layout/grocery-layout/grocery-item-details/${product?.id}`], {
+    this.navCtrl.navigateForward([`/layout/grocery-layout/grocery-item-details/${product?.id}`], {
       state: { productId: product?.id },
     });
   }

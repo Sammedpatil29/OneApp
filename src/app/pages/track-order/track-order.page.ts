@@ -35,7 +35,7 @@ export class TrackOrderPage implements OnInit {
   isSharing: boolean = false;
   isToastOpen: boolean = false;
   toastMessage = '';
-  routeSource = '';
+  routeSource:any;
   token: any;
 
 
@@ -234,7 +234,7 @@ export class TrackOrderPage implements OnInit {
   }
 
   goBack() {
-    if(this.routeSource === 'order-details') {
+    if(this.routeSource == 'order-details') {
       this.navCtrl.navigateRoot('/layout/example/home');
     } else {
       this.navCtrl.back();

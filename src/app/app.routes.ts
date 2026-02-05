@@ -63,11 +63,7 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/about/about.page').then((m) => m.AboutPage),
       },
-      {
-        path: 'cart',
-        loadComponent: () =>
-          import('./pages/cart/cart.page').then((m) => m.CartPage),
-      },
+      
       {
         path: 'support',
         loadComponent: () =>
@@ -142,12 +138,17 @@ export const routes: Routes = [
           ),
         children: [
           {
-            path: 'grocery-order-details',
+            path: 'grocery-order-details/:id',
             loadComponent: () =>
               import('./pages/grocery-order-details/grocery-order-details.page').then(
                 (m) => m.GroceryOrderDetailsPage,
               ),
           },
+          {
+        path: 'cart',
+        loadComponent: () =>
+          import('./pages/cart/cart.page').then((m) => m.CartPage),
+      },
           {
             path: 'grocery-item-details/:id',
             loadComponent: () =>

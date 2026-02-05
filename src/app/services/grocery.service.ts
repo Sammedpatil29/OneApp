@@ -164,4 +164,12 @@ export class GroceryService {
     return this.http.post(`${this.apiUrl}/api/grocery-order/verify-status`, params);
   }
 
+  getOrderById(token: any, id:any){
+    let headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+   });
+    return this.http.get(`${this.apiUrl}/api/grocery-order/${id}`, { headers: headers})
+  };
 }
+
+  

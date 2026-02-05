@@ -150,15 +150,15 @@ export class HistoryComponent implements OnInit {
   openDetails(orderDetails: any) {
     console.log(orderDetails);
     if (orderDetails.type == 'grocery') {
-      this.navCtrl.navigateRoot('/layout/grocery-order-details', {
+      this.navCtrl.navigateForward(`/layout/grocery-layout/grocery-order-details/${orderDetails.id}`, {
         state: {
-          orderDetails: orderDetails,
+          from: "history",
         },
       });
     } else if (orderDetails.type == 'dineout'){
-      this.navCtrl.navigateRoot(`/layout/dineout-layout/dineout-track/${orderDetails.id}`, {
+      this.navCtrl.navigateForward(`/layout/dineout-layout/dineout-track/${orderDetails.id}`, {
         state: {
-          orderDetails: orderDetails,
+          from: 'history',
         },
       });
     } else {

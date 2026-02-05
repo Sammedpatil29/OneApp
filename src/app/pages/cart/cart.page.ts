@@ -218,7 +218,7 @@ export class CartPage implements OnInit, OnDestroy {
         this.isOrderPlaced = true;
         this.groceryService.clearCart();
         this.isLoading = false;
-
+        this.navCtrl.navigateRoot(`/layout/grocery-layout/grocery-order-details/${res.data.id}`)
       })
     } else {
         // Online Payment Flow
@@ -238,7 +238,7 @@ export class CartPage implements OnInit, OnDestroy {
                this.initiateRazorpay(res.razorpay_order_id);
             } else {
                // Fallback: Just clear cart if backend says success but no razorpay id (zero cost?)
-               this.handleSuccess(res);
+               this.handleSuccess(res, this.pendingOrderId );
             }
           },
           error: (err) => {
@@ -265,7 +265,7 @@ export class CartPage implements OnInit, OnDestroy {
       key: 'rzp_test_S5RLYqr6y2I6xs', 
       amount: (this.billDetails.toPay * 100).toString(), 
       currency: 'INR',
-      name: 'OneApp Grocery',
+      name: 'Pintu Grocery',
       description: 'Grocery Order',
       image: 'https://your-logo-url.com/logo.png',
       order_id: rzpOrderId, 
@@ -309,7 +309,7 @@ export class CartPage implements OnInit, OnDestroy {
     this.groceryService.verifyPayment({ orderId: internalOrderId }).subscribe({
       next: (res: any) => {
         if (res.success && res.status === 'paid') {
-           this.handleSuccess(res);
+           this.handleSuccess(res, internalOrderId);
         } else if (res.status === 'failed') {
            this.stopPolling();
            this.isLoading = false;
@@ -320,12 +320,16 @@ export class CartPage implements OnInit, OnDestroy {
     });
   }
 
-  async handleSuccess(res: any) {
+  async handleSuccess(res: any, internalOrderId:any) {
     this.isPaymentDetected = true;
     this.stopPolling();
     await Preferences.remove({ key: 'pending_grocery_order_id' });
     this.groceryService.clearCart();
-    this.isOrderPlaced = true;
+    // this.isOrderPlaced = true;
+    this.navCtrl.navigateRoot(`/layout/grocery-layout/grocery-order-details/${internalOrderId}`, {
+      animated: true,
+      animationDirection: 'forward'
+    })
     this.isLoading = false;
     this.presentToast("Order Placed Successfully! 🚀");
   }

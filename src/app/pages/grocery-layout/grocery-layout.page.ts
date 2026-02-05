@@ -42,7 +42,7 @@ export class GroceryLayoutPage implements OnInit {
   }
 
   goToCart(){
-    this.navCtrl.navigateForward('/layout/cart');
+    this.navCtrl.navigateForward('/layout/grocery-layout/cart');
   }
 
 }

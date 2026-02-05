@@ -391,7 +391,7 @@ export class DineoutHotelDetailsPage implements OnInit {
 
   payBillNow(){
     this.navCtrl.navigateForward(`/layout/dineout-layout/dineout-paybill`, {
-      state: { restaurantId: this.restaurantId }
+      state: { restaurantId: this.restaurantId, from: 'hotel-details'  }
     });
   }
 }

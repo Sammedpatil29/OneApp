@@ -23,6 +23,7 @@ export class dineoutPaybillPage implements OnInit, OnDestroy {
   bookingId: any;
   restaurantId: any;
   token: any;
+  routeSource: any;
 
   // ⚡ Polling State
   pollingInterval: any = null;
@@ -43,6 +44,7 @@ export class dineoutPaybillPage implements OnInit, OnDestroy {
   async ngOnInit() {
     this.bookingId = history.state.bookingId;
     this.restaurantId = history.state.restaurantId;
+    this.routeSource = history.state?.from;
     this.token = await this.authService.getToken();
   }
 
@@ -51,7 +53,7 @@ export class dineoutPaybillPage implements OnInit, OnDestroy {
   }
 
   goBack() {
-    this.navCtrl.back();
+    this.navCtrl.back()
   }
 
   async calculateBill() {
@@ -225,14 +227,16 @@ export class dineoutPaybillPage implements OnInit, OnDestroy {
 
         // Option 1: Replace current view (History is cleared, good for receipt pages)
         if(this.bookingId){
-          this.navCtrl.navigateRoot([`/layout/dineout-layout/dineout-track/${this.bookingId}`], {
+          this.navCtrl.navigateRoot(`/layout/dineout-layout/dineout-track/${this.bookingId}`, {
             animated: true,
-            animationDirection: 'forward'
+            animationDirection: 'forward',
+            state: { from: 'paybill' }
         });
         } else {
           this.navCtrl.navigateRoot(`/layout/dineout-layout/dineout-track/${internalOrderId}`, {
             animated: true,
-            animationDirection: 'forward'
+            animationDirection: 'forward',
+            state: { from: 'paybill' }
         });
         }
 

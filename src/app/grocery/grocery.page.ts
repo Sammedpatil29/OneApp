@@ -9,6 +9,8 @@ import { GroceryService } from '../services/grocery.service';
 import { AuthService } from '../services/auth.service';
 import { ProductCardComponent } from "../components/product-card/product-card.component";
 import { ErrorComponent } from "../components/error/error.component";
+import { NavController} from '@ionic/angular' ;
+
 
 @Component({
   selector: 'app-grocery',
@@ -66,6 +68,7 @@ export class GroceryPage implements OnInit, OnDestroy {
     private cartService: GroceryService,
     private authService: AuthService,
     private cdr: ChangeDetectorRef, // Inject ChangeDetectorRef
+    private navCtrl: NavController
   ) {
     addIcons({
       chevronDownOutline,
@@ -126,33 +129,33 @@ export class GroceryPage implements OnInit, OnDestroy {
   }
 
   gotoSearch() {
-    this.router.navigate(['/layout/grocery-layout/grocery-search']);
+    this.navCtrl.navigateForward('/layout/grocery-layout/grocery-search');
   }
 
   goToSpecialCategory(term:any) {
-    this.router.navigate(['/layout/grocery-layout/grocery-special'],{
+    this.navCtrl.navigateForward('/layout/grocery-layout/grocery-special',{
       state: {term: term}
     });
   }
 
   goToGrocerybyCategory(catName?: string) {
-    this.router.navigate(['/layout/grocery-layout/grocery-by-category'], {
+    this.navCtrl.navigateForward('/layout/grocery-layout/grocery-by-category', {
       state: { category: catName },
     });
   }
 
   goToDetails(product?: any) {
-    this.router.navigate([`/layout/grocery-layout/grocery-item-details/${product?.id}`], {
+    this.navCtrl.navigateForward(`/layout/grocery-layout/grocery-item-details/${product?.id}`, {
       state: { productId: product?.id },
     });
   }
 
   goToCart() {
-    this.router.navigate(['/layout/grocery-layout/cart']);
+    this.navCtrl.navigateForward('/layout/grocery-layout/cart');
   }
 
   goToHome() {
-    this.router.navigate(['/layout/example/home']);
+    this.navCtrl.navigateForward(['/layout/example/home']);
   }
 
   getGroceryHomeData(){
