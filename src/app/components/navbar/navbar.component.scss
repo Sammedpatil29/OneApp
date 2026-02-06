@@ -1,3 +1,20 @@
+/* Hide the filled icon by default */
+.icon-active {
+  display: none;
+}
+
+/* When the tab is selected, show the filled icon and hide the outline one */
+.tab-selected {
+  .icon-active {
+    display: block !important;
+  }
+  .icon-inactive {
+    display: none !important;
+  }
+}
+
+
+
 /* --- Tab Bar Styling --- */
 .custom-tab-bar {
   height: 60px;
@@ -12,7 +29,8 @@
 /* --- Tab Buttons --- */
 ion-tab-button {
   --color: var(--grocery-theme-color);          /* Inactive Grey */
-  --color-selected: var(--grocery-theme-color-light); /* Active Black */
+  --color-selected: var(--grocery-theme-color); /* Active Black */
+  --background-selected: var(--grocery-theme-color-light) ;
   
   ion-icon {
     font-size: 24px;

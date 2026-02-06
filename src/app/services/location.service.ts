@@ -11,6 +11,10 @@ export class LocationService {
   private citySource = new BehaviorSubject<string>('');
   city$ = this.citySource.asObservable();
 
+  private locationSource = new BehaviorSubject<any>(null);
+  location$ = this.locationSource.asObservable();
+
+
   private addressSource = new BehaviorSubject<string>('');
   address$ = this.addressSource.asObservable();
   coordinates: any = []
@@ -97,5 +101,10 @@ export class LocationService {
 
   getPolygonData(){
     return this.http.get(this.polygonUrl)
+  }
+
+  setAddress(location:any){
+    this.locationSource.next(location);
+    localStorage.setItem('location', JSON.stringify(location));
   }
 }

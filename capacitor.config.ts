@@ -22,11 +22,11 @@ const config: CapacitorConfig = {
     },
     Cordova: {}
   },
-  // server: {
-  //   url: 'https://pintu-teal.vercel.app/',
-  //   cleartext: true,
-  //   errorPath: 'offline.html'
-  // }
+  server: {
+    url: 'https://pintu-teal.vercel.app/',
+    cleartext: true,
+    errorPath: 'offline.html'
+  }
 };
 
 export default config;

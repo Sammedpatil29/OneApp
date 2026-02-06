@@ -44,13 +44,14 @@ addresses: any = [
    }
 
   async ngOnInit() {
-    this.Addressid = []
-    this.Addressid = JSON.parse(localStorage.getItem('location') || '{}');
+    this.Addressid = this.locationService.location$.subscribe((res:any)=>{
+      this.Addressid = res
+    })
       console.log(this.Addressid)
     this.token = await this.authService.getToken()
-    const locationData = localStorage.getItem('location');
+    const locationData = this.Addressid;
     if (locationData) {
-      const location = JSON.parse(locationData);
+      const location = locationData;
       this.selectedAddress = location.address;
     }
 
@@ -59,9 +60,11 @@ addresses: any = [
 
   selectedAddress:any
   ionViewWillEnter() {
-    const locationData = localStorage.getItem('location');
-    if (locationData) {
-      const location = JSON.parse(locationData);
+    const locationData = this.locationService.location$.subscribe((res:any)=>{
+      this.Addressid = res
+    });
+    if (this.Addressid) {
+      const location = this.Addressid;
       this.selectedAddress = location.address;
     }
 
@@ -86,9 +89,11 @@ addresses: any = [
       label: item.label,
       address: item.address
     }
+    this.locationService.setAddress(data)
     localStorage.setItem('location', JSON.stringify(data))
     // this.getAddressList()
-    this.Addressid = JSON.parse(localStorage.getItem('location') || '{}');
+
+    // this.Addressid = JSON.parse(localStorage.getItem('location') || '{}');
     console.log(this.Addressid)
   }
 

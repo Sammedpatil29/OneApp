@@ -128,10 +128,14 @@ export class HomePage implements OnInit {
   }
 
   ionViewDidEnter() {
-  const storedLocation = localStorage.getItem('location');
+    let storedLocation;
+    this.locationService.location$.subscribe((res:any)=>{
+      storedLocation = res
+    })
+  
   if (storedLocation) {
     console.log('✅ Using Location from LocalStorage');
-    this.currentLocation = JSON.parse(storedLocation);
+    this.currentLocation = storedLocation;
   }
 }
 
@@ -196,10 +200,13 @@ export class HomePage implements OnInit {
   // --- Location Logic ---
 
   async resolveUserLocation() {
-    const storedLocation = localStorage.getItem('location');
+    let storedLocation:any;
+    this.locationService.location$.subscribe((res:any)=>{
+      storedLocation = res
+    })
     if (storedLocation) {
       console.log('✅ Using Location from LocalStorage');
-      this.currentLocation = JSON.parse(storedLocation);
+      this.currentLocation = storedLocation;
       return;
     }
 
@@ -256,11 +263,17 @@ export class HomePage implements OnInit {
 
   setAndStoreLocation(data: any) {
     this.currentLocation = data;
+    this.locationService.setAddress(data);
     localStorage.setItem('location', JSON.stringify(data));
-    const storedLocation = localStorage.getItem('location');
+    // const storedLocation = localStorage.getItem('location');
+    let storedLocation:any;
+    this.locationService.location$.subscribe((res:any)=>{
+      storedLocation = res
+    })
+  
     if (storedLocation) {
       console.log('✅ Using Location from LocalStorage');
-      this.currentLocation = JSON.parse(storedLocation);
+      this.currentLocation = storedLocation;
     }
   }
 

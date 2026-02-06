@@ -75,9 +75,12 @@ export class AboutPage implements OnInit {
   async ngOnInit() {
     this.data = this.router.getCurrentNavigation()?.extras.state?.['data'];
     console.log('Passed Data:', this.data);
-    this.Addressid = []
-    this.Addressid = JSON.parse(localStorage.getItem('location') || '{}');
-      console.log(this.Addressid)
+    this.Addressid = this.locationService.location$.subscribe((res:any)=>{
+      this.Addressid = res
+      console.log('address set as', this.Addressid)
+
+    })
+      console.log('new saved address',this.Addressid)
     this.getYear()
     this.token = await this.authService.getToken()
     if(this.data == 'Personal Details'){
@@ -96,9 +99,11 @@ export class AboutPage implements OnInit {
 selectedAddress:any
 Addressid:any
   ionViewWillEnter() {
-    const locationData = localStorage.getItem('location');
-    if (locationData) {
-      const location = JSON.parse(locationData);
+    const locationData = this.locationService.location$.subscribe((res:any)=>{
+      this.Addressid = res
+    });
+    if (this.Addressid) {
+      const location = this.Addressid;
       this.selectedAddress = location.address;
     }
 
@@ -115,9 +120,10 @@ Addressid:any
       label: item.label,
       address: item.address
     }
+    this.locationService.setAddress(data)
     localStorage.setItem('location', JSON.stringify(data))
     // this.getAddressList()
-    this.Addressid = JSON.parse(localStorage.getItem('location') || '{}');
+    // this.Addressid = JSON.parse(localStorage.getItem('location') || '{}');
     console.log(this.Addressid)
   }
 

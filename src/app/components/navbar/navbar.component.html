@@ -1,21 +1,21 @@
 <ion-tabs>
-  
   <ion-tab-bar slot="bottom" class="custom-tab-bar">
     
     <ion-tab-button tab="support">
-      <ion-icon name="help-circle-outline"></ion-icon>
+      <ion-icon name="help-circle" class="icon-active"></ion-icon>
+      <ion-icon name="help-circle-outline" class="icon-inactive"></ion-icon>
       <ion-label>Support</ion-label>
     </ion-tab-button>
 
     <div class="center-spacer"></div>
 
     <ion-tab-button tab="history">
-      <ion-icon name="time-outline"></ion-icon>
+      <ion-icon name="time" class="icon-active"></ion-icon>
+      <ion-icon name="time-outline" class="icon-inactive"></ion-icon>
       <ion-label>History</ion-label>
     </ion-tab-button>
 
   </ion-tab-bar>
-
 </ion-tabs>
 
 <div class="floating-center-btn" (click)="goToHome()">

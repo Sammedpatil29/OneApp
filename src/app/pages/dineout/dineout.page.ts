@@ -10,6 +10,7 @@ import {
 } from 'ionicons/icons';
 import { DineoutService } from 'src/app/services/dineout.service';
 import { ErrorComponent } from "src/app/components/error/error.component";
+import { LocationService } from 'src/app/services/location.service';
 
 @Component({
   selector: 'app-dineout',
@@ -41,7 +42,7 @@ export class DineoutPage implements OnInit {
   allRestaurants: any[] = []; // Master copy
   restaurants: any[] = [];    // Display copy
 
-  constructor(private navCtrl: NavController, private dineoutService: DineoutService) {
+  constructor(private navCtrl: NavController, private dineoutService: DineoutService, private locationService: LocationService) {
     addIcons({ 
       searchOutline, optionsOutline, heartOutline, star, heart, 
       bookmarkOutline, locationOutline, chevronDownOutline, pricetagOutline,
@@ -51,6 +52,9 @@ export class DineoutPage implements OnInit {
 
   ngOnInit() {
     this.getRestaurantList();
+    this.locationService.location$.subscribe((res:any)=>{
+      console.log('required',res)
+    })
   }
 
   getRestaurantList() {

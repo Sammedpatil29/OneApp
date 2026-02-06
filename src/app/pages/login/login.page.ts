@@ -94,6 +94,7 @@ export class LoginPage implements OnInit {
   }
 
   async ngOnInit() {
+    this.verifyingToken = true;
     // FIX: Removed the 2000ms setTimeout. This was causing the slow startup.
     this.token = await this.authService.getToken();
     console.log(this.token);

@@ -1,300 +1,160 @@
-import { Component, OnInit } from '@angular/core';
-
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonFooter, IonButton, IonButtons, IonIcon, IonSearchbar, IonModal, IonList, IonItem, IonLabel, IonNote, IonText, IonInput, IonChip, IonSpinner, IonToast } from '@ionic/angular/standalone';
-import { AfterViewInit, ElementRef, ViewChild } from '@angular/core';
-import { NavController } from '@ionic/angular';
-import { arrowBack } from 'ionicons/icons';
-import { addIcons } from 'ionicons';
-import { Preferences } from '@capacitor/preferences';
+import { IonicModule, NavController } from '@ionic/angular';
+import { Router } from '@angular/router';
 import { LocationService } from 'src/app/services/location.service';
 import { AuthService } from 'src/app/services/auth.service';
-import { NodataComponent } from "../../components/nodata/nodata.component";
-import { Route, Router } from '@angular/router';
+import { addIcons } from 'ionicons';
+import { arrowBack, locate, location, search, close, refresh, arrowBackOutline, locateOutline, refreshOutline, mapOutline } from 'ionicons/icons';
 
-declare const google: { maps: {
-  places: any;
-  geometry: any;
-  Polygon: any; LatLng: new (arg0: number, arg1: number) => any; Map: new (arg0: any, arg1: { center: any; zoom: number; disableDefaultUI: boolean; }) => any; event: { addListener: (arg0: any, arg1: string, arg2: () => void) => void; }; Geocoder: new () => any; 
-}; };;
+declare const google: any;
+
 @Component({
   selector: 'app-map',
   templateUrl: './map.page.html',
   styleUrls: ['./map.page.scss'],
   standalone: true,
-  imports: [IonToast, IonSpinner, CommonModule, IonChip, IonInput, IonText, IonNote, IonLabel, IonItem, IonList, IonModal, IonSearchbar, IonIcon, IonButtons, IonButton, IonFooter, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, NodataComponent]
+  imports: [IonicModule, CommonModule, FormsModule]
 })
-export class MapPage implements AfterViewInit, OnInit {
+export class MapPage implements OnInit, AfterViewInit {
+  @ViewChild('map', { static: false }) mapElement!: ElementRef;
 
-  // constructor() { }
-autocompleteService = new google.maps.places.AutocompleteService();
-   @ViewChild('map', { static: false }) mapElement!: ElementRef;
-   @ViewChild('search', { static: false }) searchElement!: ElementRef;
   map: any;
-  currentAddress: string = '';
-  centerCoords: any;
-  latLng:any;
-  houseNo:any;
-  HouseName:any;
-  landmark:any;
-  isModalOpen:boolean = false
-  isLoading:boolean = false
-  user_id = ""
-  selectedLabel = ''
-  isDisabled: boolean = false
-  token: any
-  receiverName = ''
-  receiverContact = ''
-  isSearchModalOpen: boolean = false
-  searchedAddresses: any
-  suggestions: any[] = []
-  zoom: any = 14
-  routeData = ''
-  inside: any = true
-  toastMessage = ''
-  isToastOpen: boolean = false
-  cityCenter = new google.maps.LatLng(16.715316578418758, 75.05882421691895);
-  polygonCoords: google.maps.LatLngLiteral[] = [
-    // { lat: 16.721820, lng: 75.041123 }, 
-    // { lat: 16.731534, lng: 75.044394 },
-    // { lat: 16.733517, lng: 75.050348},
-    // { lat: 16.736431, lng: 75.062371},
-    // { lat: 16.727415, lng: 75.075158},
-    // { lat: 16.716180, lng: 75.073141},
-    // { lat: 16.704540, lng: 75.067789},
-    // { lat: 16.709470, lng: 75.055160},
-    // { lat: 16.714950, lng: 75.044911},
-  ];
-  mapImgUrl: any;
-  areaColor = ''
-  strokeColor = ''
-  isPolygonLoading: boolean = true
+  currentAddress = '';
+  latLng: any;
+  inside = true;
+  isPolygonLoading = true;
+  isLoading = false;
+  isModalOpen = false;
+  isSearchModalOpen = false;
 
-  constructor(private navCtrl: NavController, private router: Router, private locationService: LocationService, private authService: AuthService){
-    addIcons({arrowBack});
+  // Form Model
+  houseNo = '';
+  landmark = '';
+  selectedLabel = 'home';
+  mapImgUrl = '';
+  
+  polygonCoords: any[] = [];
+  token: any;
+  servicePolygon: any;
+
+  constructor(
+    private navCtrl: NavController,
+    private router: Router,
+    private locationService: LocationService,
+    private authService: AuthService
+  ) {
+    addIcons({ arrowBackOutline, locate, location, search, close, refresh, locateOutline, refreshOutline, mapOutline });
   }
 
-async ngOnInit() {
-  this.routeData = this.router.getCurrentNavigation()?.extras.state?.['data'];
-    console.log('Passed Data:', this.routeData);
-    this.token = await this.authService.getToken()
-    this.getPolygon()
-}  
+  async ngOnInit() {
+    this.token = await this.authService.getToken();
+    this.fetchServiceArea();
+  }
 
   ngAfterViewInit() {
-    this.getLocationFromLocalStorage()
-    this.loadMap();
-    // setTimeout(()=> {
-      
-    // }, 3000)
+    this.initializeLocation();
   }
 
-  handleModalClose(){
-    this.isModalOpen = false
+  fetchServiceArea() {
+    this.locationService.getPolygonData().subscribe({
+      next: (res: any) => {
+        this.polygonCoords = res.polygon;
+        this.isPolygonLoading = false;
+        if (this.map) this.renderPolygon(res);
+      },
+      error: () => this.isPolygonLoading = false
+    });
   }
 
-  getPolygon(){
-    this.isPolygonLoading = true
-    this.locationService.getPolygonData().subscribe((res:any)=>{
-      this.polygonCoords = res.polygon
-      this.areaColor = res.inside_color
-      this.strokeColor = res.border_color
-      this.isPolygonLoading = false
-      this.loadMap()
-    }, error => {
-      this.isPolygonLoading = false
-    })
-  }
-
-  chipSelected(event:any){
-    console.log(event)
-    this.selectedLabel = event
-  }
-
-  createAddress(){
-    let params = {
-        "lat": this.centerCoords.lat(),
-        "lng": this.centerCoords.lng(),
-        "address": this.currentAddress,
-        "landmark": this.landmark,
-        "label": this.selectedLabel,
-        "house_no": this.houseNo,
-        "building_name": this.HouseName,
-        "receiver_name": this.receiverName,
-        "receiver_contact": this.receiverContact
-    }
-    this.isLoading = true
-    this.locationService.saveAddress(params, this.token).subscribe(res=> {
-      console.log(res)
-      this.isLoading = false
-      this.isToastOpen = true
-      this.toastMessage = 'Address added successfully🥳'
-      setTimeout(()=> {
-        this.isToastOpen = false
-      },3000)
-      this.isModalOpen = false
-      this.goBack()
-    }, error => {
-      this.isToastOpen = true
-      this.toastMessage = 'Error while adding address❗'
-      setTimeout(()=> {
-        this.isToastOpen = false
-      },3000)
-      this.isLoading = false
-    })
-  }
-
-  backtoServiceArea(){
-        this.latLng = new google.maps.LatLng(16.715316578418758, 75.05882421691895); // Default coords
-        this.zoom = 14
-        this.loadMap()
-  }
-
-  async getCurrentLocation(){
-    await this.locationService.getCurrentPosition().then(res => {
-console.log(res)
-this.latLng = new google.maps.LatLng(res.coords.latitude, res.coords.longitude);
-this.zoom = 19
-this.loadMap()
-    })
-  }
-
-  getLocationFromLocalStorage() {
-    const locationData = localStorage.getItem('location');
-    if (locationData) {
-      const location = JSON.parse(locationData);
-      // this.ad = location.address;
-      this.latLng = new google.maps.LatLng(location.lat, location.lng)
+  initializeLocation() {
+    const savedLoc = localStorage.getItem('location');
+    if (savedLoc) {
+      const parsed = JSON.parse(savedLoc);
+      this.latLng = new google.maps.LatLng(parsed.lat, parsed.lng);
     } else {
-      this.backtoServiceArea()
+      this.latLng = new google.maps.LatLng(16.7153, 75.0588); // Default fallback
     }
+    this.setupMap();
   }
 
-  loadMap() { 
-    // this.latLng = new google.maps.LatLng(16.715316578418758, 75.05882421691895); // Default coords
-
+  setupMap() {
     const mapOptions = {
       center: this.latLng,
-      zoom: this.zoom,
-      disableDefaultUI: true
+      zoom: 16,
+      disableDefaultUI: true,
+      clickableIcons: false,
+      styles: [ /* Optional: Add custom silver/dark map styles here */ ]
     };
 
     this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
 
-    const serviceArea = new google.maps.Polygon({
-  paths: this.polygonCoords,
-  strokeColor: this.strokeColor,
-  strokeOpacity: 0.8,
-  strokeWeight: 1,
-  fillColor: this.areaColor,
-  fillOpacity: 0.35,
-});
-
-serviceArea.setMap(this.map);
-
+    // Update address when map stops moving
     google.maps.event.addListener(this.map, 'idle', () => {
-      this.centerCoords = this.map.getCenter();
-      this.getAddressFromCoords(this.centerCoords.lat(), this.centerCoords.lng());
+      const center = this.map.getCenter();
+      this.updateLocationInfo(center.lat(), center.lng());
     });
   }
 
-  getAddressFromCoords(lat: number, lng: number) {
+  renderPolygon(data: any) {
+    this.servicePolygon = new google.maps.Polygon({
+      paths: this.polygonCoords,
+      strokeColor: data.border_color || '#2f3542',
+      strokeOpacity: 0.8,
+      strokeWeight: 2,
+      fillColor: data.inside_color || '#747d8c',
+      fillOpacity: 0.15,
+      map: this.map
+    });
+  }
+
+  updateLocationInfo(lat: number, lng: number) {
     const geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ location: { lat, lng } }, (results:any, status:any) => {
+    geocoder.geocode({ location: { lat, lng } }, (results: any, status: any) => {
       if (status === 'OK' && results[0]) {
         this.currentAddress = results[0].formatted_address;
-        console.log(lat,lng)
-        this.checkIfInsideServiceArea(lat, lng)
-      } else {
-        this.currentAddress = 'Address not found';
+        this.validateServiceArea(lat, lng);
       }
     });
   }
 
-locationData:any;
-  confirmLocation() {
-    console.log('Selected location:', {
-      lat: this.centerCoords.lat(),
-      lng: this.centerCoords.lng(),
-      address: this.currentAddress
-    });
-    // Preferences.set({key: 'location', value: JSON.stringify(this.currentAddress)})
-    let LocationObject = {
-    lat: this.centerCoords.lat(),
-    lng: this.centerCoords.lng(),
-    address: this.currentAddress,
-    id: "",
-    label: ""
-}
-    localStorage.setItem('location', JSON.stringify(LocationObject))
-this.locationData = localStorage.getItem('location');
-const location = JSON.parse(this.locationData)
-console.log(location.address)
-// this.goBack()
-if(this.routeData == 'addAddress'){
-  this.mapImgUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${this.centerCoords.lat()},${this.centerCoords.lng()}&zoom=17&size=600x200&markers=color:red%7C${this.centerCoords.lat()},${this.centerCoords.lng()}&key=AIzaSyA85HFedGjgP12MG_dvR-MVgooWTcJNIb0`
-this.isModalOpen = true
-    // Pass data to parent or store
-} else {
-  // this.goBack()
-   this.navCtrl.navigateBack('/layout/example/home');
-}
-  }
-
-  checkIfInsideServiceArea(lat: number, lng: number) {
-  const point = new google.maps.LatLng(lat, lng);
-  const polygon = new google.maps.Polygon({ paths: this.polygonCoords });
-
-  const inside = google.maps.geometry.poly.containsLocation(point, polygon);
-
-  if (inside) {
-    this.inside = true
-    console.log('✅ Location is inside service area');
-  } else {
-    this.inside = false
-    console.warn('❌ Location is outside service area');
-  }
-
-  return inside;
-}
-
-  goBack() {
-    this.navCtrl.back();
-  }
-
-  changeSelectedAddress(){
-    this.isModalOpen = false
-  }
-
-  openSearchLocationTab(){
-    // this.searchLocation()
-    this.isSearchModalOpen = true
-  }
-
-  onSearchChange(event: any) {
-    const input = event.detail.value;
-
-    if (!input || input.length < 3) {
-      this.suggestions = [];
-      return;
+  validateServiceArea(lat: number, lng: number) {
+    const point = new google.maps.LatLng(lat, lng);
+    const poly = this.servicePolygon || new google.maps.Polygon({ paths: this.polygonCoords });
+    this.inside = google.maps.geometry.poly.containsLocation(point, poly);
+    if(!this.inside) {
+      this.currentAddress = 'Location not serviceable';
     }
-
-    this.autocompleteService.getPlacePredictions(
-      {
-        input,
-        types: ['geocode'],
-        componentRestrictions: { country: 'in' },
-        location: this.cityCenter,
-        radius: 50000,
-      },
-      (predictions:any, status:any) => {
-        if (status === google.maps.places.PlacesServiceStatus.OK && predictions) {
-          this.suggestions = predictions.slice(0, 5);
-        } else {
-          this.suggestions = [];
-        }
-      }
-    );
   }
+
+  confirmLocation() {
+    const center = this.map.getCenter();
+    const locationData = { lat: center.lat(), lng: center.lng(), address: this.currentAddress };
+    
+    this.locationService.setAddress(locationData);
+    localStorage.setItem('location', JSON.stringify(locationData));
+
+    const state = this.router.getCurrentNavigation()?.extras.state;
+    if (state?.['data'] === 'addAddress') {
+      this.mapImgUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${locationData.lat},${locationData.lng}&zoom=17&size=600x300&markers=color:black%7C${locationData.lat},${locationData.lng}&key=YOUR_API_KEY`;
+      this.isModalOpen = true;
+    } else {
+      this.navCtrl.navigateBack('/layout/example/home');
+    }
+  }
+
+  async getCurrentLocation() {
+    try {
+      const pos = await this.locationService.getCurrentPosition();
+      const coords = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
+      this.map.panTo(coords);
+      this.map.setZoom(18);
+    } catch (e) {
+      console.error("Location access denied", e);
+    }
+  }
+
+  goBack() { this.navCtrl.back(); }
+  backtoServiceArea() { this.map.panTo(new google.maps.LatLng(16.7153, 75.0588)); }
 }
