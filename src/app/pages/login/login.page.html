@@ -58,7 +58,6 @@
     <div class="bottom-action-container">
       @if (!otpSent) {
         <ion-button
-          color="dark"
           class="book-btn w-100"
           [disabled]="isSendingOtp || phoneNumber.length != 10"
           (click)="sendVerification()">
@@ -68,7 +67,6 @@
       } @else {
         <ion-button
           expand="block"
-          color="dark"
           mode="ios"
           class="book-btn w-100"
           [disabled]="isLoading || isSendingOtp"
@@ -121,7 +119,6 @@
       <ion-button
         expand="block"
         mode="ios"
-        color="dark"
         class="book-btn w-100"
         [disabled]="isLoading"
         (click)="register()">

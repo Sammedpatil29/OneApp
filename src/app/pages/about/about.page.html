@@ -106,7 +106,7 @@
   </ion-textarea>
 </ion-item>
 <div class="mx-4">
-  <ion-button class="w-100 mt-3 book-btn" color="dark" mode="ios" (click)="postSuggestion()" [disabled]="isLoading">Submit
+  <ion-button class="w-100 mt-3 book-btn" mode="ios" (click)="postSuggestion()" [disabled]="isLoading">Submit
     @if (isLoading) {
         <ion-spinner class="button ms-2"  name="crescent"></ion-spinner>
 }
@@ -166,7 +166,7 @@
       <app-nodata></app-nodata>
     }
     <footer class="position-fixed bottom-0 w-100 p-3">
-      <ion-button class="book-btn w-100" (click)="openLocation()" color="dark">add New Address</ion-button>
+      <ion-button class="book-btn w-100" (click)="openLocation()">add New Address</ion-button>
     </footer>
     } @else {
       <div class="loader-state">

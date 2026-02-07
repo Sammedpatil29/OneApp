@@ -140,7 +140,7 @@ export class MapPage implements OnInit, AfterViewInit {
 
     const state = this.router.getCurrentNavigation()?.extras.state;
     if (this.routeSource == 'addAddress' || this.routeSource == 'cart') {
-      this.mapImgUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${locationData.lat},${locationData.lng}&zoom=17&size=600x300&markers=color:black%7C${locationData.lat},${locationData.lng}&key=YOUR_API_KEY`;
+      this.mapImgUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${locationData.lat},${locationData.lng}&zoom=17&size=600x300&markers=color:black%7C${locationData.lat},${locationData.lng}&key=AIzaSyA85HFedGjgP12MG_dvR-MVgooWTcJNIb0`;
       this.isModalOpen = true;
     } else if(this.routeSource == 'grocery') {
       this.navCtrl.navigateBack('/layout/grocery-layout/grocery');

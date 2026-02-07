@@ -127,7 +127,7 @@
   </ion-textarea>
 </ion-item>
 <div class="my-3 mx-4">
-  <ion-button class="book-btn w-100" mode="ios" color="dark" [disabled]="title.length < 5 || details.length < 5 || isCreating" (click)="createTicket()">Submit
+  <ion-button class="book-btn w-100" mode="ios" [disabled]="title.length < 5 || details.length < 5 || isCreating" (click)="createTicket()">Submit
     @if (isCreating) {
         <div class="loader-state">
       <ion-spinner name="crescent"></ion-spinner>
