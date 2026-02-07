@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angula
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, NavController } from '@ionic/angular';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocationService } from 'src/app/services/location.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { addIcons } from 'ionicons';
@@ -38,10 +38,12 @@ export class MapPage implements OnInit, AfterViewInit {
   polygonCoords: any[] = [];
   token: any;
   servicePolygon: any;
+  routeSource:any
 
   constructor(
     private navCtrl: NavController,
     private router: Router,
+    private route: ActivatedRoute,
     private locationService: LocationService,
     private authService: AuthService
   ) {
@@ -50,6 +52,7 @@ export class MapPage implements OnInit, AfterViewInit {
 
   async ngOnInit() {
     this.token = await this.authService.getToken();
+    this.routeSource = history.state.data
     this.fetchServiceArea();
   }
 
@@ -136,9 +139,11 @@ export class MapPage implements OnInit, AfterViewInit {
     localStorage.setItem('location', JSON.stringify(locationData));
 
     const state = this.router.getCurrentNavigation()?.extras.state;
-    if (state?.['data'] === 'addAddress') {
+    if (this.routeSource == 'addAddress' || this.routeSource == 'cart') {
       this.mapImgUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${locationData.lat},${locationData.lng}&zoom=17&size=600x300&markers=color:black%7C${locationData.lat},${locationData.lng}&key=YOUR_API_KEY`;
       this.isModalOpen = true;
+    } else if(this.routeSource == 'grocery') {
+      this.navCtrl.navigateBack('/layout/grocery-layout/grocery');
     } else {
       this.navCtrl.navigateBack('/layout/example/home');
     }

@@ -10,6 +10,7 @@ import { AuthService } from '../services/auth.service';
 import { ProductCardComponent } from "../components/product-card/product-card.component";
 import { ErrorComponent } from "../components/error/error.component";
 import { NavController} from '@ionic/angular' ;
+import { LocationService } from '../services/location.service';
 
 
 @Component({
@@ -32,7 +33,7 @@ import { NavController} from '@ionic/angular' ;
 })
 export class GroceryPage implements OnInit, OnDestroy {
   deliveryTime = 'Delivery Location';
-  currentLocation = 'Home - Indiranagar, Bengaluru';
+  currentLocation:any;
   token: any;
   isLoading: boolean = false;
   isError: boolean = false;
@@ -68,7 +69,8 @@ export class GroceryPage implements OnInit, OnDestroy {
     private cartService: GroceryService,
     private authService: AuthService,
     private cdr: ChangeDetectorRef, // Inject ChangeDetectorRef
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private locationService: LocationService
   ) {
     addIcons({
       chevronDownOutline,
@@ -83,6 +85,11 @@ export class GroceryPage implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.token = await this.authService.getToken();
+
+    this.locationService.location$.subscribe((res:any)=>{
+      this.currentLocation = res
+    })
+
 
     // 1. Subscribe to Cart Changes
     this.cartService.cart$.subscribe((items) => {
@@ -178,6 +185,12 @@ export class GroceryPage implements OnInit, OnDestroy {
         this.isLoading = false;
         this.isError = true;
       },
+    });
+  }
+
+  openLocation() {
+    this.navCtrl.navigateForward('/layout/address-list', {
+      state: { data: 'grocery' }
     });
   }
 

@@ -236,8 +236,9 @@ swiper-container::part(bullet-active) {
       width: 160px;
       font-weight: 700;
       font-size: 16px;
+      --background: var(--grocery-theme-color);
       margin: 0;
-      --box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+      --box-shadow: 0 8px 16px var(--grocery-theme-color-light);
     }
 
     /* ================= LOADER ================= */

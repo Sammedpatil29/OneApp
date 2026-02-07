@@ -109,6 +109,9 @@ export class HomePage implements OnInit {
   async ngOnInit() {
     try {
       this.isLoading = true;
+      this.locationService.location$.subscribe((res:any)=>{
+        this.currentLocation = res
+      })
 
       this.token = await this.authService.getToken();
 

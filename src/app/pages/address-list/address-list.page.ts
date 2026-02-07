@@ -38,6 +38,8 @@ addresses: any = [
   token:any = ''
   isToastOpen: boolean = false
   toastMessage = ''
+  routeSource:any
+
 
   constructor(private router: Router, private navCtrl: NavController , private authService: AuthService, private locationService: LocationService, private profileService: ProfileService) {
     addIcons({arrowBack,chevronForward});
@@ -49,6 +51,7 @@ addresses: any = [
     })
       console.log(this.Addressid)
     this.token = await this.authService.getToken()
+    this.routeSource = history.state.data
     const locationData = this.Addressid;
     if (locationData) {
       const location = locationData;
@@ -73,7 +76,7 @@ addresses: any = [
 
   openLocation() {
     this.navCtrl.navigateForward('/layout/map', {
-      state: {data : 'home'}
+      state: {data : this.routeSource}
     })
   }
 

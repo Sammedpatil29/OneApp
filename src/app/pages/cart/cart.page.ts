@@ -11,6 +11,7 @@ import { GroceryService } from 'src/app/services/grocery.service';
 import { AuthService } from 'src/app/services/auth.service';
 // import { CartResponse, CartItem, Suggestion } from './cart.models'; // Ensure you have the interface file
 import { ProductCardComponent } from "../../components/product-card/product-card.component";
+import { LocationService } from 'src/app/services/location.service';
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.page.html',
@@ -38,7 +39,7 @@ export class CartPage implements OnInit, OnDestroy {
   billDetails: any = {};
 
   // UI State
-  address = "Home - 123, Green Street, Bengaluru";
+  address:any;
   selectedPayment = 'online'; // Default
   couponCode = '';
   isCouponApplied = false;
@@ -52,13 +53,17 @@ export class CartPage implements OnInit, OnDestroy {
     private groceryService: GroceryService,
     private authService: AuthService,
     private cdr: ChangeDetectorRef,
-    private platform: Platform
+    private platform: Platform,
+    private locationService: LocationService
   ) { 
     addIcons({ arrowBack, locationOutline, timeOutline, checkmarkCircle, arrowForward, pricetagOutline, location });
   }
 
   async ngOnInit() {
     this.token = await this.authService.getToken();
+    this.locationService.location$.subscribe((res:any)=>{
+      this.address = res
+    })
     this.checkPendingOrder();
     this.groceryService.cart$.subscribe((cartItems) => {
       console.log('Cart Items Updated:', cartItems);
@@ -342,8 +347,10 @@ export class CartPage implements OnInit, OnDestroy {
     this.navCtrl.back();
   }
 
-  openMap() {
-    console.log('Open Map');
+  openLocation() {
+    this.navCtrl.navigateForward('/layout/address-list', {
+      state: { data: 'cart' }
+    });
   }
 
   trackOrder() {
