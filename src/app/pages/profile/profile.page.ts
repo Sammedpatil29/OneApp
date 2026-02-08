@@ -5,7 +5,7 @@ import { IonContent, IonHeader, IonTitle, IonToolbar, IonAvatar, IonLabel, IonIt
 import { addIcons } from 'ionicons';
 import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
-import { arrowBack } from 'ionicons/icons';
+import { arrowBack, arrowBackOutline } from 'ionicons/icons';
 import { Preferences } from '@capacitor/preferences';
 import { AuthService } from 'src/app/services/auth.service';
 import { ProfileService } from 'src/app/services/profile.service';
@@ -34,7 +34,7 @@ isLoading: boolean = false
 showRetry: boolean = false
 nameShort = ''
   constructor(private router: Router, private navCtrl: NavController, private authService:AuthService, private profileService: ProfileService) {
-      addIcons({arrowBack}); 
+      addIcons({arrowBackOutline,arrowBack}); 
           
 
   }

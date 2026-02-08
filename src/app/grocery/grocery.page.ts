@@ -162,7 +162,7 @@ export class GroceryPage implements OnInit, OnDestroy {
   }
 
   goToHome() {
-    this.navCtrl.navigateForward(['/layout/example/home']);
+    this.navCtrl.navigateForward('/layout/example/home');
   }
 
   getGroceryHomeData(){

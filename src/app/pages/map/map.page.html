@@ -26,11 +26,8 @@
 <ion-content [fullscreen]="true" class="ion-no-padding">
   <div #map id="map" style="height: 100%; width: 100%;"></div>
 
-  <div class="location-pin">
-    <div class="pin-wrapper">
-      <i class="bi bi-geo-alt-fill"></i>
-      <div class="pin-shadow"></div>
-    </div>
+  <div class="location-pin" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -100%); z-index: 100; pointer-events: none;">
+    <ion-icon name="location" color="dark" style="font-size: 40px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));"></ion-icon>
   </div>
 
   <ion-footer class="location-footer position-fixed bottom-0 w-100">

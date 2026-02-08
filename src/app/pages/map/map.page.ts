@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, NavController } from '@ionic/angular';
@@ -6,7 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { LocationService } from 'src/app/services/location.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { addIcons } from 'ionicons';
-import { arrowBack, locate, location, search, close, refresh, arrowBackOutline, locateOutline, refreshOutline, mapOutline } from 'ionicons/icons';
+import { arrowBack, locate, location, search, close, refresh, arrowBackOutline, locateOutline, refreshOutline, mapOutline, trendingUp } from 'ionicons/icons';
 
 declare const google: any;
 
@@ -39,13 +39,15 @@ export class MapPage implements OnInit, AfterViewInit {
   token: any;
   servicePolygon: any;
   routeSource:any
+  serviceAreaData: any;
 
   constructor(
     private navCtrl: NavController,
     private router: Router,
     private route: ActivatedRoute,
     private locationService: LocationService,
-    private authService: AuthService
+    private authService: AuthService,
+    private ngZone: NgZone
   ) {
     addIcons({ arrowBackOutline, locate, location, search, close, refresh, locateOutline, refreshOutline, mapOutline });
   }
@@ -63,9 +65,14 @@ export class MapPage implements OnInit, AfterViewInit {
   fetchServiceArea() {
     this.locationService.getPolygonData().subscribe({
       next: (res: any) => {
-        this.polygonCoords = res.polygon;
+        this.serviceAreaData = res.data;
+        this.polygonCoords = res.data.polygon;
         this.isPolygonLoading = false;
-        if (this.map) this.renderPolygon(res);
+        if (this.map) {
+          this.renderPolygon(res.data);
+          const center = this.map.getCenter();
+          if (center) this.validateServiceArea(center.lat(), center.lng());
+        }
       },
       error: () => this.isPolygonLoading = false
     });
@@ -77,7 +84,7 @@ export class MapPage implements OnInit, AfterViewInit {
       const parsed = JSON.parse(savedLoc);
       this.latLng = new google.maps.LatLng(parsed.lat, parsed.lng);
     } else {
-      this.latLng = new google.maps.LatLng(16.7153, 75.0588); // Default fallback
+      // this.latLng = new google.maps.LatLng(16.7153, 75.0588); 
     }
     this.setupMap();
   }
@@ -92,6 +99,10 @@ export class MapPage implements OnInit, AfterViewInit {
     };
 
     this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
+
+    if (this.serviceAreaData) {
+      this.renderPolygon(this.serviceAreaData);
+    }
 
     // Update address when map stops moving
     google.maps.event.addListener(this.map, 'idle', () => {
@@ -114,31 +125,45 @@ export class MapPage implements OnInit, AfterViewInit {
 
   updateLocationInfo(lat: number, lng: number) {
     const geocoder = new google.maps.Geocoder();
+    this.isPolygonLoading = true;
     geocoder.geocode({ location: { lat, lng } }, (results: any, status: any) => {
-      if (status === 'OK' && results[0]) {
-        this.currentAddress = results[0].formatted_address;
-        this.validateServiceArea(lat, lng);
-      }
+      this.ngZone.run(() => {
+        if (status === 'OK' && results[0]) {
+          this.currentAddress = results[0].formatted_address;
+          this.validateServiceArea(lat, lng);
+        }
+        this.isPolygonLoading = false;
+      });
     });
   }
 
   validateServiceArea(lat: number, lng: number) {
+    if (!this.polygonCoords || this.polygonCoords.length === 0) return;
     const point = new google.maps.LatLng(lat, lng);
     const poly = this.servicePolygon || new google.maps.Polygon({ paths: this.polygonCoords });
     this.inside = google.maps.geometry.poly.containsLocation(point, poly);
-    if(!this.inside) {
-      this.currentAddress = 'Location not serviceable';
-    }
   }
 
   confirmLocation() {
     const center = this.map.getCenter();
-    const locationData = { lat: center.lat(), lng: center.lng(), address: this.currentAddress };
+    const locationData: any = { lat: center.lat(), lng: center.lng(), address: this.currentAddress };
     
+    if (this.isModalOpen) {
+      locationData.houseNo = this.houseNo;
+      locationData.landmark = this.landmark;
+      locationData.label = this.selectedLabel;
+
+      this.locationService.setAddress(locationData);
+      localStorage.setItem('location', JSON.stringify(locationData));
+      
+      this.isModalOpen = false;
+      this.navCtrl.back();
+      return;
+    }
+
     this.locationService.setAddress(locationData);
     localStorage.setItem('location', JSON.stringify(locationData));
 
-    const state = this.router.getCurrentNavigation()?.extras.state;
     if (this.routeSource == 'addAddress' || this.routeSource == 'cart') {
       this.mapImgUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${locationData.lat},${locationData.lng}&zoom=17&size=600x300&markers=color:black%7C${locationData.lat},${locationData.lng}&key=AIzaSyA85HFedGjgP12MG_dvR-MVgooWTcJNIb0`;
       this.isModalOpen = true;

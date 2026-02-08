@@ -23,7 +23,7 @@ export class LocationService {
   addresslistUrl = "https://oneapp-backend.onrender.com/api/address/create/"
   addresslistByUser = "https://oneapp-backend.onrender.com/api/address/user-address/"
   deleteAddresses = "https://oneapp-backend.onrender.com/api/address/delete-address/"
-  polygonUrl = 'https://oneapp-backend.onrender.com/api/polygon/6/'
+  polygonUrl = 'https://oneapp-express-singapore.onrender.com'
 
   addressUrl = 'https://oneapp-express-singapore.onrender.com/api/addresses'
 
@@ -100,7 +100,7 @@ export class LocationService {
 
 
   getPolygonData(){
-    return this.http.get(this.polygonUrl)
+    return this.http.get(`${this.polygonUrl}/api/metadata`)
   }
 
   setAddress(location:any){
