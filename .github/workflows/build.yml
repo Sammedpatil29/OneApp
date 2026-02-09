@@ -1,21 +1,26 @@
 name: Build Android Bundle
+
 on:
-  workflow_dispatch: # Allows you to run it manually
+  workflow_dispatch: # Allows you to manually trigger the build from the Actions tab
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22 # Updated to meet Capacitor CLI requirements
+          cache: 'npm'
 
-      - name: Install Ionic & Dependencies
+      - name: Install Dependencies
         run: |
           npm install -g @ionic/cli
+          # Using --legacy-peer-deps to resolve the @angular/fire version mismatch
           npm install --legacy-peer-deps
 
       - name: Build Web Assets
@@ -26,16 +31,18 @@ jobs:
         with:
           java-version: '17'
           distribution: 'zulu'
+          cache: 'gradle'
 
-      - name: Build Android Bundle
+      - name: Build Android App Bundle (.aab)
         run: |
           npx cap sync android
           cd android
           chmod +x gradlew
-          ./gradlew bundleRelease
+          ./gradlew bundleRelease --no-daemon
 
-      - name: Upload Bundle
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-release-bundle
+          name: pintu-release-bundle
           path: android/app/build/outputs/bundle/release/*.aab
+          retention-days: 7
