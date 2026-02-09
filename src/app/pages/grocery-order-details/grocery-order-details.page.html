@@ -105,7 +105,7 @@
       <div class="status-card">
         <div class="status-header">
           <div class="icon-box" [ngClass]="getStatusColor(orderDetails?.status)">
-            <ion-icon [name]="orderDetails.status === 'delivered' ? 'checkmark-done-circle-outline' : 'time-outline'"></ion-icon>
+            <ion-icon [name]="orderDetails?.status   === 'delivered' ? 'checkmark-done-circle-outline' : 'time-outline'"></ion-icon>
           </div>
           <div class="text-content">
             <h2>{{ getStatusText(orderDetails?.status) }}</h2>
@@ -134,7 +134,7 @@
         <span>Delivery Address</span>
       </div>
       <div class="address-box">
-        <p class="address-text">{{ orderDetails.address }}</p>
+        <p class="address-text">{{ orderDetails?.address?.address }}</p>
       </div>
     </div>
 

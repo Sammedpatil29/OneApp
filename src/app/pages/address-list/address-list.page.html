@@ -20,7 +20,7 @@
         <!-- <ion-list class="border mt-2 mx-3" [ngClass]="item.id == Addressid.id? 'border-color': ''" style="border-radius: 20px;">
       <p>Select Location on map 📍</p>
     </ion-list> -->
-        <ion-list class="border mt-2 mx-3" [ngClass]="item.id == Addressid.id? 'border-color': ''" style="border-radius: 20px;">
+        <ion-list class="border mt-2 mx-3" [ngClass]="item.id == Addressid?.id? 'border-color': ''" style="border-radius: 20px;">
       <ion-item lines="none" >
       <div class="unread-indicator-wrapper" slot="start"></div>
       <ion-label>
@@ -30,7 +30,7 @@
       </ion-label>
       <div class="metadata-end-wrapper me-2" slot="end">
         
-        @if(item.id == Addressid.id ){
+        @if(item.id == Addressid?.id ){
           <i class="bi bi-check-circle-fill me-4 text-success" color="dark"></i>
         } @else {
           <i class="bi bi-circle me-4 text-success" color="dark" (click)="setAddressAsDefault(item)"></i>
@@ -42,14 +42,10 @@
     </ion-item>
     </ion-list>
       }
-      <div style="height: 200px"></div>
     </section>
     } @else {
       <app-nodata></app-nodata>
     }
-    <footer class="position-fixed bottom-0 w-100 p-3">
-      <ion-button class="book-btn w-100" (click)="openLocation()">Select on map</ion-button>
-    </footer>
     } @else {
       <div class="loader-state">
       <ion-spinner name="crescent"></ion-spinner>
@@ -57,3 +53,9 @@
     </div>
     }
   </ion-content>
+
+  @if (!isSpinnerLoading) {
+    <ion-footer class="ion-no-border p-3">
+      <ion-button class="book-btn w-100" (click)="openLocation()">Select on map</ion-button>
+    </ion-footer>
+  }

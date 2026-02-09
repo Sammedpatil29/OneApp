@@ -214,7 +214,7 @@ export class CartPage implements OnInit, OnDestroy {
         cartItems: this.cartData.items,
         billDetails: this.cartData.billDetails,
         address: this.address,
-        status: 'confirmed',
+        status: 'CONFIRMED',
         paymentDetails: {
           mode: 'cod',
         }
@@ -231,7 +231,7 @@ export class CartPage implements OnInit, OnDestroy {
           cartItems: this.cartData.items,
           billDetails: this.cartData.billDetails,
           address: this.address,
-          status: 'pending', 
+          status: 'PENDING',
           paymentDetails: { mode: 'online' }
         };
 
