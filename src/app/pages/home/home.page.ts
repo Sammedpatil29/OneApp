@@ -29,6 +29,7 @@ import { GroceryService } from 'src/app/services/grocery.service';
 import { Geolocation } from '@capacitor/geolocation';
 
 
+declare var google: any;
 register();
 
 @Component({
@@ -251,17 +252,45 @@ export class HomePage implements OnInit {
 
       console.log('✅ GPS Success:', coordinates);
 
+      let address = 'Current Location';
+      try {
+        const result = await this.reverseGeocode(coordinates.coords.latitude, coordinates.coords.longitude);
+        if (result) {
+          address = result;
+        }
+      } catch (e) {
+        console.error('Reverse geocoding error:', e);
+      }
+
       // Create location object
       const gpsLocation = {
         lat: coordinates.coords.latitude,
         lng: coordinates.coords.longitude,
-        address: 'Current Location',
+        address: address,
       };
 
       this.setAndStoreLocation(gpsLocation);
 
     } catch (error: any) {
     }
+  }
+
+  reverseGeocode(lat: number, lng: number): Promise<string> {
+    return new Promise((resolve, reject) => {
+      if (typeof google === 'undefined' || !google.maps) {
+        reject('Google Maps API not loaded');
+        return;
+      }
+      const geocoder = new google.maps.Geocoder();
+      const latlng = { lat, lng };
+      geocoder.geocode({ location: latlng }, (results: any, status: any) => {
+        if (status === 'OK' && results[0]) {
+          resolve(results[0].formatted_address);
+        } else {
+          reject('Geocoder failed due to: ' + status);
+        }
+      });
+    });
   }
 
   setAndStoreLocation(data: any) {
