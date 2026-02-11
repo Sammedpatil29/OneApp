@@ -257,6 +257,7 @@ export class HomePage implements OnInit {
         const result = await this.reverseGeocode(coordinates.coords.latitude, coordinates.coords.longitude);
         if (result) {
           address = result;
+          this.locationService.setAddress(address)
         }
       } catch (e) {
         console.error('Reverse geocoding error:', e);

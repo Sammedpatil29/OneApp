@@ -137,6 +137,20 @@ export class MapPage implements OnInit, AfterViewInit {
     });
   }
 
+  saveAddress(){
+    let params = {
+      "lat": this.latLng.lat(),
+      "lng": this.latLng.lng(),
+      "address": this.currentAddress,
+      "label": this.selectedLabel,
+      "landmark": this.landmark,
+      "house_no": this.houseNo
+    }
+    this.locationService.saveAddress(params, this.token).subscribe((res: any) => {
+      console.log(res)
+    });
+  }
+
   validateServiceArea(lat: number, lng: number) {
     if (!this.polygonCoords || this.polygonCoords.length === 0) return;
     const point = new google.maps.LatLng(lat, lng);

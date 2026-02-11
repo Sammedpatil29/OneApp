@@ -134,7 +134,7 @@ export class LoginPage implements OnInit {
   }
 
   async sendVerification() {
-    this.otpVerificationMessage = 'Resending Otp'
+    this.otpVerificationMessage = 'Verify Otp'
     FirebaseAuthentication.addListener('phoneCodeSent', (event) => {
       this.verificationId = event.verificationId;
       console.log('✅ Verification ID received:', this.verificationId);

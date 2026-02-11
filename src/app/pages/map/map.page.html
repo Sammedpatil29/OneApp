@@ -80,7 +80,7 @@
         <ion-chip [outline]="selectedLabel !== 'other'" (click)="selectedLabel = 'other'" [color]="selectedLabel === 'other' ? 'dark' : ''">Other</ion-chip>
       </div>
 
-      <ion-button expand="block" mode="ios" class="mt-4 py-2 book-btn w-100" (click)="confirmLocation()" [disabled]="isLoading">
+      <ion-button expand="block" mode="ios" class="mt-4 py-2 book-btn w-100" (click)="saveAddress()" [disabled]="isLoading">
         <span *ngIf="!isLoading">Save & Continue</span>
         <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
       </ion-button>
