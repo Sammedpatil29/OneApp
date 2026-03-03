@@ -1,0 +1,3 @@
+jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 -keystore pintu-release.keystore app-release.aab pintu-alias
+
+keytool -list -v -keystore pintu-release.keystore
