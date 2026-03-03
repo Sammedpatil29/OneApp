@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class HistoryService {
   // url = 'https://oneapp-backend.onrender.com/api/orders/user-orders/'
-  url = 'https://oneapp-express-singapore.onrender.com/api/history'
+  url = 'https://oneapp-express-700270095510.asia-south1.run.app/api/history'
 
   constructor(private http: HttpClient) {}
 

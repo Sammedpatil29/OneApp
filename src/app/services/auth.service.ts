@@ -10,7 +10,7 @@ import { NavController } from '@ionic/angular';
   providedIn: 'root'
 })
 export class AuthService {
-url = 'https://oneapp-express-singapore.onrender.com/'
+url = 'https://oneapp-express-700270095510.asia-south1.run.app/'
 tokenUrl = 'https://oneapp-backend.onrender.com/api/login/'
 token: any;
 

@@ -8,7 +8,7 @@ export class CommonService {
 
   constructor(private http: HttpClient) { }
 
-  url = 'https://oneapp-express-singapore.onrender.com/'
+  url = 'https://oneapp-express-700270095510.asia-south1.run.app/'
 
 // metaData = "https://oneapp-backend.onrender.com/api/metadata/"
 // activeOrders = "https://oneapp-backend.onrender.com/api/orders/active-orders-by-user/"

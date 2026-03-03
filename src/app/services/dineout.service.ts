@@ -8,7 +8,7 @@ export class DineoutService {
 
   constructor(private http: HttpClient) { }
 
-  url = 'https://oneapp-express-singapore.onrender.com';
+  url = 'https://oneapp-express-700270095510.asia-south1.run.app';
 
   getRestaurants(){
     let city = localStorage.getItem('selectedCity') || 'Athani';

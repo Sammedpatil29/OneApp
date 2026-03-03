@@ -8,8 +8,8 @@ export class EventsService {
   postUrl = 'https://oneapp-backend.onrender.com/api/orders/';
   postGroceryUrl =
     'https://oneapp-backend.onrender.com/api/orders/grocery-order/';
-  getEventsUrl = 'https://oneapp-express-singapore.onrender.com';
-  // postDetailsUrl = 'https://oneapp-express-singapore.onrender.com/api/events/booking-details'
+  getEventsUrl = 'https://oneapp-express-700270095510.asia-south1.run.app';
+  // postDetailsUrl = 'https://oneapp-express-700270095510.asia-south1.run.app/api/events/booking-details'
 
   //   {
   //     "id": 14,
