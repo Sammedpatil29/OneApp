@@ -2,7 +2,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Geolocation } from '@capacitor/geolocation';
 import { BehaviorSubject } from 'rxjs';
-import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +23,7 @@ export class LocationService {
   addresslistUrl = "https://oneapp-backend.onrender.com/api/address/create/"
   addresslistByUser = "https://oneapp-backend.onrender.com/api/address/user-address/"
   deleteAddresses = "https://oneapp-backend.onrender.com/api/address/delete-address/"
-  polygonUrl = environment.apiUrl
+  polygonUrl = 'https://oneapp-express-700270095510.asia-south1.run.app'
 
   addressUrl = 'https://oneapp-express-700270095510.asia-south1.run.app/api/addresses'
 

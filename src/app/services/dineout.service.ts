@@ -1,6 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +8,7 @@ export class DineoutService {
 
   constructor(private http: HttpClient) { }
 
-  url = environment.apiUrl;
+  url = 'https://oneapp-express-700270095510.asia-south1.run.app';
 
   getRestaurants(){
     let city = localStorage.getItem('selectedCity') || 'Athani';

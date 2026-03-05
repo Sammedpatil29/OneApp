@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
 
 export interface CartItem {
   productId: string;
@@ -20,7 +19,7 @@ export interface CartSummary {
 })
 export class GroceryService {
 
-  private apiUrl = environment.apiUrl;
+  private apiUrl = 'https://oneapp-express-700270095510.asia-south1.run.app';
 
   // --- Cart Items State ---
   private _cartSubject = new BehaviorSubject<CartItem[]>([]);
