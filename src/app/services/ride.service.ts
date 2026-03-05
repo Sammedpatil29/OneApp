@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,7 @@ export class RideService {
 private apiUrl = 'https://routes.googleapis.com/directions/v2:computeRoutes';
 private apiKey = 'AIzaSyA85HFedGjgP12MG_dvR-MVgooWTcJNIb0';
 private createRideUrl = 'https://oneapp-express-700270095510.asia-south1.run.app/api/ride/create';
-url = 'https://oneapp-express-700270095510.asia-south1.run.app';
+url = environment.apiUrl;
 
   constructor(private http: HttpClient) { }
 

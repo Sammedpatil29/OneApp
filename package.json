@@ -54,6 +54,7 @@
     "cashfree-pg-capacitor": "^1.0.2",
     "cashfree-pg-sdk-javascript": "^2.0.8",
     "com.razorpay.cordova": "github:razorpay/razorpay-cordova",
+    "dotenv": "^17.3.1",
     "firebase": "^12.1.0",
     "html2canvas": "^1.4.1",
     "ionicons": "^7.0.0",

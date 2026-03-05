@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  firebase: {}
+  apiUrl: (import.meta as any).env.apiUrl
 };
 
 /*

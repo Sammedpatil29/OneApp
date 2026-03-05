@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -8,7 +9,7 @@ export class EventsService {
   postUrl = 'https://oneapp-backend.onrender.com/api/orders/';
   postGroceryUrl =
     'https://oneapp-backend.onrender.com/api/orders/grocery-order/';
-  getEventsUrl = 'https://oneapp-express-700270095510.asia-south1.run.app';
+  getEventsUrl = environment.apiUrl;
   // postDetailsUrl = 'https://oneapp-express-700270095510.asia-south1.run.app/api/events/booking-details'
 
   //   {
