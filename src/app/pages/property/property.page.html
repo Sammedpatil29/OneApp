@@ -1,80 +1,59 @@
-<ion-header class="ion-no-border">
+<ion-header>
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button (click)="goBack()" mode="ios">
-        <ion-icon slot="icon-only" name="arrow-back-outline" color="dark"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-
-    <ion-title>Discover</ion-title> <ion-buttons slot="end">
-      <ion-button class="add-btn" (click)="listProperty()">
-        <ion-icon name="add" slot="start"></ion-icon>
-        List
-      </ion-button>
-    </ion-buttons>
+    <ion-searchbar placeholder="Search for 'Tata Tiago'" [(ngModel)]="searchText"></ion-searchbar>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="bg-light">
+<ion-content>
 
-  <div class="category-section">
-    <div class="category-scroll-container">
-      @for (cat of categories; track cat.id) {
-        <div 
-          class="category-item" 
-          [class.active]="selectedCategory === cat.name"
-          (click)="selectCategory(cat.name)">
-          
-          <ion-icon [name]="cat.icon"></ion-icon>
-          <span class="cat-name">{{ cat.name }}</span>
-
-          @if (selectedCategory === cat.name) {
-            <div class="active-indicator"></div>
-          }
-          
-        </div>
-      }
-    </div>
+  <!-- Filters -->
+  <div class="filters">
+    <ion-chip color="primary">Filters</ion-chip>
+    <ion-chip color="primary">Sort by</ion-chip>
+    <ion-chip color="primary">Fuel</ion-chip>
+    <ion-chip color="primary">Seller</ion-chip>
   </div>
 
-  <div class="listing-container">
-    <ion-grid class="ion-no-padding">
-      <ion-row>
-        @for (prop of properties; track prop.id) {
-          <ion-col size="6" class="pb-2">
-            <div class="property-card" (click)="openDetails(prop.id)">
-              
-              <div class="image-wrapper">
-                <img [src]="prop.image" loading="lazy" alt="property">
-                <div class="badge">{{ prop.type }}</div>
-                <div class="fav-btn" (click)="toggleFav(prop, $event)">
-                  <ion-icon [name]="prop.isFav ? 'heart' : 'heart-outline'" [color]="prop.isFav ? 'danger' : 'medium'"></ion-icon>
-                </div>
-              </div>
-
-              <div class="card-content">
-                <div>
-                  <h3 class="price">{{ prop.price }}</h3>
-                  <h4 class="title text-truncate">{{ prop.title }}</h4>
-                  
-                  <div class="location text-truncate">
-                    <ion-icon name="location-outline"></ion-icon>
-                    {{ prop.location }}
-                  </div>
-                </div>
-
-                <div class="specs">
-                  <ion-icon name="bed-outline"></ion-icon> {{ prop.specs }}
-                </div>
-              </div>
-
-            </div>
-          </ion-col>
-        }
-      </ion-row>
-    </ion-grid>
+  <!-- Result count -->
+  <div class="result-text">
+    {{cars.length}} Used CNG cars in Bangalore
   </div>
 
-  <div style="height: 60px;"></div>
+  <!-- Car Cards -->
+  <ion-card *ngFor="let car of cars">
+
+    <img [src]="car.image"/>
+
+    <ion-card-content>
+
+      <div class="car-title">
+        {{car.year}} {{car.brand}} {{car.model}}
+      </div>
+
+      <div class="car-subtitle">
+        {{car.variant}}
+      </div>
+
+      <div class="car-details">
+        {{car.km}} km | {{car.fuel}} | {{car.transmission}} | {{car.location}}
+      </div>
+
+      <div class="price">
+        ₹{{car.price}} lakh
+      </div>
+
+      <div class="tags">
+        <ion-badge color="success">30 days return</ion-badge>
+        <ion-badge color="medium">300+ quality checks</ion-badge>
+      </div>
+
+      <!-- <div class="buttons">
+        <ion-button size="small" fill="outline">Free Test Drive</ion-button>
+        <ion-button size="small">View Details</ion-button>
+      </div> -->
+
+    </ion-card-content>
+
+  </ion-card>
 
 </ion-content>
