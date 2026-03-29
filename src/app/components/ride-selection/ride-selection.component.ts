@@ -1,6 +1,6 @@
 import { IonContent, IonTitle, IonButton, IonSpinner, IonSkeletonText, IonToast } from "@ionic/angular/standalone";
 import { Component, ElementRef, ViewChild, AfterViewInit, OnInit, MissingTranslationStrategy } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { NavController, AlertController } from '@ionic/angular';
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import {  Input } from '@angular/core';
@@ -72,7 +72,7 @@ estimatedDistance: any = '';
   error: any = '';
   isToastOpen: boolean = false;
   toastMessage: any;
-  constructor(private navCtrl: NavController, private rideService: RideService, private socketService: SocketService, private authService: AuthService) {
+  constructor(private navCtrl: NavController, private rideService: RideService, private socketService: SocketService, private authService: AuthService, private alertController: AlertController) {
    
    }
 
@@ -292,7 +292,11 @@ this.getTripOptions()
   });
 }
   goback(){
-    this.navCtrl.back()
+    if (this.searching || (this.activeRide && (this.activeRide.status === 'searching' || this.activeRide.status === 'assigned'))) {
+      this.cancelRide();
+    } else {
+      this.navCtrl.back();
+    }
   }
 
   selectService(item:any){
@@ -409,7 +413,45 @@ this.getTripOptions()
   }
 
   rideId: any;
-   bookRide(){
+  bookRide(){
+    // Mock the initial ride creation and searching state
+    this.searching = true;
+    this.activeRide = {
+      id: 'dummy_ride_123',
+      status: 'searching',
+      trip_details: this.tripData,
+      service_details: this.selected_service_details,
+      raider_details: null,
+      otp: ['2', '3', '4', '5']
+    };
+
+    // Simulate searching for a rider for 4 seconds
+    setTimeout(() => {
+      this.activeRide.status = 'assigned';
+      this.activeRide.raider_details = {
+        name: 'Ramesh Kumar',
+        join_date: 'Oct 2021',
+        fuel_type: 'ev',
+        vehicle_number: 'KA 02 AB 1234',
+        vehicle_type: this.selected_service,
+        vehicle_model: 'Ather 450X',
+        current_location: {
+          lat: this.tripData['origin'].coords.lat + 0.005, // Slightly offset from origin
+          lng: this.tripData['origin'].coords.lng + 0.005
+        }
+      };
+
+      // Calculate estimated distance and time for the rider to reach the origin
+      const origin = { lat: this.activeRide.raider_details.current_location.lat, lng: this.activeRide.raider_details.current_location.lng };
+      const destination = { lat: this.tripData['origin'].coords.lat, lng: this.tripData['origin'].coords.lng };
+      this.getRiderDistanceandTime(origin, destination);
+
+      // Reload the map to show the rider's location
+      this.loadMap();
+    }, 4000);
+
+    /*
+    // Actual API Call
     let params:any = {
       "token": this.token,
       "trip_details": this.tripData,
@@ -426,9 +468,41 @@ this.getTripOptions()
       console.log(error)
       this.searching = false
     })
+    */
   }
 
-  cancelRide(){
+  async cancelRide(){
+    const alert = await this.alertController.create({
+      header: 'Cancel Ride',
+      message: 'Are you sure you want to cancel your ride?',
+      buttons: [
+        {
+          text: 'No',
+          role: 'cancel'
+        },
+        {
+          text: 'Yes, Cancel',
+          role: 'destructive',
+          handler: () => {
+            this.executeCancellation();
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  executeCancellation() {
+    // Mock cancellation flow
+    if (this.activeRide?.id === 'dummy_ride_123') {
+      this.activeRide.status = 'cancelled';
+      this.searching = false;
+      this.loadMap();
+      return;
+    }
+
+    /*
+    // Actual cancellation flow
     let params:any = {
       "rideId": this.activeRide.id
     }
@@ -441,6 +515,7 @@ this.getTripOptions()
       }
       console.log('ride update:', msg);
     });
+    */
   }
 
   
