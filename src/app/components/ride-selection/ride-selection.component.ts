@@ -79,7 +79,7 @@ estimatedDistance: any = '';
   async ngOnInit() {
     this.token = await this.authService.getToken()
      this.socketService.onMessage((msg) => {
-      console.log('📩 Received from server:', msg);
+      console.log('📩Received from server:', msg);
     });
 
     // Optionally send a message to the server
