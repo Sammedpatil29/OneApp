@@ -1,8 +1,7 @@
-<div style="height: 100vh">
+<div class="ride-selection-wrapper">
   <!-- map block starts -->
-  <div #map style="height: 60vh; width: 100%;" class="position-relative"></div>
-  <div class="position-absolute d-flex align-items-center justify-content-center" (click)="goback()"
-    style="height: 40px; width: 40px; background-color: rgb(255, 255, 255); border-radius: 50%; top: 25px; left: 15px; box-shadow: 0px 4px 10px rgba(0,0,0,0.2); cursor: pointer; z-index: 10;">
+  <div #map class="map-view position-relative"></div>
+  <div class="back-btn position-absolute d-flex align-items-center justify-content-center" (click)="goback()">
     <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#1f1f1f">
       <path d="M400-240 160-480l240-240 56 58-142 142h486v80H314l142 142-56 58Z" />
     </svg>
@@ -10,145 +9,144 @@
   <!-- map block ends -->
 
   <!-- bottom sheet starts -->
-  <div class="detailsBlock bg-white position-sticky"
-    style="border-radius: 20px 20px 0px 0px; height: 50vh; margin-top: -10vh; z-index: 9999; box-shadow: 0px -4px 20px rgba(0,0,0,0.15)">
+  <div class="detailsBlock bg-white position-sticky">
 
     <!-- top bar starts -->
-    <div class="bg-white py-2 position-sticky d-flex justify-content-center" style="border-radius: 20px 20px 0px 0px; top: 0; z-index: 10">
-      <div style="width: 45px; height: 5px; background-color: #e0e0e0; border-radius: 5px;"></div>
+    <div class="top-bar bg-white py-2 position-sticky d-flex justify-content-center">
+      <div class="drag-indicator"></div>
     </div>
     <!-- top bar ends -->
 
     @if (!searching) {
        <!-- service options starts -->
-     <div class="p-2 overflow-auto" style="max-height: calc(50vh - 100px);">
+     <div class="services-container p-2 overflow-auto">
       <!-- {{distance}}-{{timeInMins}} -->
       @if(isCalculating){
         @for(item of [1,2,3,4]; track $index){
-          <div class="border p-2 mb-2 me-0 shadow-sm" style="border-radius: 15px">
+          <div class="skeleton-card border p-2 mb-2 me-0 shadow-sm">
             <div class="row m-0">
               <div class="col-2 p-0">
-                <ion-skeleton-text animated style="height: 50px; width: 50px; border-radius: 5px;"></ion-skeleton-text>
+                <ion-skeleton-text animated class="skeleton-avatar"></ion-skeleton-text>
               </div>
-              <div class="col-8" style="line-height: 15px">
-                <p class="m-0"><ion-skeleton-text animated style="width: 60%; height: 15px;"></ion-skeleton-text></p>
-                <small><ion-skeleton-text animated style="width: 40%; height: 10px;"></ion-skeleton-text></small><br>
-                <small><ion-skeleton-text animated style="width: 80%; height: 10px;"></ion-skeleton-text></small>
+              <div class="col-8 line-height-15">
+                <p class="m-0"><ion-skeleton-text animated class="skeleton-text-1"></ion-skeleton-text></p>
+                <small><ion-skeleton-text animated class="skeleton-text-2"></ion-skeleton-text></small><br>
+                <small><ion-skeleton-text animated class="skeleton-text-3"></ion-skeleton-text></small>
               </div>
               <div class="col-2 d-flex align-items-center">
-                <ion-skeleton-text animated style="width: 100%; height: 20px;"></ion-skeleton-text>
+                <ion-skeleton-text animated class="skeleton-price"></ion-skeleton-text>
               </div>
             </div>
           </div>
         }
       } @else {
       @for(item of tripOptions; track $index){
-        <div class="p-2 mb-2 me-0 shadow-sm" style="border-radius: 15px; border: 1px solid #f0f0f0; transition: all 0.2s ease;" [ngClass]="selected_service == item.type ? 'selectedServiceclass border-dark' : 'bg-white'" (click)="selectService(item)">
+        <div class="service-card p-2 mb-2 me-0 shadow-sm" [ngClass]="selected_service == item.type ? 'selectedServiceclass border-dark' : 'bg-white'" (click)="selectService(item)">
         <div class="row m-0">
           <div class="col-2 p-0">
-            <img style="height: 50px;" [src]="item.image_url" alt="">
+            <img class="service-image" [src]="item.image_url" alt="">
           </div>
-          <div class="col-8" style="line-height: 15px">
+          <div class="col-8 line-height-15">
             <p class="m-0"><b>{{item.type | titlecase}}</b></p>
-            <small style="font-size: 13px !important" class="text-secondary">{{item.max_person}}</small><br>
-            <small style="font-size: 13px !important" class="text-secondary">{{item.estimated_time}} &bull; Drop {{item.estimated_reach_time}}</small>
+            <small class="service-info-text text-secondary">{{item.max_person}}</small><br>
+            <small class="service-info-text text-secondary">{{item.estimated_time}} &bull; Drop {{item.estimated_reach_time}}</small>
           </div>
           <div class="col-2 d-flex align-items-center justify-content-end">
-            <b class="text-nowrap text-dark" style="font-size: 20px">&#8377;{{item.price | number:'1.0-0'}}</b>
+            <b class="service-price-text text-nowrap text-dark">&#8377;{{item.price | number:'1.0-0'}}</b>
           </div>
         </div>
       </div>
       }
       }
       
-      <div style="height: 10px"></div>
+      <div class="spacer-10"></div>
      </div>
     <!-- service options ends -->
 
     <!-- bottom bar starts -->
-    <div class="bg-white pt-2 pb-4 position-fixed w-100 px-3 d-flex justify-content-between align-items-center" style="bottom: 0; box-shadow: 0px -4px 15px rgba(0,0,0,0.08); height: 100px; z-index: 10">
+    <div class="bottom-bar bg-white pt-2 pb-4 position-fixed w-100 px-3 d-flex justify-content-between align-items-center">
       @if(isCalculating){
         <div class="p-1 fs-5 d-flex align-items-center w-25">
-           <ion-skeleton-text animated style="width: 100%; height: 20px;"></ion-skeleton-text>
+           <ion-skeleton-text animated class="skeleton-bottom-bar-text"></ion-skeleton-text>
         </div>
         <div class="w-75 ms-2">
-           <ion-skeleton-text animated style="width: 100%; height: 45px; border-radius: 25px;"></ion-skeleton-text>
+           <ion-skeleton-text animated class="skeleton-bottom-bar-btn"></ion-skeleton-text>
         </div>
       } @else {
-      <div class="px-3 py-2 fs-6 fw-bold d-flex align-items-center bg-light text-dark" style="border-radius: 12px; gap: 6px;">
+      <div class="payment-method px-3 py-2 fs-6 fw-bold d-flex align-items-center bg-light text-dark">
         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#2cbd0f"><path d="M546.38-268.46h51.39l.77-3-155-166.68 1-2.86h10q58.61 0 95.65-29.92 37.04-29.93 41.96-80.08h38.47v-32.38h-39.57q-2.9-21.16-13.09-38.5-10.19-17.35-25.81-30.35h78.47v-32.39H329.38v34.7h127.54q39.08 0 64.43 17.61 25.34 17.62 31.34 48.93H329.38V-551h224.31q-4.46 34.62-30.31 54.5-25.84 19.88-67.15 19.88h-66.15V-438l156.3 169.54ZM480.13-120q-74.67 0-140.41-28.34-65.73-28.34-114.36-76.92-48.63-48.58-76.99-114.26Q120-405.19 120-479.87q0-74.67 28.34-140.41 28.34-65.73 76.92-114.36 48.58-48.63 114.26-76.99Q405.19-840 479.87-840q74.67 0 140.41 28.34 65.73 28.34 114.36 76.92 48.63 48.58 76.99 114.26Q840-554.81 840-480.13q0 74.67-28.34 140.41-28.34 65.73-76.92 114.36-48.58 48.63-114.26 76.99Q554.81-120 480.13-120Z"/></svg>
         <span>Cash</span>
       </div>
-      <ion-button color="dark" shape="round" class="book-btn w-75 ms-2" style="font-weight: bold; --box-shadow: 0 4px 12px rgba(0,0,0,0.15);" (click)="bookRide()">
+      <ion-button color="dark" shape="round" class="book-btn w-75 ms-2" (click)="bookRide()">
         Book {{selected_service | titlecase}}
       </ion-button>
       }
     </div>
     <!-- bottom bar ends -->
     } @else {
-<div class="px-2 overflow-auto" style="max-height: calc(50vh - 50px);">
+<div class="active-ride-container px-2 overflow-auto">
   @if(activeRide.raider_details == null){
         <!-- searching animation starts -->
-       <div class="w-100 text-center d-flex align-items-center justify-content-center flex-column mt-4 mb-3 position-sticky" style="top: 0px">
+       <div class="searching-container w-100 text-center d-flex align-items-center justify-content-center flex-column mt-4 mb-3 position-sticky">
           <b class="fs-5 text-dark mb-1">Looking for a nearby rider</b>
           <small class="text-secondary mb-3">This usually takes a few seconds...</small>
           <div class="loader mt-2"></div>
        </div>
       <!-- searching animation ends -->
       } @else {
-        <div class="" style="top: 0; z-index: 9999">
+        <div class="ride-status-wrapper">
           <div class="w-100 mb-2 px-1 text-center">
             @if(activeRide?.status == 'assigned'){
-                <div class="bg-primary text-white py-1 px-3 d-inline-block shadow-sm" style="border-radius: 20px; font-size: 13px;">
+                <div class="status-badge bg-primary text-white py-1 px-3 d-inline-block shadow-sm">
                   <b>On the way &bull;</b> Arriving in <b>{{estimatedDisplayTime}}</b>
                 </div>
             } @else if (activeRide?.status == 'arrived') {
-                <div class="bg-success text-white py-1 px-3 d-inline-block shadow-sm" style="border-radius: 20px; font-size: 13px;">
+                <div class="status-badge bg-success text-white py-1 px-3 d-inline-block shadow-sm">
                   <b>Arrived! &bull;</b> Rider is at your location.
                 </div>
             } @else if (activeRide?.status == 'started') {
-                <div class="bg-info text-dark py-1 px-3 d-inline-block shadow-sm" style="border-radius: 20px; font-size: 13px;">
+                <div class="status-badge bg-info text-dark py-1 px-3 d-inline-block shadow-sm">
                   <b>Trip Started! &bull;</b> Reaching your location by <b>{{estimatedDistance}}</b>
                 </div>
             }
           </div>
           
-          <div class="border px-3 pt-3 pb-2 d-flex align-items-center justify-content-between bg-white shadow-sm" style="border-radius: 15px 15px 0px 0px; border-bottom: 0px !important;">
+          <div class="driver-header border px-3 pt-3 pb-2 d-flex align-items-center justify-content-between bg-white shadow-sm">
             <div class="d-flex align-items-center">
-              <div class="me-3 d-flex align-items-center justify-content-center shadow-sm" style="height: 45px; width: 45px; border-radius: 50%; background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);">
+              <div class="driver-avatar me-3 d-flex align-items-center justify-content-center shadow-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5c7cfa"><path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-32q0-34 17.5-62.5T224-292q62-31 126-46.5T480-354q66 0 130 15.5T736-292q29 15 46.5 43.5T800-192v32H160Z"/></svg>
               </div>
-              <div style="line-height: 1.2">
+              <div class="line-height-12">
                 <span class="fs-6 fw-bold text-dark">{{activeRide.raider_details.name}}</span><br>
-                <small class="text-muted" style="font-size: 12px">Partner since {{activeRide.raider_details.join_date}}</small>
+                <small class="driver-join-date text-muted">Partner since {{activeRide.raider_details.join_date}}</small>
               </div>
             </div>
             
-            <div class="p-1 px-2 text-dark d-flex align-items-center" style="border-radius: 6px; box-shadow: 0px 2px 4px rgba(0,0,0,0.1); font-weight: bold; letter-spacing: 0.5px;" [ngStyle]="{'background-color': activeRide.raider_details.fuel_type == 'ev'? '#e5f9e5': '#fff9d6', 'color': activeRide.raider_details.fuel_type == 'ev'? '#107c10': '#d6a000', 'border': activeRide.raider_details.fuel_type == 'ev'? '1px solid #2cbd0f': '1px solid #f6c600'}" >
-              <div style="line-height: 8px; margin-right: 4px" class="d-flex flex-column align-items-center">
-                <div style="width: 4px; height: 4px; background-color: gray; border-radius: 50%;"></div>
-                <small style="font-size: 5px" [ngStyle]="{'color': activeRide.raider_details.fuel_type == 'ev'? '#107c10': '#d6a000'}">IND</small>
+            <div class="vehicle-plate p-1 px-2 text-dark d-flex align-items-center" [ngStyle]="{'background-color': activeRide.raider_details.fuel_type == 'ev'? '#e5f9e5': '#fff9d6', 'color': activeRide.raider_details.fuel_type == 'ev'? '#107c10': '#d6a000', 'border': activeRide.raider_details.fuel_type == 'ev'? '1px solid #2cbd0f': '1px solid #f6c600'}" >
+              <div class="plate-ind-container d-flex flex-column align-items-center">
+                <div class="plate-dot"></div>
+                <small class="plate-ind-text" [ngStyle]="{'color': activeRide.raider_details.fuel_type == 'ev'? '#107c10': '#d6a000'}">IND</small>
               </div>
               <span>{{activeRide.raider_details.vehicle_number}}</span>
             </div>
           </div>
           
-          <div class="border py-2 px-3 d-flex align-items-center justify-content-between bg-light shadow-sm" style="border-radius:  0px 0px 15px 15px; border-top: 1px dashed #dcdcdc !important">
+          <div class="vehicle-footer border py-2 px-3 d-flex align-items-center justify-content-between bg-light shadow-sm">
             <small class="text-dark"><b>{{activeRide.raider_details.vehicle_type | titlecase}} &bull; </b>{{activeRide.raider_details.vehicle_model}}</small>
-            <div class="bg-dark text-white px-3 py-1" style="border-radius: 12px; font-weight: bold; font-size: 13px; cursor: pointer;">Call</div>
+            <div class="call-btn bg-dark text-white px-3 py-1">Call</div>
           </div>
         </div>
         
         <!-- otp block -->
-        <div class="p-2 mt-3 shadow-sm" style="border-radius: 15px; background: linear-gradient(135deg, #2b3033 0%, #101212 100%);">
+        <div class="otp-container p-2 mt-3 shadow-sm">
           <div class="d-flex align-items-center justify-content-between px-3 py-1">
             <div class="d-flex flex-column">
-              <span class="text-white-50" style="font-size: 11px; letter-spacing: 1px; text-transform: uppercase;">Start Pin</span>
+              <span class="otp-label text-white-50">Start Pin</span>
               <span class="text-white fw-bold fs-6">Share OTP</span>
             </div>
             <div class="d-flex gap-2">
               @for (item of activeRide?.otp; track $index) {
-                <b class="fs-5 bg-white text-dark px-3 py-1" style="border-radius: 10px; box-shadow: 0px 2px 6px rgba(0,0,0,0.3);">{{item}}</b>
+                <b class="otp-digit fs-5 bg-white text-dark px-3 py-1">{{item}}</b>
               }
             </div>
           </div>
@@ -156,55 +154,55 @@
       }
 
       <!-- banner starts -->
-      <div class="p-3 mt-3 d-flex align-items-center justify-content-center shadow-sm" style="border-radius: 15px; height: 70px; background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%); border: 1px solid #ececec;">
-         <span class="text-muted fw-bold" style="letter-spacing: 0.5px; font-size: 13px;">YOUR SAFETY MATTERS</span>
+      <div class="safety-banner p-3 mt-3 d-flex align-items-center justify-content-center shadow-sm">
+         <span class="safety-text text-muted fw-bold">YOUR SAFETY MATTERS</span>
       </div>
       <!-- banner ends -->
       
       <!-- trip details starts -->
-      <div class="mt-3 p-3 bg-white shadow-sm position-relative" style="border-radius: 15px; border: 1px solid #f5f5f5;">
-        <div class="position-absolute" style="width: 2px; height: calc(100% - 100px); background-color: #e0e0e0; left: 31px; top: 35px;"></div>
+      <div class="trip-details-container mt-3 p-3 bg-white shadow-sm position-relative">
+        <div class="timeline-line position-absolute"></div>
         
         <div class="row pb-3 align-items-start">
           <div class="col-2 d-flex justify-content-center mt-1">
-            <div class="d-flex align-items-center justify-content-center" style="width: 16px; height: 16px; background-color: #2cbd0f; border-radius: 50%; box-shadow: 0 0 0 4px #e5f9e5;">
-              <div style="width: 6px; height: 6px; background-color: white; border-radius: 50%"></div>
+            <div class="pickup-dot d-flex align-items-center justify-content-center">
+              <div class="inner-dot"></div>
             </div>
           </div>
-        <div class="col-10" style="line-height: 1.3; min-width: 0;">
-          <small class="text-secondary fw-bold d-block mb-1" style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px;">Pickup</small>
+        <div class="location-text-container col-10">
+          <small class="location-label text-secondary fw-bold d-block mb-1">Pickup</small>
           <span class="fs-6 fw-bold text-dark d-block text-truncate">{{activeRide.trip_details.origin.name}}</span>
-            <small class="text-muted text-truncate d-block" style="font-size: 13px;">{{activeRide.trip_details.origin.address}}</small>
+            <small class="location-address text-muted text-truncate d-block">{{activeRide.trip_details.origin.address}}</small>
           </div>
         </div>
         
         <div class="row align-items-start">
           <div class="col-2 d-flex justify-content-center mt-1">
-            <div class="d-flex align-items-center justify-content-center" style="width: 16px; height: 16px; background-color: #f73838; border-radius: 50%; box-shadow: 0 0 0 4px #fbeaea;">
-              <div style="width: 6px; height: 6px; background-color: white; border-radius: 50%"></div>
+            <div class="dropoff-dot d-flex align-items-center justify-content-center">
+              <div class="inner-dot"></div>
             </div>
           </div>
-        <div class="col-10" style="line-height: 1.3; min-width: 0;">
-          <small class="text-secondary fw-bold d-block mb-1" style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px;">Drop-off</small>
+        <div class="location-text-container col-10">
+          <small class="location-label text-secondary fw-bold d-block mb-1">Drop-off</small>
           <span class="fs-6 fw-bold text-dark d-block text-truncate">{{activeRide.trip_details.drop.name}}</span>
-            <small class="text-muted text-truncate d-block" style="font-size: 13px;">{{activeRide.trip_details.drop.address}}</small>
+            <small class="location-address text-muted text-truncate d-block">{{activeRide.trip_details.drop.address}}</small>
           </div>
         </div>
       </div>
       <!-- trip details ends -->
       
       <!-- estimated fare starts -->
-      <div class="mt-3 p-3 bg-light d-flex align-items-center justify-content-between shadow-sm" style="border-radius: 12px; border: 1px dashed #dcdcdc;">
+      <div class="fare-container mt-3 p-3 bg-light d-flex align-items-center justify-content-between shadow-sm">
         <div class="d-flex flex-column">
-          <small class="text-muted fw-bold" style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">Estimated Fare</small>
+          <small class="fare-label text-muted fw-bold">Estimated Fare</small>
           <span class="fw-bold text-dark fs-5">&#8377;{{activeRide.service_details.price | number:'1.0-0'}}</span>
         </div>
-        <div class="badge bg-success text-white px-3 py-2 shadow-sm" style="border-radius: 8px; font-size: 13px;">Cash</div>
+        <div class="fare-badge badge bg-success text-white px-3 py-2 shadow-sm">Cash</div>
       </div>
       <!-- estimated fare ends -->
 
       <div class="mt-4 mb-2">
-        <ion-button expand="block" fill="outline" color="danger" shape="round" class="fw-bold shadow-sm" style="--border-width: 1.5px; --border-radius: 12px;" (click)="cancelRide()">
+        <ion-button expand="block" fill="outline" color="danger" shape="round" class="cancel-btn fw-bold shadow-sm" (click)="cancelRide()">
           Cancel Ride
         </ion-button>
       </div>

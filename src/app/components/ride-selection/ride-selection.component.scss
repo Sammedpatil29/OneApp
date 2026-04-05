@@ -1,18 +1,302 @@
-.selectedServiceclass {
-    border: 2px solid black !important;
-    background-color: #00000014 !important;
+.ride-selection-wrapper {
+  height: 100vh;
 }
 
-.loader {
-height: 4px;
-width: 130px;
---c:no-repeat linear-gradient(#131214 0 0);
-background: var(--c),var(--c),#51515244;
-background-size: 60% 100%;
-animation: l16 3s infinite;
+.map-view {
+  height: 60vh;
+  width: 100%;
 }
-@keyframes l16 {
-0% {background-position:-150% 0,-150% 0}
-66% {background-position: 250% 0,-150% 0}
-100% {background-position: 250% 0, 250% 0}
+
+.back-btn {
+  height: 40px;
+  width: 40px;
+  background-color: rgb(255, 255, 255);
+  border-radius: 50%;
+  top: 25px;
+  left: 15px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  z-index: 10;
+}
+
+.detailsBlock {
+  border-radius: 20px 20px 0px 0px;
+  height: 50vh;
+  margin-top: -10vh;
+  z-index: 9999;
+  box-shadow: 0px -4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.top-bar {
+  border-radius: 20px 20px 0px 0px;
+  top: 0;
+  z-index: 10;
+}
+
+.drag-indicator {
+  width: 45px;
+  height: 5px;
+  background-color: #e0e0e0;
+  border-radius: 5px;
+}
+
+.services-container {
+  max-height: calc(50vh - 100px);
+}
+
+.skeleton-card {
+  border-radius: 15px;
+}
+
+.skeleton-avatar {
+  height: 50px;
+  width: 50px;
+  border-radius: 5px;
+}
+
+.line-height-15 {
+  line-height: 15px;
+}
+
+.skeleton-text-1 {
+  width: 60%;
+  height: 15px;
+}
+
+.skeleton-text-2 {
+  width: 40%;
+  height: 10px;
+}
+
+.skeleton-text-3 {
+  width: 80%;
+  height: 10px;
+}
+
+.skeleton-price {
+  width: 100%;
+  height: 20px;
+}
+
+.service-card {
+  border-radius: 15px;
+  border: 1px solid #f0f0f0;
+  transition: all 0.2s ease;
+}
+
+.service-image {
+  height: 50px;
+}
+
+.service-info-text {
+  font-size: 13px !important;
+}
+
+.service-price-text {
+  font-size: 20px;
+}
+
+.spacer-10 {
+  height: 10px;
+}
+
+.bottom-bar {
+  bottom: 0;
+  box-shadow: 0px -4px 15px rgba(0, 0, 0, 0.08);
+  height: 100px;
+  z-index: 10;
+}
+
+.skeleton-bottom-bar-text {
+  width: 100%;
+  height: 20px;
+}
+
+.skeleton-bottom-bar-btn {
+  width: 100%;
+  height: 45px;
+  border-radius: 25px;
+}
+
+.payment-method {
+  border-radius: 12px;
+  gap: 6px;
+}
+
+.book-btn {
+  font-weight: bold;
+  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.active-ride-container {
+  max-height: calc(50vh - 50px);
+}
+
+.searching-container {
+  top: 0px;
+}
+
+.ride-status-wrapper {
+  top: 0;
+  z-index: 9999;
+}
+
+.status-badge {
+  border-radius: 20px;
+  font-size: 13px;
+}
+
+.driver-header {
+  border-radius: 15px 15px 0px 0px;
+  border-bottom: 0px !important;
+}
+
+.driver-avatar {
+  height: 45px;
+  width: 45px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+}
+
+.line-height-12 {
+  line-height: 1.2;
+}
+
+.driver-join-date {
+  font-size: 12px;
+}
+
+.vehicle-plate {
+  border-radius: 6px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+.plate-ind-container {
+  line-height: 8px;
+  margin-right: 4px;
+}
+
+.plate-dot {
+  width: 4px;
+  height: 4px;
+  background-color: gray;
+  border-radius: 50%;
+}
+
+.plate-ind-text {
+  font-size: 5px;
+}
+
+.vehicle-footer {
+  border-radius: 0px 0px 15px 15px;
+  border-top: 1px dashed #dcdcdc !important;
+}
+
+.call-btn {
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.otp-container {
+  border-radius: 15px;
+  background: linear-gradient(135deg, #2b3033 0%, #101212 100%);
+}
+
+.otp-label {
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.otp-digit {
+  border-radius: 10px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.safety-banner {
+  border-radius: 15px;
+  height: 70px;
+  background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+  border: 1px solid #ececec;
+}
+
+.safety-text {
+  letter-spacing: 0.5px;
+  font-size: 13px;
+}
+
+.trip-details-container {
+  border-radius: 15px;
+  border: 1px solid #f5f5f5;
+}
+
+.timeline-line {
+  width: 2px;
+  height: calc(100% - 100px);
+  background-color: #e0e0e0;
+  left: 31px;
+  top: 35px;
+}
+
+.pickup-dot {
+  width: 16px;
+  height: 16px;
+  background-color: #2cbd0f;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px #e5f9e5;
+}
+
+.inner-dot {
+  width: 6px;
+  height: 6px;
+  background-color: white;
+  border-radius: 50%;
+}
+
+.location-text-container {
+  line-height: 1.3;
+  min-width: 0;
+}
+
+.location-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.location-address {
+  font-size: 13px;
+}
+
+.dropoff-dot {
+  width: 16px;
+  height: 16px;
+  background-color: #f73838;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px #fbeaea;
+}
+
+.fare-container {
+  border-radius: 12px;
+  border: 1px dashed #dcdcdc;
+}
+
+.fare-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.fare-badge {
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.cancel-btn {
+  --border-width: 1.5px;
+  --border-radius: 12px;
 }

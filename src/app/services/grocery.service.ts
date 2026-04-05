@@ -19,7 +19,7 @@ export interface CartSummary {
 })
 export class GroceryService {
 
-  private apiUrl = 'https://oneapp-express-700270095510.asia-south1.run.app';
+  private apiUrl = 'https://oneapp-express-singapore.onrender.com';
 
   // --- Cart Items State ---
   private _cartSubject = new BehaviorSubject<CartItem[]>([]);

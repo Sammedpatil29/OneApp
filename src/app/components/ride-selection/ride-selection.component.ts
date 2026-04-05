@@ -100,6 +100,15 @@ estimatedDistance: any = '';
       } else if(this.rideUpdate.status == 'assigned'){
         this.searching = true
         this.activeRide.raider_details = this.rideUpdate.raider_details
+        this.activeRide.status = 'assigned';
+        
+        // Calculate estimated distance and time for the rider to reach the origin
+        const origin = { lat: this.activeRide.raider_details.current_location.lat, lng: this.activeRide.raider_details.current_location.lng };
+        const destination = { lat: this.tripData['origin'].coords.lat, lng: this.tripData['origin'].coords.lng };
+        this.getRiderDistanceandTime(origin, destination);
+        
+        // Reload the map to show the rider's location
+        this.loadMap();
       }
     });
 
@@ -414,43 +423,7 @@ this.getTripOptions()
 
   rideId: any;
   bookRide(){
-    // Mock the initial ride creation and searching state
     this.searching = true;
-    this.activeRide = {
-      id: 'dummy_ride_123',
-      status: 'searching',
-      trip_details: this.tripData,
-      service_details: this.selected_service_details,
-      raider_details: null,
-      otp: ['2', '3', '4', '5']
-    };
-
-    // Simulate searching for a rider for 4 seconds
-    setTimeout(() => {
-      this.activeRide.status = 'assigned';
-      this.activeRide.raider_details = {
-        name: 'Ramesh Kumar',
-        join_date: 'Oct 2021',
-        fuel_type: 'ev',
-        vehicle_number: 'KA 02 AB 1234',
-        vehicle_type: this.selected_service,
-        vehicle_model: 'Ather 450X',
-        current_location: {
-          lat: this.tripData['origin'].coords.lat + 0.005, // Slightly offset from origin
-          lng: this.tripData['origin'].coords.lng + 0.005
-        }
-      };
-
-      // Calculate estimated distance and time for the rider to reach the origin
-      const origin = { lat: this.activeRide.raider_details.current_location.lat, lng: this.activeRide.raider_details.current_location.lng };
-      const destination = { lat: this.tripData['origin'].coords.lat, lng: this.tripData['origin'].coords.lng };
-      this.getRiderDistanceandTime(origin, destination);
-
-      // Reload the map to show the rider's location
-      this.loadMap();
-    }, 4000);
-
-    /*
     // Actual API Call
     let params:any = {
       "token": this.token,
@@ -468,7 +441,6 @@ this.getTripOptions()
       console.log(error)
       this.searching = false
     })
-    */
   }
 
   async cancelRide(){
@@ -493,15 +465,6 @@ this.getTripOptions()
   }
 
   executeCancellation() {
-    // Mock cancellation flow
-    if (this.activeRide?.id === 'dummy_ride_123') {
-      this.activeRide.status = 'cancelled';
-      this.searching = false;
-      this.loadMap();
-      return;
-    }
-
-    /*
     // Actual cancellation flow
     let params:any = {
       "rideId": this.activeRide.id
@@ -515,7 +478,6 @@ this.getTripOptions()
       }
       console.log('ride update:', msg);
     });
-    */
   }
 
   

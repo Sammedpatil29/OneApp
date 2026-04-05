@@ -23,9 +23,9 @@ export class LocationService {
   addresslistUrl = "https://oneapp-backend.onrender.com/api/address/create/"
   addresslistByUser = "https://oneapp-backend.onrender.com/api/address/user-address/"
   deleteAddresses = "https://oneapp-backend.onrender.com/api/address/delete-address/"
-  polygonUrl = 'https://oneapp-express-700270095510.asia-south1.run.app'
+  polygonUrl = 'https://oneapp-express-singapore.onrender.com'
 
-  addressUrl = 'https://oneapp-express-700270095510.asia-south1.run.app/api/addresses'
+  addressUrl = 'https://oneapp-express-singapore.onrender.com/api/addresses'
 
   constructor(private http: HttpClient) { }
 

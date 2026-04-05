@@ -10,7 +10,7 @@ import { NavController } from '@ionic/angular';
   providedIn: 'root'
 })
 export class AuthService {
-url = 'https://oneapp-express-700270095510.asia-south1.run.app/'
+url = 'https://oneapp-express-singapore.onrender.com/'
 tokenUrl = 'https://oneapp-backend.onrender.com/api/login/'
 token: any;
 
@@ -21,7 +21,7 @@ return this.http.get(this.url)
   }
 
   sendOtp(testMobileNumber: string, otp: string): Observable<any> {
-  return this.http.post('http://localhost:3000/send-otp', {
+  return this.http.post('https://oneapp-express-singapore.onrender.com/send-otp', {
     mobileNumber: testMobileNumber,
     otp: otp,
   });

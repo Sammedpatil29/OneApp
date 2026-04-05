@@ -17,7 +17,7 @@ suggestion = 'https://oneapp-backend.onrender.com/api/suggestions/'
 updateDetails = 'https://oneapp-backend.onrender.com/api/address/'
 bannerUrl = 'https://oneapp-backend.onrender.com/api/banner/banners/'
 
-url = 'https://oneapp-express-700270095510.asia-south1.run.app/'
+url = 'https://oneapp-express-singapore.onrender.com/'
 
 
 // getProfileData(params:any){
