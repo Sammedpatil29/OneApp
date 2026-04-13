@@ -25,7 +25,7 @@ const config: CapacitorConfig = {
     Cordova: {}
   },
   server: {
-    url: 'https://pintu-teal.vercel.app/',
+    url: 'https://pintu.democompany.in.net/',
     cleartext: true,
     errorPath: 'offline.html'
   }
