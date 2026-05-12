@@ -5,13 +5,14 @@ import { Preferences } from '@capacitor/preferences';
 import jwt_decode from 'jwt-decode';
 import { Observable } from 'rxjs';
 import { NavController } from '@ionic/angular';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-url = 'https://oneapp-express-singapore.onrender.com/'
-tokenUrl = 'https://oneapp-backend.onrender.com/api/login/'
+url =environment.apiUrl;
+// tokenUrl = 'https://oneapp-backend.onrender.com/api/login/'
 token: any;
 
   constructor(private http: HttpClient, private router: Router, private navCtrl: NavController) { }
@@ -21,18 +22,18 @@ return this.http.get(this.url)
   }
 
   sendOtp(testMobileNumber: string, otp: string): Observable<any> {
-  return this.http.post('https://oneapp-express-singapore.onrender.com/send-otp', {
+  return this.http.post(`${this.url}/send-otp`, {
     mobileNumber: testMobileNumber,
     otp: otp,
   });
 }
 
   register(params:any){
-    return this.http.post(`${this.url}register`, params)
+    return this.http.post(`${this.url}/register`, params)
   }
 
   checkUser(params:any){
-    return this.http.post(`${this.url}login`, params)
+    return this.http.post(`${this.url}/login`, params)
   }
 
   verifyToken(token: string) {
@@ -43,7 +44,7 @@ return this.http.get(this.url)
 
     // 2. Pass headers in the request options
     // Note: I removed the trailing slash '/' to match your Node route exactly
-    return this.http.get(`${this.url}verify-token`, { headers: headers });
+    return this.http.get(`${this.url}/verify-token`, { headers: headers });
   }
 
   async logout(){
