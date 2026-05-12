@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, OnInit } from '@angular/core';
 import { Preferences } from '@capacitor/preferences';
 import { App } from '@capacitor/app'
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,7 @@ suggestion = 'https://oneapp-backend.onrender.com/api/suggestions/'
 updateDetails = 'https://oneapp-backend.onrender.com/api/address/'
 bannerUrl = 'https://oneapp-backend.onrender.com/api/banner/banners/'
 
-url = 'https://oneapp-express-singapore.onrender.com/'
+url = environment.apiUrl;
 
 
 // getProfileData(params:any){
@@ -30,7 +31,7 @@ getProfileData(token: string) {
       'Authorization': `Bearer ${token}`
     });
 
-    return this.http.get(`${this.url}user`, { headers: headers });
+    return this.http.get(`${this.url}/user`, { headers: headers });
   }
 
 async getAppVersion(): Promise<string | null> {
@@ -59,7 +60,7 @@ updateUser(params: any, token: any) {
   });
 
   // Correct order: url, body (params), options ({ headers })
-  return this.http.patch(`${this.url}user`, params, { headers: headers });
+  return this.http.patch(`${this.url}/user`, params, { headers: headers });
 }
 
 getBanners(type:any){

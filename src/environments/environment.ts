@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  // apiUrl: (import.meta as any).env.apiUrl
+  apiUrl: 'https://oneapp-express-singapore.onrender.com'
 };
 
 /*

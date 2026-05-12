@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +9,7 @@ export class CommonService {
 
   constructor(private http: HttpClient) { }
 
-  url = 'https://oneapp-express-singapore.onrender.com/'
+  url = environment.apiUrl;
 
 // metaData = "https://oneapp-backend.onrender.com/api/metadata/"
 // activeOrders = "https://oneapp-backend.onrender.com/api/orders/active-orders-by-user/"
@@ -23,7 +24,7 @@ getMetaData(){
       'Authorization': `Bearer ${token}`
     });
 
-    return this.http.get(`${this.url}api/home`, { headers: headers });
+    return this.http.get(`${this.url}/api/home`, { headers: headers });
   }
 
   sendFcmToken(params:any, token:any) {
@@ -31,7 +32,7 @@ getMetaData(){
         'Authorization': `Bearer ${token}`
       });
   
-      return this.http.patch(`${this.url}fcm-token`, params, { headers: headers });
+      return this.http.patch(`${this.url}/fcm-token`, params, { headers: headers });
     }
 
 getActiveOrders(params: any){
