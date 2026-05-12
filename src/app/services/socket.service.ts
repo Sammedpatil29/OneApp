@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -8,7 +9,7 @@ export class SocketService {
   private socket: Socket;
 
   constructor() {
-    this.socket = io('https://oneapp-express-singapore.onrender.com'); // Your backend URL
+    this.socket = io(`${environment.apiUrl}`); // Your backend URL
 
     this.socket.on('connect', () => {
       console.log('🟢 Connected to Socket.IO server');
