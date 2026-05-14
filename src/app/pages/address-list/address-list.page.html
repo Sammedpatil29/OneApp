@@ -50,3 +50,9 @@
     <ion-button expand="block" mode="ios" class="book-btn w-100" (click)="openLocation()">Select on map</ion-button>
   </ion-footer>
 }
+
+<ion-toast
+    [isOpen]="isToastOpen"
+    [message]="toastMessage"
+    [duration]="3000"
+  ></ion-toast>
