@@ -6,6 +6,9 @@ const config: CapacitorConfig = {
   webDir: 'www',
   backgroundColor: '#a000e2',
   plugins: {
+    StatusBar: {
+      overlaysWebView: true,
+    },
     FirebaseAuthentication: {
       skipNativeAuth: false,
       providers: ['phone']
