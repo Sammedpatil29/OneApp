@@ -21,20 +21,22 @@ import { ProfileService } from 'src/app/services/profile.service';
 export class AddressListPage implements OnInit {
 isSpinnerLoading: boolean = false
 Addressid:any
-addresses: any = [
-    {
-        "lat": "",
-        "lng": "",
-        "address": "",
-        "landmark": "",
-        "label": "",
-        "house_no": "",
-        "building_name": "",
-        "receiver_name": "",
-        "receiver_contact": "",
-        "user": 18
-    }
-  ]
+addresses: any = []
+
+// [
+//     {
+//         "lat": "",
+//         "lng": "",
+//         "address": "",
+//         "landmark": "",
+//         "label": "",
+//         "house_no": "",
+//         "building_name": "",
+//         "receiver_name": "",
+//         "receiver_contact": "",
+//         "user": 18
+//     }
+//   ]
   token:any = ''
   isToastOpen: boolean = false
   toastMessage = ''
@@ -135,11 +137,12 @@ addresses: any = [
 // }
 this.isSpinnerLoading = true
     this.locationService.getAddressesList(this.token).subscribe((res:any) => {
-        let address = res.data
-        this.isSpinnerLoading = false
-        this.addresses = address
-        this.addresses = [...this.addresses]
+        // let address = res.data
+        this.addresses = res.data
         console.log(this.addresses)
+        this.isSpinnerLoading = false
+        // this.addresses = address
+        
         
     }, error => {
       this.addresses = []
