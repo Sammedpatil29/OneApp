@@ -29,6 +29,8 @@ export class MapPage implements OnInit, AfterViewInit {
   isLoading = false;
   isModalOpen = false;
   isSearchModalOpen = false;
+  isToastOpen = false;
+  toastMessage = '';
 
   // Form Model
   houseNo = '';
@@ -155,10 +157,20 @@ export class MapPage implements OnInit, AfterViewInit {
     }
     this.isSaving = true;
     this.locationService.saveAddress(params, this.token).subscribe((res: any) => {
-      this.navCtrl.back();
+      this.isToastOpen = true
+      this.toastMessage = "Address saved successfully";
       this.isSaving = false;
+       this.navCtrl.back();
+      setTimeout(()=>{
+        this.isToastOpen = false
+      },3000)
     }, error => {
       this.isSaving = false;
+      this.isToastOpen = true
+      this.toastMessage = "failed to save address";
+      setTimeout(()=>{
+        this.isToastOpen = false
+      },3000)
     });
   }
 
