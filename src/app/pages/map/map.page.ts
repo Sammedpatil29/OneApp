@@ -155,8 +155,10 @@ export class MapPage implements OnInit, AfterViewInit {
     }
     this.isSaving = true;
     this.locationService.saveAddress(params, this.token).subscribe((res: any) => {
+      this.navCtrl.back();
       this.isSaving = false;
-      console.log(res)
+    }, error => {
+      this.isSaving = false;
     });
   }
 
