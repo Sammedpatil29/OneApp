@@ -11,7 +11,7 @@
 
 <ion-content [fullscreen]="true">
   @if (!isSpinnerLoading) {
-    @if (addresses && addresses.length > 0) {
+    @if (addresses.length > 0) {
       <section>
         @for (item of addresses; track $index) {
           <ion-list class="border mt-2 mx-3" [class.border-color]="item.id === Addressid?.id" style="border-radius: 20px;">
