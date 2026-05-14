@@ -60,7 +60,7 @@ addresses: any = []
       this.selectedAddress = location.address;
     }
 
-      this.getAddressList()
+      this.getAddressList(true)
   }
 
   selectedAddress:any
@@ -73,7 +73,7 @@ addresses: any = []
       this.selectedAddress = location.address;
     }
 
-      this.getAddressList()
+      this.getAddressList(true)
   }
 
   openLocation() {
@@ -111,7 +111,7 @@ addresses: any = []
       // alert("deleted successfully")
       this.isSpinnerLoading = false
       setTimeout(()=>{
-        this.getAddressList()
+        this.getAddressList(false)
       })
       this.isToastOpen = true
       this.toastMessage = "deleted successfully";
@@ -130,12 +130,14 @@ addresses: any = []
     })
   }
 
-  getAddressList(){
+  getAddressList(loader:any){
     console.log(this.token)
 //     let params = {
 //   "token": this.token
 // }
-this.isSpinnerLoading = true
+if(loader){
+  this.isSpinnerLoading = true
+}
     this.locationService.getAddressesList(this.token).subscribe((res:any) => {
         // let address = res.data
         this.addresses = res.data
