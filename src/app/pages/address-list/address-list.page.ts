@@ -19,7 +19,7 @@ import { ProfileService } from 'src/app/services/profile.service';
   imports: [IonFooter, IonList, IonButtons, IonIcon, IonLabel, IonItem, IonNote, IonText, IonSpinner, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, NodataComponent]
 })
 export class AddressListPage implements OnInit {
-isSpinnerLoading: boolean = false
+isSpinnerLoading: boolean = true
 Addressid:any
 addresses: any = []
 
