@@ -7,7 +7,11 @@
       <ion-label>Support</ion-label>
     </ion-tab-button>
 
-    <div class="center-spacer"></div>
+    <ion-tab-button tab="home" (click)="goToHome()">
+      <ion-icon name="home" class="icon-active"></ion-icon>
+      <ion-icon name="home-outline" class="icon-inactive"></ion-icon>
+      <ion-label>Home</ion-label>
+    </ion-tab-button>
 
     <ion-tab-button tab="history">
       <ion-icon name="time" class="icon-active"></ion-icon>
@@ -17,8 +21,3 @@
 
   </ion-tab-bar>
 </ion-tabs>
-
-<div class="floating-center-btn" (click)="goToHome()">
-  <ion-icon name="home"></ion-icon>
-  <span>Home</span>
-</div>
