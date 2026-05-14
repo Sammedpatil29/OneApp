@@ -25,6 +25,7 @@ export class MapPage implements OnInit, AfterViewInit {
   latLng: any;
   inside = true;
   isPolygonLoading = true;
+  isSaving = false;
   isLoading = false;
   isModalOpen = false;
   isSearchModalOpen = false;
@@ -34,6 +35,9 @@ export class MapPage implements OnInit, AfterViewInit {
   landmark = '';
   selectedLabel = 'home';
   mapImgUrl = '';
+  buildingName = '';
+  receiverName = ''
+  receiverPhone = '';
   
   polygonCoords: any[] = [];
   token: any;
@@ -144,9 +148,14 @@ export class MapPage implements OnInit, AfterViewInit {
       "address": this.currentAddress,
       "label": this.selectedLabel,
       "landmark": this.landmark,
-      "house_no": this.houseNo
+      "house_no": this.houseNo,
+      "building_name": this.buildingName,
+      "receiver_name": this.receiverName,
+      "receiver_contact": this.receiverPhone
     }
+    this.isSaving = true;
     this.locationService.saveAddress(params, this.token).subscribe((res: any) => {
+      this.isSaving = false;
       console.log(res)
     });
   }

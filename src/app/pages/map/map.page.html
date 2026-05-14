@@ -42,7 +42,7 @@
 
     <ion-toolbar class="ion-padding-vertical">
       <div class="px-3 pb-2 d-flex align-items-center">
-        <ion-icon name="map-outline" class="me-2" color="primary"></ion-icon>
+        <ion-icon name="map-outline" class="me-2 flex-shrink-0" color="primary"></ion-icon>
         <ion-text class="fw-medium text-truncate">{{ currentAddress }}</ion-text>
       </div>
       
@@ -69,7 +69,19 @@
           <ion-input label="House / Flat No." labelPlacement="stacked" [(ngModel)]="houseNo" placeholder="Enter house number"></ion-input>
         </ion-item>
         <ion-item class="input-item mb-2">
+          <ion-input label="Address" labelPlacement="stacked" [(ngModel)]="currentAddress" placeholder="Enter full address"></ion-input>
+        </ion-item>
+        <ion-item class="input-item mb-2">
           <ion-input label="Apartment / Landmark" labelPlacement="stacked" [(ngModel)]="landmark" placeholder="Nearby landmark"></ion-input>
+        </ion-item>
+        <ion-item class="input-item mb-2">
+          <ion-input label="Building Name" labelPlacement="stacked" [(ngModel)]="buildingName" placeholder="Enter building name"></ion-input>
+        </ion-item>
+        <ion-item class="input-item mb-2">
+          <ion-input label="Receiver Name" labelPlacement="stacked" [(ngModel)]="receiverName" placeholder="Enter receiver's name"></ion-input>
+        </ion-item>
+        <ion-item class="input-item mb-2">
+          <ion-input label="Receiver Phone" labelPlacement="stacked" [(ngModel)]="receiverPhone" placeholder="Enter receiver's phone number" type="tel"></ion-input>
         </ion-item>
       </ion-list>
 
