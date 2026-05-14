@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonSpinner, IonText, IonNote, IonItem, IonLabel, IonIcon, IonButtons, IonList, IonFooter } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonSpinner, IonText, IonNote, IonItem, IonLabel, IonIcon, IonButtons, IonList, IonFooter, IonToast } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { NodataComponent } from "src/app/components/nodata/nodata.component";
 import { NavController } from '@ionic/angular';
@@ -16,7 +16,7 @@ import { ProfileService } from 'src/app/services/profile.service';
   templateUrl: './address-list.page.html',
   styleUrls: ['./address-list.page.scss'],
   standalone: true,
-  imports: [IonFooter, IonList, IonButtons, IonIcon, IonLabel, IonItem, IonNote, IonText, IonSpinner, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, NodataComponent]
+  imports: [IonToast, IonFooter, IonList, IonButtons, IonIcon, IonLabel, IonItem, IonNote, IonText, IonSpinner, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, NodataComponent]
 })
 export class AddressListPage implements OnInit {
 isSpinnerLoading: boolean = true
@@ -73,7 +73,7 @@ addresses: any = []
       this.selectedAddress = location.address;
     }
 
-      this.getAddressList(true)
+      this.getAddressList(false)
   }
 
   openLocation() {
@@ -149,11 +149,11 @@ if(loader){
     }, error => {
       this.addresses = []
       this.isSpinnerLoading = false
-      // this.isToastOpen = true
-      // this.toastMessage = `No Data `;
-      // setTimeout(()=>{
-      //   this.isToastOpen = false
-      // },3000)
+      this.isToastOpen = true
+      this.toastMessage = `No Data `;
+      setTimeout(()=>{
+        this.isToastOpen = false
+      },3000)
     })
   }
 
