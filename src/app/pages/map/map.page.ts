@@ -160,7 +160,8 @@ export class MapPage implements OnInit, AfterViewInit {
       this.isToastOpen = true
       this.toastMessage = "Address saved successfully";
       this.isSaving = false;
-       this.navCtrl.back();
+      this.isModalOpen = false;
+      this.navCtrl.back();
       setTimeout(()=>{
         this.isToastOpen = false
       },3000)
