@@ -145,7 +145,6 @@ if(loader){
         this.isSpinnerLoading = false
         // this.addresses = address
         
-        
     }, error => {
       this.addresses = []
       this.isSpinnerLoading = false
