@@ -149,7 +149,7 @@ if(loader){
       this.addresses = []
       this.isSpinnerLoading = false
       this.isToastOpen = true
-      this.toastMessage = `No Data `;
+      this.toastMessage = `No Data`;
       setTimeout(()=>{
         this.isToastOpen = false
       },3000)
