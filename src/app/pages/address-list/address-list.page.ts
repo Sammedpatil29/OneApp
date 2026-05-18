@@ -114,7 +114,7 @@ addresses: any = []
         this.getAddressList(false)
       })
       this.isToastOpen = true
-      this.toastMessage = "deleted successfully";
+      this.toastMessage = "address deleted successfully";
       setTimeout(()=>{
         this.isToastOpen = false
       },3000)
