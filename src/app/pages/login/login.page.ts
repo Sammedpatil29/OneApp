@@ -326,11 +326,12 @@ export class LoginPage implements OnInit {
           this.otpVerificationMessage = '';
           this.showRegisterForm = true
         } else {
-          Preferences.set({
-          key: 'auth-token',
-          value: res.token,
-        });
-        console.log(Preferences.get({ key: 'auth-token' }));
+        //   Preferences.set({
+        //   key: 'auth-token',
+        //   value: res.token,
+        // });
+        localStorage.setItem('auth-token', res.token);
+        console.log(localStorage.getItem('auth-token'));
         this.navCtrl.navigateRoot('/layout/example/home');
         }
       },
@@ -361,10 +362,11 @@ export class LoginPage implements OnInit {
     this.authService.register(params).subscribe(
       (res:any) => {
         if(res.success == true){
-          Preferences.set({
-          key: 'auth-token',
-          value: res.token,
-        });
+        //   Preferences.set({
+        //   key: 'auth-token',
+        //   value: res.token,
+        // });
+        localStorage.setItem('auth-token', res.token);
         let values = {
           name: res.user.first_name,
           phone: res.user.phone,

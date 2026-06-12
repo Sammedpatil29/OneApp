@@ -6,7 +6,6 @@ import { addIcons } from 'ionicons';
 import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { arrowBack, arrowBackOutline } from 'ionicons/icons';
-import { Preferences } from '@capacitor/preferences';
 import { AuthService } from 'src/app/services/auth.service';
 import { ProfileService } from 'src/app/services/profile.service';
 
