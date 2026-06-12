@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'https://pintu-api.democompany.in.net'
-  // apiUrl: 'https://oneapp-express-singapore.onrender.com'
+  // apiUrl: 'https://pintu-api.democompany.in.net'
+  apiUrl: 'https://oneapp-express-singapore.onrender.com'
 };
 
 /*

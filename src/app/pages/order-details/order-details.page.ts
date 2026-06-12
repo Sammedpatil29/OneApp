@@ -106,7 +106,8 @@ export class OrderDetailsPage implements OnInit, OnDestroy {
   }
 
   async checkPendingOrder() {
-    const { value } = await Preferences.get({ key: 'pending_order_id' });
+    // const { value } = await Preferences.get({ key: 'pending_order_id' });
+const value = localStorage.getItem('pending_order_id');
     if (value) {
       this.pendingOrderId = value;
       // Resume polling if we have a pending ID
@@ -196,7 +197,8 @@ export class OrderDetailsPage implements OnInit, OnDestroy {
         if (res.success) {
           // Store internal ID
           this.pendingOrderId = res.internal_order_id;
-          await Preferences.set({ key: 'pending_order_id', value: res.internal_order_id });
+          // await Preferences.set({ key: 'pending_order_id', value: res.internal_order_id });
+          localStorage.setItem('pending_order_id', res.internal_order_id);
           
           // Open Razorpay with the acquired Order ID
           this.initiateRazorpay(res.razorpay_order_id);
@@ -308,8 +310,8 @@ export class OrderDetailsPage implements OnInit, OnDestroy {
   this.isLoading = false;
   
   // Clear the pending order from storage
-  await Preferences.remove({ key: 'pending_order_id' });
-  
+  // await Preferences.remove({ key: 'pending_order_id' });
+  localStorage.removeItem('pending_order_id');
   this.showToast("Booking Confirmed! 🚀");
 
   // Determine the correct Order ID to pass

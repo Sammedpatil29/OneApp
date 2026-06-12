@@ -239,7 +239,8 @@ export class CartPage implements OnInit, OnDestroy {
           next: async (res: any) => {
             if (res.success && res.razorpay_order_id) {
                this.pendingOrderId = res.internal_order_id;
-               await Preferences.set({ key: 'pending_grocery_order_id', value: res.internal_order_id });
+              //  await Preferences.set({ key: 'pending_grocery_order_id', value: res.internal_order_id });
+               localStorage.setItem('pending_grocery_order_id', res.internal_order_id);
                this.initiateRazorpay(res.razorpay_order_id);
             } else {
                // Fallback: Just clear cart if backend says success but no razorpay id (zero cost?)
@@ -258,7 +259,8 @@ export class CartPage implements OnInit, OnDestroy {
   // --- Payment Polling & Refund Logic ---
 
   async checkPendingOrder() {
-    const { value } = await Preferences.get({ key: 'pending_grocery_order_id' });
+    // const { value } = await Preferences.get({ key: 'pending_grocery_order_id' });
+      const value = localStorage.getItem('pending_grocery_order_id');
     if (value) {
       this.pendingOrderId = value;
       this.startPolling(this.pendingOrderId);
@@ -328,7 +330,8 @@ export class CartPage implements OnInit, OnDestroy {
   async handleSuccess(res: any, internalOrderId:any) {
     this.isPaymentDetected = true;
     this.stopPolling();
-    await Preferences.remove({ key: 'pending_grocery_order_id' });
+    // await Preferences.remove({ key: 'pending_grocery_order_id' });
+    localStorage.removeItem('pending_grocery_order_id');
     this.groceryService.clearCart();
     // this.isOrderPlaced = true;
     this.navCtrl.navigateRoot(`/layout/grocery-layout/grocery-order-details/${internalOrderId}`, {
