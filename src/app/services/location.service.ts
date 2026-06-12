@@ -101,7 +101,10 @@ export class LocationService {
 
 
   getPolygonData(){
-    return this.http.get(`${this.polygonUrl}/api/metadata`)
+    let params = {
+      "fields": ["polygon"]
+    }
+    return this.http.post(`${this.polygonUrl}/api/metadata/query`, { params: params })
   }
 
   setAddress(location:any){
