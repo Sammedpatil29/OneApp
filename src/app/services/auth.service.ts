@@ -36,7 +36,7 @@ return this.http.get(this.url)
     return this.http.post(`${this.url}/login`, params)
   }
 
-  verifyToken(token: string) {
+  verifyToken(token: any) {
     // 1. Create the headers
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
@@ -48,16 +48,19 @@ return this.http.get(this.url)
   }
 
   async logout(){
-    await Preferences.remove({key: 'auth-token'})
-    await Preferences.remove({key: 'user_id'})
+    // await Preferences.remove({key: 'auth-token'})
+    // await Preferences.remove({key: 'user_id'})
     localStorage.removeItem('location')
+    localStorage.removeItem('auth-token')
+    localStorage.removeItem('user_id')
     this.navCtrl.navigateRoot(['/login']);
   }
 
   async getToken(){
-    const token = await Preferences.get({ key: 'auth-token' });
+    // const token = await Preferences.get({ key: 'auth-token' });
+    const token = localStorage.getItem('auth-token');
     console.log(token)
-    return token.value
+    return token;
   }
 
   // response:any

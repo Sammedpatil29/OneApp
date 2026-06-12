@@ -9,7 +9,6 @@ import { LocationService } from 'src/app/services/location.service';
 import { NavController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { AuthService } from 'src/app/services/auth.service';
-import { Preferences } from '@capacitor/preferences';
 
 @Component({
   selector: 'app-prelogin',

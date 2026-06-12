@@ -1,6 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, OnInit } from '@angular/core';
-import { Preferences } from '@capacitor/preferences';
 import { App } from '@capacitor/app'
 import { environment } from 'src/environments/environment';
 

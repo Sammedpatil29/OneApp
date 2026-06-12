@@ -114,7 +114,7 @@ addresses: any = []
         this.getAddressList(false)
       })
       this.isToastOpen = true
-      this.toastMessage = "deleted successfully";
+      this.toastMessage = "address deleted successfully";
       setTimeout(()=>{
         this.isToastOpen = false
       },3000)
@@ -145,12 +145,11 @@ if(loader){
         this.isSpinnerLoading = false
         // this.addresses = address
         
-        
     }, error => {
       this.addresses = []
       this.isSpinnerLoading = false
       this.isToastOpen = true
-      this.toastMessage = `No Data `;
+      this.toastMessage = `No Data`;
       setTimeout(()=>{
         this.isToastOpen = false
       },3000)
