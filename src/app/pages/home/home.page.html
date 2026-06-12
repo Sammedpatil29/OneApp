@@ -1,4 +1,5 @@
-<ion-content [fullscreen]="true" (ionScroll)="onScroll($event)" scrollEvents="true">
+@if(insideServiceArea){
+  <ion-content [fullscreen]="true" (ionScroll)="onScroll($event)" scrollEvents="true">
 
   @if(isLoading){
     <div class="w-100 position-fixed pe-2 pt-3" style="z-index: 999; background: transparent;">
@@ -217,3 +218,24 @@
 
   } 
 </ion-content>
+} @else {
+  <ion-content class="ion-padding">
+  <div style="display: flex; flex-direction: column; align-items: center; text-align: center; margin-top: 8vh;">
+    <div style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; background: var(--ion-color-light, #f4f5f8); border-radius: 28px; margin-bottom: 1.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.15);">
+      <ion-icon name="location-outline" style="font-size: 48px; color: var(--ion-color-danger, #eb445a);"></ion-icon>
+    </div>
+    
+    <h2 class="page-title" style="font-size: 26px; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem;">
+      Area Not Serviceable
+    </h2>
+    
+    <p class="subtitle" style="font-size: 15px; color: var(--text-muted); max-width: 290px; line-height: 1.4;">
+      We're sorry! Pintu isn't available in your location just yet. We are expanding rapidly, so please check back soon!
+    </p>
+
+    <ion-button fill="clear" color="" style="margin-top: 1.5rem; font-weight: 600; color: var(--ion-color-primary);" (click)="openLocation()">
+      Change Location
+    </ion-button>
+  </div>
+</ion-content>
+}
