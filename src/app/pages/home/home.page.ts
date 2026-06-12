@@ -9,7 +9,7 @@ import {
   IonToolbar, IonButtons, IonButton, IonSpinner, IonCol, IonRow, IonGrid, IonRefresher, IonRefresherContent, AlertController, IonSkeletonText } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
-import { library, playCircle, radio, search, home, cube, bag, receiptOutline, person, personCircle, personCircleOutline, constructOutline, briefcaseOutline, buildOutline, arrowBack, cloudOfflineOutline, locationOutline } from 'ionicons/icons';
+import { library, playCircle, radio, search, home, cube, bag, receiptOutline, person, personCircle, personCircleOutline, constructOutline, briefcaseOutline, buildOutline, arrowBack, cloudOfflineOutline, locationOutline, mapOutline } from 'ionicons/icons';
 import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle } from '@ionic/angular/standalone';
 import { FooterComponent } from "../../components/footer/footer.component";
 import { Router, RouterLink } from '@angular/router';
@@ -104,22 +104,25 @@ export class HomePage implements OnInit {
     private alertController: AlertController,
     private fcmService: RegisterFcmService
   ) {
-    addIcons({arrowBack,locationOutline,cloudOfflineOutline,home,buildOutline,receiptOutline,personCircleOutline,briefcaseOutline,constructOutline,library,personCircle,person,search,bag,cube,radio,playCircle});
+    addIcons({arrowBack,locationOutline,mapOutline,cloudOfflineOutline,home,buildOutline,receiptOutline,personCircleOutline,briefcaseOutline,constructOutline,library,personCircle,person,search,bag,cube,radio,playCircle});
   }
 
   async ngOnInit() {
     try {
       this.isLoading = true;
       this.locationService.location$.subscribe((res:any)=>{
-        this.currentLocation = res
-      })
+        if (res) {
+          this.currentLocation = res;
+          this.checkServiceAvailability();
+        }
+      });
 
       this.token = await this.authService.getToken();
 
       if (!this.token) {
         return;
       }
-      this.fcmService.initPush()
+      this.fcmService.initPush();
 
       await this.homeData();
       
@@ -131,17 +134,49 @@ export class HomePage implements OnInit {
     }
   }
 
-  ionViewDidEnter() {
-    let storedLocation;
-    this.locationService.location$.subscribe((res:any)=>{
-      storedLocation = res
-    })
-  
-  if (storedLocation) {
-    console.log('✅ Using Location from LocalStorage');
-    this.currentLocation = storedLocation;
+  checkServiceAvailability() {
+    if (!this.currentLocation || !this.currentLocation.lat || !this.currentLocation.lng) {
+      this.insideServiceArea = false;
+      return;
+    }
+
+    this.locationService.getPolygonData().subscribe((res:any)=>{
+      if (res && res.data && res.data.polygon) {
+        const polygonCoords = res.data.polygon.map((point:any) => ({ lat: point.lat, lng: point.lng }));
+        const userLocation = { lat: this.currentLocation.lat, lng: this.currentLocation.lng };
+        this.insideServiceArea = this.isPointInPolygon(userLocation, polygonCoords);
+      } else {
+        this.insideServiceArea = false;
+      }
+    }, error => {
+      console.error('Error fetching polygon data:', error);
+      this.insideServiceArea = false;
+    });
   }
-}
+
+  isPointInPolygon(point: any, polygon: any[]): boolean {
+    let isInside = false;
+    const x = point.lat, y = point.lng;
+
+    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+      if (((polygon[i].lng > y) !== (polygon[j].lng > y)) &&
+          (x < (polygon[j].lat - polygon[i].lat) * (y - polygon[i].lng) / (polygon[j].lng - polygon[i].lng) + polygon[i].lat)) {
+        isInside = !isInside;
+      }
+    }
+    return isInside;
+  }
+
+  ionViewDidEnter() {
+    const localStr = localStorage.getItem('location');
+    if (localStr) {
+      try {
+        const storedLocation = JSON.parse(localStr);
+        console.log('✅ Using Location from LocalStorage');
+        this.locationService.setAddress(storedLocation);
+      } catch (e) {}
+    }
+  }
 
   // --- Data Fetching ---
 
@@ -205,12 +240,23 @@ export class HomePage implements OnInit {
 
   async resolveUserLocation() {
     let storedLocation:any;
-    this.locationService.location$.subscribe((res:any)=>{
-      storedLocation = res
-    })
+    const sub = this.locationService.location$.subscribe((res:any)=>{
+      storedLocation = res;
+    });
+    sub.unsubscribe();
+
+    if (!storedLocation) {
+      const localStr = localStorage.getItem('location');
+      if (localStr) {
+        try {
+          storedLocation = JSON.parse(localStr);
+        } catch(e) {}
+      }
+    }
+
     if (storedLocation) {
       console.log('✅ Using Location from LocalStorage');
-      this.currentLocation = storedLocation;
+      this.setAndStoreLocation(storedLocation);
       return;
     }
 
@@ -257,7 +303,6 @@ export class HomePage implements OnInit {
         const result = await this.reverseGeocode(coordinates.coords.latitude, coordinates.coords.longitude);
         if (result) {
           address = result;
-          this.locationService.setAddress(address)
         }
       } catch (e) {
         console.error('Reverse geocoding error:', e);
@@ -273,6 +318,8 @@ export class HomePage implements OnInit {
       this.setAndStoreLocation(gpsLocation);
 
     } catch (error: any) {
+      console.error('GPS Error:', error);
+      this.insideServiceArea = false;
     }
   }
 
@@ -295,19 +342,7 @@ export class HomePage implements OnInit {
   }
 
   setAndStoreLocation(data: any) {
-    this.currentLocation = data;
     this.locationService.setAddress(data);
-    localStorage.setItem('location', JSON.stringify(data));
-    // const storedLocation = localStorage.getItem('location');
-    let storedLocation:any;
-    this.locationService.location$.subscribe((res:any)=>{
-      storedLocation = res
-    })
-  
-    if (storedLocation) {
-      console.log('✅ Using Location from LocalStorage');
-      this.currentLocation = storedLocation;
-    }
   }
 
   receiveData(data: any) {
