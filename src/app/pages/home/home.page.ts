@@ -54,7 +54,7 @@ export class HomePage implements OnInit {
   isLocationLoading: boolean = false;
   isFlashOfferVisible: boolean = false;
   disableProfileClick: boolean = false;
-  insideServiceArea: boolean = false;
+  insideServiceArea: boolean = true;
   // Data
   token: any = '';
   banners: any[] = [];

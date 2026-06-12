@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonAvatar, IonLabel, IonItem, IonIcon, IonButton, IonButtons, IonSpinner } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonAvatar, IonLabel, IonItem, IonIcon, IonButton, IonButtons, IonSpinner, IonSkeletonText } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
@@ -20,7 +20,7 @@ interface Profile {
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
   standalone: true,
-  imports: [IonSpinner, IonButtons, IonButton, IonIcon, IonItem, IonLabel, IonAvatar, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonSpinner, IonButtons, IonButton, IonIcon, IonItem, IonSkeletonText, IonLabel, IonAvatar, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
 export class ProfilePage implements OnInit {
 profileData: any = {

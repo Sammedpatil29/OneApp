@@ -73,10 +73,34 @@
       </ion-button>
     </div>
 
+    <!-- <div class="px-3 mt-2 mb-4">
+      <ion-button expand="block" fill="outline" color="medium" class="w-100" style="border-radius: 12px; font-weight: 600;">
+        Cancel
+      </ion-button>
+    </div> -->
+
     } @else if (isLoading) {
-      <div class="loader-state">
-        <ion-spinner name="crescent"></ion-spinner>
-        <p>Loading Profile...</p>
+      <div class="profile-header">
+        <div class="avatar-wrapper d-flex justify-content-center">
+          <ion-skeleton-text animated style="width: 80px; height: 80px; border-radius: 50%;"></ion-skeleton-text>
+        </div>
+        
+        <div class="profile-info d-flex flex-column align-items-center mt-3">
+          <ion-skeleton-text animated style="width: 180px; height: 26px; border-radius: 6px; margin-bottom: 8px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 120px; height: 16px; border-radius: 4px; margin-bottom: 12px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 150px; height: 26px; border-radius: 20px;"></ion-skeleton-text>
+        </div>
+      </div>
+
+      <div class="menu-card mt-3">
+        @for (i of [1,2,3,4,5,6,7]; track i) {
+          <ion-item lines="full">
+            <ion-skeleton-text animated style="width: 22px; height: 22px; border-radius: 4px; margin-right: 16px;" slot="start"></ion-skeleton-text>
+            <ion-label>
+              <ion-skeleton-text animated style="width: 60%; height: 18px; border-radius: 4px;"></ion-skeleton-text>
+            </ion-label>
+          </ion-item>
+        }
       </div>
     } @else if (showRetry) {
       <div class="retry-state">
