@@ -36,7 +36,7 @@ return this.http.get(this.url)
     return this.http.post(`${this.url}/login`, params)
   }
 
-  verifyToken(token: string) {
+  verifyToken(token: any) {
     // 1. Create the headers
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
