@@ -111,20 +111,35 @@
             <h2>{{ getStatusText(orderDetails?.status) }}</h2>
             <p>Arriving in 15 mins</p> </div>
         </div>
+      </div>
+    </div>
 
-        <!-- <div class="timeline-container">
-          @for (step of timeline; track step.status) {
-            <div class="step" [class.active]="step.active">
-              <div class="step-icon">
-                <ion-icon [name]="step.icon"></ion-icon>
+    <div class="section-card">
+      <div class="section-header">
+        <ion-icon name="time-outline"></ion-icon>
+        <span>Order Timeline</span>
+      </div>
+      <div class="timeline-container mt-2 px-2">
+        @for (step of orderDetails?.timeline; track step.status; let isLast = $last) {
+          <div class="d-flex">
+            <div class="d-flex flex-column align-items-center me-3">
+              <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 24px; height: 24px; background-color: var(--ion-color-success, #2dd36f); color: white;">
+                <ion-icon name="checkmark-outline" style="font-size: 16px;"></ion-icon>
               </div>
-              <span class="step-label">{{ step.title }}</span>
+              @if (!isLast) {
+                <div style="width: 2px; height: 30px; background-color: var(--ion-color-success, #2dd36f); opacity: 0.5; margin: 4px 0;"></div>
+              }
             </div>
-            @if (!$last) {
-              <div class="connector" [class.active]="step.active"></div>
-            }
-          }
-        </div> -->
+            <div class="pb-3" style="margin-top: 2px;">
+              <div style="font-weight: 600; font-size: 14px; color: var(--ion-color-dark);">
+                {{ step.status.split('_').join(' ') | titlecase }}
+              </div>
+              <div style="font-size: 12px; color: var(--ion-color-medium);">
+                {{ step.time | date:'dd MMM yyyy, hh:mm a' }}
+              </div>
+            </div>
+          </div>
+        }
       </div>
     </div>
 
