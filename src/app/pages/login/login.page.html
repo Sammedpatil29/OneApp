@@ -5,32 +5,44 @@
     
     @if (!showRegisterForm) {
     <ion-header class="ion-no-border pt-4">
-      <ion-toolbar>
+      <!-- <ion-toolbar>
         <ion-buttons slot="start">
           </ion-buttons>
-      </ion-toolbar>
+      </ion-toolbar> -->
     </ion-header>
 
     <div class="login-wrapper main-container">
       @if (!otpSent) {
         <div class="intro-content" style="display: flex; flex-direction: column; align-items: center; text-align: center; margin-top: 8vh; margin-bottom: 3rem;">
-          <img src="assets/pintu startup.png" alt="Welcome to Pintu" style="width: 100px; height: 100px; object-fit: cover; border-radius: 28px; margin-bottom: 1.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.15);">
-          <h2 class="page-title" style="font-size: 28px; font-weight: 800; color: var(--text-main);">Welcome to Pintu</h2>
+          <!-- <img src="assets/pintu startup.png" alt="Welcome to Pintu" style="width: 100px; height: 100px; object-fit: cover; border-radius: 28px; margin-bottom: 1.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.15);"> -->
+         <h1 style="font-size: 46px; font-weight: 800; line-height: 1.1; color: var(--text-main); margin-bottom: 12px; letter-spacing: -1px;">
+            <!-- No Gimmicks.<br> -->
+            <span style="color: var(--grocery-theme-color);">NEEDS IN<br>MINUTES<br></span>
+          </h1> 
+          <!-- <h2 class="page-title" style="font-size: 28px; font-weight: 800; color: var(--text-main);">Welcome to Pintu</h2> -->
           <p class="subtitle" style="font-size: 15px; color: var(--text-muted); max-width: 280px;">Your everyday companion. Enter your mobile number to securely log in.</p>
         </div>
 
-        <div class="form-section">
-          <div class="input-container">
-            <div class="country-pill">+91</div>
+        <div class="form-section animate__animated animate__fadeIn" style="padding: 0 20px;">
+          <div class="input-container" style="border: 1.5px solid #e0e0e0; border-radius: 14px; padding: 6px 16px; display: flex; align-items: center; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+            <div class="country-pill" style="font-size: 16px; font-weight: 600; color: var(--text-main); padding-right: 12px; border-right: 2px solid #f0f0f0; margin-right: 12px;">
+              +91
+            </div>
             <ion-input
               [(ngModel)]="phoneNumber"
               type="tel"
               inputmode="numeric"
               maxlength="10"
-              placeholder="00000 00000"
-              class="modern-input">
+              placeholder="Enter Mobile Number"
+              class="modern-input"
+              style="--padding-start: 0; font-size: 18px; font-weight: 600; letter-spacing: 1px;">
             </ion-input>
           </div>
+          
+          <p style="font-size: 12px; color: #888; text-align: center; margin-top: 24px; line-height: 1.5;">
+            By continuing, you accept our <br>
+            <b style="color: var(--text-main);">Terms & Conditions</b> & <b style="color: var(--text-main);">Privacy Policy</b>
+          </p>
         </div>
       } @else {
         <div class="intro-content animate__animated animate__fadeIn" style="display: flex; flex-direction: column; align-items: center; text-align: center; margin-top: 8vh; margin-bottom: 2rem;">
