@@ -9,7 +9,7 @@ import { HistoryComponent } from "../../components/history/history.component";
   templateUrl: './history.page.html',
   styleUrls: ['./history.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, HistoryComponent]
+  imports: [IonContent, CommonModule, FormsModule, HistoryComponent]
 })
 export class HistoryPage implements OnInit {
 

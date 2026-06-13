@@ -15,7 +15,7 @@ import { ErrorComponent } from "src/app/components/error/error.component";
   templateUrl: './grocery-special.page.html',
   styleUrls: ['./grocery-special.page.scss'],
   standalone: true,
-  imports: [IonSkeletonText, IonButton, IonFooter, IonIcon, IonBackButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, ProductCardComponent, ErrorComponent]
+  imports: [IonSkeletonText, IonButton, IonIcon, IonBackButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, ProductCardComponent, ErrorComponent]
 })
 export class GrocerySpecialPage implements OnInit {
 

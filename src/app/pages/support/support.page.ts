@@ -9,7 +9,7 @@ import { SupportComponent } from "../../components/support/support.component";
   templateUrl: './support.page.html',
   styleUrls: ['./support.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, SupportComponent]
+  imports: [IonContent, CommonModule, FormsModule, SupportComponent]
 })
 export class SupportPage implements OnInit {
 

@@ -16,7 +16,7 @@ import { NavController } from '@ionic/angular';
   selector: 'app-support',
   templateUrl: './support.component.html',
   styleUrls: ['./support.component.scss'],
-  imports: [IonButtons, IonRefresherContent, IonRefresher, IonToast, IonModal, IonTextarea, IonSpinner, IonButton, IonInput, IonIcon, IonNote, CommonModule, IonText, IonList, IonSegment, IonSegmentButton, IonAccordionGroup, IonItem, IonAccordion, IonLabel, IonHeader, IonToolbar, IonTitle, NodataComponent, IonSegmentView, IonSegmentContent, FormsModule]
+  imports: [IonButtons, IonRefresherContent, IonRefresher, IonToast, IonTextarea, IonSpinner, IonButton, IonInput, IonIcon, IonNote, CommonModule, IonText, IonList, IonSegment, IonSegmentButton, IonAccordionGroup, IonItem, IonAccordion, IonLabel, IonHeader, IonToolbar, IonTitle, NodataComponent, IonSegmentView, IonSegmentContent, FormsModule]
 })
 export class SupportComponent  implements OnInit {
   raiseTicket:boolean = false

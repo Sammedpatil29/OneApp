@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
   selector: 'app-search',
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.scss'],
-  imports: [IonCol, IonRow, IonGrid, IonIcon, FormsModule, IonCardSubtitle, IonCardTitle, IonCardHeader, IonCard, IonSearchbar, IonHeader, IonToolbar, IonTitle, NodataComponent, CommonModule]
+  imports: [IonCol, IonRow, IonGrid, FormsModule, IonCardSubtitle, IonCardTitle, IonCardHeader, IonCard, IonSearchbar, IonHeader, IonToolbar, IonTitle, NodataComponent, CommonModule]
 })
 export class SearchComponent  implements OnInit {
   placeholder = 'Search'

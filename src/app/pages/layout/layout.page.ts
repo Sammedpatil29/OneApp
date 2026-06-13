@@ -17,7 +17,7 @@ import { BottomsheetMessageComponent } from 'src/app/components/bottomsheet-mess
   templateUrl: './layout.page.html',
   styleUrls: ['./layout.page.scss'],
   standalone: true,
-  imports: [IonAlert, IonCardTitle, IonRouterOutlet, IonApp, CommonModule, FormsModule]
+  imports: [ IonRouterOutlet, IonApp, CommonModule, FormsModule]
 })
 export class LayoutPage implements OnInit {
   isDragging = false;

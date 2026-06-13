@@ -9,7 +9,7 @@ import { RouterOutlet } from "@angular/router";
   templateUrl: './dineout-layout.page.html',
   styleUrls: ['./dineout-layout.page.scss'],
   standalone: true,
-  imports: [IonRouterOutlet, IonApp, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, RouterOutlet]
+  imports: [IonRouterOutlet, IonApp, CommonModule, FormsModule]
 })
 export class DineoutLayoutPage implements OnInit {
 

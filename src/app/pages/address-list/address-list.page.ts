@@ -16,7 +16,7 @@ import { ProfileService } from 'src/app/services/profile.service';
   templateUrl: './address-list.page.html',
   styleUrls: ['./address-list.page.scss'],
   standalone: true,
-  imports: [IonToast, IonFooter, IonList, IonSkeletonText, IonButtons, IonIcon, IonLabel, IonItem, IonNote, IonText, IonSpinner, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, NodataComponent]
+  imports: [IonToast, IonFooter, IonList, IonSkeletonText, IonButtons, IonIcon, IonLabel, IonItem, IonNote, IonText, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, NodataComponent]
 })
 export class AddressListPage implements OnInit {
 isSpinnerLoading: boolean = true

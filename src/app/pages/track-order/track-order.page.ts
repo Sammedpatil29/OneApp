@@ -21,7 +21,7 @@ declare var window: any;
   templateUrl: './track-order.page.html',
   styleUrls: ['./track-order.page.scss'],
   standalone: true,
-  imports: [IonText, IonCol, IonRow, IonGrid, IonFabButton, IonFab, IonFooter, IonSpinner, IonToast, IonCard, IonIcon, IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonCol, IonRow, IonGrid, IonFooter, IonSpinner, IonToast, IonIcon, IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
 export class TrackOrderPage implements OnInit {
   
