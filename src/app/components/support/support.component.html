@@ -94,10 +94,11 @@
 </ion-accordion-group>
     } @else {
       <app-nodata></app-nodata>
+      <!-- <ion-button (click)="raiseTicket = true">Raise Ticket</ion-button> -->
     }
   </ion-segment-content>
 
-  <ion-segment-content id="second">
+    <ion-segment-content id="second">
     @if (!raiseTicket) {
       <ion-accordion-group expand="inset" mode="ios">
   @for (item of faqs; track $index) {
@@ -138,15 +139,19 @@
   >
   </ion-textarea>
 </ion-item>
-<div class="my-3">
-  <ion-button class="book-btn w-100" [disabled]="title.length < 5 || details.length < 5 || isCreating" (click)="createTicket()">Submit
+<div class="my-3 d-flex justify-content-center align-items-center gap-2">
+  <ion-button class="book-btn w-20" style="--color: black; --background: transparent; --box-shadow: 0px 0px 1px var(--grocery-theme-color);" (click)="clear()">Clear</ion-button>
+  <ion-button class="book-btn w-100" [disabled]="title.length < 5 || details.length < 5 || isCreating || !orderId || !orderService" (click)="createTicket()">
     @if (isCreating) {
         <div class="loader-state">
       <ion-spinner name="crescent"></ion-spinner>
       <p>Raising Ticket...</p>
     </div>
+} @else {
+  Submit
 }
   </ion-button>
+  
 </div>
 <div class="text-center mb-5"> <span class="text-primary" (click)="raiseTicket = false">back to FAQS</span></div>
     }
