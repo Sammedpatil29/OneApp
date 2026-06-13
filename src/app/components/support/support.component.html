@@ -4,11 +4,11 @@
 <!-- <app-nodata></app-nodata> -->
 
 @if(!isLoading){
-  <ion-header>
-  <ion-toolbar class="pt-4">
+  <ion-header class="ion-no-border">
+  <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button (click)="goBack()">
-        <ion-icon name="arrow-back"></ion-icon>
+      <ion-button (click)="goBack()" class="custom-back">
+         <ion-icon name="arrow-back-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-title>Support</ion-title>
@@ -45,10 +45,10 @@
       <!-- <div class="unread-indicator-wrapper" slot="start"></div> -->
       <ion-label>
         <ion-text class="text-truncate"> <b>{{item.title}}</b></ion-text><br />
-        <ion-note color="medium" class="ion-text-wrap"><span [ngClass]="item.status == 'Open'? 'text-success': 'text-danger'"><b>{{item.status}}</b></span> &bull; <b>{{item.ticket_id}}</b> &bull; {{item.created_at | date:'short'}}</ion-note>
+        <ion-note color="medium" class="ion-text-wrap"><span [ngClass]="item.status[item.status.length - 1].status == 'Open'? 'text-success': 'text-danger'"><b>{{item.status[item.status.length - 1].status | titlecase}}</b></span> &bull; <b>{{item.ticket_id}}</b> &bull; {{item.createdAt | date:'short'}}</ion-note>
       </ion-label>
       <div class="metadata-end-wrapper" slot="end">
-        <!-- <ion-note color="medium">{{item.created_at}}</ion-note> -->
+        <!-- <ion-note color="medium">{{item.createdAt}}</ion-note> -->
         <!-- <ion-icon color="medium" name="chevron-forward"></ion-icon> -->
       </div>
     </ion-item>
@@ -73,10 +73,10 @@
       <!-- <div class="unread-indicator-wrapper" slot="start"></div> -->
       <ion-label>
         <ion-text class="text-truncate"> <b>{{item.title}}</b></ion-text><br />
-        <ion-note color="medium" class="ion-text-wrap"><span [ngClass]="item.status == 'Open'? 'text-success': 'text-danger'"><b>{{item.status}}</b></span> &bull; <b>{{item.ticket_id}}</b> &bull; {{item.created_at | date:'short'}}</ion-note>
+        <ion-note color="medium" class="ion-text-wrap"><span [ngClass]="item.status[item.status.length - 1].status == 'Open'? 'text-success': 'text-danger'"><b>{{item.status[item.status.length - 1].status | titlecase}}</b></span> &bull; <b>{{item.ticket_id}}</b> &bull; {{item.createdAt | date:'short'}}</ion-note>
       </ion-label>
       <div class="metadata-end-wrapper" slot="end">
-        <!-- <ion-note color="medium">{{item.created_at}}</ion-note> -->
+        <!-- <ion-note color="medium">{{item.createdAt}}</ion-note> -->
         <!-- <ion-icon color="medium" name="chevron-forward"></ion-icon> -->
       </div>
     </ion-item>
@@ -111,12 +111,24 @@
 </ion-accordion-group>
 <div class="text-center mb-5">did't get the answer? <span class="text-primary" (click)="raiseTicket = true">Raise a Ticket</span></div>
     } @else {
-       <ion-list class="text-area mx-4 mt-4">
+       <div class="d-flex gap-2">
+        <ion-list class="text-area mt-4">
+  <ion-item class="suggestion" lines="none" [disabled]="state">
+    <ion-input placeholder="Order Id" [(ngModel)]="orderId" value=""></ion-input>
+  </ion-item>
+</ion-list>
+<ion-list class="text-area mt-4">
+  <ion-item class="suggestion" lines="none" [disabled]="state">
+    <ion-input placeholder="Order Service" [(ngModel)]="orderService" value=""></ion-input>
+  </ion-item>
+</ion-list>
+       </div>
+       <ion-list class="text-area mt-4">
   <ion-item class="suggestion" lines="none">
     <ion-input placeholder="Issue Title" [(ngModel)]="title" value=""></ion-input>
   </ion-item>
 </ion-list>
-    <ion-item class="text-area mx-4 mt-4" lines="none">
+    <ion-item class="text-area mt-4" lines="none">
   <ion-textarea
     class="suggestion"
     placeholder="Detailed Issue"
@@ -126,8 +138,8 @@
   >
   </ion-textarea>
 </ion-item>
-<div class="my-3 mx-4">
-  <ion-button class="book-btn w-100" mode="ios" [disabled]="title.length < 5 || details.length < 5 || isCreating" (click)="createTicket()">Submit
+<div class="my-3">
+  <ion-button class="book-btn w-100" [disabled]="title.length < 5 || details.length < 5 || isCreating" (click)="createTicket()">Submit
     @if (isCreating) {
         <div class="loader-state">
       <ion-spinner name="crescent"></ion-spinner>
@@ -149,10 +161,44 @@
 
 </div>
 } @else {
-  <div class="d-flex justify-content-center align-items-center h-100">
-        <div class="loader-state">
-      <ion-spinner name="crescent"></ion-spinner>
-      <p>Getting Support Ready...</p>
+  <ion-header>
+    <ion-toolbar class="pt-4">
+      <ion-buttons slot="start">
+        <ion-button disabled>
+          <ion-icon name="arrow-back"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+      <ion-title>Support</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="mx-2 mt-5">
+    <!-- Segment Skeleton -->
+    <div class="d-flex justify-content-between mb-4 px-1" style="gap: 10px;">
+      <ion-skeleton-text [animated]="true" style="width: 50%; height: 36px; border-radius: 6px; margin: 0;"></ion-skeleton-text>
+      <ion-skeleton-text [animated]="true" style="width: 50%; height: 36px; border-radius: 6px; margin: 0;"></ion-skeleton-text>
     </div>
-      </div>
+
+    <!-- Accordion 1 Header Skeleton -->
+    <ion-skeleton-text [animated]="true" style="width: 100%; height: 48px; border-radius: 8px; margin-bottom: 10px;"></ion-skeleton-text>
+    
+    <!-- List Items Skeleton -->
+    <ion-list class="px-2">
+      <ion-item lines="none" class="mb-2">
+        <ion-label>
+          <ion-skeleton-text [animated]="true" style="width: 60%; height: 20px; border-radius: 4px;"></ion-skeleton-text>
+          <ion-skeleton-text [animated]="true" style="width: 80%; height: 14px; margin-top: 8px; border-radius: 4px;"></ion-skeleton-text>
+        </ion-label>
+      </ion-item>
+      <ion-item lines="none" class="mb-2">
+        <ion-label>
+          <ion-skeleton-text [animated]="true" style="width: 50%; height: 20px; border-radius: 4px;"></ion-skeleton-text>
+          <ion-skeleton-text [animated]="true" style="width: 70%; height: 14px; margin-top: 8px; border-radius: 4px;"></ion-skeleton-text>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <!-- Accordion 2 Header Skeleton -->
+    <ion-skeleton-text [animated]="true" style="width: 100%; height: 48px; border-radius: 8px; margin-top: 10px;"></ion-skeleton-text>
+  </div>
 }
