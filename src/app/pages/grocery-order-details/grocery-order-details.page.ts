@@ -103,6 +103,12 @@ export class GroceryOrderDetailsPage implements OnInit {
   //   this.backButtonSubscription?.unsubscribe();
   // }
 
+  openHelp(orderId: any) {
+    this.router.navigate(['/layout/example/support'], {
+      state: { from: 'order_details', orderId, service: 'grocery' }
+    });
+  }
+
   updateTimeline() {
     // Basic logic to activate timeline steps based on current status
     const statusMap: any = { 'confirmed': 0, 'preparing': 1, 'out_for_delivery': 2, 'delivered': 3 };

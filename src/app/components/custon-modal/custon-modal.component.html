@@ -2,7 +2,7 @@
   <div class="p-4 body h-100 position-relative" style="min-height: 100px;">
     <h6 class="text-center"><b>Ticket details</b></h6>
     <div>
-      <b [ngClass]="item.status == 'Open'? 'text-success': 'text-danger'">{{item.status}}</b> &bull; {{item.ticket_id}} &bull; <small>{{item.created_at | date: 'short'}}</small>
+      <b [ngClass]="item.status[item.status.length - 1].status == 'Open'? 'text-success': 'text-danger'">{{item.status[item.status.length - 1].status | titlecase}}</b> &bull; {{item.ticket_id}} &bull; <small>{{item.createdAt | date: 'short'}}</small>
     </div>
     <div class="mt-2"><b>{{item.title}}</b></div>
     <q><i>{{item.details}}</i></q>
@@ -11,14 +11,14 @@
     <div class="md-step active">
       <div class="md-step-circle"><span>1</span></div>
       <div class="md-step-title mt-1">Ticket Raised</div>
-      <div class="md-step-title mt-0" style="font-size: 12px;">{{item.created_at | date: 'short'}}</div>
+      <div class="md-step-title mt-0" style="font-size: 12px;">{{item.createdAt | date: 'short'}}</div>
       <div class="md-step-bar-left"></div>
       <div class="md-step-bar-right"></div>
     </div>
-    <div [ngClass]="item.status === 'Open'? 'md-step': 'md-step closed'">
+    <div [ngClass]="item.status[item.status.length - 1].status === 'Open'? 'md-step': 'md-step closed'">
       <div class="md-step-circle"><span>2</span></div>
       <div class="md-step-title mt-1">Ticket Resolved</div>
-      @if (item.status != 'Open') {
+      @if (item.status[item.status.length - 1].status != 'Open') {
               <div class="md-step-title mt-0" style="font-size: 12px;">{{item.closed_at | date: 'short'}}</div>
       }
       <div class="md-step-bar-left"></div>
@@ -26,15 +26,23 @@
     </div>
   </div>
 
-  @if (item.status != 'Open') {
+  @if (item.status[item.status.length - 1].status != 'Open') {
     <div class="comment-border">
     <small>
-      <b>Closing Comment -</b> 
-      <i>
-        {{item.comment}}
+      <b><svg xmlns="http://www.w3.org/2000/svg" height="17px" viewBox="0 -960 960 960" width="24px" fill="#8C1AF6"><path d="M240-400h480v-80H240v80Zm0-120h480v-80H240v80Zm0-120h480v-80H240v80ZM880-80 720-240H160q-33 0-56.5-23.5T80-320v-480q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v720ZM160-320h594l46 45v-525H160v480Zm0 0v-480 480Z"/></svg>Closing Comment </b>
+      @for(comment of item.comment; track $index) {
+         <hr class="m-0">
+        <i>
+        {{comment.date | date: 'short'}} - {{comment.comment}}
       </i>
+      }
     </small>
   </div>
+  
+  }
+
+  @if(item.status[item.status.length - 1].status === 'Open'){
+    <ion-button class="book-btn w-100" color="danger" (click)="closeTicket()">Close Ticket</ion-button>
   }
 
   </div>

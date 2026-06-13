@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IonHeader, IonToolbar, IonSearchbar, IonTitle, IonLabel, IonAccordion, IonItem, IonAccordionGroup, IonSegmentButton, IonSegment, IonSegmentView, IonSegmentContent, IonList, IonText, IonNote, IonIcon, IonInput, IonButton, IonSpinner, IonTextarea, IonModal, IonToast, IonRefresher, IonRefresherContent, IonButtons } from "@ionic/angular/standalone";
+import { IonHeader, IonToolbar, IonSearchbar, IonTitle, IonLabel,IonSkeletonText, IonAccordion, IonItem, IonAccordionGroup, IonSegmentButton, IonSegment, IonSegmentView, IonSegmentContent, IonList, IonText, IonNote, IonIcon, IonInput, IonButton, IonSpinner, IonTextarea, IonModal, IonToast, IonRefresher, IonRefresherContent, IonButtons } from "@ionic/angular/standalone";
 import { NodataComponent } from "../nodata/nodata.component";
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
@@ -16,7 +16,7 @@ import { NavController } from '@ionic/angular';
   selector: 'app-support',
   templateUrl: './support.component.html',
   styleUrls: ['./support.component.scss'],
-  imports: [IonButtons, IonRefresherContent, IonRefresher, IonToast, IonTextarea, IonSpinner, IonButton, IonInput, IonIcon, IonNote, CommonModule, IonText, IonList, IonSegment, IonSegmentButton, IonAccordionGroup, IonItem, IonAccordion, IonLabel, IonHeader, IonToolbar, IonTitle, NodataComponent, IonSegmentView, IonSegmentContent, FormsModule]
+  imports: [IonButtons, IonRefresherContent,IonSkeletonText, IonRefresher, IonToast, IonTextarea, IonSpinner, IonButton, IonInput, IonIcon, IonNote, CommonModule, IonText, IonList, IonSegment, IonSegmentButton, IonAccordionGroup, IonItem, IonAccordion, IonLabel, IonHeader, IonToolbar, IonTitle, NodataComponent, IonSegmentView, IonSegmentContent, FormsModule]
 })
 export class SupportComponent  implements OnInit {
   raiseTicket:boolean = false
@@ -31,6 +31,9 @@ export class SupportComponent  implements OnInit {
   openTickets: any = []
   closedTickets: any = []
 tickets: any = []
+orderId: any = ''
+orderService: any = ''
+state: boolean = false
 
 faqs: any = [
   {
@@ -79,11 +82,13 @@ faqs: any = [
     const navigation = this.router.getCurrentNavigation();
   const state = navigation?.extras.state;
   if (state) {
-    this.raiseTicket = state['showForm']
-    this.activeTab = state['activeTab']
-    this.title = state['orderId']
+    this.raiseTicket = true
+    this.activeTab = 'second'
+    this.orderId = state['orderId']
+    this.orderService = state['service']
+    this.state = true
   }
-     addIcons({ chevronForward, listCircle });
+     addIcons({ chevronForward, listCircle,  });
    }
 
   async ngOnInit() {
@@ -124,7 +129,8 @@ createTicket(){
     "token": this.token,
     "title": this.title,
     "details": this.details,
-    "ticket_id": ticket_id
+    "orderId": this.orderId,
+    "orderService": this.orderService
   }
   this.isCreating = true
   this.supportService.createTicket(params).subscribe((res:any) => {
@@ -132,7 +138,12 @@ createTicket(){
     this.isCreating = false
     this.title = ''
     this.details = ''
-      this.toastMessage = `${res.ticket_id} created successfully`;
+    this.orderId = ''
+    this.orderService = ''
+    this.state = false 
+    this.activeTab = 'first'
+    this.getTickets()
+      this.toastMessage = `${res.data.ticket_id} created successfully`;
       setTimeout(()=>{
         this.isToastOpen = false
       },3000)
@@ -147,18 +158,16 @@ createTicket(){
 }
 
 getTickets(){
-  let params = {
-    "token": this.token,
-  }
+  
   this.isLoading = true
-  this.supportService.getTickets(params).subscribe((res:any) => {
-    this.tickets = res
+  this.supportService.getTickets().subscribe((res:any) => {
+    this.tickets = res.data
+    this.isLoading = false
     this.openTickets = []
       this.closedTickets = []
     this.tickets.forEach((element:any) => {
       this.isLoading = false
-      
-        if(element.status == 'Open'){
+        if(element.status[element.status.length - 1].status == 'Open'){
           this.openTickets.push(element);
           console.log(this.openTickets);
         } else {
