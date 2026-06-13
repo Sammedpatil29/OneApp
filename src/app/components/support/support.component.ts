@@ -3,7 +3,7 @@ import { IonHeader, IonToolbar, IonSearchbar, IonTitle, IonLabel,IonSkeletonText
 import { NodataComponent } from "../nodata/nodata.component";
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
-import { chevronForward, listCircle } from 'ionicons/icons';
+import { chevronForward, listCircle, arrowBackOutline } from 'ionicons/icons';
 import { ModalController } from '@ionic/angular';
 import { CustonModalComponent } from '../custon-modal/custon-modal.component';
 import { SupportService } from 'src/app/services/support.service';
@@ -88,7 +88,7 @@ faqs: any = [
     this.orderService = state['service']
     this.state = true
   }
-     addIcons({ chevronForward, listCircle,  });
+     addIcons({ chevronForward, listCircle, arrowBackOutline});
    }
 
   async ngOnInit() {
@@ -185,5 +185,11 @@ goBack(){
     this.navCtrl.back()
   }
 
-
+clear(){
+  this.title = ''
+  this.details = ''
+  this.orderId = ''
+  this.orderService = ''
+  this.state = false
+}
 }

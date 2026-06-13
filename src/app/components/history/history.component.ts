@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { IonContent, IonCardSubtitle, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonButton, IonIcon, IonHeader, IonToolbar, IonTitle, IonNote, IonList, IonItem, IonLabel, IonText, IonChip, IonSelect, IonSelectOption, IonRefresher, IonRefresherContent, IonSpinner, IonButtons, IonSkeletonText } from "@ionic/angular/standalone";
 import { addIcons } from 'ionicons';
-import { library, playCircle, radio, search, person, home, homeOutline, time, helpCircle, homeSharp, searchOutline, funnel, funnelOutline } from 'ionicons/icons';
+import { library, playCircle, radio, search, person, home, homeOutline, time, helpCircle, homeSharp, searchOutline, funnel, funnelOutline, arrowBackOutline } from 'ionicons/icons';
 import { HistoryService } from './history.service';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -57,6 +57,7 @@ export class HistoryComponent implements OnInit {
       playCircle,
       funnel,
       funnelOutline,
+      arrowBackOutline
     });
   }
 
