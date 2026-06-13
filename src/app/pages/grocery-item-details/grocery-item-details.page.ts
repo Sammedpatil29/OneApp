@@ -16,7 +16,7 @@ import { NavController } from '@ionic/angular';
   templateUrl: './grocery-item-details.page.html',
   styleUrls: ['./grocery-item-details.page.scss'],
   standalone: true,
-  imports: [IonSkeletonText, IonBackButton, IonFooter, IonIcon, IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, ErrorComponent, ProductCardComponent]
+  imports: [IonSkeletonText, IonBackButton, IonFooter, IonIcon, IonButtons, IonContent, IonHeader, IonToolbar, CommonModule, FormsModule, ErrorComponent, ProductCardComponent]
 })
 export class GroceryItemDetailsPage implements OnInit {
 

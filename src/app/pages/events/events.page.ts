@@ -18,8 +18,7 @@ import { EventDialogComponent } from 'src/app/components/event-dialog/event-dial
   imports: [IonRefresherContent, IonRefresher, 
     CommonModule, FormsModule, FooterComponent,
     IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon,
-    IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCardSubtitle, IonImg,
-    IonModal, IonSpinner, IonSearchbar, IonSkeletonText, IonBadge, IonFab, IonFabButton
+     IonSearchbar, IonSkeletonText, IonFab, IonFabButton
   ]
 })
 export class EventsPage implements OnInit {

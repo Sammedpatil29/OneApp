@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
   templateUrl: './ride-selection-page.page.html',
   styleUrls: ['./ride-selection-page.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, RideSelectionComponent]
+  imports: [IonContent, CommonModule, FormsModule, RideSelectionComponent]
 })
 export class RideSelectionPagePage implements OnInit {
 tripData: any;

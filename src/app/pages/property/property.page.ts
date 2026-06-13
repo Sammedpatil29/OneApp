@@ -7,7 +7,7 @@ import { IonHeader, IonChip, IonSearchbar, IonContent, IonToolbar, IonCard, IonC
   selector: 'app-property',
   templateUrl: './property.page.html',
   styleUrls: ['./property.page.scss'],
-  imports: [IonButton, IonBadge, FormsModule, IonCardContent, IonCard, IonToolbar, IonContent, IonSearchbar, IonChip, IonHeader, CommonModule]
+  imports: [ IonBadge, FormsModule, IonCardContent, IonCard, IonToolbar, IonContent, IonSearchbar, IonChip, IonHeader, CommonModule]
 })
 export class PropertyPage {
 
