@@ -8,7 +8,7 @@ import { IonContent, IonHeader, IonTitle, IonToolbar, IonApp, IonRouterOutlet } 
   templateUrl: './property-layout.page.html',
   styleUrls: ['./property-layout.page.scss'],
   standalone: true,
-  imports: [IonRouterOutlet, IonApp, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonRouterOutlet, IonApp, CommonModule, FormsModule]
 })
 export class PropertyLayoutPage implements OnInit {
 

@@ -14,7 +14,7 @@ import { Geolocation, Position } from '@capacitor/geolocation';
   templateUrl: './ride.page.html',
   styleUrls: ['./ride.page.scss'],
   standalone: true,
-  imports: [IonSpinner, IonSearchbar, IonIcon, IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, RideSelectionComponent]
+  imports: [IonSpinner, IonContent, IonTitle, CommonModule, FormsModule, RideSelectionComponent]
 })
 export class RidePage implements OnInit, AfterViewInit, OnDestroy {
 @ViewChild('autocompleteInput') autocompleteInput!: ElementRef<HTMLInputElement>;

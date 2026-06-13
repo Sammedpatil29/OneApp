@@ -14,7 +14,7 @@ import { Router } from '@angular/router';
   templateUrl: './grocery-search.page.html',
   styleUrls: ['./grocery-search.page.scss'],
   standalone: true,
-  imports: [IonSkeletonText, IonTitle, IonFooter, IonIcon, IonButton, IonButtons, IonSearchbar, IonToolbar, IonHeader, IonContent, CommonModule, FormsModule]
+  imports: [IonSkeletonText, IonIcon, IonSearchbar, IonToolbar, IonHeader, IonContent, CommonModule, FormsModule]
 })
 export class GrocerySearchPage implements OnInit {
 

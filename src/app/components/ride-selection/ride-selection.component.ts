@@ -13,7 +13,7 @@ import { AuthService } from "src/app/services/auth.service";
   selector: 'app-ride-selection',
   templateUrl: './ride-selection.component.html',
   styleUrls: ['./ride-selection.component.scss'],
-  imports: [IonToast, IonSkeletonText, IonSpinner, IonButton, IonTitle, CommonModule, FormsModule]
+  imports: [IonToast, IonSkeletonText, IonButton, CommonModule, FormsModule]
 })
 export class RideSelectionComponent  implements OnInit {
 

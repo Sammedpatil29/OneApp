@@ -9,7 +9,7 @@ import { SearchComponent } from "../../components/search/search.component";
   templateUrl: './search.page.html',
   styleUrls: ['./search.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, SearchComponent]
+  imports: [IonContent, CommonModule, FormsModule, SearchComponent]
 })
 export class SearchPage implements OnInit {
 

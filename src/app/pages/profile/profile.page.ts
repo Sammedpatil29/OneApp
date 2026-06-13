@@ -20,7 +20,7 @@ interface Profile {
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
   standalone: true,
-  imports: [IonSpinner, IonButtons, IonButton, IonIcon, IonItem, IonSkeletonText, IonLabel, IonAvatar, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonButtons, IonButton, IonIcon, IonItem, IonSkeletonText, IonLabel, IonAvatar, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
 export class ProfilePage implements OnInit {
 profileData: any = {

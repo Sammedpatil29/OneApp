@@ -39,7 +39,7 @@ register();
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   encapsulation: ViewEncapsulation.None,
-  imports: [IonSkeletonText, IonRefresherContent, IonRefresher, IonGrid, IonRow, IonCol, IonSpinner, IonButton, IonButtons, IonContent, CommonModule, FormsModule, IonIcon, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, FooterComponent, IonTitle, IonToolbar, IonHeader, AddressComponent, RouterLink]
+  imports: [IonSkeletonText, IonRefresherContent, IonRefresher, IonGrid, IonRow, IonCol, IonButton, IonButtons, IonContent, CommonModule, FormsModule, IonIcon, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, FooterComponent, IonTitle, IonToolbar, IonHeader, AddressComponent]
 })
 export class HomePage implements OnInit {
   // UI State
