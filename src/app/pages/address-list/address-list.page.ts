@@ -103,18 +103,14 @@ addresses: any = []
   }
 
   deleteAddress(id:any){
-    let params = {
-      "token": this.token
-    }
-    this.isSpinnerLoading = true
-    this.locationService.deleteAddress(params, id).subscribe(res => {
+    this.locationService.deleteAddress(this.token, id).subscribe(res => {
       // alert("deleted successfully")
       this.isSpinnerLoading = false
       setTimeout(()=>{
         this.getAddressList(false)
       })
       this.isToastOpen = true
-      this.toastMessage = "address deleted successfully";
+      this.toastMessage = "Address deleted successfully";
       setTimeout(()=>{
         this.isToastOpen = false
       },3000)
