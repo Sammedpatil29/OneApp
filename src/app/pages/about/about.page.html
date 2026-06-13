@@ -169,10 +169,26 @@
       <ion-button class="book-btn w-100" (click)="openLocation()">add New Address</ion-button>
     </footer>
     } @else {
-      <div class="loader-state">
-      <ion-spinner name="crescent"></ion-spinner>
-      <p>Loading Address</p>
-    </div>
+      <section>
+        @for (i of [1,2,3,4,5]; track i) {
+          <ion-list class="border mt-2 mx-3" style="border-radius: 20px;">
+            <ion-item lines="none">
+              <ion-label>
+                <div class="d-flex align-items-center mb-2 mt-1">
+                  <ion-skeleton-text animated style="width: 60px; height: 22px; border-radius: 10px; margin-right: 10px;"></ion-skeleton-text>
+                  <ion-skeleton-text animated style="width: 100px; height: 16px; border-radius: 4px;"></ion-skeleton-text>
+                </div>
+                <ion-skeleton-text animated style="width: 90%; height: 14px; border-radius: 4px; margin-bottom: 6px;"></ion-skeleton-text>
+                <ion-skeleton-text animated style="width: 60%; height: 14px; border-radius: 4px;"></ion-skeleton-text>
+              </ion-label>
+              <div class="metadata-end-wrapper me-2 d-flex align-items-center gap-3" slot="end">
+                <ion-skeleton-text animated style="width: 18px; height: 18px; border-radius: 50%; margin: 0;"></ion-skeleton-text>
+                <ion-skeleton-text animated style="width: 18px; height: 18px; border-radius: 4px; margin: 0;"></ion-skeleton-text>
+              </div>
+            </ion-item>
+          </ion-list>
+        }
+      </section>
     }
   </ion-content>
 }  @else if (data == 'Personal Details') {
