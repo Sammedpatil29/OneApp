@@ -13,14 +13,77 @@
 <ion-content [fullscreen]="true" class="bg-light">
 
   @if(isLoading) {
-    <div class="mx-3 mt-3 skeleton-box" style="height: 150px; border-radius: 12px;"></div>
-    <div class="mx-3 mt-3 skeleton-box" style="height: 200px; border-radius: 12px;"></div>
+    <!-- Item Details Skeleton -->
+    <div class="section-card mt-3">
+      <div class="header">
+        <ion-skeleton-text animated style="width: 40%; height: 20px; border-radius: 4px; margin: 0;"></ion-skeleton-text>
+      </div>
+      <div class="body pb-2">
+        @for (i of [1, 2]; track i) {
+          <div class="cart-item-wrapper d-flex align-items-center mb-3">
+            <div class="item-img-box">
+              <ion-skeleton-text animated style="width: 60px; height: 60px; border-radius: 10px; margin: 0;"></ion-skeleton-text>
+            </div>
+            <div class="item-details-box flex-grow-1 ms-3">
+              <ion-skeleton-text animated style="width: 70%; height: 16px; border-radius: 4px; margin-bottom: 8px;"></ion-skeleton-text>
+              <ion-skeleton-text animated style="width: 40%; height: 12px; border-radius: 4px; margin-bottom: 8px;"></ion-skeleton-text>
+              <ion-skeleton-text animated style="width: 30%; height: 16px; border-radius: 4px; margin: 0;"></ion-skeleton-text>
+            </div>
+            <div class="qty-btn-group" style="width: 80px; height: 32px; border-radius: 6px; overflow: hidden; border: none; background: transparent;">
+              <ion-skeleton-text animated style="width: 100%; height: 100%; margin: 0;"></ion-skeleton-text>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Coupon Skeleton -->
+    <div class="section-card">
+      <div class="header">
+        <ion-skeleton-text animated style="width: 40%; height: 20px; border-radius: 4px; margin: 0;"></ion-skeleton-text>
+      </div>
+      <div class="body py-3">
+        <div class="d-flex gap-2">
+          <ion-skeleton-text animated style="width: 70%; height: 40px; border-radius: 8px; margin: 0;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 30%; height: 40px; border-radius: 8px; margin: 0;"></ion-skeleton-text>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bill Details Skeleton -->
+    <div class="section-card">
+      <div class="header">
+        <ion-skeleton-text animated style="width: 30%; height: 20px; border-radius: 4px; margin: 0;"></ion-skeleton-text>
+      </div>
+      <div class="body py-3">
+        @for (i of [1, 2, 3, 4]; track i) {
+          <div class="d-flex justify-content-between mb-3">
+            <ion-skeleton-text animated style="width: 50%; height: 16px; border-radius: 4px; margin: 0;"></ion-skeleton-text>
+            <ion-skeleton-text animated style="width: 20%; height: 16px; border-radius: 4px; margin: 0;"></ion-skeleton-text>
+          </div>
+        }
+        <div class="d-flex justify-content-between mt-3 pt-2" style="border-top: 1px dashed #eee;">
+          <ion-skeleton-text animated style="width: 30%; height: 20px; border-radius: 4px; margin: 0;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 25%; height: 20px; border-radius: 4px; margin: 0;"></ion-skeleton-text>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment Method Skeleton -->
+    <div class="section-card mb-5">
+      <div class="header">
+        <ion-skeleton-text animated style="width: 40%; height: 20px; border-radius: 4px; margin: 0;"></ion-skeleton-text>
+      </div>
+      <div class="body py-3">
+        <ion-skeleton-text animated style="width: 100%; height: 60px; border-radius: 12px; margin-bottom: 10px;"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width: 100%; height: 60px; border-radius: 12px; margin: 0;"></ion-skeleton-text>
+      </div>
+    </div>
   } @else if (isError){
     <app-error 
       title="Failed to Load Cart" 
       subtitle="Please check your internet connection and try again."
-      buttonText="Retry"
-      (retry)="fetchCartData()">
+      buttonText="Retry">
     </app-error>
   } @else {
     @if(items.length > 0) {
@@ -65,7 +128,8 @@
       </div>
     </div>
 
-    <div class="section-card swiper-section">
+    @if(suggestions.length > 0){
+      <div class="section-card swiper-section">
       <div class="header">
         You might need
       </div>
@@ -82,6 +146,7 @@
     </div>
       </div>
     </div>
+    }
 
     <div class="section-card">
       <div class="header d-flex justify-content-between align-items-center">
@@ -92,8 +157,11 @@
         @if(!isCouponApplied) {
           <div class="d-flex gap-2">
             <input type="text" [(ngModel)]="couponCode" placeholder="Enter Code (e.g. WELCOME50)" class="coupon-input flex-grow-1">
-            <button class="apply-btn" (click)="applyCoupon()">APPLY</button>
+            <button class="apply-btn" (click)="applyCoupon()" [disabled]="!couponCode">APPLY</button>
           </div>
+          @if(!isCouponApplied && couponMessage) {
+             <small class="text-danger px-1" style="font-size: 13px">{{couponMessage}}</small>
+          }
         } @else {
           <div class="applied-coupon d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center gap-2">
@@ -192,7 +260,7 @@
       <ion-icon name="location" style="color: var(--grocery-theme-color); font-size: 30px;"></ion-icon>
       <div class="ms-2 flex-grow-1">
         <div class="fw-bold" style="font-size: 13px;">Delivering to Home</div>
-        <div class="text-truncate text-secondary" style="font-size: 11px; width: 80%">{{address.address}}</div>
+        <div class="text-truncate text-secondary" style="font-size: 11px; width: 80%">{{address?.address}}</div>
       </div>
       <div class="text-uppercase fw-bold" style="font-size: 11px; color: var(--grocery-theme-color);" (click)="openLocation()">Change</div>
     </div>

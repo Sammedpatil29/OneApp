@@ -42,7 +42,9 @@
   }
 
   @if(item.status[item.status.length - 1].status === 'Open'){
-    <ion-button class="book-btn w-100" color="danger" (click)="closeTicket()">Close Ticket</ion-button>
+    <ion-footer class="position-fixed bottom-0 w-100">
+      <ion-button class="book-btn w-100" color="danger" (click)="closeTicket()">Close Ticket</ion-button>
+    </ion-footer>
   }
 
   </div>
