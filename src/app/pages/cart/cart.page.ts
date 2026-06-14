@@ -24,8 +24,10 @@ export class CartPage implements OnInit, OnDestroy {
 
   isLoading = true;
   isError: boolean = false;
+  applyingCoupon = false
   checking = false;
   isOrderPlaced = false;
+  insideServiceArea = false;
   couponMessage = '';
   // Polling State
   pendingOrderId: any = null;
@@ -62,8 +64,11 @@ export class CartPage implements OnInit, OnDestroy {
   async ngOnInit() {
     this.token = await this.authService.getToken();
     this.locationService.location$.subscribe((res:any)=>{
-      this.address = res
-    })
+        if (res) {
+          this.address = res;
+          this.checkServiceAvailability();
+        }
+      });
     this.checkPendingOrder();
     this.isLoading = true;
     this.groceryService.cart$.subscribe((cartItems) => {
@@ -72,6 +77,39 @@ export class CartPage implements OnInit, OnDestroy {
       this.fetchCartData(false);
       this.cdr.markForCheck();
     });
+  }
+
+  checkServiceAvailability() {
+    if (!this.address || !this.address.lat || !this.address.lng) {
+      this.insideServiceArea = false;
+      return;
+    }
+
+    this.locationService.getPolygonData().subscribe((res:any)=>{
+      if (res && res.data && res.data.polygon) {
+        const polygonCoords = res.data.polygon.map((point:any) => ({ lat: point.lat, lng: point.lng }));
+        const userLocation = { lat: this.address.lat, lng: this.address.lng };
+        this.insideServiceArea = this.isPointInPolygon(userLocation, polygonCoords);
+      } else {
+        this.insideServiceArea = false;
+      }
+    }, error => {
+      console.error('Error fetching polygon data:', error);
+      this.insideServiceArea = false;
+    });
+  }
+
+  isPointInPolygon(point: any, polygon: any[]): boolean {
+    let isInside = false;
+    const x = point.lat, y = point.lng;
+
+    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+      if (((polygon[i].lng > y) !== (polygon[j].lng > y)) &&
+          (x < (polygon[j].lat - polygon[i].lat) * (y - polygon[i].lng) / (polygon[j].lng - polygon[i].lng) + polygon[i].lat)) {
+        isInside = !isInside;
+      }
+    }
+    return isInside;
   }
 
   fetchCartData(reload:boolean) {
@@ -187,13 +225,15 @@ export class CartPage implements OnInit, OnDestroy {
       this.couponMessage = 'Please enter a coupon code';
       return;
     }
-    // Simulate API check
+    this.applyingCoupon = true;
 
     this.fetchCartData(false)
     if(this.billDetails.couponStatus === 'applied') {
+      this.applyingCoupon = false;  
       this.isCouponApplied = true;
       this.couponMessage = this.billDetails.couponMessage;
     } else {
+      this.applyingCoupon = false;
       this.isCouponApplied = false;
       this.couponMessage = this.billDetails.couponMessage;
     }
