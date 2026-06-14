@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { IonContent, IonTitle, IonButton } from "@ionic/angular/standalone";
+import { IonContent, IonTitle, IonButton, IonFooter } from "@ionic/angular/standalone";
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ModalController } from '@ionic/angular';
@@ -9,7 +9,7 @@ import { SupportService } from 'src/app/services/support.service';
   selector: 'app-custon-modal',
   templateUrl: './custon-modal.component.html',
   styleUrls: ['./custon-modal.component.scss'],
-  imports: [IonButton, IonTitle, IonContent, CommonModule, FormsModule],
+  imports: [IonFooter, IonButton, IonTitle, IonContent, CommonModule, FormsModule],
 })
 export class CustonModalComponent  implements OnInit {
   @Input() item: any;

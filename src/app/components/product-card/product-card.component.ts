@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { addIcons } from 'ionicons';
@@ -11,7 +11,7 @@ import { timeOutline } from 'ionicons/icons';
   standalone: true,
   imports: [CommonModule, IonicModule]
 })
-export class ProductCardComponent {
+export class ProductCardComponent implements OnInit {
 
   @Input() product: any; // The product object
   @Input() qty: number = 0; // The live quantity from the parent
@@ -56,8 +56,14 @@ export class ProductCardComponent {
   '#F2F2F2'  // Concrete (Light)
 ];
 
+  cardBackground: string = '';
+
   constructor() {
     addIcons({ timeOutline });
+  }
+
+  ngOnInit() {
+    this.cardBackground = this.getRandomColor();
   }
 
   onCardClick() {
