@@ -26,7 +26,7 @@ export class CartPage implements OnInit, OnDestroy {
   isError: boolean = false;
   checking = false;
   isOrderPlaced = false;
-  
+  couponMessage = '';
   // Polling State
   pendingOrderId: any = null;
   pollingInterval: any = null;
@@ -65,17 +65,19 @@ export class CartPage implements OnInit, OnDestroy {
       this.address = res
     })
     this.checkPendingOrder();
+    this.isLoading = true;
     this.groceryService.cart$.subscribe((cartItems) => {
       console.log('Cart Items Updated:', cartItems);
       this.cartItems = cartItems;
-      this.fetchCartData();
-
-      this.cdr.detectChanges();
+      this.fetchCartData(false);
+      this.cdr.markForCheck();
     });
   }
 
-  fetchCartData() {
-    this.isLoading = true;
+  fetchCartData(reload:boolean) {
+    if(reload){
+      this.isLoading = true;
+    }
     this.isError = false;
      this.groceryService.getCartdata(this.token, this.couponCode).subscribe(apiResponse => {
         console.log('📦 Cart API Response:', apiResponse);
@@ -83,6 +85,7 @@ export class CartPage implements OnInit, OnDestroy {
       this.cartData = apiResponse.data;
       this.items = apiResponse.data.items;
       this.billDetails = apiResponse.data.billDetails;
+      this.couponMessage = this.billDetails.couponMessage;
       this.suggestions = apiResponse.data.suggestions;
       if(this.billDetails.couponStatus === 'applied') {
         this.isCouponApplied = true;
@@ -179,19 +182,20 @@ export class CartPage implements OnInit, OnDestroy {
     this.presentToast('Item added to cart');
   }
 
-  applyCoupon() {
+    applyCoupon() {
     if(!this.couponCode) {
-      this.presentToast('Please enter a coupon code');
+      this.couponMessage = 'Please enter a coupon code';
       return;
     }
     // Simulate API check
-    this.fetchCartData()
+
+    this.fetchCartData(false)
     if(this.billDetails.couponStatus === 'applied') {
       this.isCouponApplied = true;
-      this.presentToast('Coupon applied successfully');
+      this.couponMessage = this.billDetails.couponMessage;
     } else {
       this.isCouponApplied = false;
-      this.presentToast('Invalid coupon code');
+      this.couponMessage = this.billDetails.couponMessage;
     }
     // Update bill details logic would happen here based on API response
   }
@@ -199,7 +203,7 @@ export class CartPage implements OnInit, OnDestroy {
   removeCoupon() {
     this.isCouponApplied = false;
     this.couponCode = '';
-    this.fetchCartData();
+    this.fetchCartData(false);
   }
 
   pay() {
@@ -208,7 +212,7 @@ export class CartPage implements OnInit, OnDestroy {
       return;
     }
     
-    this.isLoading = true;
+    // this.isLoading = true;
     if(this.selectedPayment === 'cod') {
       let params = {
         cartItems: this.cartData.items,

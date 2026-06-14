@@ -3,7 +3,7 @@
 </ion-app>
 
 @if (!currentRoute.includes('/layout/grocery-layout/grocery-item-details') && !currentRoute.includes('/layout/grocery-layout/cart') && !currentRoute.includes('/layout/grocery-layout/grocery-order-details')) {
-  <ion-footer class="cart-footer" *ngIf="totalItems > 0" (click)="goToCart()">
+  <ion-footer class="cart-footer position-fixed bottom-0 w-100" *ngIf="totalItems > 0" (click)="goToCart()">
   <div class="cart-bar" >
     <div class="cart-info">
       <small>{{totalItems}} ITEMS</small>
