@@ -27,6 +27,7 @@ ion-toolbar {
   padding: 20px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.05);
   text-align: center;
+  color: white;
 
   .status-header {
     display: flex;
@@ -53,8 +54,8 @@ ion-toolbar {
       &.danger { color: #e74c3c; background: #fadbd8; }
     }
 
-    h2 { margin: 0; font-size: 20px; font-weight: 800; color: var(--text-dark); }
-    p { margin: 4px 0 0; color: var(--text-grey); font-size: 14px; }
+    h2 { margin: 0; font-size: 20px; font-weight: 800; color: white; }
+    p { margin: 4px 0 0; color: rgb(243, 238, 238); font-size: 14px; }
   }
 
   /* Timeline */

@@ -8,7 +8,11 @@ import {
   receiptOutline, chevronBackOutline, chatbubbleEllipsesOutline,
   cubeOutline, checkmarkDoneCircleOutline, closeCircleOutline,
   star,
-  call
+  call,
+  map,
+  callOutline,
+  mapOutline,
+  checkmarkOutline
 } from 'ionicons/icons';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GroceryService } from 'src/app/services/grocery.service';
@@ -83,7 +87,7 @@ export class GroceryOrderDetailsPage implements OnInit {
     addIcons({ 
       checkmarkCircle, timeOutline, bicycleOutline, homeOutline, 
       receiptOutline, chevronBackOutline, chatbubbleEllipsesOutline,
-      cubeOutline, checkmarkDoneCircleOutline, closeCircleOutline, star, call
+      cubeOutline, checkmarkDoneCircleOutline, closeCircleOutline, star, callOutline, mapOutline, checkmarkOutline
     });
   }
 
@@ -187,4 +191,66 @@ export class GroceryOrderDetailsPage implements OnInit {
       this.isCancelling = false
     })
   }
+
+  getColor(status: any) {
+  switch (status?.toLowerCase()) {
+    case 'pending':
+      return 'linear-gradient(135deg, #4CAF50, #66BB6A)'; // Green
+
+    case 'confirmed':
+      return 'linear-gradient(135deg, #2196F3, #42A5F5)'; // Blue
+
+    case 'rider assigned':
+      return 'linear-gradient(135deg, #FF9800, #FFB74D)'; // Orange
+
+    case 'packed':
+      return 'linear-gradient(135deg, #9C27B0, #BA68C8)'; // Purple
+
+    case 'cancelled':
+      return 'linear-gradient(135deg, #F44336, #EF5350)'; // Red
+
+    case 'on the way':
+      return 'linear-gradient(135deg, #3F51B5, #5C6BC0)'; // Indigo
+
+    case 'reached':
+      return 'linear-gradient(135deg, #607D8B, #78909C)'; // Blue Grey
+
+    case 'delivered':
+      return 'linear-gradient(135deg, #009688, #26A69A)'; // Teal
+
+    default:
+      return '#a000e2';
+  }
+}
+
+ getMessage(status: any) {
+  switch (status?.toLowerCase()) {
+    case 'pending':
+      return '⏳ Order received! We’re on it.';
+
+    case 'confirmed':
+      return '✅ Order confirmed! Preparing it now.';
+
+    case 'rider assigned':
+      return '🛵 Rider assigned! Pickup happening soon.';
+
+    case 'packed':
+      return '📦 Packed & ready! Dispatching shortly.';
+
+    case 'cancelled':
+      return 'Order is cancelled.';
+
+    case 'on the way':
+      return '🚀 On the way! Almost there.';
+
+    case 'reached':
+      return '📍 Rider has arrived! Please be ready.';
+
+    case 'delivered':
+      return '🎉 Delivered! Enjoy your order.';
+
+    default:
+      return '⚡ We’re preparing your order!';
+  }
+}
 }
