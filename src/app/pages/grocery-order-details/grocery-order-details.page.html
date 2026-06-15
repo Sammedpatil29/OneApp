@@ -24,9 +24,9 @@
     <div class="status-card-wrapper">
       <div class="status-card">
         <div class="status-header">
-          <div class="icon-box">
+          <!-- <div class="icon-box">
             <ion-skeleton-text animated style="width: 100%; height: 100%; border-radius: 50%;"></ion-skeleton-text>
-          </div>
+          </div> -->
           <div class="text-content" style="width: 100%;">
             <ion-skeleton-text animated style="width: 60%; height: 24px; margin-bottom: 8px; border-radius: 4px;"></ion-skeleton-text>
             <ion-skeleton-text animated style="width: 40%; height: 16px; border-radius: 4px;"></ion-skeleton-text>
@@ -102,14 +102,14 @@
     </app-error>
   } @else {
     <div class="status-card-wrapper">
-      <div class="status-card">
-        <div class="status-header">
-          <div class="icon-box" [ngClass]="getStatusColor(orderDetails?.status)">
+      <div class="status-card" [ngStyle]="{ background: getColor(orderDetails?.status) }">
+        <div class="status-header m-0">
+          <!-- <div class="icon-box" [ngClass]="getStatusColor(orderDetails?.status)">
             <ion-icon [name]="orderDetails?.status   === 'delivered' ? 'checkmark-done-circle-outline' : 'time-outline'"></ion-icon>
-          </div>
+          </div> -->
           <div class="text-content">
             <h2>{{ getStatusText(orderDetails?.status) }}</h2>
-            <p>Arriving in 15 mins</p> </div>
+            <p>{{getMessage(orderDetails?.status)}}</p> </div>
         </div>
       </div>
     </div>
@@ -136,8 +136,11 @@
               <ion-icon name="star" style="color: #f5b041;"></ion-icon> {{ orderDetails.rider_details.rating || 'New' }} &bull; {{orderDetails.rider_details.vehicle_type | titlecase}}
             </div>
           </div>
+          <!-- <ion-button fill="clear" color="primary" [href]="'tel:' + orderDetails.rider_details.contact" style="--padding-start: 8px; --padding-end: 8px; height: 36px; margin: 0;" [disabled]="!orderDetails.rider_details.contact">
+            <ion-icon name="map-outline" slot="icon-only" style="font-size: 22px;"></ion-icon>
+          </ion-button> -->
           <ion-button fill="clear" color="primary" [href]="'tel:' + orderDetails.rider_details.contact" style="--padding-start: 8px; --padding-end: 8px; height: 36px; margin: 0;" [disabled]="!orderDetails.rider_details.contact">
-            <ion-icon name="call" slot="icon-only" style="font-size: 22px;"></ion-icon>
+            <ion-icon name="call-outline" slot="icon-only" style="font-size: 22px;"></ion-icon>
           </ion-button>
         </div>
       </div>
