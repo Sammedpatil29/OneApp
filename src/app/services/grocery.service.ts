@@ -171,6 +171,13 @@ export class GroceryService {
    });
     return this.http.get(`${this.apiUrl}/api/grocery-order/${id}`, { headers: headers})
   };
+
+  cancelOrder(params: any){
+    let headers = {
+      'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
+    }
+    return this.http.post(`${this.apiUrl}/api/grocery-order/cancel`, params, { headers });
+  }
 }
 
   

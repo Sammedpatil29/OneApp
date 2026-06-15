@@ -6,7 +6,9 @@ import { addIcons } from 'ionicons';
 import { 
   checkmarkCircle, timeOutline, bicycleOutline, homeOutline, 
   receiptOutline, chevronBackOutline, chatbubbleEllipsesOutline,
-  cubeOutline, checkmarkDoneCircleOutline, closeCircleOutline
+  cubeOutline, checkmarkDoneCircleOutline, closeCircleOutline,
+  star,
+  call
 } from 'ionicons/icons';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GroceryService } from 'src/app/services/grocery.service';
@@ -28,6 +30,7 @@ export class GroceryOrderDetailsPage implements OnInit {
   // Mock Data matching your JSON Response
   orderDetails:any = {}
   isLoading: boolean = false;
+  isCancelling: boolean = false;
   isError: boolean = false;
   // backButtonSubscription: any;
   
@@ -80,7 +83,7 @@ export class GroceryOrderDetailsPage implements OnInit {
     addIcons({ 
       checkmarkCircle, timeOutline, bicycleOutline, homeOutline, 
       receiptOutline, chevronBackOutline, chatbubbleEllipsesOutline,
-      cubeOutline, checkmarkDoneCircleOutline, closeCircleOutline
+      cubeOutline, checkmarkDoneCircleOutline, closeCircleOutline, star, call
     });
   }
 
@@ -90,7 +93,7 @@ export class GroceryOrderDetailsPage implements OnInit {
 
 
     this.token = await this.authServcie.getToken();
-    this.getOrderDetails()
+    this.getOrderDetails(true)
   }
 
   // ionViewDidEnter() {
@@ -137,8 +140,15 @@ export class GroceryOrderDetailsPage implements OnInit {
   return status.replace(/_/g, ' ').toUpperCase();
 }
 
-  getOrderDetails(){
-    this.isLoading = true;
+  getInitials(name: string) {
+    if (!name) return '';
+    return name.trim().split(/\s+/).map((n: string) => n[0]).join('').toUpperCase().substring(0, 2);
+  }
+
+  getOrderDetails(reload:any){
+    if(reload){
+      this.isLoading = true;
+    }
     this.isError = false;
     this.groceryService.getOrderById(this.token, this.orderId).subscribe((res:any)=>{
       this.orderDetails = res.data;
@@ -152,7 +162,7 @@ export class GroceryOrderDetailsPage implements OnInit {
 
   doRefresh(event:any) {
     setTimeout(() => {
-      this.getOrderDetails();
+      this.getOrderDetails(true);
       event.target.complete();
     }, 500);
   }
@@ -163,5 +173,18 @@ export class GroceryOrderDetailsPage implements OnInit {
     } else {
       this.navCtrl.navigateRoot('/layout/example/home');
     }
+  }
+
+  cancelOrder(){
+    let params = {
+      "orderId": this.orderDetails?.id
+    }
+    this.isCancelling = true
+    this.groceryService.cancelOrder(params).subscribe((res:any)=>{
+      this.isCancelling = false
+      this.getOrderDetails(true);
+    }, error => {
+      this.isCancelling = false
+    })
   }
 }
