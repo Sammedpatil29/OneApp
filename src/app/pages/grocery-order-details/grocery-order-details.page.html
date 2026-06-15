@@ -98,7 +98,7 @@
       title="Failed to Load Categories" 
       subtitle="Please check your internet connection and try again."
       buttonText="Retry"
-      (retry)="getOrderDetails()">
+      (retry)="getOrderDetails(true)">
     </app-error>
   } @else {
     <div class="status-card-wrapper">
@@ -114,6 +114,35 @@
       </div>
     </div>
 
+    @if (orderDetails?.rider_details) {
+      <div class="section-card">
+        <div class="section-header">
+          <ion-icon name="bicycle-outline"></ion-icon>
+          <span>Delivery Partner</span>
+        </div>
+        <div class="d-flex align-items-center mt-2 p-2" style="background: #f9f9f9; border-radius: 12px; border: 1px dashed #ddd;">
+          <div style="width: 48px; height: 48px; border-radius: 50%; background: #e0e0e0; overflow: hidden; margin-right: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #555; font-size: 18px;">
+            @if (orderDetails.rider_details.image_url) {
+              <img [src]="orderDetails.rider_details.image_url" alt="Rider" style="width: 100%; height: 100%; object-fit: cover;">
+            } @else {
+              {{ getInitials(orderDetails.rider_details.name || 'Partner Assigned') }}
+            }
+          </div>
+          <div style="flex: 1;">
+            <h4 style="margin: 0 0 2px; font-size: 14px; font-weight: 600; color: var(--text-dark);">
+              {{ orderDetails.rider_details.name || 'Partner Assigned' }}
+            </h4>
+            <div style="font-size: 12px; color: var(--text-grey); display: flex; align-items: center; gap: 4px;">
+              <ion-icon name="star" style="color: #f5b041;"></ion-icon> {{ orderDetails.rider_details.rating || 'New' }} &bull; {{orderDetails.rider_details.vehicle_type | titlecase}}
+            </div>
+          </div>
+          <ion-button fill="clear" color="primary" [href]="'tel:' + orderDetails.rider_details.contact" style="--padding-start: 8px; --padding-end: 8px; height: 36px; margin: 0;" [disabled]="!orderDetails.rider_details.contact">
+            <ion-icon name="call" slot="icon-only" style="font-size: 22px;"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    }
+
     <div class="section-card">
       <div class="section-header">
         <ion-icon name="time-outline"></ion-icon>
@@ -122,8 +151,8 @@
       <div class="timeline-container mt-2 px-2">
         @for (step of orderDetails?.timeline; track step.status; let isLast = $last) {
           <div class="d-flex">
-            <div class="d-flex flex-column align-items-center me-3">
-              <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 24px; height: 24px; background-color: var(--ion-color-success, #2dd36f); color: white;">
+            <div class="d-flex flex-column align-items-center me-3 mt-1">
+              <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 15px; height: 15px; background-color: var(--ion-color-success, #2dd36f); color: white;">
                 <ion-icon name="checkmark-outline" style="font-size: 16px;"></ion-icon>
               </div>
               @if (!isLast) {
@@ -215,6 +244,15 @@
     </div>
   }
 
-  <div style="height: 40px;"></div>
+@if(orderDetails?.status.toLowerCase() == 'confirmed'){
+    <ion-button class="book-btn w-100 px-3" color="danger" (click)="cancelOrder()" [disabled]="isCancelling">
+      @if(isCancelling){
+        Cancelling...
+      } @else {
+        Cancel Order
+      }
+    </ion-button>
+}
+  <div class="mb-5"></div>
 
 </ion-content>
