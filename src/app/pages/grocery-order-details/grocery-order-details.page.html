@@ -1,8 +1,24 @@
-<ion-header class="ion-no-border">
+<!-- <ion-header class="ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-button (click)="goBack()" color="dark">
         <ion-icon name="chevron-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Track Order #{{orderDetails?.id}}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button color="primary" (click)="openHelp(orderDetails?.id)">
+        <ion-icon name="chatbubble-ellipses-outline"></ion-icon> Help
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header> -->
+
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back" color="dark"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-title>Track Order #{{orderDetails?.id}}</ion-title>
@@ -168,9 +184,15 @@
         @for (step of orderDetails?.timeline; track step.status; let isLast = $last) {
           <div class="d-flex">
             <div class="d-flex flex-column align-items-center me-3 mt-1">
-              <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 15px; height: 15px; background-color: var(--ion-color-success, #2dd36f); color: white;">
+              @if(step?.status?.toLowerCase() == 'cancelled'){
+                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 15px; height: 15px; background-color: #d60000; color: white;">
+                <ion-icon name="close-outline" style="font-size: 16px;"></ion-icon>
+              </div>
+              } @else {
+                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 15px; height: 15px; background-color: var(--ion-color-success, #2dd36f); color: white;">
                 <ion-icon name="checkmark-outline" style="font-size: 16px;"></ion-icon>
               </div>
+              }
               @if (!isLast) {
                 <div style="width: 2px; height: 30px; background-color: var(--ion-color-success, #2dd36f); opacity: 0.5; margin: 4px 0;"></div>
               }
