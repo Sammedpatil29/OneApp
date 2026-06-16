@@ -12,7 +12,9 @@ import {
   map,
   callOutline,
   mapOutline,
-  checkmarkOutline
+  checkmarkOutline,
+  closeOutline,
+  arrowBack
 } from 'ionicons/icons';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GroceryService } from 'src/app/services/grocery.service';
@@ -95,7 +97,7 @@ export class GroceryOrderDetailsPage implements OnInit {
     addIcons({ 
       checkmarkCircle, timeOutline, bicycleOutline, homeOutline, 
       receiptOutline, chevronBackOutline, chatbubbleEllipsesOutline,
-      cubeOutline, checkmarkDoneCircleOutline, closeCircleOutline, star, callOutline, mapOutline, checkmarkOutline
+      cubeOutline, checkmarkDoneCircleOutline, closeCircleOutline, star, callOutline, mapOutline, checkmarkOutline, closeOutline, arrowBack 
     });
   }
 
@@ -397,7 +399,7 @@ openMap(){
   if(this.viewMap){
     setTimeout(()=>{
       this.initMap();
-  }, 300)
+  }, 50)
   }
 }
 }

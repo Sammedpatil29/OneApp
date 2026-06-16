@@ -42,7 +42,7 @@ export class CartPage implements OnInit, OnDestroy {
 
   // UI State
   address:any;
-  selectedPayment = 'online'; // Default
+  selectedPayment = 'cod'; // Default
   couponCode = '';
   isCouponApplied = false;
   token:any;
