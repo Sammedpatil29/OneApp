@@ -101,7 +101,7 @@
       (retry)="getOrderDetails(true)">
     </app-error>
   } @else {
-    <div class="status-card-wrapper">
+    <div class="status-card-wrapper" style="position: relative; z-index: 1;">
       <div class="status-card" [ngStyle]="{ background: getColor(orderDetails?.status) }">
         <div class="status-header m-0">
           <!-- <div class="icon-box" [ngClass]="getStatusColor(orderDetails?.status)">
@@ -113,6 +113,14 @@
         </div>
       </div>
     </div>
+    
+    @if(viewMap){
+      <div class="status-card-wrapper pt-0">
+  <div class="status-card p-0" style="position: relative; background-color: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-top: -41px; z-index: 0;">
+    <div #mapElement id="map" style="width: 100%; height: 255px; display: block;"></div>
+  </div>
+</div>
+    }
 
     @if (orderDetails?.rider_details) {
       <div class="section-card">
@@ -136,13 +144,18 @@
               <ion-icon name="star" style="color: #f5b041;"></ion-icon> {{ orderDetails.rider_details.rating || 'New' }} &bull; {{orderDetails.rider_details.vehicle_type | titlecase}}
             </div>
           </div>
-          <!-- <ion-button fill="clear" color="primary" [href]="'tel:' + orderDetails.rider_details.contact" style="--padding-start: 8px; --padding-end: 8px; height: 36px; margin: 0;" [disabled]="!orderDetails.rider_details.contact">
+          
+          @if(orderDetails?.status?.toLowerCase() != 'delivered' || orderDetails?.status?.toLowerCase() != 'cancelled'){
+            <ion-button fill="clear" color="primary" (click)="openMap()" style="--padding-start: 8px; --padding-end: 8px; height: 36px; margin: 0;" [disabled]="!orderDetails.rider_details.contact">
             <ion-icon name="map-outline" slot="icon-only" style="font-size: 22px;"></ion-icon>
-          </ion-button> -->
-          <ion-button fill="clear" color="primary" [href]="'tel:' + orderDetails.rider_details.contact" style="--padding-start: 8px; --padding-end: 8px; height: 36px; margin: 0;" [disabled]="!orderDetails.rider_details.contact">
+          </ion-button>
+            <ion-button fill="clear" color="primary" [href]="'tel:' + orderDetails.rider_details.contact" style="--padding-start: 8px; --padding-end: 8px; height: 36px; margin: 0;" [disabled]="!orderDetails.rider_details.contact">
             <ion-icon name="call-outline" slot="icon-only" style="font-size: 22px;"></ion-icon>
           </ion-button>
+          }
         </div>
+
+        
       </div>
     }
 
