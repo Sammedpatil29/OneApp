@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, NavController, Platform } from '@ionic/angular';
@@ -19,6 +19,8 @@ import { GroceryService } from 'src/app/services/grocery.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { ErrorComponent } from "src/app/components/error/error.component";
 
+declare var google: any;
+
 @Component({
   selector: 'app-grocery-order-details',
   templateUrl: './grocery-order-details.page.html',
@@ -28,6 +30,11 @@ import { ErrorComponent } from "src/app/components/error/error.component";
 })
 export class GroceryOrderDetailsPage implements OnInit {
 
+  @ViewChild('mapElement') mapElement!: ElementRef;
+  map: any;
+  directionsService: any;
+  directionsRenderer: any;
+
   orderId:any;
   token:any;
   currentRoute: any;
@@ -35,6 +42,7 @@ export class GroceryOrderDetailsPage implements OnInit {
   orderDetails:any = {}
   isLoading: boolean = false;
   isCancelling: boolean = false;
+  viewMap: boolean = false;
   isError: boolean = false;
   // backButtonSubscription: any;
   
@@ -158,6 +166,11 @@ export class GroceryOrderDetailsPage implements OnInit {
       this.orderDetails = res.data;
       this.isLoading = false
       this.updateTimeline();
+      
+      // Wait for DOM to render the @if block before initializing the map
+      // setTimeout(() => {
+      //   this.initMap();
+      // }, 300);
     }, error => {
       this.isLoading = false;
       this.isError = true;
@@ -167,6 +180,9 @@ export class GroceryOrderDetailsPage implements OnInit {
   doRefresh(event:any) {
     setTimeout(() => {
       this.getOrderDetails(true);
+      if(this.viewMap){
+        this.initMap();
+      }
       event.target.complete();
     }, 500);
   }
@@ -179,6 +195,127 @@ export class GroceryOrderDetailsPage implements OnInit {
     }
   }
 
+  initMap() {
+    if (!this.mapElement || !this.orderDetails?.address || !this.orderDetails?.rider_details) return;
+
+    const deliveryLat = parseFloat(this.orderDetails.address.lat);
+    const deliveryLng = parseFloat(this.orderDetails.address.lng);
+    const riderLat = parseFloat(this.orderDetails.rider_details.current_lat);
+    const riderLng = parseFloat(this.orderDetails.rider_details.current_lng);
+
+    if (!deliveryLat || !deliveryLng || !riderLat || !riderLng) return;
+
+    const deliveryLoc = { lat: deliveryLat, lng: deliveryLng };
+    const riderLoc = { lat: riderLat, lng: riderLng };
+
+    // Hide Google Map Logo/Controls dynamically
+    const styleId = 'google-maps-hide-logo';
+    if (!document.getElementById(styleId)) {
+      const style = document.createElement('style');
+      style.id = styleId;
+      style.innerHTML = `
+        .gmnoprint a, .gmnoprint span, .gm-style-cc { display: none !important; }
+        .gmnoprint div { background: none !important; }
+        a[href^="https://maps.google.com/maps"], a[href^="https://www.google.com/maps"] { display: none !important; }
+      `;
+      document.head.appendChild(style);
+    }
+
+    // Custom Map Style blending with #a000e2 brand theme
+    const mapStyles = [
+      // Base background (Land) - Very soft purple tint
+      { elementType: "geometry", stylers: [{ color: "#f9f6fb" }] },
+      // Hide standard icons to keep it clean
+      { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
+      // Text styling matching the theme subtly
+      { elementType: "labels.text.fill", stylers: [{ color: "#8b7d91" }] },
+      { elementType: "labels.text.stroke", stylers: [{ color: "#ffffff" }] },
+      // Water elements - Soft theme purple
+      { featureType: "water", elementType: "geometry", stylers: [{ color: "#ebdcf0" }] },
+      // Parks & Nature
+      { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#eaf3eb" }] },
+      // Points of interest - Subtle grey-purple
+      { featureType: "poi", elementType: "geometry", stylers: [{ color: "#f2ebf5" }] },
+      // General roads - Crisp white
+      { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] },
+      // Highways - Slightly more prominent theme tint
+      { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#e6d6eb" }] },
+      { featureType: "road.highway", elementType: "labels.text.fill", stylers: [{ color: "#7c6885" }] }
+    ];
+
+    this.map = new google.maps.Map(this.mapElement.nativeElement, {
+      zoom: 14,
+      center: riderLoc,
+      disableDefaultUI: true,
+      keyboardShortcuts: false,
+      styles: mapStyles,
+      gestureHandling: 'greedy'
+    });
+
+    this.directionsService = new google.maps.DirectionsService();
+    this.directionsRenderer = new google.maps.DirectionsRenderer({
+      map: this.map,
+      suppressMarkers: true,
+      polylineOptions: {
+        strokeColor: '#a000e2',
+        strokeWeight: 4,
+        strokeOpacity: 0.8
+      }
+    });
+
+    this.calculateAndDisplayRoute(riderLoc, deliveryLoc);
+  }
+
+  calculateAndDisplayRoute(origin: any, destination: any) {
+    this.directionsService.route(
+      { origin, destination, travelMode: google.maps.TravelMode.DRIVING },
+      (response: any, status: any) => {
+        if (status === 'OK') {
+          this.directionsRenderer.setDirections(response);
+          const route = response.routes[0].legs[0];
+          this.addCustomMarkers(route.start_location, route.end_location);
+        } else {
+          console.error('Directions request failed due to ' + status);
+          
+          this.addCustomMarkers(origin, destination);
+          
+          const bounds = new google.maps.LatLngBounds();
+          bounds.extend(origin);
+          bounds.extend(destination);
+          this.map.fitBounds(bounds);
+        }
+      }
+    );
+  }
+
+  addCustomMarkers(origin: any, destination: any) {
+    // Rider Marker (A pulsating dot or simple bold circle)
+    const riderIcon = {
+      url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#a000e2" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="#fff"/></svg>'),
+      scaledSize: new google.maps.Size(32, 32),
+      anchor: new google.maps.Point(16, 16)
+    };
+
+    // Destination Marker (A red home icon)
+    const homeIcon = {
+      url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24"><path d="M12 2L1 11h3v11h16V11h3L12 2zm0 2.8l7 6.4V20H5v-8.8l7-6.4z" fill="#000" stroke="#fff" stroke-width="1"/><path d="M12 5.8L6 11.3V19h12v-7.7L12 5.8z" fill="#a000e2"/></svg>'),
+      scaledSize: new google.maps.Size(36, 36),
+      anchor: new google.maps.Point(18, 18)
+    };
+
+    new google.maps.Marker({
+      position: origin,
+      map: this.map,
+      icon: riderIcon
+    });
+
+    new google.maps.Marker({
+      position: destination,
+      map: this.map,
+      icon: homeIcon
+    });
+  }
+
   cancelOrder(){
     let params = {
       "orderId": this.orderDetails?.id
@@ -186,6 +323,7 @@ export class GroceryOrderDetailsPage implements OnInit {
     this.isCancelling = true
     this.groceryService.cancelOrder(params).subscribe((res:any)=>{
       this.isCancelling = false
+      this.viewMap = false;
       this.getOrderDetails(true);
     }, error => {
       this.isCancelling = false
@@ -251,6 +389,15 @@ export class GroceryOrderDetailsPage implements OnInit {
 
     default:
       return '⚡ We’re preparing your order!';
+  }
+}
+
+openMap(){
+  this.viewMap = !this.viewMap;
+  if(this.viewMap){
+    setTimeout(()=>{
+      this.initMap();
+  }, 300)
   }
 }
 }
