@@ -27,6 +27,8 @@ import { AuthService } from 'src/app/services/auth.service';
 import { EventsService } from 'src/app/services/events.service';
 import { GroceryService } from 'src/app/services/grocery.service';
 import { Geolocation } from '@capacitor/geolocation';
+import { Observable, forkJoin, of } from 'rxjs';
+import { catchError, finalize, tap } from 'rxjs/operators';
 
 
 declare var google: any;
@@ -124,13 +126,21 @@ export class HomePage implements OnInit {
       }
       this.fcmService.initPush();
 
-      await this.homeData();
+      // Using forkJoin to run API calls in parallel
+      forkJoin({
+        home: this.homeData(),
+        orders: this.getActiveOrders()
+      }).pipe(
+        finalize(() => {
+          // Delay slightly to allow DOM to paint properly
+          setTimeout(() => this.isLoading = false, 300);
+        })
+      ).subscribe();
       
 
     } catch (error) {
       console.error('❌ Error initializing home:', error);
-    } finally {
-      // isLoading will be handled inside homeData to ensure sync with data
+      this.isLoading = false;
     }
   }
 
@@ -180,26 +190,36 @@ export class HomePage implements OnInit {
 
   // --- Data Fetching ---
 
-  async homeData() {
-    this.isLoading = true;
-    this.commonService.getHomeData(this.token).subscribe((res: any) => {
-      this.banners = res.data.banners;
-      this.allServices = res.data.services;
-      this.slides = this.banners;
-      this.addresses = res.data.addresses;
-      this.groupedData = this.groupByCategory(this.allServices);
-      
-      this.resolveUserLocation();
+  homeData(): Observable<any> {
+    this.sendFcmToken();
+    return this.commonService.getHomeData(this.token).pipe(
+      tap((res: any) => {
+        this.banners = res.data.banners;
+        this.allServices = res.data.services;
+        this.slides = this.banners;
+        this.addresses = res.data.addresses;
+        this.groupedData = this.groupByCategory(this.allServices);
+        
+        this.resolveUserLocation();
+      }),
+      catchError(error => {
+        console.error('Error fetching home data:', error);
+        return of(null); // Let forkJoin complete
+      })
+    );
+  }
 
-      // Delay slightly to allow DOM to paint properly
-      setTimeout(()=>{
-        this.isLoading = false;
-      }, 300)
-
-    }, error => {
-      this.isLoading = false;
+  handleRefresh(event: any) {
+    // Refresh both home data and active orders on pull-to-refresh
+    forkJoin({
+      home: this.homeData(),
+      orders: this.getActiveOrders()
+    }).subscribe({
+      next: () => event.target.complete(),
+      error: () => {
+        event.target.complete();
+      }
     });
-    this.sendFcmToken()
   }
 
   sendFcmToken(){
@@ -210,6 +230,19 @@ export class HomePage implements OnInit {
       console.log(res)
     });
 
+  }
+
+  getActiveOrders(): Observable<any> {
+    return this.commonService.getActiveOrders(this.token).pipe(
+      tap((res: any) => {
+        this.orders = res.data;
+        this.activeOrderDetails = res.data;
+      }),
+      catchError(error => {
+        console.error('Error fetching active orders:', error);
+        return of(null); // Let forkJoin complete
+      })
+    );
   }
 
   getServicesData() {
@@ -377,19 +410,22 @@ export class HomePage implements OnInit {
   }
 
   goToOrderDetails(orderId: any) {
-    let orderDetails;
-    this.orders.forEach((item: any) => {
-      let details = JSON.parse(item.details);
-      if (details.orderId == orderId) {
-        orderDetails = item;
-      }
-    });
-    this.navCtrl.navigateRoot('/layout/track-order', {
-      state: {
-        orderDetails: orderDetails
-      }
-    });
+    this.navCtrl.navigateForward('/layout/example/history')
+    // let orderDetails;
+    // this.orders.forEach((item: any) => {
+    //   let details = JSON.parse(item.details);
+    //   if (details.orderId == orderId) {
+    //     orderDetails = item;
+    //   }
+    // });
+    // this.navCtrl.navigateRoot('/layout/track-order', {
+    //   state: {
+    //     orderDetails: orderDetails
+    //   }
+    // });
   }
+
+  
 
   gotoGrocery() {
     this.navCtrl.navigateForward('/layout/grocery');
