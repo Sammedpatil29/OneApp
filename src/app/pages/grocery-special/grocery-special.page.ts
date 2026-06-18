@@ -3,12 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, IonIcon, IonFooter, IonButton, IonSkeletonText } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { searchOutline, filterOutline, caretForwardOutline } from 'ionicons/icons';
+import { searchOutline, filterOutline, caretForwardOutline, arrowBack } from 'ionicons/icons';
 import { GroceryService } from 'src/app/services/grocery.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
 import { ProductCardComponent } from "src/app/components/product-card/product-card.component";
 import { ErrorComponent } from "src/app/components/error/error.component";
+import { NavController } from "@ionic/angular"
 
 @Component({
   selector: 'app-grocery-special',
@@ -36,7 +37,7 @@ export class GrocerySpecialPage implements OnInit {
   title: string = '';
   isLoading: boolean = false;
   isError: boolean = false;
-
+  banner = ''
 
   // Products List
   products:any = []
@@ -51,8 +52,8 @@ export class GrocerySpecialPage implements OnInit {
   //   { id: 8, name: 'Cucumber', weight: '500g', price: 18, oldPrice: 25, discount: 5, img: 'https://cdn-icons-png.flaticon.com/512/2329/2329921.png', qty: 0 },
   // ];
 
-  constructor(private router: Router, private groceryService: GroceryService, private authService: AuthService, private cdr: ChangeDetectorRef,) { 
-    addIcons({ searchOutline, filterOutline, caretForwardOutline });
+  constructor(private router: Router, private groceryService: GroceryService, private authService: AuthService, private cdr: ChangeDetectorRef, private navCtrl: NavController,) { 
+    addIcons({ searchOutline, filterOutline, caretForwardOutline, arrowBack });
   }
 
  async ngOnInit() {
@@ -112,6 +113,7 @@ export class GrocerySpecialPage implements OnInit {
         console.log('Products by term:', response);
         this.products = response.data.products;
         this.title = response.data.title;
+        this.banner = response.data.banner;
         this.cdr.detectChanges();
         this.isLoading = false;
       },
@@ -131,5 +133,9 @@ export class GrocerySpecialPage implements OnInit {
 
   gotoSearch() {
     this.router.navigate(['/layout/grocery-layout/grocery-search']);
+  }
+
+  back(){
+    this.navCtrl.back();
   }
 }

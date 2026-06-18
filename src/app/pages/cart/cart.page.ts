@@ -6,7 +6,7 @@ import { Preferences } from '@capacitor/preferences';
 
 declare var window: any;
 import { addIcons } from 'ionicons';
-import { arrowBack, locationOutline, timeOutline,location, checkmarkCircle, arrowForward, pricetagOutline } from 'ionicons/icons';
+import { arrowBack, locationOutline, timeOutline,location, checkmarkCircle, arrowForward, pricetagOutline, home, business } from 'ionicons/icons';
 import { GroceryService } from 'src/app/services/grocery.service';
 import { AuthService } from 'src/app/services/auth.service';
 // import { CartResponse, CartItem, Suggestion } from './cart.models'; // Ensure you have the interface file
@@ -58,7 +58,7 @@ export class CartPage implements OnInit, OnDestroy {
     private platform: Platform,
     private locationService: LocationService
   ) { 
-    addIcons({ arrowBack, locationOutline, timeOutline, checkmarkCircle, arrowForward, pricetagOutline, location });
+    addIcons({ arrowBack, locationOutline, timeOutline, checkmarkCircle, arrowForward, pricetagOutline, location, home, business });
   }
 
   async ngOnInit() {

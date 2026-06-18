@@ -112,7 +112,7 @@
 </ion-accordion-group>
 <div class="text-center mb-5">did't get the answer? <span class="text-primary" (click)="raiseTicket = true">Raise a Ticket</span></div>
     } @else {
-       <div class="d-flex gap-2">
+       <div class="d-flex gap-2 mx-2">
         <ion-list class="text-area mt-4">
   <ion-item class="suggestion" lines="none" [disabled]="state">
     <ion-input placeholder="Order Id" [(ngModel)]="orderId" value=""></ion-input>
@@ -124,12 +124,12 @@
   </ion-item>
 </ion-list>
        </div>
-       <ion-list class="text-area mt-4">
+       <ion-list class="text-area mt-4 mx-2">
   <ion-item class="suggestion" lines="none">
     <ion-input placeholder="Issue Title" [(ngModel)]="title" value=""></ion-input>
   </ion-item>
 </ion-list>
-    <ion-item class="text-area mt-4" lines="none">
+    <ion-item class="text-area mt-4 mx-2" lines="none">
   <ion-textarea
     class="suggestion"
     placeholder="Detailed Issue"
@@ -139,7 +139,7 @@
   >
   </ion-textarea>
 </ion-item>
-<div class="my-3 d-flex justify-content-center align-items-center gap-2">
+<div class="my-3 d-flex justify-content-center align-items-center gap-2 mx-2">
   <ion-button class="book-btn w-20" style="--color: black; --background: transparent; --box-shadow: 0px 0px 1px var(--grocery-theme-color);" (click)="clear()">Clear</ion-button>
   <ion-button class="book-btn w-100" [disabled]="title.length < 5 || details.length < 5 || isCreating || !orderId || !orderService" (click)="createTicket()">
     @if (isCreating) {
