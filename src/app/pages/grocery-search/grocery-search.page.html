@@ -1,7 +1,7 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
     <div class="search-header">
-      <ion-icon name="arrow-back" class="back-icon"></ion-icon>
+      <ion-icon name="arrow-back" class="back-icon" (click)="back()"></ion-icon>
       <div class="input-wrapper">
         <ion-searchbar 
           placeholder='Search "paneer"' 
@@ -9,6 +9,7 @@
           (ionInput)="onSearchChange($event)"
           [debounce]="250"
           animated="true"
+          autofocus="true"
           showCancelButton="never">
         </ion-searchbar>
       </div>
@@ -42,7 +43,7 @@
       <div class="d-flex align-items-center justify-content-center mt-5">
       <!-- <img src="https://cdn-icons-png.flaticon.com/512/6134/6134065.png" alt="No Data"> -->
       <!-- <h3>No items found</h3> -->
-      <p>Try searching for 'Milk' or 'Bread'</p>
+      <p>Try searching for 'Anything'</p>
     </div>
     
     <!-- <div class="section" *ngIf="recentSearches.length > 0">

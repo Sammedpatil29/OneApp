@@ -1,7 +1,7 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home" color="dark" icon="arrow-back"></ion-back-button>
+      <ion-back-button defaultHref="/home" color="dark" icon="arrow-back" (click)="back()"></ion-back-button>
     </ion-buttons>
     <ion-title>{{title}}</ion-title>
     <ion-buttons slot="end">
@@ -45,7 +45,14 @@
     </app-error>
  } @else {
   <div>
-  <div class="hero-banner" [style.background]="categoryInfo.color">
+  
+
+  @if(banner){
+    <div class="d-flex w-100 justify-content-center p-2">
+      <img [src]="banner" alt="" class="w-100 mx-2" style="border-radius: 10px">
+    </div>
+  } @else {
+    <div class="hero-banner" [style.background]="categoryInfo.color">
     <div class="text-content">
       <h5>Fresh Picks</h5>
       <h2>{{categoryInfo.name}}</h2>
@@ -55,6 +62,7 @@
       <img [src]="categoryInfo.bannerImg" />
     </div>
   </div>
+  }
 
   <!-- <div class="filter-scroll">
     <div 

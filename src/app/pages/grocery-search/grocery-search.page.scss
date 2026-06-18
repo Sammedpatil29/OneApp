@@ -63,7 +63,7 @@ ion-toolbar {
       border-bottom: 1px solid #f9f9f9;
       color: #555;
       
-      ion-icon { font-size: 18px; color: #999; }
+      ion-icon { font-size: 18px; color: $accent; }
       span { flex: 1; font-size: 14px; }
       .remove { color: #ccc; }
       
