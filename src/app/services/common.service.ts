@@ -35,8 +35,10 @@ getMetaData(){
       return this.http.patch(`${this.url}/fcm-token`, params, { headers: headers });
     }
 
-getActiveOrders(params: any){
-  console.log(params)
-  // return this.http.post(this.activeOrders, params)
+getActiveOrders(token:any){
+  let headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`
+  })
+  return this.http.get(`${this.url}/api/grocery-order/active`, {headers: headers})
 }
 }
