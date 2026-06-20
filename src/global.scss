@@ -24,6 +24,8 @@
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
 
 
 /**
@@ -40,10 +42,12 @@
 :root {
     --primary-color: black;
     --secondary-color: white;
-    --ion-font-family: 'Roboto', sans-serif;
+    --ion-font-family: 'Black Ops One', sans-serif;
     --swiper-theme-color: red !important;
     --grocery-theme-color: #a000e2;
     --grocery-theme-color-light: #f8eaff;
+
+    font-family: var(--ion-font-family);
 }
 
 :host {
