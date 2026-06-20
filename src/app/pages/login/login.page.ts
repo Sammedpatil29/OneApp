@@ -7,10 +7,8 @@ import { addIcons } from 'ionicons';
 import { arrowBack, chevronBack, timeOutline, personOutline, mailOutline, arrowForward } from 'ionicons/icons';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
-import { Preferences } from '@capacitor/preferences';
 import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
 import { NgOtpInputModule } from 'ng-otp-input';
-import { timer } from 'rxjs';
 
 @Component({
   selector: 'app-login',
