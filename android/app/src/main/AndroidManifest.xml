@@ -56,6 +56,13 @@ android:versionCode="2"
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="oneapp" android:host="payment" />
             </intent-filter>
+
+            <intent-filter android:autoVerify="true">
+    <action android:name="android.intent.action.VIEW" />
+    <category android:name="android.intent.category.DEFAULT" />
+    <category android:name="android.intent.category.BROWSABLE" />
+    <data android:scheme="https" android:host="pintu.democompany.in.net" />
+</intent-filter>
         </activity>
 
 
