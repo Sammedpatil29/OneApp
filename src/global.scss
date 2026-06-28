@@ -288,3 +288,11 @@ ion-toast {
 ion-footer {
   padding-bottom: var(--ion-safe-area-bottom, 10px);
 }
+
+.alert-box{
+    border: 1px dotted red;
+    border-radius: 7px;
+    text-align: center !important;
+    background-color: #ff00002e;
+    padding: 10px;
+}
