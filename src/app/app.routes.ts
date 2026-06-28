@@ -47,6 +47,10 @@ export const routes: Routes = [
               import('./pages/history/history.page').then((m) => m.HistoryPage),
           },
           {
+    path: 'referral',
+    loadComponent: () => import('./pages/referral/referral.page').then( m => m.ReferralPage)
+  },
+          {
             path: '',
             redirectTo: 'home',
             pathMatch: 'full',
@@ -256,6 +260,8 @@ export const routes: Routes = [
       },
     ],
   },
+  
+
   
 
 ];

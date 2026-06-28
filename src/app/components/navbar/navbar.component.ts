@@ -2,7 +2,7 @@ import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonTabs, IonTabBar, IonTabButton, IonIcon, IonCard } from "@ionic/angular/standalone";
 import { addIcons } from 'ionicons';
-import { library, playCircle, radio, search, helpCircleOutline,timeOutline,helpCircle,homeSharp,searchOutline,time,homeOutline, home, person } from 'ionicons/icons';
+import { library, playCircle, radio, search, helpCircleOutline,timeOutline,helpCircle,homeSharp,searchOutline,time,homeOutline, home, person, shareSocialOutline, shareSocialSharp } from 'ionicons/icons';
 import { register } from 'swiper/element/bundle';
 
 register();
@@ -26,7 +26,7 @@ export class NavbarComponent  implements OnInit {
   ] 
 
   constructor(private router: Router) { 
-    addIcons({ home,search,helpCircleOutline,timeOutline,helpCircle,homeSharp,searchOutline,time,homeOutline,radio,library,person,playCircle });
+    addIcons({ home,search,helpCircleOutline,shareSocialOutline, shareSocialSharp, timeOutline,helpCircle,homeSharp,searchOutline,time,homeOutline,radio,library,person,playCircle });
   }
 
   ngOnInit() {}
