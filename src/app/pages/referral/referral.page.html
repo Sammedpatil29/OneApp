@@ -1,0 +1,53 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/home" text="" icon="arrow-back-outline"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Refer & Earn</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content style="--background: #f8fafc;">
+  <div class="h-100 d-flex flex-column justify-content-center">
+    <div class="text-center">
+      <!-- <img src="assets/refer.png" alt="Refer a friend" style="max-width: 200px; margin-bottom: 2rem;">
+        -->
+      <div class="mb-2 mt-4">
+        <svg fill="#a000e2" width="100px" height="100px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20,18a1,1,0,0,0,1-1V13a1,1,0,0,0-1-1H13V9.858a4,4,0,1,0-2,0V12H4a1,1,0,0,0-1,1v4a1,1,0,0,0,2,0V14h6v3a1,1,0,0,0,2,0V14h6v3A1,1,0,0,0,20,18ZM12,8a2,2,0,1,1,2-2A2,2,0,0,1,12,8ZM23,21a1,1,0,0,1-1,1H18a1,1,0,0,1,0-2h4A1,1,0,0,1,23,21ZM1,21a1,1,0,0,1,1-1H6a1,1,0,0,1,0,2H2A1,1,0,0,1,1,21Zm13-1a1,1,0,0,1,0,2H10a1,1,0,0,1,0-2Z"/></svg>
+      </div>
+      
+      <h2 style="font-size: 24px; font-weight: 800; color: #0f172a; margin-bottom: 1rem;">
+        Refer & Earn ₹50
+      </h2>
+      
+      <p style="font-size: 15px; color: #64748b; max-width: 300px; line-height: 1.6; margin: 0 auto 2.5rem;">
+        Share your referral code with friends and you'll both get ₹50 when they place their first order.
+      </p>
+
+      <div class="referral-code-container">
+        <span class="code-label">Your Referral Code</span>
+        <div class="code-box">
+          <span id="referralCode" class="fw-bold">{{ referralCode }}</span>
+          <ion-button fill="clear" size="small" (click)="copyCode()">
+            <ion-icon slot="icon-only" name="copy-outline"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    </div>
+
+    <div class="how-it-works">
+      <h5 class="fw-bolder text-dark">How it works</h5>
+      <ol class="steps-list">
+        <li>Share your referral code with your friends.</li>
+        <li>Your friend signs up using your referral code.</li>
+        <li>You both get ₹50 in your wallet after their first successful order.</li>
+      </ol>
+    </div>
+  </div>
+
+  <ion-footer class="ion-no-border">
+    <ion-toolbar>
+      <ion-button expand="block" class="book-btn w-100" (click)="share()">Refer a Friend</ion-button>
+    </ion-toolbar>
+  </ion-footer>
+</ion-content>

@@ -38,6 +38,11 @@
     "glob": "offline.html",
     "input": "src/",
     "output": "/"
+  },
+  {
+    "glob": "assetlinks.json",
+    "input": "src/.well-known",
+    "output": "/.well-known"
   }
             ],
             "styles": ["src/global.scss", "src/theme/variables.scss", "node_modules/bootstrap/dist/css/bootstrap.min.css"],
