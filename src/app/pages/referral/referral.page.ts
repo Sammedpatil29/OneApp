@@ -62,7 +62,7 @@ export class ReferralPage implements OnInit {
     await Share.share({
       title: 'Join me on Pintu!',
       text: `I'm inviting you to try Pintu! Sign up with my code ${this.referralCode} and we'll both get ₹50.`,
-      url: 'https://pintu.app/join',
+      url: 'https://www.flyn.to/HAM7uwd',
       dialogTitle: 'Share with friends',
     });
   }
