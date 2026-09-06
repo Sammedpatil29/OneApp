@@ -27,7 +27,7 @@ const config: CapacitorConfig = {
     },
     OtaKit: {
       appId: 'io.ionic.oneapp',
-      cdnUrl: 'https://pintu-partner.democompany.in.net/ota',
+      cdnUrl: 'https://pintu-api.democompany.in.net/ota',
       allowInsecureUrls: true
     },
     Cordova: {}
