@@ -27,7 +27,7 @@ const MANIFEST_DIR = path.join(OTA_PUBLIC_DIR, 'manifests', APP_ID, CHANNEL, RUN
 const MANIFEST_FILE = path.join(MANIFEST_DIR, 'manifest.json');
 
 // Base CDN / API URL for bundles
-const PROD_CDN_URL = process.env.OTA_CDN_URL || 'https://oneapp-backend.onrender.com/ota';
+const PROD_CDN_URL = process.env.OTA_CDN_URL || 'https://pintu-api.democompany.in.net/ota';
 
 async function main() {
   const args = process.argv.slice(2);
