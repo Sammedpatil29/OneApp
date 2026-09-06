@@ -6,18 +6,18 @@ const config: CapacitorConfig = {
   webDir: 'www',
   backgroundColor: '#a000e2',
   plugins: {
-    StatusBar: {
-      overlaysWebView: true,
-    },
+    // StatusBar: {
+    //   overlaysWebView: true,
+    // },
     FirebaseAuthentication: {
       skipNativeAuth: false,
       providers: ['phone']
     },
     SplashScreen: {
       backgroundColor: '#a000e2',
-      launchShowDuration: 1000,
+      launchShowDuration: 0,
       launchAutoHide: true,
-      launchFadeOutDuration: 500,
+      launchFadeOutDuration: 0,
       showSpinner: false,
       splashFullScreen: true,
       splashImmersive: true,
