@@ -1,18 +1,21 @@
 {
   "name": "Pintu - Minutes App",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Ionic Framework",
   "homepage": "https://ionicframework.com/",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ionic build",
+    "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
     "deploy": "npx ionic build --prod && npx cap run android --target 65PJQ8SCOJRCS8EI",
     "sync": "npx cap sync android && ionic build && npx cap run android --target 65PJQ8SCOJRCS8EI",
-    "deploy-vercel": "npx ionic build && cd www && vercel --prod --yes --scope sammedpatil29s-projects -n pintu"
+    "deploy-vercel": "npx ionic build && cd www && vercel --prod --yes --scope sammedpatil29s-projects -n pintu",
+    "ota:publish": "node scripts/publish-ota.mjs",
+    "ota:publish:immediate": "node scripts/publish-ota.mjs --immediate",
+    "ota:publish:quick": "node scripts/publish-ota.mjs --skip-build"
   },
   "private": true,
   "dependencies": {
@@ -46,6 +49,7 @@
     "@capacitor/splash-screen": "^8.0.0",
     "@capacitor/status-bar": "7.0.0",
     "@ionic/angular": "^8.0.0",
+    "@otakit/capacitor-updater": "^2.3.3",
     "@techiediaries/ngx-qrcode": "^9.1.0",
     "@types/googlemaps": "^3.43.3",
     "angularx-qrcode": "^20.0.0",
@@ -73,6 +77,7 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^19.0.0",
+    "archiver": "^8.0.0",
     "@angular-eslint/builder": "^19.0.0",
     "@angular-eslint/eslint-plugin": "^19.0.0",
     "@angular-eslint/eslint-plugin-template": "^19.0.0",

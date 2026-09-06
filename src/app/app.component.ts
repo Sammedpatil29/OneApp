@@ -12,6 +12,7 @@ import { IonToast } from '@ionic/angular/standalone';
 import { App } from '@capacitor/app';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
+import { OtaService } from './services/ota.service';
 
 @Component({
   selector: 'app-root',
@@ -31,7 +32,8 @@ export class AppComponent implements OnInit {
     private platform: Platform,
     private navCtrl: NavController,
     private location: Location,
-    private router: Router
+    private router: Router,
+    private otaService: OtaService
   ) {
     
   }
@@ -46,6 +48,9 @@ export class AppComponent implements OnInit {
   async initializeApp() {
     await this.platform.ready();
     await SplashScreen.hide();
+
+    // 🚀 Initialize OTA Live Update Checks
+    this.otaService.initialize();
 
     // ✅ MODIFIED
     // await this.checkNetworkStatus();

@@ -1,10 +1,14 @@
-name: Build Android Bundle
+name: Build and Sign Android App (AAB & APK)
 
 on:
-  workflow_dispatch: # Allows you to manually trigger the build from the Actions tab
+  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+  push:
+    branches:
+      - main
+      - master
 
 jobs:
-  build:
+  build-and-sign:
     runs-on: ubuntu-latest
 
     steps:
@@ -14,13 +18,12 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22 # Updated to meet Capacitor CLI requirements
+          node-version: 22
           cache: 'npm'
 
       - name: Install Dependencies
         run: |
           npm install -g @ionic/cli
-          # Using --legacy-peer-deps to resolve the @angular/fire version mismatch
           npm install --legacy-peer-deps
 
       - name: Build Web Assets
@@ -33,16 +36,96 @@ jobs:
           distribution: 'zulu'
           cache: 'gradle'
 
-      - name: Build Android App Bundle (.aab)
+      - name: Set up Android SDK Build Tools
+        uses: android-actions/setup-android@v3
+
+      - name: Sync Capacitor Android Project
+        run: npx cap sync android
+
+      - name: Build Android Release (AAB & APK)
         run: |
-          npx cap sync android
           cd android
           chmod +x gradlew
-          ./gradlew bundleRelease --no-daemon
+          ./gradlew assembleRelease bundleRelease --no-daemon
 
-      - name: Upload Artifact
+      - name: Prepare Keystore File
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "Decoding keystore from GitHub Secret..."
+            echo "$KEYSTORE_BASE64" | base64 --decode > pintu-release.keystore
+          elif [ -f "pintu-release.keystore" ]; then
+            echo "Using existing repository keystore: pintu-release.keystore"
+          else
+            echo "❌ Error: Keystore not found in repository or secrets!"
+            exit 1
+          fi
+
+      - name: Sign Android App Bundle (.aab) & APK (.apk)
+        env:
+          KEYSTORE_PATH: pintu-release.keystore
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS || 'pintu-alias' }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD || secrets.KEYSTORE_PASSWORD }}
+        run: |
+          BUILD_TOOLS_DIR=$(ls -d $ANDROID_HOME/build-tools/* | sort -V | tail -n 1)
+          echo "Using Android Build Tools from: $BUILD_TOOLS_DIR"
+
+          AAB_FILE="android/app/build/outputs/bundle/release/app-release.aab"
+          UNSIGNED_APK="android/app/build/outputs/apk/release/app-release-unsigned.apk"
+          ALIGNED_APK="android/app/build/outputs/apk/release/app-release-aligned.apk"
+          SIGNED_APK="android/app/build/outputs/apk/release/app-release-signed.apk"
+
+          echo "🔐 Signing .aab bundle with jarsigner..."
+          if [ -n "$KEYSTORE_PASSWORD" ]; then
+            jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
+              -keystore "$KEYSTORE_PATH" \
+              -storepass "$KEYSTORE_PASSWORD" \
+              -keypass "$KEY_PASSWORD" \
+              "$AAB_FILE" "$KEY_ALIAS"
+          else
+            jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
+              -keystore "$KEYSTORE_PATH" \
+              "$AAB_FILE" "$KEY_ALIAS"
+          fi
+
+          echo "📦 Aligning and Signing .apk with apksigner..."
+          if [ -f "$UNSIGNED_APK" ]; then
+            $BUILD_TOOLS_DIR/zipalign -v -p 4 "$UNSIGNED_APK" "$ALIGNED_APK" || cp "$UNSIGNED_APK" "$ALIGNED_APK"
+            
+            if [ -n "$KEYSTORE_PASSWORD" ]; then
+              $BUILD_TOOLS_DIR/apksigner sign \
+                --ks "$KEYSTORE_PATH" \
+                --ks-pass "pass:$KEYSTORE_PASSWORD" \
+                --ks-key-alias "$KEY_ALIAS" \
+                --key-pass "pass:$KEY_PASSWORD" \
+                --out "$SIGNED_APK" \
+                "$ALIGNED_APK"
+            else
+              $BUILD_TOOLS_DIR/apksigner sign \
+                --ks "$KEYSTORE_PATH" \
+                --ks-key-alias "$KEY_ALIAS" \
+                --out "$SIGNED_APK" \
+                "$ALIGNED_APK"
+            fi
+
+            echo "✅ Verifying signed APK..."
+            $BUILD_TOOLS_DIR/apksigner verify "$SIGNED_APK"
+          else
+            echo "⚠️ Unsigned APK not found at $UNSIGNED_APK"
+          fi
+
+      - name: Upload Signed .AAB Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: pintu-release-bundle
+          name: pintu-release-signed-aab
           path: android/app/build/outputs/bundle/release/*.aab
-          retention-days: 7
+          retention-days: 14
+
+      - name: Upload Signed .APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pintu-release-signed-apk
+          path: android/app/build/outputs/apk/release/*signed.apk
+          retention-days: 14

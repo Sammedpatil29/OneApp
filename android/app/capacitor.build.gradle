@@ -27,6 +27,7 @@ dependencies {
     implementation project(':capacitor-share')
     implementation project(':capacitor-splash-screen')
     implementation project(':capacitor-status-bar')
+    implementation project(':otakit-capacitor-updater')
     implementation project(':capacitor-razorpay')
     implementation project(':cashfree-pg-capacitor')
     implementation "com.razorpay:checkout:1.6.19"
