@@ -39,20 +39,14 @@ jobs:
       - name: Set up Android SDK Build Tools
         uses: android-actions/setup-android@v3
 
-      - name: Sync Capacitor Android Project
+      - name: Sync Capacitor Android Project (Copy Fresh Web Assets)
         run: npx cap sync android
 
-      - name: Clean Gradle Build Cache & Stale Artifacts
+      - name: Build Android Release (Clean, AAB & APK)
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew clean --no-daemon
-          rm -rf app/build .gradle
-
-      - name: Build Android Release (AAB & APK)
-        run: |
-          cd android
-          ./gradlew assembleRelease bundleRelease --no-daemon --rerun-tasks
+          ./gradlew clean assembleRelease bundleRelease --no-daemon --rerun-tasks
 
       - name: Prepare Keystore File
         env:
