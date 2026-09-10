@@ -1,1 +1,38 @@
-{}
+{
+  "appId": "io.ionic.oneapp",
+  "appName": "Pintu - Minutes App",
+  "webDir": "www",
+  "backgroundColor": "#a000e2",
+  "plugins": {
+    "FirebaseAuthentication": {
+      "skipNativeAuth": false,
+      "providers": [
+        "phone"
+      ]
+    },
+    "SplashScreen": {
+      "backgroundColor": "#a000e2",
+      "launchShowDuration": 0,
+      "launchAutoHide": true,
+      "launchFadeOutDuration": 0,
+      "showSpinner": false,
+      "splashFullScreen": true,
+      "splashImmersive": true
+    },
+    "PushNotifications": {
+      "presentationOptions": [
+        "badge",
+        "sound",
+        "alert"
+      ]
+    },
+    "Geolocation": {},
+    "OtaKit": {
+      "appId": "io.ionic.oneapp",
+      "cdnUrl": "https://pintu-api.democompany.in.net/ota",
+      "allowInsecureUrls": true
+    },
+    "Cordova": {}
+  }
+}
+

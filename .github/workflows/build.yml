@@ -42,11 +42,17 @@ jobs:
       - name: Sync Capacitor Android Project
         run: npx cap sync android
 
-      - name: Build Android Release (AAB & APK)
+      - name: Clean Gradle Build Cache & Stale Artifacts
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleRelease bundleRelease --no-daemon
+          ./gradlew clean --no-daemon
+          rm -rf app/build .gradle
+
+      - name: Build Android Release (AAB & APK)
+        run: |
+          cd android
+          ./gradlew assembleRelease bundleRelease --no-daemon --rerun-tasks
 
       - name: Prepare Keystore File
         env:
@@ -77,7 +83,6 @@ jobs:
           UNSIGNED_APK="android/app/build/outputs/apk/release/app-release-unsigned.apk"
           FINAL_UNSIGNED_APK="android/app/build/outputs/apk/release/pintu-release-unsigned.apk"
           ALIGNED_APK="android/app/build/outputs/apk/release/app-release-aligned.apk"
-          SIGNED_APK="android/app/build/outputs/apk/release/app-release-signed.apk"
           SIGNED_APK="android/app/build/outputs/apk/release/pintu-release-signed.apk"
 
           echo "🔐 Signing .aab bundle with jarsigner..."
@@ -115,28 +120,40 @@ jobs:
                 "$ALIGNED_APK"
             fi
 
-            echo "✅ Verifying signed APK..."
+            echo "✅ Verifying signed APK signature..."
             $BUILD_TOOLS_DIR/apksigner verify "$SIGNED_APK"
           else
             echo "⚠️ Unsigned APK not found at $UNSIGNED_APK"
           fi
 
-      - name: Upload Signed .AAB Artifact
+      - name: Verify Compiled APK Manifest Permissions
+        run: |
+          BUILD_TOOLS_DIR=$(ls -d $ANDROID_HOME/build-tools/* | sort -V | tail -n 1)
+          SIGNED_APK="android/app/build/outputs/apk/release/pintu-release-signed.apk"
+
+          echo "=================================================="
+          echo "🔍 Inspecting Manifest Permissions in Compiled APK"
+          echo "=================================================="
+          if [ -f "$SIGNED_APK" ]; then
+            $BUILD_TOOLS_DIR/aapt dump permissions "$SIGNED_APK" || echo "aapt dump permissions finished"
+            echo ""
+            echo "📋 Detailed APK Badging Summary:"
+            $BUILD_TOOLS_DIR/aapt dump badging "$SIGNED_APK" | grep -E "package|uses-permission" || true
+          else
+            echo "❌ Signed APK not found for permission validation!"
+            exit 1
+          fi
+
       - name: Upload Signed .APK (Ready for Direct Install)
         uses: actions/upload-artifact@v4
         with:
-          name: pintu-release-signed-aab
-          path: android/app/build/outputs/bundle/release/*.aab
           name: pintu-customer-signed-apk
           path: android/app/build/outputs/apk/release/pintu-release-signed.apk
           retention-days: 14
 
-      - name: Upload Signed .APK Artifact
       - name: Upload Unsigned .APK
         uses: actions/upload-artifact@v4
         with:
-          name: pintu-release-signed-apk
-          path: android/app/build/outputs/apk/release/*signed.apk
           name: pintu-customer-unsigned-apk
           path: android/app/build/outputs/apk/release/pintu-release-unsigned.apk
           retention-days: 14
