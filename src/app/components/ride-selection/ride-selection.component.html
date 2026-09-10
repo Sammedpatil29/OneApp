@@ -108,6 +108,10 @@
                 <div class="status-badge bg-info text-dark py-1 px-3 d-inline-block shadow-sm">
                   <b>Trip Started! &bull;</b> Reaching your location by <b>{{estimatedDistance}}</b>
                 </div>
+            } @else if (activeRide?.status == 'completed') {
+                <div class="status-badge bg-success text-white py-1 px-3 d-inline-block shadow-sm">
+                  <b>Trip Completed &bull;</b> Thank you for riding with us!
+                </div>
             }
           </div>
           
