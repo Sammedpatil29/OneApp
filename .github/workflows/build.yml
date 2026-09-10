@@ -73,9 +73,12 @@ jobs:
           echo "Using Android Build Tools from: $BUILD_TOOLS_DIR"
 
           AAB_FILE="android/app/build/outputs/bundle/release/app-release.aab"
+          AAB_SIGNED="android/app/build/outputs/bundle/release/pintu-release-signed.aab"
           UNSIGNED_APK="android/app/build/outputs/apk/release/app-release-unsigned.apk"
+          FINAL_UNSIGNED_APK="android/app/build/outputs/apk/release/pintu-release-unsigned.apk"
           ALIGNED_APK="android/app/build/outputs/apk/release/app-release-aligned.apk"
           SIGNED_APK="android/app/build/outputs/apk/release/app-release-signed.apk"
+          SIGNED_APK="android/app/build/outputs/apk/release/pintu-release-signed.apk"
 
           echo "🔐 Signing .aab bundle with jarsigner..."
           if [ -n "$KEYSTORE_PASSWORD" ]; then
@@ -89,9 +92,11 @@ jobs:
               -keystore "$KEYSTORE_PATH" \
               "$AAB_FILE" "$KEY_ALIAS"
           fi
+          cp "$AAB_FILE" "$AAB_SIGNED"
 
           echo "📦 Aligning and Signing .apk with apksigner..."
           if [ -f "$UNSIGNED_APK" ]; then
+            cp "$UNSIGNED_APK" "$FINAL_UNSIGNED_APK"
             $BUILD_TOOLS_DIR/zipalign -v -p 4 "$UNSIGNED_APK" "$ALIGNED_APK" || cp "$UNSIGNED_APK" "$ALIGNED_APK"
             
             if [ -n "$KEYSTORE_PASSWORD" ]; then
@@ -117,15 +122,28 @@ jobs:
           fi
 
       - name: Upload Signed .AAB Artifact
+      - name: Upload Signed .APK (Ready for Direct Install)
         uses: actions/upload-artifact@v4
         with:
           name: pintu-release-signed-aab
           path: android/app/build/outputs/bundle/release/*.aab
+          name: pintu-customer-signed-apk
+          path: android/app/build/outputs/apk/release/pintu-release-signed.apk
           retention-days: 14
 
       - name: Upload Signed .APK Artifact
+      - name: Upload Unsigned .APK
         uses: actions/upload-artifact@v4
         with:
           name: pintu-release-signed-apk
           path: android/app/build/outputs/apk/release/*signed.apk
+          name: pintu-customer-unsigned-apk
+          path: android/app/build/outputs/apk/release/pintu-release-unsigned.apk
+          retention-days: 14
+
+      - name: Upload Signed .AAB (Google Play Store Bundle)
+        uses: actions/upload-artifact@v4
+        with:
+          name: pintu-customer-signed-aab
+          path: android/app/build/outputs/bundle/release/pintu-release-signed.aab
           retention-days: 14

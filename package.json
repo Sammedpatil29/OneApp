@@ -15,7 +15,8 @@
     "deploy-vercel": "npx ionic build && cd www && vercel --prod --yes --scope sammedpatil29s-projects -n pintu",
     "ota:publish": "node scripts/publish-ota.mjs",
     "ota:publish:immediate": "node scripts/publish-ota.mjs --immediate",
-    "ota:publish:quick": "node scripts/publish-ota.mjs --skip-build"
+    "ota:publish:quick": "node scripts/publish-ota.mjs --skip-build",
+    "fix:git": "powershell -ExecutionPolicy Bypass -File ../fix-git.ps1"
   },
   "private": true,
   "dependencies": {
