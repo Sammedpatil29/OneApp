@@ -34,7 +34,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" (ionScroll)="onScroll($event)" [scrollEvents]="true" class="home-page-content">
+<ion-content (ionScroll)="onScroll($event)" [scrollEvents]="true" class="home-page-content">
   <!-- Native Pull-to-Refresh -->
   <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)" class="custom-refresher">
     <ion-refresher-content pullingIcon="arrow-down-outline" refreshingSpinner="crescent"></ion-refresher-content>

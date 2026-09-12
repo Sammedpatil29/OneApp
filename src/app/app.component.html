@@ -3,6 +3,9 @@
     <ion-router-outlet></ion-router-outlet>
     
     
+    @if (showSplash) {
+      <app-custom-splash></app-custom-splash>
+    }
   } @else {
     <ion-content>
       <div class="no-internet h-100 d-flex flex-column justify-content-center align-items-center">
