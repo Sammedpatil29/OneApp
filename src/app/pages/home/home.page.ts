@@ -19,6 +19,7 @@ import { addIcons } from 'ionicons';
 import {
   location,
   chevronDown,
+  chevronForward,
   arrowForward,
   arrowForwardOutline,
   flashOutline,
@@ -26,7 +27,13 @@ import {
   sparklesOutline,
   chatbubbleEllipsesOutline,
   arrowDownOutline,
-  headsetOutline
+  headsetOutline,
+  alertCircleOutline,
+  moonOutline,
+  navigateCircleOutline,
+  mapOutline,
+  refreshOutline,
+  locationOutline
 } from 'ionicons/icons';
 import { AuthService } from 'src/app/services/auth.service';
 import { LocationService } from 'src/app/services/location.service';
@@ -83,13 +90,26 @@ export interface ServiceItem {
   ]
 })
 export class HomePage implements OnInit {
-  headerBg = 'rgba(248, 250, 252, 0.94)';
+  headerBg: string = 'rgba(255, 255, 255, 0)';
+  headerOpacity: number = 0;
+  isPastBanner: boolean = false;
+  isScrolled: boolean = false;
+  private cachedBannerHeight: number = 0;
   displayLocationName: string = 'Select Location';
   profileAvatar: string = '';
   userInitials: string = 'P';
   orders: any[] = [];
   token: string = '';
   isLoadingServices: boolean = true;
+
+  // Service Area & Geofencing State
+  isLocationPermissionDenied: boolean = false;
+  isOutOfServiceArea: boolean = false;
+  nearestServiceArea: { id?: string; cityName: string; distanceKm: number } | null = null;
+  isAreaClosed: boolean = false;
+  closedAreaCity: string = '';
+  areaClosureMessage: string = '';
+  currentCoords: { lat: number; lng: number } | null = null;
 
   banners: BannerItem[] = [
     {
@@ -157,18 +177,7 @@ export class HomePage implements OnInit {
     private profileService: ProfileService,
     private commonService: CommonService
   ) {
-    addIcons({
-      location,
-      chevronDown,
-      arrowForward,
-      arrowForwardOutline,
-      flashOutline,
-      shieldCheckmarkOutline,
-      sparklesOutline,
-      chatbubbleEllipsesOutline,
-      arrowDownOutline,
-      headsetOutline
-    });
+    addIcons({location,chevronDown,arrowForward,alertCircleOutline,chevronForward,moonOutline,refreshOutline,locationOutline,navigateCircleOutline,mapOutline,arrowForwardOutline,flashOutline,shieldCheckmarkOutline,sparklesOutline,chatbubbleEllipsesOutline,arrowDownOutline,headsetOutline});
   }
 
   goToSupport() {
@@ -178,14 +187,27 @@ export class HomePage implements OnInit {
   async ngOnInit() {
     this.token = (await this.authService.getToken()) || '';
 
+    // Load saved location from storage if present
+    const savedLoc = localStorage.getItem('location');
+    if (savedLoc) {
+      try {
+        const parsed = JSON.parse(savedLoc);
+        if (parsed?.area) {
+          this.displayLocationName = parsed.area;
+        } else if (parsed?.address) {
+          this.displayLocationName = parsed.address.split(',')[0];
+        }
+      } catch (e) {}
+    }
+
     this.locationService.address$.subscribe((addr: string) => {
       if (addr && addr.trim()) {
-        this.displayLocationName = addr;
+        this.displayLocationName = addr.split(',')[0];
       }
     });
 
     this.locationService.city$.subscribe((city: string) => {
-      if (city && city.trim() && this.displayLocationName === 'Select Location') {
+      if (city && city.trim() && (this.displayLocationName === 'Select Location' || !this.displayLocationName)) {
         this.displayLocationName = city;
       }
     });
@@ -195,6 +217,8 @@ export class HomePage implements OnInit {
     } catch (e) {
       console.warn('Could not auto-fetch current GPS position', e);
     }
+    // Check location permission and evaluate service area
+    this.initLocationAndServiceArea();
 
     if (this.token) {
       this.loadUserProfile();
@@ -205,16 +229,161 @@ export class HomePage implements OnInit {
     }
   }
 
+  async initLocationAndServiceArea() {
+    try {
+      const perm = await this.locationService.checkLocationPermission();
+      if (perm.location === 'denied') {
+        this.isLocationPermissionDenied = true;
+      } else {
+        this.isLocationPermissionDenied = false;
+      }
+    } catch (e) {
+      this.isLocationPermissionDenied = false;
+    }
+
+    let lat: number | null = null;
+    let lng: number | null = null;
+
+    const savedLoc = localStorage.getItem('location');
+    if (savedLoc) {
+      try {
+        const parsed = JSON.parse(savedLoc);
+        if (parsed?.lat && parsed?.lng) {
+          lat = parseFloat(parsed.lat);
+          lng = parseFloat(parsed.lng);
+        }
+      } catch (e) {}
+    }
+
+    if (!lat || !lng) {
+      try {
+        const pos = await this.locationService.getCurrentPosition();
+        if (pos?.coords?.coords) {
+          lat = pos.coords.coords.latitude;
+          lng = pos.coords.coords.longitude;
+          this.isLocationPermissionDenied = false;
+        }
+      } catch (e) {
+        console.warn('Could not auto-fetch current GPS position', e);
+      }
+    }
+
+    if (lat && lng) {
+      this.currentCoords = { lat, lng };
+      this.evaluateServiceArea(lat, lng);
+    }
+  }
+
+  evaluateServiceArea(lat: number, lng: number) {
+    this.locationService.checkLocationInServiceArea(lat, lng).subscribe({
+      next: (res: any) => {
+        if (res?.success) {
+          if (res.inServiceArea) {
+            this.isOutOfServiceArea = false;
+            this.nearestServiceArea = null;
+
+            if (res.area?.isOffline) {
+              this.isAreaClosed = true;
+              this.closedAreaCity = res.area.cityName || this.displayLocationName || 'Athani';
+              this.areaClosureMessage = res.area.offlineMessage || 'Operations in this city are temporarily offline. We will resume shortly.';
+            } else {
+              this.isAreaClosed = false;
+            }
+          } else {
+            this.isOutOfServiceArea = true;
+            this.isAreaClosed = false;
+            this.nearestServiceArea = res.nearestArea || null;
+          }
+        }
+      },
+      error: (err: any) => {
+        console.warn('Could not check service area:', err);
+      }
+    });
+  }
+
+  async requestLocationPermission() {
+    const perm = await this.locationService.requestLocationPermission();
+    if (perm.location === 'granted') {
+      this.isLocationPermissionDenied = false;
+      const pos = await this.locationService.getCurrentPosition();
+      if (pos?.coords?.coords) {
+        const lat = pos.coords.coords.latitude;
+        const lng = pos.coords.coords.longitude;
+        this.currentCoords = { lat, lng };
+        this.evaluateServiceArea(lat, lng);
+      }
+    } else {
+      this.isLocationPermissionDenied = true;
+    }
+  }
+
+  async recheckLocationAndServiceArea() {
+    try {
+      const pos = await this.locationService.getCurrentPosition();
+      if (pos?.coords?.coords) {
+        this.isLocationPermissionDenied = false;
+        const lat = pos.coords.coords.latitude;
+        const lng = pos.coords.coords.longitude;
+        this.currentCoords = { lat, lng };
+        this.evaluateServiceArea(lat, lng);
+      } else if (this.currentCoords) {
+        this.evaluateServiceArea(this.currentCoords.lat, this.currentCoords.lng);
+      }
+    } catch (e) {
+      if (this.currentCoords) {
+        this.evaluateServiceArea(this.currentCoords.lat, this.currentCoords.lng);
+      }
+    }
+  }
+
   onScroll(event: any) {
     const scrollTop = event?.detail?.scrollTop || 0;
-    if (scrollTop > 20) {
-      this.headerBg = 'rgba(255, 255, 255, 0.98)';
+
+    // Dynamically resolve hero banner height if hero slider element exists
+    if (!this.cachedBannerHeight) {
+      const heroEl = document.querySelector('.home-top-hero-slider') as HTMLElement | null;
+      if (heroEl && heroEl.offsetHeight > 0) {
+        this.cachedBannerHeight = heroEl.offsetHeight;
+      }
+    }
+
+    const hasBanners = Boolean(this.banners && this.banners.length > 0);
+    const bannerHeight = hasBanners ? (this.cachedBannerHeight || 240) : 0;
+    const headerHeight = 64;
+
+    // Point where the bottom of the hero banner crosses the top bar
+    const endFade = bannerHeight > 0 ? Math.max(100, bannerHeight - headerHeight) : 20;
+    // Fade starts smoothly at ~25% into the banner (e.g. ~40-45px), keeping the top clean
+    const startFade = bannerHeight > 0 ? Math.max(20, Math.round(endFade * 0.25)) : 0;
+
+    let newOpacity = 0;
+    let pastBanner = false;
+
+    if (scrollTop <= startFade) {
+      newOpacity = 0;
+      pastBanner = false;
+    } else if (scrollTop >= endFade) {
+      newOpacity = 1;
+      pastBanner = true;
     } else {
-      this.headerBg = 'rgba(248, 250, 252, 0.94)';
+      const raw = (scrollTop - startFade) / (endFade - startFade);
+      // Smooth 5% quantization steps to minimize change detection cycles
+      newOpacity = Math.round(raw * 20) / 20;
+      pastBanner = false;
+    }
+
+    if (this.headerOpacity !== newOpacity || this.isPastBanner !== pastBanner) {
+      this.headerOpacity = newOpacity;
+      this.isPastBanner = pastBanner;
+      this.isScrolled = pastBanner;
+      this.headerBg = pastBanner ? '#ffffff' : `rgba(255, 255, 255, ${newOpacity})`;
     }
   }
 
   handleRefresh(event: any) {
+    this.cachedBannerHeight = 0;
+    this.initLocationAndServiceArea();
     if (this.token) {
       this.loadUserProfile();
       this.loadHomeData();
@@ -577,7 +746,7 @@ export class HomePage implements OnInit {
   }
 
   openLocation() {
-    this.router.navigate(['/layout/address-list']);
+    this.router.navigate(['/layout/map']);
   }
 
   goToProfile() {

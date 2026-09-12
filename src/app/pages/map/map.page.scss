@@ -279,9 +279,11 @@ ion-content.map-page-content {
 }
 
 /* --- Floating Map Action Buttons --- */
+/* --- Floating Map Action Buttons (Positioned on Top Properly) --- */
 .map-floating-controls {
   position: absolute;
   bottom: 16px;
+  top: 16px;
   right: 16px;
   display: flex;
   flex-direction: column;

@@ -16,21 +16,45 @@
   z-index: 100;
 }
 
-/* Customer Top Header (Matching Partner App) */
+/* Customer Top Header (Initial Transparent, Progressively Fades to Solid White on Crossing Banner) */
 .customer-header {
-  --background: #ffffff;
-  background: #ffffff;
-  border-bottom: 1px solid #f1f5f9;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  --background: transparent;
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  box-shadow: none;
+  pointer-events: none;
+  transition: background-color 0.12s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 
   ion-toolbar {
-    --background: #ffffff;
+    --background: transparent;
+    background: transparent;
     --padding-start: 16px;
     --padding-end: 16px;
-    --padding-top: 4px;
-    --padding-bottom: 4px;
-    --min-height: 48px;
+    --padding-top: calc(env(safe-area-inset-top) + 6px);
+    --padding-bottom: 6px;
+    --min-height: 52px;
     --border-width: 0;
+    transition: --background 0.12s ease, background 0.12s ease;
+  }
+
+  /* Full Solid White as soon as it crosses the hero banner */
+  &.is-past-banner,
+  &.is-scrolled {
+    --background: #ffffff !important;
+    background: #ffffff !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06) !important;
+    pointer-events: auto;
+
+    ion-toolbar {
+      --background: #ffffff !important;
+      background: #ffffff !important;
+    }
   }
 }
 
@@ -39,20 +63,27 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  pointer-events: auto;
 }
 
+/* Address Selector (Styled Like Earlier) */
 .location-pill-btn {
   display: flex;
   align-items: center;
   gap: 10px;
   cursor: pointer;
   max-width: 80%;
+  transition: transform 0.15s ease;
+
+  &:active {
+    transform: scale(0.97);
+  }
 
   .location-icon-box {
     width: 38px;
     height: 38px;
     border-radius: 12px;
-    background: linear-gradient(135deg, rgba(160, 0, 226, 0.14) 0%, rgba(160, 0, 226, 0.04) 100%);
+    background: linear-gradient(135deg, rgba(160, 0, 226, 0.14) 0%, rgba(160, 0, 226, 0.04) 100%), #ffffff;
     border: 1px solid rgba(160, 0, 226, 0.2);
     color: #a000e2;
     display: flex;
@@ -60,6 +91,7 @@
     justify-content: center;
     font-size: 20px;
     flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   }
 
   .location-text-col {
@@ -103,25 +135,6 @@
   display: flex;
   align-items: center;
   gap: 10px;
-
-  .icon-btn {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #f1f5f9;
-    cursor: pointer;
-    background: #f8fafc;
-    color: #475569;
-    font-size: 19px;
-    transition: transform 0.15s ease;
-
-    &:active {
-      transform: scale(0.9);
-    }
-  }
 
   .customer-avatar-btn {
     position: relative;
@@ -224,49 +237,51 @@
 }
 
 @keyframes pulseGlow {
-  0% {
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
-  }
-  70% {
-    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
-  }
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
 }
 
 /* =======================================================
-   SWIPABLE BANNERS (TOP OF SERVICES)
+   HERO TOP BANNER SLIDER (FULL BLEED: NO PADDING, NO RADIUS)
    ======================================================= */
-.home-banners-section {
+.home-top-hero-slider {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
   overflow: hidden;
   position: relative;
 
-  .home-banners-swiper {
+  .hero-swiper {
     width: 100%;
-    border-radius: 20px;
     overflow: hidden;
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
     display: block;
 
     swiper-slide {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      border-radius: 0;
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 100%;
       box-sizing: border-box;
     }
 
     &::part(pagination) {
-      bottom: 8px;
+      bottom: 12px;
     }
 
     &::part(bullet) {
       width: 6px;
       height: 6px;
-      background: rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.45);
       opacity: 1;
       border-radius: 99px;
       transition: all 0.25s ease;
@@ -279,16 +294,19 @@
     }
   }
 
-  .banner-card {
+  .hero-banner-card {
     width: 100%;
-    min-height: 136px;
-    border-radius: 20px;
+    min-height: 235px;
+    max-height: 270px;
+    margin: 0;
+    padding: calc(env(safe-area-inset-top) + 64px) 18px 24px 18px;
+    border-radius: 0;
     position: relative;
     overflow: hidden;
     cursor: pointer;
     box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     box-sizing: border-box;
     transition: transform 0.15s ease;
 
@@ -296,125 +314,352 @@
       transform: scale(0.985);
     }
 
-    .banner-full-img {
+    .hero-banner-img {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
-      min-height: 136px;
-      max-height: 160px;
       object-fit: cover;
+      border-radius: 0;
       display: block;
     }
 
-    .banner-content-box {
-      width: 100%;
-      height: 100%;
-      min-height: 136px;
-      padding: 16px 18px 26px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    .hero-banner-content-box {
       position: relative;
       z-index: 2;
+      max-width: 82%;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
 
-      .banner-text-col {
-        flex: 1;
-        min-width: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 3px;
-        z-index: 2;
-
-        .banner-badge-pill {
-          font-size: 9.5px;
-          font-weight: 850;
-          letter-spacing: 0.6px;
-          padding: 2.5px 8.5px;
-          border-radius: 99px;
-          width: fit-content;
-          display: inline-block;
-          margin-bottom: 2px;
-          backdrop-filter: blur(8px);
-        }
-
-        .banner-title {
-          font-size: 16px;
-          font-weight: 850;
-          color: #ffffff;
-          margin: 0;
-          letter-spacing: -0.3px;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-
-        .banner-subtitle {
-          font-size: 11px;
-          font-weight: 500;
-          color: rgba(255, 255, 255, 0.78);
-          margin: 0;
-          line-height: 1.3;
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-          max-width: 220px;
-        }
-
-        .banner-cta-row {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          margin-top: 6px;
-
-          .banner-cta-text {
-            font-size: 11.5px;
-            font-weight: 800;
-            color: #ffffff;
-          }
-
-          .banner-cta-arrow {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(6px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #ffffff;
-            font-size: 11px;
-            transition: transform 0.2s ease;
-          }
-        }
+      .banner-badge-pill {
+        display: inline-block;
+        font-size: 9.5px;
+        font-weight: 850;
+        letter-spacing: 0.6px;
+        padding: 3px 9px;
+        border-radius: 99px;
+        width: fit-content;
+        margin-bottom: 4px;
+        backdrop-filter: blur(8px);
       }
 
-      .banner-art-col {
-        width: 80px;
-        height: 80px;
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
+      .banner-title {
+        font-size: 19px;
+        font-weight: 850;
+        color: #ffffff;
+        margin: 0 0 2px 0;
+        line-height: 1.25;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+      }
 
-        .banner-orb-glow {
-          position: absolute;
-          width: 70px;
-          height: 70px;
-          border-radius: 50%;
-          background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 70%);
-          filter: blur(10px);
+      .banner-subtitle {
+        font-size: 12.5px;
+        color: rgba(255, 255, 255, 0.9);
+        margin: 0 0 10px 0;
+        line-height: 1.4;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .banner-cta-row {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        width: fit-content;
+        background: rgba(255, 255, 255, 0.94);
+        padding: 5px 12px;
+        border-radius: 99px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+        .banner-cta-text {
+          font-size: 12px;
+          font-weight: 800;
+          color: #0f172a;
         }
 
-        .banner-art-emoji {
-          font-size: 42px;
-          position: relative;
-          z-index: 2;
-          filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.25));
+        .banner-cta-arrow {
+          font-size: 12px;
+          color: #a000e2;
+          display: flex;
+          align-items: center;
         }
       }
     }
   }
+}
+
+/* =======================================================
+   SERVICE ALERT & STATUS BANNERS (PERMISSION, CLOSED, OUT-OF-AREA)
+   ======================================================= */
+.service-alert-banner {
+  border-radius: 18px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+  box-sizing: border-box;
+
+  .alert-icon-box {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+
+    &.warning {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    &.closed {
+      background: #fce7f3;
+      color: #db2777;
+    }
+
+    &.out {
+      background: #ffedd5;
+      color: #ea580c;
+    }
+  }
+
+  .alert-text-col {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .alert-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 8px;
+      border-radius: 99px;
+      font-size: 9.5px;
+      font-weight: 850;
+      letter-spacing: 0.6px;
+      width: fit-content;
+
+      &.warning {
+        background: #fef3c7;
+        color: #92400e;
+      }
+
+      &.closed {
+        background: #fce7f3;
+        color: #9d174d;
+      }
+
+      &.out {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+    }
+
+    .alert-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0;
+      letter-spacing: -0.2px;
+    }
+
+    .alert-desc {
+      font-size: 12.5px;
+      color: #64748b;
+      margin: 0;
+      line-height: 1.45;
+    }
+  }
+
+  .status-pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+
+    &.amber {
+      background: #f59e0b;
+      box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.3);
+    }
+
+    &.red {
+      background: #ef4444;
+      box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3);
+      animation: alertPulse 1.6s infinite;
+    }
+  }
+
+  /* 1. Location Permission Banner */
+  &.permission-banner {
+    background: linear-gradient(180deg, #fffbeb 0%, #fefce8 100%);
+    border: 1.5px solid #fde68a;
+
+    .btn-alert-action.enable-btn {
+      align-self: flex-start;
+      background: #d97706;
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(217, 119, 6, 0.25);
+      transition: transform 0.15s ease;
+
+      &:active {
+        transform: scale(0.96);
+      }
+    }
+  }
+
+  /* 2. Closed City Banner */
+  &.closed-banner {
+    background: linear-gradient(180deg, #fdf2f8 0%, #ffffff 100%);
+    border: 1.5px solid #fbcfe8;
+
+    .recheck-btn {
+      align-self: flex-start;
+      background: #db2777;
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-size: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(219, 39, 119, 0.25);
+
+      &:active {
+        transform: scale(0.95);
+      }
+    }
+  }
+
+  /* 3. Out of Service Area Banner (Matching Partner App) */
+  &.out-of-area-banner {
+    background: linear-gradient(180deg, #fffbf7 0%, #ffffff 100%);
+    border: 1.5px solid #fed7aa;
+    box-shadow: 0 6px 20px rgba(234, 88, 12, 0.08);
+
+    .nearest-area-box {
+      background: #ffffff;
+      border: 1px dashed #cbd5e1;
+      border-radius: 14px;
+      padding: 12px;
+      margin: 4px 0 6px 0;
+
+      .nearest-title {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: #334155;
+        margin-bottom: 4px;
+
+        ion-icon {
+          font-size: 16px;
+          color: #ea580c;
+        }
+
+        strong {
+          color: #0f172a;
+          font-weight: 800;
+        }
+      }
+
+      .nearest-distance-badge {
+        display: inline-block;
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        color: #475569;
+        font-size: 11.5px;
+        padding: 2px 8px;
+        border-radius: 6px;
+        margin-bottom: 6px;
+
+        strong {
+          color: #ea580c;
+          font-weight: 800;
+        }
+      }
+
+      .nearest-instruction {
+        font-size: 12px;
+        color: #64748b;
+        line-height: 1.4;
+      }
+    }
+
+    .alert-actions-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 4px;
+
+      .btn-change-loc {
+        flex: 1;
+        height: 42px;
+        background: linear-gradient(135deg, #a000e2 0%, #7900b2 100%);
+        color: #ffffff;
+        border: none;
+        border-radius: 12px;
+        padding: 0 16px;
+        font-size: 13px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        cursor: pointer;
+        box-shadow: 0 4px 14px rgba(160, 0, 226, 0.28);
+        transition: transform 0.15s ease;
+
+        &:active {
+          transform: scale(0.97);
+        }
+
+        ion-icon {
+          font-size: 16px;
+        }
+      }
+
+      .btn-recheck-loc {
+        width: 42px;
+        height: 42px;
+        background: #ffffff;
+        border: 1.5px solid #fed7aa;
+        color: #ea580c;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        cursor: pointer;
+        transition: transform 0.15s ease;
+
+        &:active {
+          transform: scale(0.95);
+        }
+      }
+    }
+  }
+}
+
+@keyframes alertPulse {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
 }
 
 /* =======================================================
@@ -726,6 +971,33 @@
             text-overflow: ellipsis;
           }
         }
+
+        .arrow-circle-mini {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          width: 22px;
+          height: 22px;
+          border-radius: 50%;
+          background: rgba(0, 0, 0, 0.04);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 11px;
+          color: #64748b;
+          z-index: 2;
+          transition: all 0.15s ease;
+
+          ion-icon {
+            font-size: 12px;
+          }
+        }
+      }
+
+      &:active .arrow-circle-mini {
+        background: #a000e2;
+        color: #ffffff;
+        transform: scale(1.08);
       }
 
       /* Corner Art with Increased Size & ~20% bleed into bottom & right edges */

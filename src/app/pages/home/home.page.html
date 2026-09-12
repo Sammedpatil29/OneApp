@@ -1,8 +1,16 @@
-<!-- Customer Top Header (Matching Partner App) -->
-<ion-header class="customer-header" [translucent]="false">
-  <ion-toolbar>
+<!-- Customer Top Header (Initial Transparent, Progressively Fades to Full Solid White on Crossing Banner) -->
+<ion-header
+  class="customer-header ion-no-border"
+  [class.is-scrolled]="isPastBanner"
+  [class.is-past-banner]="isPastBanner"
+  [style.background]="headerBg"
+  [style.--background]="headerBg">
+  <ion-toolbar
+    [class.scrolled-toolbar]="isPastBanner"
+    [style.background]="headerBg"
+    [style.--background]="headerBg">
     <div class="header-inner">
-      <!-- Left: Location Selector Chip -->
+      <!-- Left: Enhanced Location Selector Chip -->
       <div class="location-pill-btn" (click)="openLocation()" role="button" tabindex="0">
         <div class="location-icon-box">
           <ion-icon name="location"></ion-icon>
@@ -30,11 +38,66 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content (ionScroll)="onScroll($event)" [scrollEvents]="true" class="home-page-content">
+<ion-content (ionScroll)="onScroll($event)" [scrollEvents]="true" class="home-page-content" [fullscreen]="true">
   <!-- Native Pull-to-Refresh -->
   <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)" class="custom-refresher">
     <ion-refresher-content pullingIcon="arrow-down-outline" refreshingSpinner="crescent"></ion-refresher-content>
   </ion-refresher>
+
+  <!-- Top Hero Banner Slider (Full-Bleed: 0 margin, 0 padding, 0 border-radius) -->
+  @if (banners && banners.length > 0) {
+    <section class="home-top-hero-slider">
+      <swiper-container
+        slides-per-view="1"
+        pagination="true"
+        autoplay-delay="3800"
+        autoplay-disable-on-interaction="false"
+        loop="true"
+        class="hero-swiper">
+        @for (banner of banners; track banner.id || $index) {
+          <swiper-slide>
+            <div
+              class="hero-banner-card"
+              [style.background]="banner.bgGradient || 'linear-gradient(135deg, #2e0854 0%, #1e1b4b 50%, #3b0764 100%)'"
+              (click)="navigateToBanner(banner)"
+              role="button"
+              tabindex="0">
+
+              <!-- Real Image Banner -->
+              @if (isBannerImageValid(banner)) {
+                <img
+                  [src]="getBannerImgUrl(banner)"
+                  alt="Promotional Banner"
+                  class="hero-banner-img"
+                  (error)="banner.img = ''" />
+              } @else {
+                <!-- Gradient Graphic Card Fallback -->
+                <div class="hero-banner-content-box">
+                  @if (banner.badge) {
+                    <span
+                      class="banner-badge-pill"
+                      [style.background]="banner.badgeBg || 'rgba(255, 255, 255, 0.2)'"
+                      [style.color]="banner.badgeColor || '#ffffff'">
+                      {{ banner.badge }}
+                    </span>
+                  }
+                  <h3 class="banner-title">{{ banner.title || 'Special Delivery Offer' }}</h3>
+                  <p class="banner-subtitle">{{ banner.subtitle || 'Discover premium fast delivery with Pintu' }}</p>
+
+                  <div class="banner-cta-row">
+                    <span class="banner-cta-text">Explore Now</span>
+                    <div class="banner-cta-arrow">
+                      <ion-icon name="arrow-forward"></ion-icon>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </swiper-slide>
+        }
+      </swiper-container>
+    </section>
+  }
 
   <!-- Main Scrollable Home Body -->
   <main class="home-body-container">
@@ -54,71 +117,89 @@
       </section>
     }
 
-    <!-- Swipable Banners Section (Top of Services) -->
-    @if (banners && banners.length > 0) {
-      <section class="home-banners-section">
-        <swiper-container
-          slides-per-view="1"
-          space-between="12"
-          pagination="true"
-          autoplay-delay="3800"
-          autoplay-disable-on-interaction="false"
-          loop="true"
-          class="home-banners-swiper">
-          @for (banner of banners; track banner.id || $index) {
-            <swiper-slide>
-              <div
-                class="banner-card"
-                [style.background]="banner.bgGradient || 'linear-gradient(135deg, #2e0854 0%, #1e1b4b 50%, #3b0764 100%)'"
-                (click)="navigateToBanner(banner)"
-                role="button"
-                tabindex="0">
+    <!-- 1. Location Permission Required Alert Banner -->
+    @if (isLocationPermissionDenied) {
+      <section class="service-alert-banner permission-banner animate__animated animate__fadeIn">
+        <div class="alert-icon-box warning">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+        </div>
+        <div class="alert-text-col">
+          <div class="alert-badge warning">
+            <span class="status-pulse-dot amber"></span>
+            <span>LOCATION PERMISSION REQUIRED</span>
+          </div>
+          <h4 class="alert-title">GPS Access Disabled</h4>
+          <p class="alert-desc">Please enable location permissions to verify deliverability and explore active stores in Athani.</p>
+        </div>
+        <button type="button" class="btn-alert-action enable-btn" (click)="requestLocationPermission()">
+          <span>ENABLE</span>
+          <ion-icon name="chevron-forward"></ion-icon>
+        </button>
+      </section>
+    }
 
-                <!-- Real Image Banner -->
-                @if (isBannerImageValid(banner)) {
-                  <img
-                    [src]="getBannerImgUrl(banner)"
-                    alt="Promotional Banner"
-                    class="banner-full-img"
-                    (error)="banner.img = ''" />
-                }
+    <!-- 2. Services Closed in City Alert Banner -->
+    @if (!isLocationPermissionDenied && isAreaClosed) {
+      <section class="service-alert-banner closed-banner animate__animated animate__fadeIn">
+        <div class="alert-icon-box closed">
+          <ion-icon name="moon-outline"></ion-icon>
+        </div>
+        <div class="alert-text-col">
+          <div class="alert-badge closed">
+            <span class="status-pulse-dot red"></span>
+            <span>SERVICES TEMPORARILY CLOSED</span>
+          </div>
+          <h4 class="alert-title">Operations Paused in {{ closedAreaCity || displayLocationName || 'this city' }}</h4>
+          <p class="alert-desc">{{ areaClosureMessage || 'Our services in this city are temporarily offline. We will resume operations soon.' }}</p>
+        </div>
+        <button type="button" class="btn-alert-action recheck-btn" (click)="recheckLocationAndServiceArea()" title="Re-check status">
+          <ion-icon name="refresh-outline"></ion-icon>
+        </button>
+      </section>
+    }
 
-                <!-- Gradient Graphic Card Fallback -->
-                @else {
-                  <div class="banner-content-box">
-                    <div class="banner-text-col">
-                      @if (banner.badge) {
-                        <span
-                          class="banner-badge-pill"
-                          [style.background]="banner.badgeBg || 'rgba(255, 255, 255, 0.2)'"
-                          [style.color]="banner.badgeColor || '#ffffff'">
-                          {{ banner.badge }}
-                        </span>
-                      }
-                      <h3 class="banner-title">{{ banner.title || 'Special Offer' }}</h3>
-                      <p class="banner-subtitle">{{ banner.subtitle || 'Discover premium fast delivery with Pintu' }}</p>
+    <!-- 3. Out of Service Area Alert Banner (Matching Partner App) -->
+    @if (!isLocationPermissionDenied && !isAreaClosed && isOutOfServiceArea) {
+      <section class="service-alert-banner out-of-area-banner animate__animated animate__fadeIn">
+        <div class="alert-icon-box out">
+          <ion-icon name="location-outline"></ion-icon>
+        </div>
+        <div class="alert-text-col">
+          <div class="alert-badge out">
+            <span class="status-pulse-dot red"></span>
+            <span>OUT OF SERVICE AREA</span>
+          </div>
+          <h4 class="alert-title">Outside Serviceable Zone</h4>
+          <p class="alert-desc">Your selected location is currently outside our operating service boundaries.</p>
 
-                      <div class="banner-cta-row">
-                        <span class="banner-cta-text">Explore Now</span>
-                        <div class="banner-cta-arrow">
-                          <ion-icon name="arrow-forward"></ion-icon>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="banner-art-col">
-                      <div class="banner-orb-glow"></div>
-                      <span class="banner-art-emoji">
-                        {{ $index === 0 ? '⚡' : ($index === 1 ? '🛵' : '🥦') }}
-                      </span>
-                    </div>
-                  </div>
-                }
-
+          @if (nearestServiceArea) {
+            <div class="nearest-area-box">
+              <div class="nearest-title">
+                <ion-icon name="navigate-circle-outline"></ion-icon>
+                <span>Nearest City Zone: <strong>{{ nearestServiceArea.cityName }}</strong></span>
               </div>
-            </swiper-slide>
+              <div class="nearest-distance-badge">
+                Approx. <strong>{{ nearestServiceArea.distanceKm }} km</strong> away
+              </div>
+              <div class="nearest-instruction">
+                Please travel inside <strong>{{ nearestServiceArea.cityName }}</strong> or change delivery location to place orders.
+              </div>
+            </div>
+          } @else {
+            <div class="nearest-instruction">
+              Please move inside our active service area to explore and place orders.
+            </div>
           }
-        </swiper-container>
+        </div>
+        <div class="alert-actions-row">
+          <button type="button" class="btn-change-loc" (click)="openLocation()">
+            <ion-icon name="map-outline"></ion-icon>
+            <span>Change Location</span>
+          </button>
+          <button type="button" class="btn-recheck-loc" (click)="recheckLocationAndServiceArea()" title="Recheck Location">
+            <ion-icon name="refresh-outline"></ion-icon>
+          </button>
+        </div>
       </section>
     }
 
@@ -129,7 +210,6 @@
           <span class="sparkle-icon">✨</span>
           <h3 class="section-heading">Services</h3>
         </div>
-        <!-- <span class="services-count-pill">{{ allServices.length }} Available</span> -->
       </div>
 
       <!-- Skeleton Loaders if loading -->
@@ -248,6 +328,11 @@
                     <p class="tile-subtitle-normal" [class.status-active]="isStatusActive(service)">
                       {{ service.subtitle || (isStatusActive(service) ? 'Active' : 'Book now') }}
                     </p>
+                  </div>
+
+                  <!-- Arrow as earlier -->
+                  <div class="arrow-circle-mini">
+                    <ion-icon name="arrow-forward"></ion-icon>
                   </div>
                 </div>
 
