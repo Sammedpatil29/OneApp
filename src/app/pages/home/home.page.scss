@@ -19,6 +19,7 @@
 /* Customer Top Header (Matching Partner App) */
 .customer-header {
   --background: #ffffff;
+  background: #ffffff;
   border-bottom: 1px solid #f1f5f9;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
 
@@ -26,9 +27,9 @@
     --background: #ffffff;
     --padding-start: 16px;
     --padding-end: 16px;
-    --padding-top: calc(env(safe-area-inset-top, 0px) + 4px);
-    --padding-bottom: 6px;
-    --min-height: 52px;
+    --padding-top: 4px;
+    --padding-bottom: 4px;
+    --min-height: 48px;
     --border-width: 0;
   }
 }
@@ -158,10 +159,10 @@
 
 /* Home Body Container */
 .home-body-container {
-  padding: 16px 16px 24px;
+  padding: 10px 16px 24px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;

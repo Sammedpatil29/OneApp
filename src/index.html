@@ -38,47 +38,20 @@
       padding: 0;
       width: 100%;
       height: 100%;
-      background-color: #f8fafc;
+      background-color: #ffffff;
       overflow: hidden;
-    }
-    .app-initial-loader {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background-color: #f8fafc;
-      z-index: 99999;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    }
-    .app-initial-loader .startup-logo {
-      width: 72px;
-      height: 72px;
-      border-radius: 18px;
-      object-fit: contain;
-      margin-bottom: 20px;
-      box-shadow: 0 10px 24px rgba(160, 0, 226, 0.15);
-    }
-    .app-initial-loader .startup-spinner {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      border: 3px solid #e2e8f0;
-      border-top-color: #a000e2;
-      animation: spin-startup 0.75s linear infinite;
-    }
-    @keyframes spin-startup {
-      to { transform: rotate(360deg); }
     }
   </style>
 </head>
 
-<body class="light">
+<body>
   <app-root>
-    <div class="app-initial-loader">
-      <img src="assets/pintu startup.png" alt="Pintu" class="startup-logo" onerror="this.style.display='none'" />
-      <div class="startup-spinner"></div>
+    <div id="initial-app-loader" style="position:fixed;top:0;left:0;right:0;bottom:0;background:#ffffff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;z-index:99999;">
+      <div style="width:42px;height:42px;border:3.5px solid #f3e8ff;border-top-color:#a000e2;border-radius:50%;animation:initialSpin 0.75s cubic-bezier(0.68,-0.55,0.27,1.55) infinite;"></div>
+      <p style="font-size:13px;font-weight:600;color:#64748b;margin:16px 0 0;letter-spacing:0.2px;">Starting Pintu...</p>
+      <style>
+        @keyframes initialSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+      </style>
     </div>
   </app-root>
 <script
