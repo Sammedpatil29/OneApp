@@ -49,6 +49,94 @@ export class LocationService {
     }
   }
 
+  /**
+   * Comprehensive location check: returns precise status (ok, permission_denied, gps_disabled)
+   */
+  async getDetailedPosition(): Promise<{
+    status: 'ok' | 'permission_denied' | 'gps_disabled' | 'error';
+    coords?: { latitude: number; longitude: number };
+    address?: string;
+    city?: string;
+    error?: any;
+  }> {
+    // 1. Check permission first
+    let perm: PermissionStatus;
+    try {
+      perm = await this.checkLocationPermission();
+      if (perm.location === 'prompt' || perm.location === 'prompt-with-rationale') {
+        perm = await this.requestLocationPermission();
+      }
+      if (perm.location !== 'granted') {
+        return { status: 'permission_denied' };
+      }
+    } catch (err) {
+      return { status: 'permission_denied', error: err };
+    }
+
+    // 2. Permission is granted. Now try to fetch current GPS coordinates
+    try {
+      const position = await Geolocation.getCurrentPosition({
+        enableHighAccuracy: true,
+        timeout: 9000,
+        maximumAge: 3000
+      });
+
+      if (position?.coords) {
+        this.coordinates = position;
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        this.getAddress(lat, lng);
+
+        return {
+          status: 'ok',
+          coords: { latitude: lat, longitude: lng },
+          address: this.address,
+          city: this.city
+        };
+      }
+      return { status: 'gps_disabled' };
+    } catch (posErr: any) {
+      console.warn('Geolocation.getCurrentPosition error:', posErr);
+      const msg = (posErr?.message || '').toLowerCase();
+      const code = posErr?.code;
+      if (code === 1 || msg.includes('denied') || msg.includes('permission')) {
+        return { status: 'permission_denied', error: posErr };
+      }
+      return { status: 'gps_disabled', error: posErr };
+    }
+  }
+
+  /**
+   * Continuous Location Watch
+   */
+  async watchPosition(callback: (pos: any, err?: any) => void): Promise<string | null> {
+    try {
+      const watchId = await Geolocation.watchPosition(
+        { enableHighAccuracy: true, timeout: 10000 },
+        (position, err) => {
+          if (position?.coords) {
+            this.coordinates = position;
+            callback(position, null);
+          } else if (err) {
+            callback(null, err);
+          }
+        }
+      );
+      return String(watchId);
+    } catch (e) {
+      console.warn('watchPosition failed:', e);
+      return null;
+    }
+  }
+
+  async clearWatch(watchId: string): Promise<void> {
+    try {
+      await Geolocation.clearWatch({ id: watchId });
+    } catch (e) {
+      console.warn('clearWatch failed:', e);
+    }
+  }
+
   async getCurrentPosition() {
     try {
       const perm = await this.checkLocationPermission();
@@ -117,7 +205,7 @@ export class LocationService {
   }
 
   /**
-   * Fetch polygon data (dynamically from service areas, with fallback to legacy metadata)
+   * Fetch polygon data strictly from service areas (no legacy metadata fallback)
    */
   getPolygonData(): Observable<any> {
     return this.getServiceAreas(true).pipe(
@@ -135,11 +223,13 @@ export class LocationService {
             }
           };
         }
-        throw new Error('No active service areas configured');
+        return { success: false, data: { polygon: [], allAreas: [] } };
       }),
       catchError(() => {
-        const params = { "fields": ["polygon"] };
-        return this.http.post(`${this.polygonUrl}/api/metadata/query`, { params });
+        return new Observable(subscriber => {
+          subscriber.next({ success: false, data: { polygon: [], allAreas: [] } });
+          subscriber.complete();
+        });
       })
     );
   }
@@ -153,6 +243,13 @@ export class LocationService {
       'Authorization': `Bearer ${token}`
     });
     return this.http.post(`${this.addressUrl}/api/addresses`, params, { headers });
+  }
+
+  updateAddress(id: number | string, params: any, token: any) {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.put(`${this.addressUrl}/api/addresses/${id}`, params, { headers });
   }
 
   deleteAddress(token: any, id: any) {
@@ -172,5 +269,27 @@ export class LocationService {
   setAddress(location: any) {
     this.locationSource.next(location);
     localStorage.setItem('location', JSON.stringify(location));
+  }
+
+  /**
+   * Mark an address as primary in the database
+   * PUT /api/addresses/:id/set-primary
+   */
+  setPrimaryAddress(addressId: number | string, token: string) {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.put(`${this.addressUrl}/api/addresses/${addressId}/set-primary`, {}, { headers });
+  }
+
+  /**
+   * Get the user's primary address from the database
+   * GET /api/addresses/primary
+   */
+  getPrimaryAddress(token: string): Observable<any> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.get(`${this.addressUrl}/api/addresses/primary`, { headers });
   }
 }

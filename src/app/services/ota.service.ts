@@ -1,7 +1,10 @@
 import { Injectable, NgZone } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
-import { ToastController, AlertController } from '@ionic/angular/standalone';
+import { ToastController } from '@ionic/angular/standalone';
 import { OtaKit } from '@otakit/capacitor-updater';
+
+/** Key used to flag that an OTA update was just applied (survives reload) */
+const OTA_UPDATED_KEY = 'ota_just_updated';
 
 @Injectable({
   providedIn: 'root'
@@ -9,12 +12,12 @@ import { OtaKit } from '@otakit/capacitor-updater';
 export class OtaService {
   constructor(
     private toastCtrl: ToastController,
-    private alertCtrl: AlertController,
     private ngZone: NgZone
   ) {}
 
   /**
-   * Initializes OtaKit on native device
+   * Initializes OtaKit on native device.
+   * Flow: download silently → apply immediately → notify user after reload.
    */
   async initialize() {
     if (!Capacitor.isNativePlatform()) {
@@ -23,70 +26,96 @@ export class OtaService {
     }
 
     try {
-      // 1. Notify OtaKit that the app started successfully (prevents automatic rollback)
       await OtaKit.notifyAppReady();
       console.log('✅ [OtaKit] notifyAppReady sent');
     } catch (e) {
       console.warn('[OtaKit] notifyAppReady warning:', e);
     }
 
-    // 2. Setup silent background OTA update checks & staged listeners
+    // Show "App updated" toast if we just came back from an OTA apply
+    this.showPostUpdateToast();
+
+    // Start silent background OTA check & auto-apply
     this.setupOtaUpdates();
   }
 
+  // ─── Silent background check → download → apply ───────────────────
+
   private async setupOtaUpdates() {
     try {
-      // 1. Listen for background download completion (staged)
+      // Listen for background download completion
       await OtaKit.addListener('updateStaged', (event) => {
-        this.ngZone.run(() => {
-          this.promptRelaunch(event.bundle?.version || '');
-        });
+        console.log('📦 [OtaKit] Event updateStaged received:', event);
+        this.silentApply(event.bundle?.version || '');
       });
 
-      // 2. Check if an update was already staged previously
+      // Check if an update was already staged from a previous session
       const state = await OtaKit.getState();
+      console.log('📊 [OtaKit] Current state:', JSON.stringify(state));
       if (state.staged) {
-        this.ngZone.run(() => {
-          this.promptRelaunch(state.staged?.version || '');
-        });
+        console.log('📌 [OtaKit] Staged update waiting:', state.staged?.version);
+        this.silentApply(state.staged?.version || '');
         return;
       }
 
-      // 3. Perform silent background check & download
+      // Perform background check & download
+      console.log('🔎 [OtaKit] Checking for updates on CDN...');
       const check = await OtaKit.check();
+      console.log('🔎 [OtaKit] Check result:', JSON.stringify(check));
+
       if (check.kind === 'update_available') {
         console.log('🚀 [OtaKit] New update available:', check.latest?.version);
-        // Download silently in background
-        await OtaKit.download();
+        const downloadRes = await OtaKit.download();
+        console.log('📥 [OtaKit] Download result:', JSON.stringify(downloadRes));
+        if (downloadRes.kind === 'staged') {
+          this.silentApply(downloadRes.bundle?.version || check.latest?.version || '');
+        }
       } else if (check.kind === 'already_staged') {
-        this.ngZone.run(() => {
-          this.promptRelaunch(check.latest?.version || '');
-        });
+        console.log('📌 [OtaKit] Update already staged:', check.latest?.version);
+        this.silentApply(check.latest?.version || '');
+      } else {
+        console.log('✅ [OtaKit] App is up to date.');
       }
     } catch (err) {
-      console.warn('[OtaKit] Silent update setup error:', err);
+      console.warn('❌ [OtaKit] Update error:', err);
     }
   }
 
-  private async promptRelaunch(version: string) {
-    const toast = await this.toastCtrl.create({
-      message: `Update ${version ? 'v' + version : ''} is ready! Restart to apply changes.`,
-      position: 'bottom',
-      duration: 10000,
-      buttons: [
-        {
-          text: 'Restart',
-          role: 'info',
-          handler: async () => {
-            try {
-              await OtaKit.apply();
-            } catch (e) {
-              console.error('[OtaKit] Failed to apply update:', e);
-            }
-          }
-        }
-      ]
-    });
-    await toast.present();
+  // ─── Apply immediately without asking the user ─────────────────────
+
+  private async silentApply(version: string) {
+    try {
+      console.log(`🔄 [OtaKit] Silently applying update ${version}...`);
+      // Persist a flag so we can show a toast after the reload
+      localStorage.setItem(OTA_UPDATED_KEY, version);
+      await OtaKit.apply(); // This triggers an app reload
+    } catch (e) {
+      console.error('❌ [OtaKit] Failed to silently apply update:', e);
+      localStorage.removeItem(OTA_UPDATED_KEY);
+    }
+  }
+
+  // ─── Post-reload notification ──────────────────────────────────────
+
+  private async showPostUpdateToast() {
+    const version = localStorage.getItem(OTA_UPDATED_KEY);
+    if (!version) return;
+
+    // Clear the flag so we don't show the toast again
+    localStorage.removeItem(OTA_UPDATED_KEY);
+
+    try {
+      const toast = await this.toastCtrl.create({
+        message: `App updated${version ? ' to v' + version : ''} successfully! 🎉`,
+        position: 'bottom',
+        duration: 4000,
+        color: 'success',
+        cssClass: 'ota-success-toast',
+      });
+      await toast.present();
+      console.log('✅ [OtaKit] Post-update toast shown for version', version);
+    } catch (e) {
+      console.error('Toast display error:', e);
+    }
   }
 }

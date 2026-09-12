@@ -17,7 +17,7 @@
         class="search-input"
         [(ngModel)]="searchQuery"
         (input)="onSearchInput()"
-        placeholder="Search for area, street, landmark in Athani..." />
+        placeholder="Search for area, street, landmark..." />
       @if (isSearching) {
         <ion-spinner name="crescent" class="search-spinner"></ion-spinner>
       } @else if (searchQuery) {
@@ -46,7 +46,7 @@
   </div>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="map-page-content" [scrollY]="false">
+<ion-content [fullscreen]="false" class="map-page-content" [scrollY]="false">
   <!-- Google Maps Canvas -->
   <div #map id="map" class="map-container"></div>
 
@@ -78,13 +78,10 @@
     <div class="pin-ground-shadow"></div>
   </div>
 
-  <!-- Floating Action Buttons (GPS Locate & Reset Service Area) -->
+  <!-- Floating Action Button (Bring to Current Live Location) -->
   <div class="map-floating-controls">
-    <button type="button" class="map-fab-btn gps-fab" (click)="getCurrentLocation(true)" title="My GPS Location" aria-label="My GPS Location">
+    <button type="button" class="map-fab-btn gps-fab" (click)="getCurrentLocation(true)" title="Current Live Location" aria-label="Current Live Location">
       <ion-icon name="locate-outline"></ion-icon>
-    </button>
-    <button type="button" class="map-fab-btn area-fab" (click)="backtoServiceArea()" title="Center Service Area" aria-label="Center Service Area">
-      <ion-icon name="refresh-outline"></ion-icon>
     </button>
   </div>
 </ion-content>
@@ -99,12 +96,12 @@
       @if (inside) {
         <div class="status-badge available">
           <span class="status-dot green"></span>
-          <span>Delivering to Athani • 10-15 Min Delivery</span>
+          <span>Delivering to {{ currentServiceAreaName || mainAreaName || 'Service Area' }} • 10-15 Min Delivery</span>
         </div>
       } @else {
         <div class="status-badge unavailable">
           <span class="status-dot red"></span>
-          <span>Location Not Serviceable • Move pin inside Athani</span>
+          <span>Location Not Serviceable • Move pin inside {{ nearestServiceAreaName || 'Service Area' }}</span>
         </div>
       }
     </div>
@@ -116,7 +113,7 @@
       </div>
       <div class="address-text-col">
         <h4 class="area-title text-truncate">
-          {{ mainAreaName || 'Athani, Karnataka' }}
+          {{ mainAreaName || currentServiceAreaName || 'Selected Location' }}
         </h4>
         <p class="full-address-text">
           @if (isPolygonLoading) {
@@ -139,8 +136,8 @@
           <ion-spinner name="crescent"></ion-spinner>
           <span>Verifying location...</span>
         } @else if (inside) {
-          <span>{{ routeSource === 'addAddress' || routeSource === 'cart' ? 'Enter Complete Address' : 'Confirm Location' }}</span>
-          <ion-icon name="navigate-outline"></ion-icon>
+          <span>{{ isSaveAddressFlow ? 'Save Address' : 'Confirm Location' }}</span>
+          <ion-icon [name]="isSaveAddressFlow ? 'bookmark-outline' : 'navigate-outline'"></ion-icon>
         } @else {
           <span>Location Not Serviceable</span>
         }
@@ -149,79 +146,22 @@
   </div>
 </ion-footer>
 
-<!-- Save Address Details Modal -->
-<ion-modal [isOpen]="isModalOpen" (didDismiss)="isModalOpen = false" [breakpoints]="[0, 1]" [initialBreakpoint]="1" [handle]="true" class="address-details-modal">
+<!-- Save Address Form Component Modal -->
+<ion-modal
+  [isOpen]="isModalOpen"
+  (didDismiss)="closeAddressModal()"
+  [breakpoints]="[0, 1]"
+  [initialBreakpoint]="1"
+  [handle]="true"
+  class="address-save-form-modal">
   <ng-template>
-    <div class="modal-body-container ion-padding">
-      <h3 class="modal-title">Save Address Details</h3>
-      <p class="modal-subtitle">Add house and receiver details for faster deliveries</p>
-
-      @if (mapImgUrl) {
-        <div class="preview-map-box mb-3">
-          <img [src]="mapImgUrl" alt="Static Map" (error)="mapImgUrl = ''" />
-        </div>
-      }
-
-      <div class="address-form-list">
-        <div class="form-input-card">
-          <label class="form-label">House / Flat / Floor No. *</label>
-          <input type="text" class="custom-input" [(ngModel)]="houseNo" placeholder="e.g. Flat 402, 4th Floor" />
-        </div>
-
-        <div class="form-input-card">
-          <label class="form-label">Building / Apartment Name</label>
-          <input type="text" class="custom-input" [(ngModel)]="buildingName" placeholder="e.g. Shanti Residency" />
-        </div>
-
-        <div class="form-input-card">
-          <label class="form-label">Nearby Landmark</label>
-          <input type="text" class="custom-input" [(ngModel)]="landmark" placeholder="e.g. Near City Hospital" />
-        </div>
-
-        <div class="form-input-card">
-          <label class="form-label">Full Street Address</label>
-          <textarea class="custom-textarea" [(ngModel)]="currentAddress" rows="2" placeholder="Full address"></textarea>
-        </div>
-
-        <div class="form-row-2col">
-          <div class="form-input-card flex-1">
-            <label class="form-label">Receiver Name</label>
-            <input type="text" class="custom-input" [(ngModel)]="receiverName" placeholder="Contact person" />
-          </div>
-          <div class="form-input-card flex-1">
-            <label class="form-label">Receiver Phone</label>
-            <input type="tel" class="custom-input" [(ngModel)]="receiverPhone" placeholder="Mobile number" />
-          </div>
-        </div>
-
-        <div class="address-tag-section">
-          <span class="tag-section-title">Save Address As</span>
-          <div class="tag-chips-row">
-            <button type="button" class="tag-chip" [class.selected]="selectedLabel === 'home'" (click)="selectedLabel = 'home'">
-              <ion-icon name="home-outline"></ion-icon>
-              <span>Home</span>
-            </button>
-            <button type="button" class="tag-chip" [class.selected]="selectedLabel === 'work'" (click)="selectedLabel = 'work'">
-              <ion-icon name="briefcase-outline"></ion-icon>
-              <span>Work</span>
-            </button>
-            <button type="button" class="tag-chip" [class.selected]="selectedLabel === 'other'" (click)="selectedLabel = 'other'">
-              <ion-icon name="bookmark-outline"></ion-icon>
-              <span>Other</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <button type="button" class="btn-save-address" (click)="saveAddress()" [disabled]="isSaving || !houseNo">
-        @if (isSaving) {
-          <ion-spinner name="crescent"></ion-spinner>
-          <span>Saving Address...</span>
-        } @else {
-          <span>Save & Continue</span>
-        }
-      </button>
-    </div>
+    <app-address-save-form
+      [initialCoords]="{ lat: latLng?.lat ? latLng.lat() : 12.8556, lng: latLng?.lng ? latLng.lng() : 77.6818 }"
+      [initialAddress]="currentAddress"
+      [routeSource]="routeSource"
+      (addressSaved)="onAddressSaved($event)"
+      (cancel)="closeAddressModal()">
+    </app-address-save-form>
   </ng-template>
 </ion-modal>
 

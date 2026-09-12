@@ -1,0 +1,220 @@
+<div class="address-save-form-container">
+  <!-- Header Bar with Back/Close -->
+  <div class="form-header-bar">
+    <div class="header-left">
+      <div class="header-icon-box">
+        <ion-icon [name]="isEditMode ? 'create-outline' : 'location-outline'"></ion-icon>
+      </div>
+      <div class="header-text-col">
+        <h3 class="header-title">{{ isEditMode ? 'Edit Delivery Address' : 'Complete Address' }}</h3>
+        <p class="header-subtitle">{{ isEditMode ? 'Update house, street or contact details' : 'Provide delivery details for accurate drops' }}</p>
+      </div>
+    </div>
+    <button type="button" class="btn-close-form" (click)="onCancel()" aria-label="Close">
+      <ion-icon name="close-outline"></ion-icon>
+    </button>
+  </div>
+
+  <!-- Error Alert -->
+  @if (errorMessage) {
+    <div class="form-error-banner animate__animated animate__headShake">
+      <ion-icon name="close-outline"></ion-icon>
+      <span>{{ errorMessage }}</span>
+    </div>
+  }
+
+  <!-- Form Body -->
+  <div class="form-scrollable-body">
+    <!-- 1. Location Preview Card -->
+    <div class="location-preview-card">
+      <div class="preview-icon">
+        <ion-icon name="location-outline"></ion-icon>
+      </div>
+      <div class="preview-text-col">
+        <span class="preview-eyebrow">PINNED LOCATION</span>
+        <p class="preview-address text-truncate-2">{{ currentAddress || 'Address details captured from map' }}</p>
+      </div>
+    </div>
+
+    <!-- 2. Address Fields -->
+    <div class="form-fields-group">
+      <!-- House / Flat / Floor No. (Mandatory) -->
+      <div class="input-card" [class.has-error]="errorMessage && !houseNo">
+        <label class="input-label">
+          <span>House / Flat / Floor No.</span>
+          <span class="required-star">*</span>
+        </label>
+        <div class="input-field-wrap">
+          <input
+            type="text"
+            class="app-text-input"
+            [(ngModel)]="houseNo"
+            placeholder="e.g. Flat 402, 4th Floor"
+            autocomplete="off" />
+        </div>
+      </div>
+
+      <!-- Building / Apartment / Society Name -->
+      <div class="input-card">
+        <label class="input-label">
+          <span>Building / Apartment Name</span>
+          <span class="optional-tag">OPTIONAL</span>
+        </label>
+        <div class="input-field-wrap">
+          <input
+            type="text"
+            class="app-text-input"
+            [(ngModel)]="buildingName"
+            placeholder="e.g. Shanti Residency"
+            autocomplete="off" />
+        </div>
+      </div>
+
+      <!-- Landmark -->
+      <div class="input-card">
+        <label class="input-label">
+          <span>Nearby Landmark</span>
+          <span class="optional-tag">OPTIONAL</span>
+        </label>
+        <div class="input-field-wrap">
+          <input
+            type="text"
+            class="app-text-input"
+            [(ngModel)]="landmark"
+            placeholder="e.g. Near City Hospital / Metro Pillar 24"
+            autocomplete="off" />
+        </div>
+      </div>
+
+      <!-- Full Street Address (Editable) -->
+      <div class="input-card">
+        <label class="input-label">
+          <span>Street / Area Details</span>
+        </label>
+        <div class="input-field-wrap textarea-wrap">
+          <textarea
+            class="app-textarea"
+            [(ngModel)]="currentAddress"
+            rows="2"
+            placeholder="Street address"></textarea>
+        </div>
+      </div>
+
+      <!-- Receiver Details (2 Column) -->
+      <div class="form-row-2col">
+        <div class="input-card flex-1">
+          <label class="input-label">
+            <span>Receiver Name</span>
+          </label>
+          <div class="input-field-wrap">
+            <ion-icon name="person-outline" class="leading-icon"></ion-icon>
+            <input
+              type="text"
+              class="app-text-input with-icon"
+              [(ngModel)]="receiverName"
+              placeholder="Contact person" />
+          </div>
+        </div>
+
+        <div class="input-card flex-1">
+          <label class="input-label">
+            <span>Contact Phone</span>
+          </label>
+          <div class="input-field-wrap">
+            <ion-icon name="call-outline" class="leading-icon"></ion-icon>
+            <input
+              type="tel"
+              class="app-text-input with-icon"
+              [(ngModel)]="receiverPhone"
+              placeholder="10-digit number" />
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Address Label Selector -->
+      <div class="label-selector-card">
+        <label class="input-label">
+          <span>Save Address As</span>
+        </label>
+        <div class="label-chips-grid">
+          <button
+            type="button"
+            class="label-chip"
+            [class.active]="selectedLabel === 'home'"
+            (click)="selectLabel('home')">
+            <ion-icon name="home-outline"></ion-icon>
+            <span>Home</span>
+            @if (selectedLabel === 'home') {
+              <ion-icon name="checkmark-circle" class="check-indicator"></ion-icon>
+            }
+          </button>
+
+          <button
+            type="button"
+            class="label-chip"
+            [class.active]="selectedLabel === 'work'"
+            (click)="selectLabel('work')">
+            <ion-icon name="briefcase-outline"></ion-icon>
+            <span>Work</span>
+            @if (selectedLabel === 'work') {
+              <ion-icon name="checkmark-circle" class="check-indicator"></ion-icon>
+            }
+          </button>
+
+          <button
+            type="button"
+            class="label-chip"
+            [class.active]="selectedLabel === 'other'"
+            (click)="selectLabel('other')">
+            <ion-icon name="bookmark-outline"></ion-icon>
+            <span>Other</span>
+            @if (selectedLabel === 'other') {
+              <ion-icon name="checkmark-circle" class="check-indicator"></ion-icon>
+            }
+          </button>
+        </div>
+
+        @if (selectedLabel === 'other') {
+          <div class="custom-label-wrap animate__animated animate__fadeIn">
+            <input
+              type="text"
+              class="app-text-input custom-tag-input"
+              [(ngModel)]="customLabel"
+              placeholder="e.g. Parents, Gym, Friend's House" />
+          </div>
+        }
+      </div>
+
+      <!-- 4. Default / Primary Address Toggle Card -->
+      <div class="primary-toggle-card" (click)="isPrimary = !isPrimary" role="button" tabindex="0">
+        <div class="toggle-icon-box" [class.active]="isPrimary">
+          <ion-icon [name]="isPrimary ? 'star' : 'star-outline'"></ion-icon>
+        </div>
+        <div class="toggle-text-col">
+          <span class="toggle-title">Set as Default / Primary Address</span>
+          <span class="toggle-subtitle">Orders and home deliveries will default to this address</span>
+        </div>
+        <div class="toggle-switch-ui" [class.on]="isPrimary">
+          <div class="toggle-knob"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Action Footer -->
+  <div class="form-action-footer">
+    <button
+      type="button"
+      class="btn-save-submit"
+      (click)="save()"
+      [disabled]="isSaving || !houseNo">
+      @if (isSaving) {
+        <ion-spinner name="crescent"></ion-spinner>
+        <span>{{ isEditMode ? 'Updating Address...' : 'Saving Address...' }}</span>
+      } @else {
+        <span>{{ isEditMode ? 'Update Address' : 'Save Address' }}</span>
+      }
+    </button>
+  </div>
+</div>
+

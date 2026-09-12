@@ -1,0 +1,191 @@
+<div class="saved-addresses-container">
+
+  <!-- 1. SKELETON LOADING STATE -->
+  @if (isLoading) {
+    <div class="skeleton-wrapper">
+      @for (i of [1, 2, 3]; track i) {
+        <div class="address-skeleton-card">
+          <div class="skel-top-row">
+            <ion-skeleton-text animated style="width: 70px; height: 24px; border-radius: 6px;"></ion-skeleton-text>
+            <ion-skeleton-text animated style="width: 24px; height: 24px; border-radius: 50%;"></ion-skeleton-text>
+          </div>
+          <ion-skeleton-text animated style="width: 60%; height: 16px; border-radius: 4px; margin: 10px 0 6px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 90%; height: 14px; border-radius: 4px; margin-bottom: 6px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 40%; height: 14px; border-radius: 4px;"></ion-skeleton-text>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- 2. EMPTY STATE (NO ADDRESSES) -->
+  @else if (addresses.length === 0) {
+    <div class="empty-state-wrapper">
+      <div class="empty-icon-circle">
+        <ion-icon name="map-outline"></ion-icon>
+      </div>
+      <h3 class="empty-title">No Saved Addresses</h3>
+      <p class="empty-subtitle">
+        You haven't added any delivery addresses yet. Choose your location on the map to get started.
+      </p>
+
+      <button type="button" class="btn-select-map-primary" (click)="openMap()">
+        <ion-icon name="map-outline"></ion-icon>
+        <span>Select on Map</span>
+      </button>
+    </div>
+  }
+
+  <!-- 3. SAVED ADDRESSES LIST -->
+  @else {
+    <div class="address-content-wrapper">
+      <div class="section-badge-row">
+        <span class="section-label">SAVED DELIVERY ADDRESSES</span>
+        <span class="badge-count">{{ addresses.length }}</span>
+      </div>
+
+      <div class="address-cards-list">
+        @for (item of addresses; track item.id || $index) {
+          <div
+            class="address-card"
+            [class.is-active]="item.id === activeAddressId"
+            (click)="selectAddress(item)"
+            role="button"
+            tabindex="0">
+
+            <div class="card-top-row">
+              <div class="labels-cluster">
+                <!-- Label Chip (Home / Work / Other) -->
+                <div class="address-label-chip" [attr.data-label]="(item.label || 'other') | lowercase">
+                  <ion-icon [name]="getLabelIcon(item.label)"></ion-icon>
+                  <span>{{ (item.label || 'Other') | uppercase }}</span>
+                </div>
+
+                <!-- Primary / Default Address Badge -->
+                @if (item.is_primary) {
+                  <span class="primary-address-badge" title="Default Delivery Address">
+                    <ion-icon name="star"></ion-icon>
+                    <span>DEFAULT</span>
+                  </span>
+                } @else {
+                  <button
+                    type="button"
+                    class="btn-make-default"
+                    (click)="setAsPrimary(item, $event)"
+                    title="Set as Default Delivery Address">
+                    <ion-icon name="star-outline"></ion-icon>
+                    <span>Set as Default</span>
+                  </button>
+                }
+              </div>
+
+              <!-- Selection Indicator, Edit & Delete -->
+              <div class="card-actions">
+                @if (item.id === activeAddressId) {
+                  <span class="active-badge">
+                    <ion-icon name="checkmark-circle"></ion-icon>
+                    <span>ACTIVE</span>
+                  </span>
+                } @else {
+                  <span class="select-indicator" title="Select this address">
+                    <ion-icon name="ellipse-outline"></ion-icon>
+                  </span>
+                }
+
+                <!-- Edit Button -->
+                <button
+                  type="button"
+                  class="btn-action-icon btn-edit"
+                  (click)="openEditAddress(item, $event)"
+                  title="Edit Address"
+                  aria-label="Edit Address">
+                  <ion-icon name="create-outline"></ion-icon>
+                </button>
+
+                <!-- Delete Button (Asks for Confirmation) -->
+                <button
+                  type="button"
+                  class="btn-action-icon btn-delete"
+                  (click)="confirmDeleteAddress(item, $event)"
+                  title="Delete Address"
+                  aria-label="Delete Address">
+                  <ion-icon name="trash-outline"></ion-icon>
+                </button>
+              </div>
+            </div>
+
+            <!-- House & Building Info -->
+            <div class="card-body">
+              <h4 class="address-name">
+                @if (item.house_no) {
+                  <span>{{ item.house_no }}</span>
+                }
+                @if (item.building_name) {
+                  <span>{{ item.house_no ? ', ' : '' }}{{ item.building_name }}</span>
+                }
+                @if (!item.house_no && !item.building_name) {
+                  <span>{{ item.landmark || (item.address | slice:0:30) }}</span>
+                }
+              </h4>
+
+              <p class="full-address-text">
+                @if (item.landmark) {
+                  <span class="landmark-text">Near {{ item.landmark }}, </span>
+                }
+                <span>{{ item.address }}</span>
+              </p>
+
+              <!-- Receiver Info if available -->
+              @if (item.receiver_name || item.receiver_contact) {
+                <div class="receiver-pill">
+                  <span class="rec-label">Contact:</span>
+                  @if (item.receiver_name) {
+                    <span class="rec-name">{{ item.receiver_name }}</span>
+                  }
+                  @if (item.receiver_contact) {
+                    <span class="rec-phone">({{ item.receiver_contact }})</span>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Active Accent Border Bar -->
+            @if (item.id === activeAddressId) {
+              <div class="active-accent-bar"></div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Bottom Floating Action Bar: Select on Map -->
+      <div class="map-action-footer">
+        <button type="button" class="btn-select-map" (click)="openMap()">
+          <ion-icon name="map-outline"></ion-icon>
+          <span>Select on map</span>
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Edit Address Modal Bottom Sheet -->
+  @if (isEditModalOpen && editingAddress) {
+    <div class="edit-modal-backdrop animate__animated animate__fadeIn" (click)="closeEditModal()">
+      <div class="edit-modal-sheet animate__animated animate__slideInUp" (click)="$event.stopPropagation()">
+        <app-address-save-form
+          [editAddress]="editingAddress"
+          [initialCoords]="{ lat: editingAddress.lat || 12.8556, lng: editingAddress.lng || 77.6818 }"
+          [initialAddress]="editingAddress.address || ''"
+          (addressSaved)="onAddressUpdated($event)"
+          (cancel)="closeEditModal()">
+        </app-address-save-form>
+      </div>
+    </div>
+  }
+
+</div>
+
+<ion-toast
+  [isOpen]="isToastOpen"
+  [message]="toastMessage"
+  [duration]="2500"
+  (didDismiss)="isToastOpen = false">
+</ion-toast>

@@ -1,4 +1,4 @@
-import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, OnInit, OnDestroy, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { register } from 'swiper/element/bundle';
 
 register();
@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
+import { App } from '@capacitor/app';
 import {
   IonHeader,
   IonToolbar,
@@ -29,11 +30,15 @@ import {
   arrowDownOutline,
   headsetOutline,
   alertCircleOutline,
+  alertCircle,
   moonOutline,
   navigateCircleOutline,
   mapOutline,
   refreshOutline,
-  locationOutline
+  refresh,
+  locationOutline,
+  locate,
+  locateOutline
 } from 'ionicons/icons';
 import { AuthService } from 'src/app/services/auth.service';
 import { LocationService } from 'src/app/services/location.service';
@@ -89,20 +94,30 @@ export interface ServiceItem {
     FooterComponent
   ]
 })
-export class HomePage implements OnInit {
+export class HomePage implements OnInit, OnDestroy {
   headerBg: string = 'rgba(255, 255, 255, 0)';
   headerOpacity: number = 0;
   isPastBanner: boolean = false;
   isScrolled: boolean = false;
   private cachedBannerHeight: number = 0;
+  locationLabel: string = 'UNSAVED';
+  isSavedAddress: boolean = false;
   displayLocationName: string = 'Select Location';
+  displayFullAddress: string = '';
   profileAvatar: string = '';
   userInitials: string = 'P';
   orders: any[] = [];
   token: string = '';
   isLoadingServices: boolean = true;
 
-  // Service Area & Geofencing State
+  // Location Verification & Continuous Monitoring State
+  isCheckingLocation: boolean = true;
+  locationCheckPhase: 'loading_address' | 'detecting' | 'permission_needed' | 'gps_disabled' | 'validating' | 'done' = 'detecting';
+  isGpsDisabled: boolean = false;
+  private locationWatchId: string | null = null;
+  private locationMonitorTimer: any = null;
+  private appStateListener: any = null;
+
   isLocationPermissionDenied: boolean = false;
   isOutOfServiceArea: boolean = false;
   nearestServiceArea: { id?: string; cityName: string; distanceKm: number } | null = null;
@@ -110,6 +125,10 @@ export class HomePage implements OnInit {
   closedAreaCity: string = '';
   areaClosureMessage: string = '';
   currentCoords: { lat: number; lng: number } | null = null;
+
+  get isOfflineOrOutOfServiceArea(): boolean {
+    return Boolean(this.isAreaClosed || this.isOutOfServiceArea);
+  }
 
   banners: BannerItem[] = [
     {
@@ -177,7 +196,29 @@ export class HomePage implements OnInit {
     private profileService: ProfileService,
     private commonService: CommonService
   ) {
-    addIcons({location,chevronDown,arrowForward,alertCircleOutline,chevronForward,moonOutline,refreshOutline,locationOutline,navigateCircleOutline,mapOutline,arrowForwardOutline,flashOutline,shieldCheckmarkOutline,sparklesOutline,chatbubbleEllipsesOutline,arrowDownOutline,headsetOutline});
+    addIcons({
+      location,
+      locate,
+      locateOutline,
+      alertCircle,
+      alertCircleOutline,
+      refresh,
+      refreshOutline,
+      chevronDown,
+      chevronForward,
+      arrowForward,
+      arrowForwardOutline,
+      flashOutline,
+      shieldCheckmarkOutline,
+      sparklesOutline,
+      chatbubbleEllipsesOutline,
+      arrowDownOutline,
+      headsetOutline,
+      moonOutline,
+      navigateCircleOutline,
+      mapOutline,
+      locationOutline
+    });
   }
 
   goToSupport() {
@@ -192,17 +233,22 @@ export class HomePage implements OnInit {
     if (savedLoc) {
       try {
         const parsed = JSON.parse(savedLoc);
-        if (parsed?.area) {
-          this.displayLocationName = parsed.area;
-        } else if (parsed?.address) {
-          this.displayLocationName = parsed.address.split(',')[0];
-        }
+        this.applyLocationDetails(parsed);
       } catch (e) {}
     }
 
+    this.locationService.location$.subscribe((loc: any) => {
+      if (loc) {
+        this.applyLocationDetails(loc);
+      }
+    });
+
     this.locationService.address$.subscribe((addr: string) => {
-      if (addr && addr.trim()) {
-        this.displayLocationName = addr.split(',')[0];
+      if (addr && addr.trim() && (!this.displayFullAddress || this.displayFullAddress === 'Select Location')) {
+        this.displayFullAddress = addr.trim();
+        if (this.displayLocationName === 'Select Location' || !this.displayLocationName) {
+          this.displayLocationName = addr.split(',')[0].trim();
+        }
       }
     });
 
@@ -212,13 +258,8 @@ export class HomePage implements OnInit {
       }
     });
 
-    try {
-      this.locationService.getCurrentPosition();
-    } catch (e) {
-      console.warn('Could not auto-fetch current GPS position', e);
-    }
-    // Check location permission and evaluate service area
-    this.initLocationAndServiceArea();
+    // Start initial location verification flow with startup popup
+    this.startLocationVerificationFlow(true);
 
     if (this.token) {
       this.loadUserProfile();
@@ -229,111 +270,327 @@ export class HomePage implements OnInit {
     }
   }
 
-  async initLocationAndServiceArea() {
-    try {
-      const perm = await this.locationService.checkLocationPermission();
-      if (perm.location === 'denied') {
-        this.isLocationPermissionDenied = true;
-      } else {
-        this.isLocationPermissionDenied = false;
-      }
-    } catch (e) {
-      this.isLocationPermissionDenied = false;
+  ngOnDestroy() {
+    this.stopContinuousLocationMonitoring();
+  }
+
+  /**
+   * Fires every time the home page becomes active (including back navigation).
+   * Re-reads localStorage to pick up address changes made on the map/address-list pages.
+   */
+  ionViewWillEnter() {
+    const savedLoc = localStorage.getItem('location');
+    if (savedLoc) {
+      try {
+        const parsed = JSON.parse(savedLoc);
+        this.applyLocationDetails(parsed);
+      } catch (e) {}
+    }
+  }
+
+  /**
+   * Primary location verification flow on startup & refresh.
+   * Priority: 1) localStorage cached address → 2) DB primary address → 3) GPS fallback
+   */
+  async startLocationVerificationFlow(showModal: boolean = true) {
+    if (showModal) {
+      this.isCheckingLocation = true;
+      this.locationCheckPhase = 'loading_address';
     }
 
-    let lat: number | null = null;
-    let lng: number | null = null;
-
+    // 1. Check localStorage for a cached primary address
     const savedLoc = localStorage.getItem('location');
     if (savedLoc) {
       try {
         const parsed = JSON.parse(savedLoc);
         if (parsed?.lat && parsed?.lng) {
-          lat = parseFloat(parsed.lat);
-          lng = parseFloat(parsed.lng);
-        }
-      } catch (e) {}
-    }
-
-    if (!lat || !lng) {
-      try {
-        const pos = await this.locationService.getCurrentPosition();
-        if (pos?.coords?.coords) {
-          lat = pos.coords.coords.latitude;
-          lng = pos.coords.coords.longitude;
-          this.isLocationPermissionDenied = false;
+          console.log('📍 Using cached primary address from localStorage');
+          this.applyLocationDetails(parsed);
+          this.locationCheckPhase = 'validating';
+          await this.evaluateServiceArea(Number(parsed.lat), Number(parsed.lng));
+          this.startContinuousLocationMonitoring();
+          return;
         }
       } catch (e) {
-        console.warn('Could not auto-fetch current GPS position', e);
+        console.warn('Failed to parse cached location:', e);
       }
     }
 
-    if (lat && lng) {
-      this.currentCoords = { lat, lng };
-      this.evaluateServiceArea(lat, lng);
+    // 2. If logged in, try fetching primary address from API
+    if (this.token) {
+      try {
+        const primaryAddr = await this.fetchPrimaryAddressFromApi();
+        if (primaryAddr?.lat && primaryAddr?.lng) {
+          console.log('📍 Using DB primary address:', primaryAddr.address);
+          const locData = {
+            lat: primaryAddr.lat,
+            lng: primaryAddr.lng,
+            id: primaryAddr.id,
+            label: primaryAddr.label || 'Home',
+            house_no: primaryAddr.house_no,
+            building_name: primaryAddr.building_name,
+            landmark: primaryAddr.landmark,
+            address: primaryAddr.address,
+            area: primaryAddr.address?.split(',')[0] || 'Athani'
+          };
+          this.locationService.setAddress(locData);
+          this.applyLocationDetails(locData);
+          this.locationCheckPhase = 'validating';
+          await this.evaluateServiceArea(Number(primaryAddr.lat), Number(primaryAddr.lng));
+          this.startContinuousLocationMonitoring();
+          return;
+        }
+      } catch (e) {
+        console.warn('Could not fetch primary address from API:', e);
+      }
+    }
+
+    // 3. No saved address → fall back to GPS detection
+    console.log('📍 No primary address found, falling back to GPS detection');
+    this.locationCheckPhase = 'detecting';
+    await this.runLocationCheck();
+    this.startContinuousLocationMonitoring();
+  }
+
+  /**
+   * Apply address details to header UI:
+   * Sets locationLabel ('HOME', 'WORK', 'OTHER', or 'UNSAVED'),
+   * displayLocationName (main area name),
+   * and displayFullAddress (detailed street / full address).
+   */
+  private applyLocationDetails(addr: any) {
+    if (!addr) return;
+
+    // 1. Determine Label & Saved Status
+    const rawLabel = (addr.label || '').trim();
+    if (addr.id || (rawLabel && rawLabel.toLowerCase() !== 'unsaved')) {
+      this.locationLabel = rawLabel ? rawLabel : 'Home';
+      this.isSavedAddress = true;
+    } else {
+      this.locationLabel = 'Unsaved';
+      this.isSavedAddress = false;
+    }
+
+    // 2. Main Area Name
+    if (addr.area && addr.area.trim()) {
+      this.displayLocationName = addr.area.trim();
+    } else if (addr.address && addr.address.trim()) {
+      this.displayLocationName = addr.address.split(',')[0].trim() || 'Athani';
+    } else {
+      this.displayLocationName = 'Select Location';
+    }
+
+    // 3. Current Detailed Full Address
+    const detailedParts = [
+      addr.house_no,
+      addr.building_name,
+      addr.landmark ? 'Near ' + addr.landmark : '',
+      addr.address
+    ].filter(Boolean);
+
+    if (detailedParts.length > 1) {
+      this.displayFullAddress = detailedParts.join(', ');
+    } else if (addr.address && addr.address.trim()) {
+      this.displayFullAddress = addr.address.trim();
+    } else {
+      this.displayFullAddress = this.displayLocationName;
+    }
+
+    // 4. Coordinates
+    if (addr.lat && addr.lng) {
+      this.currentCoords = { lat: Number(addr.lat), lng: Number(addr.lng) };
     }
   }
 
-  evaluateServiceArea(lat: number, lng: number) {
-    this.locationService.checkLocationInServiceArea(lat, lng).subscribe({
-      next: (res: any) => {
-        if (res?.success) {
-          if (res.inServiceArea) {
-            this.isOutOfServiceArea = false;
-            this.nearestServiceArea = null;
-
-            if (res.area?.isOffline) {
-              this.isAreaClosed = true;
-              this.closedAreaCity = res.area.cityName || this.displayLocationName || 'Athani';
-              this.areaClosureMessage = res.area.offlineMessage || 'Operations in this city are temporarily offline. We will resume shortly.';
-            } else {
-              this.isAreaClosed = false;
-            }
-          } else {
-            this.isOutOfServiceArea = true;
-            this.isAreaClosed = false;
-            this.nearestServiceArea = res.nearestArea || null;
-          }
-        }
-      },
-      error: (err: any) => {
-        console.warn('Could not check service area:', err);
-      }
+  /**
+   * Fetch primary address from backend API (returns null if none)
+   */
+  private fetchPrimaryAddressFromApi(): Promise<any> {
+    return new Promise((resolve) => {
+      this.locationService.getPrimaryAddress(this.token).subscribe({
+        next: (res: any) => {
+          resolve(res?.success && res?.data ? res.data : null);
+        },
+        error: () => resolve(null)
+      });
     });
   }
 
-  async requestLocationPermission() {
-    const perm = await this.locationService.requestLocationPermission();
-    if (perm.location === 'granted') {
-      this.isLocationPermissionDenied = false;
-      const pos = await this.locationService.getCurrentPosition();
-      if (pos?.coords?.coords) {
-        const lat = pos.coords.coords.latitude;
-        const lng = pos.coords.coords.longitude;
-        this.currentCoords = { lat, lng };
-        this.evaluateServiceArea(lat, lng);
-      }
-    } else {
+  /**
+   * GPS-based location check (only used when no primary address exists)
+   */
+  async runLocationCheck(): Promise<void> {
+    const locResult = await this.locationService.getDetailedPosition();
+
+    if (locResult.status === 'permission_denied') {
       this.isLocationPermissionDenied = true;
+      this.isGpsDisabled = false;
+      this.locationCheckPhase = 'permission_needed';
+      this.isCheckingLocation = true;
+      return;
+    }
+
+    if (locResult.status === 'gps_disabled') {
+      this.isLocationPermissionDenied = false;
+      this.isGpsDisabled = true;
+      this.locationCheckPhase = 'gps_disabled';
+      this.isCheckingLocation = true;
+      return;
+    }
+
+    if (locResult.status === 'ok' && locResult.coords) {
+      this.isLocationPermissionDenied = false;
+      this.isGpsDisabled = false;
+      this.locationCheckPhase = 'validating';
+
+      const { latitude, longitude } = locResult.coords;
+      this.currentCoords = { lat: latitude, lng: longitude };
+
+      const area = locResult.city || (locResult.address ? locResult.address.split(',')[0] : 'Athani');
+      const address = locResult.address || locResult.city || 'Athani';
+
+      this.applyLocationDetails({
+        lat: latitude,
+        lng: longitude,
+        label: '', // Empty label signals 'Unsaved'
+        area,
+        address
+      });
+
+      await this.evaluateServiceArea(latitude, longitude);
+    }
+  }
+
+  /**
+   * Validate coordinates against backend service areas
+   */
+  evaluateServiceArea(lat: number, lng: number): Promise<void> {
+    return new Promise((resolve) => {
+      this.locationService.checkLocationInServiceArea(lat, lng).subscribe({
+        next: (res: any) => {
+          this.isCheckingLocation = false;
+          this.locationCheckPhase = 'done';
+
+          if (res?.success) {
+            if (res.inServiceArea) {
+              this.isOutOfServiceArea = false;
+              this.nearestServiceArea = null;
+
+              if (res.area?.isOffline) {
+                this.isAreaClosed = true;
+                this.closedAreaCity = res.area.cityName || this.displayLocationName || 'Athani';
+                this.areaClosureMessage = res.area.offlineMessage || 'Operations in this city are temporarily offline. We will resume shortly.';
+              } else {
+                this.isAreaClosed = false;
+              }
+            } else {
+              this.isOutOfServiceArea = true;
+              this.isAreaClosed = false;
+              this.nearestServiceArea = res.nearestArea || null;
+            }
+          }
+          resolve();
+        },
+        error: (err: any) => {
+          console.warn('Could not check service area:', err);
+          this.isCheckingLocation = false;
+          this.locationCheckPhase = 'done';
+          resolve();
+        }
+      });
+    });
+  }
+
+  /**
+   * Action button in popup: request permission and immediately re-evaluate
+   */
+  async requestLocationPermissionAndPosition() {
+    this.locationCheckPhase = 'detecting';
+    try {
+      const perm = await this.locationService.requestLocationPermission();
+      if (perm.location === 'granted') {
+        this.isLocationPermissionDenied = false;
+        await this.runLocationCheck();
+      } else {
+        this.isLocationPermissionDenied = true;
+        this.locationCheckPhase = 'permission_needed';
+      }
+    } catch (e) {
+      await this.runLocationCheck();
     }
   }
 
   async recheckLocationAndServiceArea() {
-    try {
-      const pos = await this.locationService.getCurrentPosition();
-      if (pos?.coords?.coords) {
-        this.isLocationPermissionDenied = false;
-        const lat = pos.coords.coords.latitude;
-        const lng = pos.coords.coords.longitude;
-        this.currentCoords = { lat, lng };
-        this.evaluateServiceArea(lat, lng);
-      } else if (this.currentCoords) {
-        this.evaluateServiceArea(this.currentCoords.lat, this.currentCoords.lng);
+    await this.startLocationVerificationFlow(true);
+  }
+
+  /**
+   * Continuous background monitoring: appStateChange, active interval, & watchPosition
+   */
+  startContinuousLocationMonitoring() {
+    // 1. App Resume Listener (detects return from Android quick settings / permissions)
+    if (!this.appStateListener) {
+      try {
+        this.appStateListener = App.addListener('appStateChange', async (state) => {
+          if (state.isActive) {
+            console.log('📱 App resumed, re-evaluating location status...');
+            if (this.isLocationPermissionDenied || this.isGpsDisabled || this.isCheckingLocation) {
+              await this.runLocationCheck();
+            }
+          }
+        });
+      } catch (e) {
+        console.warn('AppState listener unavailable:', e);
       }
-    } catch (e) {
-      if (this.currentCoords) {
-        this.evaluateServiceArea(this.currentCoords.lat, this.currentCoords.lng);
-      }
+    }
+
+    // 2. Periodic poll interval if location resolution is pending (every 2.5s)
+    if (!this.locationMonitorTimer) {
+      this.locationMonitorTimer = setInterval(async () => {
+        if (this.isLocationPermissionDenied || this.isGpsDisabled || this.isCheckingLocation) {
+          const perm = await this.locationService.checkLocationPermission();
+          if (perm.location === 'granted') {
+            await this.runLocationCheck();
+          }
+        }
+      }, 2500);
+    }
+
+    // 3. Continuous Geolocation Watcher
+    if (!this.locationWatchId) {
+      this.locationService.watchPosition((position, err) => {
+        if (position?.coords) {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+
+          if (this.isLocationPermissionDenied || this.isGpsDisabled) {
+            this.isLocationPermissionDenied = false;
+            this.isGpsDisabled = false;
+          }
+
+          if (this.isOutOfServiceArea || !this.currentCoords) {
+            this.currentCoords = { lat, lng };
+            this.evaluateServiceArea(lat, lng);
+          }
+        }
+      }).then(id => {
+        if (id) this.locationWatchId = id;
+      });
+    }
+  }
+
+  stopContinuousLocationMonitoring() {
+    if (this.locationMonitorTimer) {
+      clearInterval(this.locationMonitorTimer);
+      this.locationMonitorTimer = null;
+    }
+    if (this.locationWatchId) {
+      this.locationService.clearWatch(this.locationWatchId);
+      this.locationWatchId = null;
+    }
+    if (this.appStateListener) {
+      this.appStateListener.remove?.();
+      this.appStateListener = null;
     }
   }
 
@@ -383,7 +640,7 @@ export class HomePage implements OnInit {
 
   handleRefresh(event: any) {
     this.cachedBannerHeight = 0;
-    this.initLocationAndServiceArea();
+    this.startLocationVerificationFlow(false);
     if (this.token) {
       this.loadUserProfile();
       this.loadHomeData();
@@ -746,7 +1003,9 @@ export class HomePage implements OnInit {
   }
 
   openLocation() {
-    this.router.navigate(['/layout/map']);
+    this.router.navigate(['/layout/address-list'], {
+      state: { data: 'home' }
+    });
   }
 
   goToProfile() {

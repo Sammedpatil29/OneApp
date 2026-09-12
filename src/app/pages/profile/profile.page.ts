@@ -34,6 +34,7 @@ import {
 import { AuthService } from 'src/app/services/auth.service';
 import { ProfileService } from 'src/app/services/profile.service';
 import { AppDialogService } from 'src/app/services/app-dialog.service';
+import { FooterComponent } from 'src/app/components/footer/footer.component';
 
 @Component({
   selector: 'app-profile',
@@ -50,7 +51,8 @@ import { AppDialogService } from 'src/app/services/app-dialog.service';
     IonTitle,
     IonContent,
     IonSkeletonText,
-    IonIcon
+    IonIcon,
+    FooterComponent
   ]
 })
 export class ProfilePage implements OnInit {
@@ -147,7 +149,9 @@ export class ProfilePage implements OnInit {
     if (option === 'Personal Details') {
       this.router.navigate(['/layout/profile-details']);
     } else if (option === 'Saved Addresses') {
-      this.router.navigate(['/layout/address-list']);
+      this.router.navigate(['/layout/address-list'], {
+        state: { data: 'profile' }
+      });
     } else if (option === 'Orders History' || option === 'Orders') {
       this.router.navigate(['/layout/history']);
     } else {

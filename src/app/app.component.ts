@@ -13,6 +13,7 @@ import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { OtaService } from './services/ota.service';
 import { AuthService } from './services/auth.service';
+import { AppDialogService } from './services/app-dialog.service';
 import { CustomSplashComponent } from './pages/custom-splash/custom-splash.component';
 
 @Component({
@@ -36,7 +37,8 @@ export class AppComponent implements OnInit {
     private location: Location,
     private router: Router,
     private otaService: OtaService,
-    private authService: AuthService
+    private authService: AuthService,
+    private dialogService: AppDialogService
   ) {
     const startTime = Date.now();
     this.routeBasedOnAuth(startTime);
@@ -146,23 +148,48 @@ export class AppComponent implements OnInit {
   }
 
   initializeBackButtonCustomHandler() {
-    this.platform.backButton.subscribeWithPriority(10, (processNextHandler) => {
+    this.platform.backButton.subscribeWithPriority(10, async (processNextHandler) => {
 
       const currentUrl = this.router.url;
       console.log('📍 Back Pressed. Current URL:', currentUrl);
 
-      const isRootPage =
-        currentUrl.includes('/home') ||
-        currentUrl.includes('/login') ||
-        currentUrl.includes('/offline'); // ✅ added offline
+      // 1. If an alert dialog is currently open, dismiss it on back press
+      if (this.dialogService.isAlertOpen) {
+        this.dialogService.handleCancel();
+        return;
+      }
 
-      if (isRootPage) {
+      // 2. On home page, show confirmation dialog before exiting
+      if (currentUrl.includes('/home')) {
+        const confirmed = await this.dialogService.showConfirm({
+          title: 'Exit Pintu?',
+          message: 'Are you sure you want to exit the app?',
+          confirmText: 'Exit App',
+          cancelText: 'Stay'
+        });
+        if (confirmed) {
+          App.exitApp();
+        }
+        return;
+      }
+
+      // 3. Other root pages (login, offline) exit directly
+      const isDirectExitPage =
+        currentUrl.includes('/login') ||
+        currentUrl.includes('/offline');
+
+      if (isDirectExitPage) {
         App.exitApp();
       }
       else if (this.routerOutlet && this.routerOutlet.canGoBack()) {
         this.navCtrl.back({ animated: false });
-      } else if (currentUrl == '/layout/example/history' || currentUrl == '/layout/example/support') {
-        this.navCtrl.navigateBack('/layout/example/home');
+      } else if (
+        currentUrl.includes('/layout/history') ||
+        currentUrl.includes('/layout/support') ||
+        currentUrl.includes('/layout/profile') ||
+        currentUrl.includes('/layout/refer')
+      ) {
+        this.navCtrl.navigateRoot('/layout/home');
       }
       else {
         processNextHandler();

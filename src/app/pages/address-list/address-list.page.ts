@@ -1,155 +1,58 @@
-import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonSkeletonText, IonSpinner, IonText, IonNote, IonItem, IonLabel, IonIcon, IonButtons, IonList, IonFooter, IonToast } from '@ionic/angular/standalone';
-import { Router } from '@angular/router';
-import { NodataComponent } from "src/app/components/nodata/nodata.component";
+import {
+  IonContent,
+  IonHeader,
+  IonTitle,
+  IonToolbar,
+  IonButton,
+  IonButtons,
+  IonIcon
+} from '@ionic/angular/standalone';
 import { NavController } from '@ionic/angular';
-import { arrowBack, arrowBackOutline, chevronForward } from 'ionicons/icons';
+import { arrowBackOutline } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
-import { AuthService } from 'src/app/services/auth.service';
-import { LocationService } from 'src/app/services/location.service';
-import { ProfileService } from 'src/app/services/profile.service';
+import { SavedAddressesComponent } from 'src/app/components/saved-addresses/saved-addresses.component';
 
 @Component({
   selector: 'app-address-list',
   templateUrl: './address-list.page.html',
   styleUrls: ['./address-list.page.scss'],
   standalone: true,
-  imports: [IonToast, IonFooter, IonList, IonSkeletonText, IonButtons, IonIcon, IonLabel, IonItem, IonNote, IonText, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, NodataComponent]
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonContent,
+    IonHeader,
+    IonTitle,
+    IonToolbar,
+    IonButton,
+    IonButtons,
+    IonIcon,
+    SavedAddressesComponent
+  ]
 })
 export class AddressListPage implements OnInit {
-isSpinnerLoading: boolean = true
-Addressid:any
-addresses: any = []
+  @ViewChild(SavedAddressesComponent) savedAddressesComp!: SavedAddressesComponent;
+  routeSource: any = 'home';
 
-// [
-//     {
-//         "lat": "",
-//         "lng": "",
-//         "address": "",
-//         "landmark": "",
-//         "label": "",
-//         "house_no": "",
-//         "building_name": "",
-//         "receiver_name": "",
-//         "receiver_contact": "",
-//         "user": 18
-//     }
-//   ]
-  token:any = ''
-  isToastOpen: boolean = false
-  toastMessage = ''
-  routeSource:any
-
-
-  constructor(private router: Router, private navCtrl: NavController , private authService: AuthService, private locationService: LocationService, private profileService: ProfileService) {
-    addIcons({arrowBack, arrowBackOutline, chevronForward});
-   }
-
-  async ngOnInit() {
-    this.Addressid = this.locationService.location$.subscribe((res:any)=>{
-      this.Addressid = res
-    })
-      console.log(this.Addressid)
-    this.token = await this.authService.getToken()
-    this.routeSource = history.state.data
-    const locationData = this.Addressid;
-    if (locationData) {
-      const location = locationData;
-      this.selectedAddress = location.address;
-    }
-
-      this.getAddressList(true)
+  constructor(private navCtrl: NavController) {
+    addIcons({ arrowBackOutline });
   }
 
-  selectedAddress:any
+  ngOnInit() {
+    this.routeSource = history.state?.data || 'home';
+  }
+
   ionViewWillEnter() {
-    const locationData = this.locationService.location$.subscribe((res:any)=>{
-      this.Addressid = res
-    });
-    if (this.Addressid) {
-      const location = this.Addressid;
-      this.selectedAddress = location.address;
+    this.routeSource = history.state?.data || this.routeSource || 'home';
+    if (this.savedAddressesComp) {
+      this.savedAddressesComp.loadAddresses(false);
     }
-
-      this.getAddressList(false)
-  }
-
-  openLocation() {
-    this.navCtrl.navigateForward('/layout/map', {
-      state: {data : this.routeSource}
-    })
   }
 
   goBack() {
     this.navCtrl.back();
   }
-
-  setAddressAsDefault(item:any){
-    let data = {
-      lat: item.lat,
-      lng: item.lng,
-      id: item.id,
-      label: item.label,
-      address: item.address
-    }
-    this.locationService.setAddress(data)
-    localStorage.setItem('location', JSON.stringify(data))
-    // this.getAddressList()
-
-    // this.Addressid = JSON.parse(localStorage.getItem('location') || '{}');
-    console.log(this.Addressid)
-  }
-
-  deleteAddress(id:any){
-    this.locationService.deleteAddress(this.token, id).subscribe(res => {
-      // alert("deleted successfully")
-      this.isSpinnerLoading = false
-      setTimeout(()=>{
-        this.getAddressList(false)
-      })
-      this.isToastOpen = true
-      this.toastMessage = "Address deleted successfully";
-      setTimeout(()=>{
-        this.isToastOpen = false
-      },3000)
-      
-      this.addresses = [...this.addresses]
-      console.log(this.addresses)
-    }, error =>{
-      this.isToastOpen = true
-      this.toastMessage = "failed to delete address";
-      setTimeout(()=>{
-        this.isToastOpen = false
-      },3000)
-    })
-  }
-
-  getAddressList(loader:any){
-    console.log(this.token)
-//     let params = {
-//   "token": this.token
-// }
-if(loader){
-  this.isSpinnerLoading = true
-}
-    this.locationService.getAddressesList(this.token).subscribe((res:any) => {
-        // let address = res.data
-        this.addresses = res.data
-        console.log(this.addresses)
-        this.isSpinnerLoading = false
-        // this.addresses = address
-        
-    }, error => {
-      this.addresses = []
-      this.isSpinnerLoading = false
-      this.isToastOpen = true
-      this.toastMessage = `No Data`;
-      setTimeout(()=>{
-        this.isToastOpen = false
-      },3000)
-    })
-  }
-
 }

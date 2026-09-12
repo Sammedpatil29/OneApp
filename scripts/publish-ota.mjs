@@ -153,7 +153,8 @@ async function main() {
       const res = await fetch(uploadUrl, {
         method: 'POST',
         headers: {
-          'x-ota-secret': OTA_SECRET_KEY
+          'x-ota-secret': OTA_SECRET_KEY,
+          'x-forwarded-proto': 'https'
         },
         body: formData
       });
