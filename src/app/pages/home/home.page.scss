@@ -763,10 +763,7 @@
       letter-spacing: 0.35px;
       text-transform: uppercase;
       line-height: 1.2;
-      border-top-left-radius: 16.5px;
-      border-top-right-radius: 0;
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 10px;
+      border-radius: 16.5px 0 10px 0;
 
       /* Light pastel themes as earlier */
       &.tag-brand {
