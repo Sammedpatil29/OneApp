@@ -472,7 +472,7 @@
   /* 2 SERVICES: 50% Width 2 in Inline */
   &.count-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-auto-rows: 136px;
+    grid-auto-rows: 130px;
 
     .mosaic-tile {
       width: 100%;
@@ -482,44 +482,92 @@
   /* MORE THAN 2 SERVICES: BENTO MOSAIC GRID */
   &.bento-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-auto-rows: 114px;
+    grid-auto-rows: 122px;
   }
 
   .mosaic-tile {
     min-width: 0;
     box-sizing: border-box;
-    border-radius: 22px;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.035);
+    border-radius: 18px;
+    border: 1.5px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    background: #ffffff;
     cursor: pointer;
     overflow: hidden;
     position: relative;
-    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
 
     &:active {
       transform: scale(0.975);
-      border-color: rgba(160, 0, 226, 0.3);
-      box-shadow: 0 6px 18px rgba(160, 0, 226, 0.09);
+      border-color: rgba(160, 0, 226, 0.4);
+      box-shadow: 0 4px 14px rgba(160, 0, 226, 0.12);
     }
 
-    /* Common Badge */
-    .service-pill-tag {
-      align-self: flex-start;
-      font-size: 9.5px;
+    /* ─── CORNER OFFER TAG (Touches Top-Left Corner with light pastel colors) ─── */
+    .service-corner-tag {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 3;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 3px 8.5px 3.5px 8px;
+      font-size: 8.5px;
       font-weight: 850;
-      letter-spacing: 0.4px;
-      padding: 2.5px 8.5px;
-      border-radius: 99px;
-      background: rgba(160, 0, 226, 0.12);
-      color: #a000e2;
-      border: 1px solid rgba(160, 0, 226, 0.2);
-      display: inline-block;
-      width: fit-content;
+      letter-spacing: 0.35px;
+      text-transform: uppercase;
+      line-height: 1.2;
+      border-top-left-radius: 16.5px;
+      border-top-right-radius: 0;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 10px;
 
-      &.tag-vibrant {
-        background: rgba(250, 204, 21, 0.22);
-        color: #854d0e;
-        border-color: rgba(250, 204, 21, 0.4);
+      /* Light pastel themes as earlier */
+      &.tag-brand {
+        background: #f5f3ff;
+        color: #7c3aed;
+        border-right: 1px solid rgba(124, 58, 237, 0.2);
+        border-bottom: 1px solid rgba(124, 58, 237, 0.2);
+      }
+
+      &.tag-discount {
+        background: #ecfdf5;
+        color: #059669;
+        border-right: 1px solid rgba(5, 150, 105, 0.2);
+        border-bottom: 1px solid rgba(5, 150, 105, 0.2);
+      }
+
+      &.tag-highlight {
+        background: #fff7ed;
+        color: #ea580c;
+        border-right: 1px solid rgba(234, 88, 12, 0.22);
+        border-bottom: 1px solid rgba(234, 88, 12, 0.22);
+      }
+    }
+
+    /* Subtitle active status highlighting (like media_1789216424950.png) */
+    .status-active {
+      color: #059669 !important;
+      font-weight: 700 !important;
+    }
+
+    /* ─── COMMON CORNER ART ─── */
+    .tile-corner-art {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+      pointer-events: none;
+      z-index: 1;
+
+      img {
+        display: block;
+        object-fit: contain;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.08));
+        transition: transform 0.2s ease;
       }
     }
 
@@ -527,97 +575,103 @@
     &.mosaic-tile-tall {
       grid-column: span 1;
       grid-row: span 2;
-      padding: 16px 14px;
 
       .tall-tile-inner {
         height: 100%;
+        width: 100%;
+        padding: 14px 14px 12px 14px;
+        box-sizing: border-box;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        position: relative;
+        z-index: 2;
+
+        &.has-corner-tag {
+          padding-top: 26px;
+        }
 
         .tile-header-area {
           display: flex;
           flex-direction: column;
-          gap: 4px;
+          gap: 2px;
+          max-width: 100%;
 
           .tile-title-tall {
             font-size: 18px;
             font-weight: 850;
             color: #0f172a;
-            margin: 4px 0 0;
+            margin: 0;
             letter-spacing: -0.3px;
+            line-height: 1.25;
           }
 
           .tile-subtitle-tall {
-            font-size: 11.5px;
+            font-size: 12px;
             color: #64748b;
             margin: 0;
             line-height: 1.35;
+            font-weight: 600;
           }
         }
 
-        .tile-bottom-area {
+        /* Center Art in Main Card as earlier */
+        .tile-center-art-tall {
+          flex: 1;
           display: flex;
-          flex-direction: column;
           align-items: center;
-          gap: 12px;
-          margin-top: auto;
+          justify-content: center;
+          margin: 6px 0;
+          width: 100%;
 
-          .tile-visual-box-tall {
-            width: 80px;
-            height: 80px;
+          .service-art-img-tall-center {
+            width: 86px;
+            height: 86px;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
+            transition: transform 0.2s ease;
+          }
+
+          .service-art-fallback.tall-fallback {
+            width: 76px;
+            height: 76px;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 
-            .service-art-img {
-              width: 100%;
-              height: 100%;
-              object-fit: contain;
-              filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
-            }
-
-            .service-art-fallback {
-              width: 72px;
-              height: 72px;
-              border-radius: 20px;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-
-              .fallback-emoji {
-                font-size: 38px;
-              }
+            .fallback-emoji {
+              font-size: 40px;
             }
           }
+        }
 
-          .tile-action-row {
-            width: 100%;
+        .tile-action-row {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding-top: 8px;
+          border-top: 1px solid rgba(0, 0, 0, 0.05);
+
+          .action-btn-text {
+            font-size: 12px;
+            font-weight: 800;
+            color: #a000e2;
+          }
+
+          .arrow-circle-btn {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: #a000e2;
+            color: #ffffff;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding-top: 8px;
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
-
-            .action-btn-text {
-              font-size: 12px;
-              font-weight: 800;
-              color: #a000e2;
-            }
-
-            .arrow-circle-btn {
-              width: 26px;
-              height: 26px;
-              border-radius: 50%;
-              background: #a000e2;
-              color: #ffffff;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              font-size: 13px;
-              box-shadow: 0 2px 6px rgba(160, 0, 226, 0.3);
-            }
+            justify-content: center;
+            font-size: 13px;
+            box-shadow: 0 2px 6px rgba(160, 0, 226, 0.3);
           }
         }
       }
@@ -627,42 +681,34 @@
     &.mosaic-tile-normal {
       grid-column: span 1;
       grid-row: span 1;
-      padding: 13px 13px 12px;
 
       .normal-tile-inner {
         height: 100%;
+        width: 100%;
+        padding: 13px 12px 12px 14px;
+        box-sizing: border-box;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        justify-content: flex-start;
+        position: relative;
+        z-index: 2;
 
-        .normal-top-row {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-
-          .arrow-circle-mini {
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            background: rgba(0, 0, 0, 0.04);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            color: #64748b;
-          }
+        &.has-corner-tag {
+          padding-top: 24px;
         }
 
-        .normal-center-info {
+        .normal-left-info {
+          max-width: 75%;
           display: flex;
           flex-direction: column;
-          min-width: 0;
+          gap: 2px;
 
           .tile-title-normal {
             font-size: 14.5px;
             font-weight: 800;
             color: #0f172a;
             margin: 0;
+            line-height: 1.25;
             letter-spacing: -0.2px;
             white-space: nowrap;
             overflow: hidden;
@@ -670,38 +716,45 @@
           }
 
           .tile-subtitle-normal {
-            font-size: 11px;
+            font-size: 11.5px;
             color: #64748b;
-            margin: 1px 0 0;
+            margin: 0;
+            font-weight: 600;
+            line-height: 1.2;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
           }
         }
+      }
 
-        .normal-bottom-art {
+      /* Corner Art with Increased Size & ~20% bleed into bottom & right edges */
+      .normal-corner-art {
+        position: absolute;
+        right: -12px;
+        bottom: -12px;
+        z-index: 1;
+        pointer-events: none;
+
+        .service-art-img-normal {
+          width: 80px;
+          height: 80px;
+          object-fit: contain;
+          filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.1));
+          display: block;
+        }
+
+        .service-art-fallback.normal-fallback {
+          width: 52px;
+          height: 52px;
+          border-radius: 14px;
+          margin: 0 4px 4px 0;
           display: flex;
           align-items: center;
-          justify-content: flex-end;
+          justify-content: center;
 
-          .service-art-img-normal {
-            width: 44px;
-            height: 44px;
-            object-fit: contain;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.06));
-          }
-
-          .service-art-fallback.normal-fallback {
-            width: 38px;
-            height: 38px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            .fallback-emoji-small {
-              font-size: 20px;
-            }
+          .fallback-emoji-small {
+            font-size: 26px;
           }
         }
       }
@@ -711,24 +764,29 @@
     &.mosaic-tile-wide {
       grid-column: span 2;
       grid-row: span 1;
-      padding: 14px 16px;
 
       .wide-tile-inner {
         height: 100%;
+        width: 100%;
+        padding: 14px 16px;
+        box-sizing: border-box;
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        position: relative;
+        z-index: 2;
+
+        &.has-corner-tag {
+          padding-top: 22px;
+        }
 
         .wide-left-content {
-          flex: 1;
-          min-width: 0;
+          max-width: 65%;
           display: flex;
           flex-direction: column;
-          gap: 2px;
-          padding-right: 12px;
+          gap: 3px;
 
           .tile-title-wide {
-            font-size: 16px;
+            font-size: 16.5px;
             font-weight: 800;
             color: #0f172a;
             margin: 0;
@@ -736,9 +794,10 @@
           }
 
           .tile-subtitle-wide {
-            font-size: 11.5px;
+            font-size: 12px;
             color: #64748b;
             margin: 0;
+            font-weight: 600;
           }
 
           .wide-cta-chip {
@@ -748,40 +807,42 @@
             font-size: 11px;
             font-weight: 800;
             color: #a000e2;
-            margin-top: 3px;
+            margin-top: 4px;
 
             ion-icon {
               font-size: 12px;
             }
           }
         }
+      }
 
-        .wide-right-visual {
+      /* Corner Art with Increased Size & ~20% bleed into bottom & right edges */
+      .wide-corner-art {
+        position: absolute;
+        right: -14px;
+        bottom: -12px;
+        z-index: 1;
+        pointer-events: none;
+
+        .service-art-img-wide {
+          width: 92px;
+          height: 92px;
+          object-fit: contain;
+          filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.1));
+          display: block;
+        }
+
+        .service-art-fallback.wide-fallback {
           width: 64px;
           height: 64px;
+          border-radius: 16px;
+          margin: 0 6px 6px 0;
           display: flex;
           align-items: center;
           justify-content: center;
-          flex-shrink: 0;
 
-          .service-art-img-wide {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.08));
-          }
-
-          .service-art-fallback.wide-fallback {
-            width: 54px;
-            height: 54px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            .fallback-emoji {
-              font-size: 28px;
-            }
+          .fallback-emoji {
+            font-size: 32px;
           }
         }
       }
@@ -789,6 +850,40 @@
 
     &.skeleton-card {
       pointer-events: none;
+
+      .skeleton-corner-tag {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 54px;
+        height: 18px;
+        background: #f1f5f9;
+        border-top-left-radius: 16.5px;
+        border-bottom-right-radius: 10px;
+      }
+
+      .skeleton-corner-circle {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        border-bottom-right-radius: 16.5px;
+
+        &.normal {
+          width: 58px;
+          height: 58px;
+          border-radius: 18px 0 16.5px 0;
+        }
+        &.wide {
+          width: 70px;
+          height: 70px;
+          border-radius: 20px 0 16.5px 0;
+        }
+        &.tall {
+          width: 82px;
+          height: 82px;
+          border-radius: 24px 0 16.5px 0;
+        }
+      }
     }
   }
 }

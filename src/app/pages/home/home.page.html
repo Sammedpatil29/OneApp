@@ -16,12 +16,8 @@
         </div>
       </div>
 
-      <!-- Right: Action & Profile Avatar (Matching Partner App) -->
+      <!-- Right: Customer Profile Avatar -->
       <div class="header-actions">
-        <button type="button" class="icon-btn help-btn" (click)="goToSupport()" title="Customer Support" aria-label="Customer Support">
-          <ion-icon name="headset-outline"></ion-icon>
-        </button>
-
         <div class="customer-avatar-btn" (click)="goToProfile()" role="button" tabindex="0" title="My Profile">
           @if (profileAvatar) {
             <img [src]="profileAvatar" alt="Profile" (error)="profileAvatar = ''" />
@@ -140,22 +136,28 @@
       @if (isLoadingServices && allServices.length === 0) {
         <div class="services-mosaic-grid bento-grid">
           <div class="mosaic-tile mosaic-tile-tall skeleton-card">
-            <ion-skeleton-text animated style="width: 70px; height: 16px; border-radius: 99px; margin-bottom: 12px;"></ion-skeleton-text>
-            <ion-skeleton-text animated style="width: 110px; height: 22px; border-radius: 6px; margin-bottom: 6px;"></ion-skeleton-text>
+            <div class="skeleton-corner-tag"></div>
+            <ion-skeleton-text animated style="width: 110px; height: 20px; border-radius: 6px; margin: 26px 0 6px 0;"></ion-skeleton-text>
             <ion-skeleton-text animated style="width: 130px; height: 14px; border-radius: 4px;"></ion-skeleton-text>
-            <ion-skeleton-text animated style="width: 70px; height: 70px; border-radius: 18px; margin-top: auto; align-self: center;"></ion-skeleton-text>
+            <ion-skeleton-text animated class="skeleton-corner-circle tall"></ion-skeleton-text>
           </div>
           <div class="mosaic-tile mosaic-tile-normal skeleton-card">
-            <ion-skeleton-text animated style="width: 50px; height: 14px; border-radius: 99px; margin-bottom: 6px;"></ion-skeleton-text>
-            <ion-skeleton-text animated style="width: 90px; height: 16px; border-radius: 6px;"></ion-skeleton-text>
+            <div class="skeleton-corner-tag"></div>
+            <ion-skeleton-text animated style="width: 80px; height: 16px; border-radius: 6px; margin: 24px 0 4px 0;"></ion-skeleton-text>
+            <ion-skeleton-text animated style="width: 55px; height: 12px; border-radius: 4px;"></ion-skeleton-text>
+            <ion-skeleton-text animated class="skeleton-corner-circle normal"></ion-skeleton-text>
           </div>
           <div class="mosaic-tile mosaic-tile-normal skeleton-card">
-            <ion-skeleton-text animated style="width: 50px; height: 14px; border-radius: 99px; margin-bottom: 6px;"></ion-skeleton-text>
-            <ion-skeleton-text animated style="width: 90px; height: 16px; border-radius: 6px;"></ion-skeleton-text>
+            <div class="skeleton-corner-tag"></div>
+            <ion-skeleton-text animated style="width: 80px; height: 16px; border-radius: 6px; margin: 24px 0 4px 0;"></ion-skeleton-text>
+            <ion-skeleton-text animated style="width: 55px; height: 12px; border-radius: 4px;"></ion-skeleton-text>
+            <ion-skeleton-text animated class="skeleton-corner-circle normal"></ion-skeleton-text>
           </div>
           <div class="mosaic-tile mosaic-tile-wide skeleton-card">
-            <ion-skeleton-text animated style="width: 140px; height: 18px; border-radius: 6px; margin-bottom: 6px;"></ion-skeleton-text>
-            <ion-skeleton-text animated style="width: 180px; height: 14px; border-radius: 4px;"></ion-skeleton-text>
+            <div class="skeleton-corner-tag"></div>
+            <ion-skeleton-text animated style="width: 130px; height: 18px; border-radius: 6px; margin: 24px 0 6px 0;"></ion-skeleton-text>
+            <ion-skeleton-text animated style="width: 100px; height: 13px; border-radius: 4px;"></ion-skeleton-text>
+            <ion-skeleton-text animated class="skeleton-corner-circle wide"></ion-skeleton-text>
           </div>
         </div>
       }
@@ -174,33 +176,38 @@
               role="button"
               tabindex="0">
 
-              <!-- TALL MOSAIC TILE (Left Hero Span 2 Rows in Bento mode) -->
+              <!-- Corner Offer Tag (Touches Top-Left Corner with changed borders) -->
+              @if (hasOffer(service)) {
+                <div class="service-corner-tag" [ngClass]="getOfferTagClass(service)">
+                  <span>{{ service.offers }}</span>
+                </div>
+              }
+
+              <!-- TALL MOSAIC TILE (Main Card: Center Art as earlier) -->
               @if (getMosaicTileType($index, allServices.length) === 'mosaic-tile-tall') {
-                <div class="tall-tile-inner">
+                <div class="tall-tile-inner" [class.has-corner-tag]="hasOffer(service)">
                   <div class="tile-header-area">
-                    @if (hasOffer(service)) {
-                      <span class="service-pill-tag tag-vibrant">{{ service.offers }}</span>
-                    }
                     <h3 class="tile-title-tall">{{ service.title }}</h3>
-                    <p class="tile-subtitle-tall">{{ service.subtitle || 'Instant & reliable service' }}</p>
+                    <p class="tile-subtitle-tall" [class.status-active]="isStatusActive(service)">
+                      {{ service.subtitle || (isStatusActive(service) ? 'Active' : 'Instant & reliable service') }}
+                    </p>
                   </div>
 
-                  <div class="tile-bottom-area">
-                    <div class="tile-visual-box-tall">
-                      @if (isImageValid(service) && !service.hasImgError) {
-                        <img [src]="getServiceImgUrl(service)" [alt]="service.title" class="service-art-img" (error)="service.hasImgError = true" />
-                      } @else {
-                        <div class="service-art-fallback" [style.background]="getServiceBg(service)">
-                          <span class="fallback-emoji">{{ getServiceIcon(service) }}</span>
-                        </div>
-                      }
-                    </div>
-
-                    <div class="tile-action-row">
-                      <span class="action-btn-text">Explore</span>
-                      <div class="arrow-circle-btn">
-                        <ion-icon name="arrow-forward"></ion-icon>
+                  <!-- Centered Art in Main Card as earlier -->
+                  <div class="tile-center-art-tall">
+                    @if (isImageValid(service) && !service.hasImgError) {
+                      <img [src]="getServiceImgUrl(service)" [alt]="service.title" class="service-art-img-tall-center" (error)="service.hasImgError = true" />
+                    } @else {
+                      <div class="service-art-fallback tall-fallback" [style.background]="getServiceBg(service)">
+                        <span class="fallback-emoji">{{ getServiceIcon(service) }}</span>
                       </div>
+                    }
+                  </div>
+
+                  <div class="tile-action-row">
+                    <span class="action-btn-text">Explore</span>
+                    <div class="arrow-circle-btn">
+                      <ion-icon name="arrow-forward"></ion-icon>
                     </div>
                   </div>
                 </div>
@@ -208,57 +215,51 @@
 
               <!-- WIDE MOSAIC TILE (100% Width: when count=1, or full row span) -->
               @else if (getMosaicTileType($index, allServices.length) === 'mosaic-tile-wide') {
-                <div class="wide-tile-inner">
+                <div class="wide-tile-inner" [class.has-corner-tag]="hasOffer(service)">
                   <div class="wide-left-content">
-                    @if (hasOffer(service)) {
-                      <span class="service-pill-tag">{{ service.offers }}</span>
-                    }
                     <h4 class="tile-title-wide">{{ service.title }}</h4>
-                    <p class="tile-subtitle-wide">{{ service.subtitle || 'Available now' }}</p>
+                    <p class="tile-subtitle-wide" [class.status-active]="isStatusActive(service)">
+                      {{ service.subtitle || (isStatusActive(service) ? 'Active' : 'Available now') }}
+                    </p>
                     <div class="wide-cta-chip">
                       <span>Explore</span>
                       <ion-icon name="arrow-forward"></ion-icon>
                     </div>
                   </div>
+                </div>
 
-                  <div class="wide-right-visual">
-                    @if (isImageValid(service) && !service.hasImgError) {
-                      <img [src]="getServiceImgUrl(service)" [alt]="service.title" class="service-art-img-wide" (error)="service.hasImgError = true" />
-                    } @else {
-                      <div class="service-art-fallback wide-fallback" [style.background]="getServiceBg(service)">
-                        <span class="fallback-emoji">{{ getServiceIcon(service) }}</span>
-                      </div>
-                    }
-                  </div>
+                <!-- Wide Corner Art (Tucked in Bottom-Right Corner) -->
+                <div class="tile-corner-art wide-corner-art">
+                  @if (isImageValid(service) && !service.hasImgError) {
+                    <img [src]="getServiceImgUrl(service)" [alt]="service.title" class="service-art-img-wide" (error)="service.hasImgError = true" />
+                  } @else {
+                    <div class="service-art-fallback wide-fallback" [style.background]="getServiceBg(service)">
+                      <span class="fallback-emoji">{{ getServiceIcon(service) }}</span>
+                    </div>
+                  }
                 </div>
               }
 
               <!-- NORMAL COMPACT TILE (50% Width inline when count=2, or 1x1 in Bento) -->
               @else {
-                <div class="normal-tile-inner">
-                  <div class="normal-top-row">
-                    @if (hasOffer(service)) {
-                      <span class="service-pill-tag tag-compact">{{ service.offers }}</span>
-                    }
-                    <div class="arrow-circle-mini">
-                      <ion-icon name="arrow-forward"></ion-icon>
-                    </div>
-                  </div>
-
-                  <div class="normal-center-info">
+                <div class="normal-tile-inner" [class.has-corner-tag]="hasOffer(service)">
+                  <div class="normal-left-info">
                     <h4 class="tile-title-normal">{{ service.title }}</h4>
-                    <p class="tile-subtitle-normal">{{ service.subtitle || 'Book now' }}</p>
+                    <p class="tile-subtitle-normal" [class.status-active]="isStatusActive(service)">
+                      {{ service.subtitle || (isStatusActive(service) ? 'Active' : 'Book now') }}
+                    </p>
                   </div>
+                </div>
 
-                  <div class="normal-bottom-art">
-                    @if (isImageValid(service) && !service.hasImgError) {
-                      <img [src]="getServiceImgUrl(service)" [alt]="service.title" class="service-art-img-normal" (error)="service.hasImgError = true" />
-                    } @else {
-                      <div class="service-art-fallback normal-fallback" [style.background]="getServiceBg(service)">
-                        <span class="fallback-emoji-small">{{ getServiceIcon(service) }}</span>
-                      </div>
-                    }
-                  </div>
+                <!-- Normal Corner Art (Tucked in Bottom-Right Corner like user screenshot) -->
+                <div class="tile-corner-art normal-corner-art">
+                  @if (isImageValid(service) && !service.hasImgError) {
+                    <img [src]="getServiceImgUrl(service)" [alt]="service.title" class="service-art-img-normal" (error)="service.hasImgError = true" />
+                  } @else {
+                    <div class="service-art-fallback normal-fallback" [style.background]="getServiceBg(service)">
+                      <span class="fallback-emoji-small">{{ getServiceIcon(service) }}</span>
+                    </div>
+                  }
                 </div>
               }
 

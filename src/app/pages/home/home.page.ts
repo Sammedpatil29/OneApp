@@ -389,10 +389,33 @@ export class HomePage implements OnInit {
     return o !== '' && o !== 'nothing' && o !== 'null' && o !== 'undefined';
   }
 
+  isStatusActive(service: ServiceItem): boolean {
+    const sub = (service?.subtitle || '').toLowerCase();
+    const st = (service?.status || '').toLowerCase();
+    return sub.includes('active') || (st === 'active' && !service?.subtitle);
+  }
+
+  getOfferTagClass(service: ServiceItem): string {
+    const offer = (service?.offers || '').toLowerCase();
+    if (offer.includes('%') || offer.includes('off') || offer.includes('save') || offer.includes('cash')) {
+      return 'tag-discount';
+    }
+    if (offer.includes('commission') || offer.includes('zero') || offer.includes('surge') || offer.includes('free')) {
+      return 'tag-highlight';
+    }
+    return 'tag-brand';
+  }
+
   getServiceIcon(service: ServiceItem): string {
     const title = (service?.title || '').toLowerCase();
     const cat = (service?.category || '').toLowerCase();
 
+    if (title.includes('property') || title.includes('properties') || cat.includes('property') || cat.includes('real estate')) {
+      return '🏡';
+    }
+    if (title.includes('vehicle') || cat.includes('vehicle')) {
+      return '🚗';
+    }
     if (title.includes('grocery') || title.includes('vegitables') || title.includes('vegetable') || title.includes('milk') || cat.includes('daily')) {
       return '🥦';
     }
@@ -408,14 +431,18 @@ export class HomePage implements OnInit {
     if (title.includes('laundry')) {
       return '🧺';
     }
+    if (title.includes('parcel') || title.includes('goods')) {
+      return '📦';
+    }
     if (title.includes('history') || title.includes('order') || title.includes('track')) {
       return '📦';
     }
-    return '⚡';
+    return '✨';
   }
 
   getServiceBg(service: ServiceItem): string {
     const title = (service?.title || '').toLowerCase();
+    if (title.includes('property') || title.includes('properties')) return 'rgba(16, 185, 129, 0.12)';
     if (title.includes('grocery') || title.includes('vegitables')) return 'rgba(16, 185, 129, 0.12)';
     if (title.includes('ride') || title.includes('cab') || title.includes('auto')) return 'rgba(59, 130, 246, 0.12)';
     if (title.includes('food') || title.includes('dineout') || title.includes('dining')) return 'rgba(249, 115, 22, 0.12)';
@@ -426,6 +453,9 @@ export class HomePage implements OnInit {
 
   getServiceCardGradient(service: ServiceItem): string {
     const title = (service?.title || '').toLowerCase();
+    if (title.includes('property') || title.includes('properties')) {
+      return 'linear-gradient(155deg, #ffffff 0%, #f0fdf4 100%)';
+    }
     if (title.includes('grocery') || title.includes('vegitables')) {
       return 'linear-gradient(155deg, #ffffff 0%, #f0fdf4 100%)';
     }
@@ -487,6 +517,8 @@ export class HomePage implements OnInit {
         this.router.navigate(['/layout/dineout-layout']);
       } else if (title.includes('history') || title.includes('order') || title.includes('track')) {
         this.router.navigate(['/layout/history']);
+      } else if (title.includes('property') || title.includes('properties') || title.includes('vehicle')) {
+        this.router.navigate(['/layout/property']);
       }
     }
   }
