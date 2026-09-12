@@ -60,34 +60,28 @@
                   <span>{{ (item.label || 'Other') | uppercase }}</span>
                 </div>
 
-                <!-- Primary / Default Address Badge -->
+                <!-- Primary Star: Only Filled Star if primary, Only Empty Star button if not -->
                 @if (item.is_primary) {
-                  <span class="primary-address-badge" title="Default Delivery Address">
+                  <span class="star-indicator is-primary" title="Default Delivery Address">
                     <ion-icon name="star"></ion-icon>
-                    <span>DEFAULT</span>
                   </span>
                 } @else {
                   <button
                     type="button"
-                    class="btn-make-default"
+                    class="star-indicator not-primary"
                     (click)="setAsPrimary(item, $event)"
-                    title="Set as Default Delivery Address">
+                    title="Set as Default Delivery Address"
+                    aria-label="Set as default address">
                     <ion-icon name="star-outline"></ion-icon>
-                    <span>Set as Default</span>
                   </button>
                 }
               </div>
 
-              <!-- Selection Indicator, Edit & Delete -->
+              <!-- Selection Indicator (Only Right Mark if Selected), Edit & Delete -->
               <div class="card-actions">
                 @if (item.id === activeAddressId) {
-                  <span class="active-badge">
+                  <span class="selected-check-icon" title="Selected Address">
                     <ion-icon name="checkmark-circle"></ion-icon>
-                    <span>ACTIVE</span>
-                  </span>
-                } @else {
-                  <span class="select-indicator" title="Select this address">
-                    <ion-icon name="ellipse-outline"></ion-icon>
                   </span>
                 }
 

@@ -5,8 +5,7 @@ import {
   IonIcon,
   IonSkeletonText,
   IonToast,
-  NavController,
-  AlertController
+  NavController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -26,6 +25,7 @@ import {
 } from 'ionicons/icons';
 import { AuthService } from 'src/app/services/auth.service';
 import { LocationService } from 'src/app/services/location.service';
+import { AppDialogService } from 'src/app/services/app-dialog.service';
 import { AddressSaveFormComponent } from '../address-save-form/address-save-form.component';
 
 @Component({
@@ -43,6 +43,7 @@ import { AddressSaveFormComponent } from '../address-save-form/address-save-form
   ]
 })
 export class SavedAddressesComponent implements OnInit {
+
   @Input() routeSource: string = 'home';
   @Input() autoNavigateBackOnSelect: boolean = true;
   @Output() addressSelected = new EventEmitter<any>();
@@ -61,9 +62,9 @@ export class SavedAddressesComponent implements OnInit {
 
   constructor(
     private navCtrl: NavController,
-    private alertCtrl: AlertController,
     private authService: AuthService,
-    private locationService: LocationService
+    private locationService: LocationService,
+    private dialogService: AppDialogService
   ) {
     addIcons({
       homeOutline,
@@ -138,18 +139,46 @@ export class SavedAddressesComponent implements OnInit {
   }
 
   selectAddress(item: any) {
+    const wasAlreadyPrimary = Boolean(item.is_primary);
+
     const data = {
       lat: item.lat,
       lng: item.lng,
       id: item.id,
       label: item.label,
       address: item.address,
-      area: item.address?.split(',')[0] || 'Athani'
+      area: item.address?.split(',')[0] || 'Athani',
+      house_no: item.house_no,
+      building_name: item.building_name,
+      landmark: item.landmark,
+      receiver_name: item.receiver_name,
+      receiver_contact: item.receiver_contact,
+      is_primary: true
     };
 
     this.activeAddressId = item.id;
-    this.locationService.setAddress(data);
+    this.locationService.setAddress(data, this.token);
     localStorage.setItem('location', JSON.stringify(data));
+
+    // When saved address is selected, mark that address as primary
+    if (item?.id) {
+      item.is_primary = true;
+      this.addresses = this.addresses.map((a: any) => ({
+        ...a,
+        is_primary: a.id === item.id
+      }));
+
+      if (this.token && !wasAlreadyPrimary) {
+        this.locationService.setPrimaryAddress(item.id, this.token).subscribe({
+          next: () => {
+            console.log(`✅ Address #${item.id} marked as primary on selection`);
+          },
+          error: (err: any) => {
+            console.warn('Could not mark selected address as primary:', err);
+          }
+        });
+      }
+    }
 
     this.addressSelected.emit(item);
 
@@ -222,25 +251,16 @@ export class SavedAddressesComponent implements OnInit {
 
     const displayAddr = item.house_no ? `${item.house_no}, ${item.address}` : item.address;
 
-    const alert = await this.alertCtrl.create({
-      header: 'Delete Address?',
+    const confirmed = await this.dialogService.showDangerConfirm({
+      title: 'Delete Address?',
       message: `Are you sure you want to delete this address:\n"${displayAddr}"?\nThis action cannot be undone.`,
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel'
-        },
-        {
-          text: 'Delete',
-          role: 'destructive',
-          handler: () => {
-            this.deleteAddress(item.id);
-          }
-        }
-      ]
+      confirmText: 'Yes, Delete',
+      cancelText: 'Cancel'
     });
 
-    await alert.present();
+    if (confirmed) {
+      this.deleteAddress(item.id);
+    }
   }
 
   deleteAddress(id: any) {

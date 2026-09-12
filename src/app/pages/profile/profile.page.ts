@@ -34,7 +34,8 @@ import {
   cloudDownloadOutline,
   refreshOutline,
   arrowUpCircle,
-  warningOutline
+  warningOutline,
+  settingsOutline
 } from 'ionicons/icons';
 import { AuthService } from 'src/app/services/auth.service';
 import { ProfileService } from 'src/app/services/profile.service';
@@ -101,7 +102,8 @@ export class ProfilePage implements OnInit {
       cloudDownloadOutline,
       refreshOutline,
       arrowUpCircle,
-      warningOutline
+      warningOutline,
+      settingsOutline
     });
   }
 
@@ -255,6 +257,10 @@ export class ProfilePage implements OnInit {
       });
     } else if (option === 'Orders History' || option === 'Orders') {
       this.router.navigate(['/layout/history']);
+    } else if (option === 'settings' || option === 'language' || option === 'App Settings') {
+      this.router.navigate(['/layout/about'], {
+        state: { data: 'App Settings' }
+      });
     } else {
       this.router.navigate(['/layout/about'], {
         state: { data: option }

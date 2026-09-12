@@ -6,6 +6,13 @@
   <!-- Partner-Styled Bottom Navigation Bar (5 Tabs) -->
   @if (showBottomBar) {
     <nav class="customer-bottom-bar">
+      <!-- OTA Download Progress Bar (3px on bottom navbar top border) -->
+      @if (isDownloadingOta$ | async) {
+        <div class="ota-top-progress-bar" role="progressbar" [attr.aria-valuenow]="otaProgress$ | async" aria-valuemin="0" aria-valuemax="100">
+          <div class="ota-progress-fill" [style.width.%]="otaProgress$ | async"></div>
+        </div>
+      }
+
       <!-- 1. Home (Compass icon matching partner app Cockpit/Home) -->
       <button
         type="button"
@@ -88,6 +95,13 @@
     </nav>
   }
 
+  <!-- Floating Progress Bar when on sub-routes where bottom bar is hidden -->
+  @if (!showBottomBar && (isDownloadingOta$ | async)) {
+    <div class="ota-floating-progress-bar" role="progressbar" [attr.aria-valuenow]="otaProgress$ | async" aria-valuemin="0" aria-valuemax="100">
+      <div class="ota-progress-fill" [style.width.%]="otaProgress$ | async"></div>
+    </div>
+  }
+
   <!-- Global Partner-Styled Alert Modal -->
   <app-alert-modal
     [isOpen]="(dialogState$ | async)?.isOpen ?? false"
@@ -100,4 +114,35 @@
     (confirmed)="dialogService.handleConfirm()"
     (cancelled)="dialogService.handleCancel()">
   </app-alert-modal>
+
+  <!-- Strict Mandatory Google Play Store Update Overlay (Non-Dismissible) -->
+  @if ((playStoreState$ | async)?.isMandatoryUpdateRequired) {
+    <div class="playstore-mandatory-backdrop">
+      <div class="playstore-mandatory-card">
+        <div class="playstore-icon-wrap">
+          <ion-icon name="arrow-up-circle"></ion-icon>
+        </div>
+
+        <h3 class="playstore-update-title">Update Required</h3>
+        <p class="playstore-update-subtitle">
+          A new version of <strong>Pintu</strong> is available on Google Play Store with critical fixes, enhancements, and features.
+        </p>
+
+        <div class="playstore-version-badge-wrap">
+          <span class="version-tag current">Current: v{{ (playStoreState$ | async)?.currentVersionName || '0.0.21' }}</span>
+          <ion-icon name="arrow-forward-outline" class="arrow-between"></ion-icon>
+          <span class="version-tag latest">Latest: v{{ (playStoreState$ | async)?.availableVersionName || 'Latest' }}</span>
+        </div>
+
+        <div class="playstore-strict-note">
+          Please update the application on Google Play Store to continue using Pintu.
+        </div>
+
+        <button type="button" class="btn-playstore-update" (click)="onUpdatePlayStoreClick()">
+          <ion-icon name="logo-google-playstore" class="me-2"></ion-icon>
+          Update on Google Play
+        </button>
+      </div>
+    </div>
+  }
 </div>

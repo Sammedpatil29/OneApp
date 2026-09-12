@@ -20,11 +20,16 @@ import {
   headset,
   headsetOutline,
   person,
-  personOutline
+  personOutline,
+  arrowUpCircle,
+  arrowForwardOutline,
+  logoGooglePlaystore
 } from 'ionicons/icons';
 import { filter } from 'rxjs/operators';
 import { AlertModalComponent } from 'src/app/components/alert-modal/alert-modal.component';
 import { AppDialogService } from 'src/app/services/app-dialog.service';
+import { OtaService } from 'src/app/services/ota.service';
+import { PlayStoreUpdateService } from 'src/app/services/play-store-update.service';
 
 @Component({
   selector: 'app-layout',
@@ -43,7 +48,16 @@ import { AppDialogService } from 'src/app/services/app-dialog.service';
 })
 export class LayoutPage implements OnInit {
   public dialogService = inject(AppDialogService);
+  public otaService = inject(OtaService);
+  public playStoreUpdateService = inject(PlayStoreUpdateService);
   private router = inject(Router);
+
+  // OTA Download Progress streams
+  readonly isDownloadingOta$ = this.otaService.isDownloading$;
+  readonly otaProgress$ = this.otaService.downloadProgress$;
+
+  // Play Store update state stream
+  readonly playStoreState$ = this.playStoreUpdateService.state$;
 
   currentRoute: string = '/layout/home';
 
@@ -82,7 +96,10 @@ export class LayoutPage implements OnInit {
       headset,
       headsetOutline,
       person,
-      personOutline
+      personOutline,
+      arrowUpCircle,
+      arrowForwardOutline,
+      logoGooglePlaystore
     });
   }
 
@@ -102,5 +119,9 @@ export class LayoutPage implements OnInit {
 
   isTabActive(route: string): boolean {
     return this.currentRoute === route || this.currentRoute.startsWith(route + '/');
+  }
+
+  async onUpdatePlayStoreClick() {
+    await this.playStoreUpdateService.redirectToPlayStore();
   }
 }

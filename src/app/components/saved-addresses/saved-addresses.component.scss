@@ -220,56 +220,42 @@
     }
   }
 
-  .primary-address-badge {
+  .star-indicator {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    padding: 3px 8px;
-    border-radius: 6px;
-    font-size: 0.68rem;
-    font-weight: 850;
-    letter-spacing: 0.5px;
-    background: #fef9c3;
-    color: #854d0e;
-    border: 1px solid #fde047;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    padding: 2px 4px;
+    line-height: 1;
 
-    ion-icon {
-      font-size: 12px;
-      color: #ca8a04;
-    }
-  }
-
-  .btn-make-default {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 3px 8px;
-    border-radius: 6px;
-    font-size: 0.68rem;
-    font-weight: 750;
-    background: #f8fafc;
-    color: #64748b;
-    border: 1px dashed #cbd5e1;
-    cursor: pointer;
-    transition: all 0.15s ease;
-
-    ion-icon {
-      font-size: 12px;
-      color: #94a3b8;
-    }
-
-    &:hover {
-      background: #fef9c3;
-      border-color: #fde047;
-      color: #854d0e;
+    &.is-primary {
+      color: #eab308;
+      filter: drop-shadow(0 1px 2px rgba(234, 179, 8, 0.35));
 
       ion-icon {
-        color: #ca8a04;
+        font-size: 18px;
       }
     }
 
-    &:active {
-      transform: scale(0.95);
+    &.not-primary {
+      color: #94a3b8;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.15s ease;
+
+      ion-icon {
+        font-size: 18px;
+      }
+
+      &:hover {
+        color: #eab308;
+        transform: scale(1.15);
+      }
+
+      &:active {
+        transform: scale(0.9);
+      }
     }
   }
 
@@ -278,31 +264,16 @@
     align-items: center;
     gap: 8px;
 
-    .active-badge {
+    .selected-check-icon {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      font-size: 0.68rem;
-      font-weight: 800;
-      color: #059669;
-      background: rgba(5, 150, 105, 0.1);
-      padding: 3px 8px;
-      border-radius: 6px;
+      justify-content: center;
+      color: #10b981;
+      line-height: 1;
+      filter: drop-shadow(0 1px 2px rgba(16, 185, 129, 0.25));
 
       ion-icon {
-        font-size: 14px;
-      }
-    }
-
-    .select-indicator {
-      display: flex;
-      align-items: center;
-      color: #cbd5e1;
-      font-size: 19px;
-      transition: color 0.15s ease;
-
-      &:hover {
-        color: #a000e2;
+        font-size: 20px;
       }
     }
 

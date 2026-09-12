@@ -14,6 +14,7 @@ import { Location } from '@angular/common';
 import { OtaService } from './services/ota.service';
 import { AuthService } from './services/auth.service';
 import { AppDialogService } from './services/app-dialog.service';
+import { PlayStoreUpdateService } from './services/play-store-update.service';
 import { CustomSplashComponent } from './pages/custom-splash/custom-splash.component';
 
 @Component({
@@ -38,7 +39,8 @@ export class AppComponent implements OnInit {
     private router: Router,
     private otaService: OtaService,
     private authService: AuthService,
-    private dialogService: AppDialogService
+    private dialogService: AppDialogService,
+    private playStoreUpdateService: PlayStoreUpdateService
   ) {
     const startTime = Date.now();
     this.routeBasedOnAuth(startTime);
@@ -85,6 +87,9 @@ export class AppComponent implements OnInit {
 
     // 🚀 Initialize OTA Live Update Checks
     this.otaService.initialize();
+
+    // 🚀 Initialize Play Store In-App Updates Check (Strict update requirement)
+    this.playStoreUpdateService.initialize();
 
     // ✅ MODIFIED
     // await this.checkNetworkStatus();

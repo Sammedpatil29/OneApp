@@ -3,6 +3,7 @@ import { Capacitor } from '@capacitor/core';
 import { App } from '@capacitor/app';
 import { ToastController } from '@ionic/angular/standalone';
 import { OtaKit } from '@otakit/capacitor-updater';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 export interface OtaDiagnosticResult {
   success: boolean;
@@ -24,6 +25,15 @@ const OTA_UPDATED_KEY = 'ota_just_updated';
   providedIn: 'root'
 })
 export class OtaService {
+  // Observables for download progress bar on bottom navbar
+  private isDownloadingSubject = new BehaviorSubject<boolean>(false);
+  public readonly isDownloading$: Observable<boolean> = this.isDownloadingSubject.asObservable();
+
+  private downloadProgressSubject = new BehaviorSubject<number>(0);
+  public readonly downloadProgress$: Observable<number> = this.downloadProgressSubject.asObservable();
+
+  private progressInterval: any = null;
+
   constructor(
     private toastCtrl: ToastController,
     private ngZone: NgZone
@@ -31,7 +41,7 @@ export class OtaService {
 
   /**
    * Initializes OtaKit on native device.
-   * Flow: download silently → apply immediately → notify user after reload.
+   * Flow: download silently → show progress bar on bottom navbar → apply and restart immediately → notify user after reload.
    */
   async initialize() {
     if (!Capacitor.isNativePlatform()) {
@@ -53,14 +63,26 @@ export class OtaService {
     this.setupOtaUpdates();
   }
 
-  // ─── Silent background check → download → apply ───────────────────
+  // ─── Silent background check → download with progress bar → restart app ──
 
   private async setupOtaUpdates() {
     try {
       // Listen for background download completion
-      await OtaKit.addListener('updateStaged', (event) => {
+      await OtaKit.addListener('updateStaged', async (event) => {
         console.log('📦 [OtaKit] Event updateStaged received:', event);
-        this.silentApply(event.bundle?.version || '');
+        await this.completeDownloadAndRestart(event.bundle?.version || '');
+      });
+
+      // Listen for updateAvailable event from background policy
+      await OtaKit.addListener('updateAvailable', async (latest) => {
+        console.log('🚀 [OtaKit] Event updateAvailable received:', latest);
+        await this.startDownloadAndRestart(latest?.version);
+      });
+
+      // Listen for failure to reset progress bar cleanly
+      await OtaKit.addListener('downloadFailed', (event) => {
+        console.warn('❌ [OtaKit] Event downloadFailed received:', event);
+        this.resetDownloadState();
       });
 
       // Check if an update was already staged from a previous session
@@ -68,7 +90,7 @@ export class OtaService {
       console.log('📊 [OtaKit] Current state:', JSON.stringify(state));
       if (state.staged) {
         console.log('📌 [OtaKit] Staged update waiting:', state.staged?.version);
-        this.silentApply(state.staged?.version || '');
+        await this.completeDownloadAndRestart(state.staged?.version || '');
         return;
       }
 
@@ -79,33 +101,110 @@ export class OtaService {
 
       if (check.kind === 'update_available') {
         console.log('🚀 [OtaKit] New update available:', check.latest?.version);
-        const downloadRes = await OtaKit.download();
-        console.log('📥 [OtaKit] Download result:', JSON.stringify(downloadRes));
-        if (downloadRes.kind === 'staged') {
-          this.silentApply(downloadRes.bundle?.version || check.latest?.version || '');
-        }
+        await this.startDownloadAndRestart(check.latest?.version);
       } else if (check.kind === 'already_staged') {
         console.log('📌 [OtaKit] Update already staged:', check.latest?.version);
-        this.silentApply(check.latest?.version || '');
+        await this.completeDownloadAndRestart(check.latest?.version || '');
       } else {
         console.log('✅ [OtaKit] App is up to date.');
       }
     } catch (err) {
       console.warn('❌ [OtaKit] Update error:', err);
+      this.resetDownloadState();
     }
   }
 
-  // ─── Apply immediately without asking the user ─────────────────────
+  /**
+   * Starts downloading OTA bundle, displays progress bar on bottom navbar top border (2-3px),
+   * and automatically restarts/applies the app once download completes.
+   */
+  async startDownloadAndRestart(version?: string): Promise<{ success: boolean; message: string }> {
+    if (!Capacitor.isNativePlatform()) {
+      console.log('ℹ️ [OtaKit] Skipping download on non-native platform.');
+      return { success: false, message: 'OTA updates require physical device.' };
+    }
 
-  private async silentApply(version: string) {
+    if (this.isDownloadingSubject.value) {
+      console.log('⏳ [OtaKit] Download already in progress...');
+      return { success: true, message: 'Download already in progress...' };
+    }
+
+    this.startProgressSimulation();
+
     try {
-      console.log(`🔄 [OtaKit] Silently applying update ${version}...`);
-      // Persist a flag so we can show a toast after the reload
+      console.log('📥 [OtaKit] Calling OtaKit.download()...');
+      const downloadRes = await OtaKit.download();
+      console.log('📥 [OtaKit] Download result:', JSON.stringify(downloadRes));
+
+      if (downloadRes.kind === 'staged' || (downloadRes as any).kind === 'already_staged') {
+        const targetVer = (downloadRes as any).bundle?.version || version || '';
+        await this.completeDownloadAndRestart(targetVer);
+        return { success: true, message: 'Update downloaded! Restarting app...' };
+      } else {
+        this.resetDownloadState();
+        return { success: false, message: `Download returned status: ${downloadRes.kind}` };
+      }
+    } catch (err: any) {
+      this.resetDownloadState();
+      console.error('❌ [OtaKit] Error downloading OTA bundle:', err);
+      return { success: false, message: err.message || 'Download failed' };
+    }
+  }
+
+  private startProgressSimulation() {
+    this.clearIntervalIfActive();
+    this.ngZone.run(() => {
+      this.isDownloadingSubject.next(true);
+      this.downloadProgressSubject.next(10);
+    });
+
+    let current = 10;
+    this.progressInterval = setInterval(() => {
+      if (current < 92) {
+        const step = Math.max(1, Math.floor((92 - current) / 6));
+        current += step;
+        this.ngZone.run(() => {
+          this.downloadProgressSubject.next(current);
+        });
+      }
+    }, 180);
+  }
+
+  private async completeDownloadAndRestart(version: string) {
+    this.clearIntervalIfActive();
+    this.ngZone.run(() => {
+      this.isDownloadingSubject.next(true);
+      this.downloadProgressSubject.next(100);
+    });
+
+    if (version) {
       localStorage.setItem(OTA_UPDATED_KEY, version);
-      await OtaKit.apply(); // This triggers an app reload
+    }
+
+    // Brief delay to allow user to visually see progress bar reach 100%
+    await new Promise(resolve => setTimeout(resolve, 600));
+
+    try {
+      console.log(`🔄 [OtaKit] Restarting app to apply update v${version}...`);
+      await OtaKit.apply(); // Triggers reload/restart of the app with new bundle
     } catch (e) {
-      console.error('❌ [OtaKit] Failed to silently apply update:', e);
-      localStorage.removeItem(OTA_UPDATED_KEY);
+      console.error('❌ [OtaKit] Failed to restart and apply update:', e);
+      this.resetDownloadState();
+    }
+  }
+
+  private resetDownloadState() {
+    this.clearIntervalIfActive();
+    this.ngZone.run(() => {
+      this.isDownloadingSubject.next(false);
+      this.downloadProgressSubject.next(0);
+    });
+  }
+
+  private clearIntervalIfActive() {
+    if (this.progressInterval) {
+      clearInterval(this.progressInterval);
+      this.progressInterval = null;
     }
   }
 
@@ -230,20 +329,13 @@ export class OtaService {
       const state = await OtaKit.getState();
       if (state?.staged) {
         const ver = state.staged?.version || '';
-        localStorage.setItem(OTA_UPDATED_KEY, ver);
-        await OtaKit.apply();
-        return { success: true, message: 'Update applied! Reloading app...' };
+        await this.completeDownloadAndRestart(ver);
+        return { success: true, message: 'Update applied! Restarting app...' };
       }
 
-      const downloadRes = await OtaKit.download();
-      if (downloadRes.kind === 'staged') {
-        const ver = downloadRes.bundle?.version || '';
-        localStorage.setItem(OTA_UPDATED_KEY, ver);
-        await OtaKit.apply();
-        return { success: true, message: 'Update applied! Reloading app...' };
-      }
-      return { success: false, message: `Download returned status: ${downloadRes.kind}` };
+      return await this.startDownloadAndRestart();
     } catch (e: any) {
+      this.resetDownloadState();
       return { success: false, message: e.message || 'Failed to download and apply OTA bundle.' };
     }
   }

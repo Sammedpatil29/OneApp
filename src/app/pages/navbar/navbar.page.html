@@ -21,6 +21,11 @@
   </ion-tab>
 
   <ion-tab-bar slot="bottom">
+    @if (isDownloadingOta$ | async) {
+      <div class="ota-top-progress-bar" role="progressbar" [attr.aria-valuenow]="otaProgress$ | async" aria-valuemin="0" aria-valuemax="100">
+        <div class="ota-progress-fill" [style.width.%]="otaProgress$ | async"></div>
+      </div>
+    }
     <ion-tab-button tab="home">
       <ion-icon name="home"></ion-icon>
       Home

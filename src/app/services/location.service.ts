@@ -266,9 +266,17 @@ export class LocationService {
     return this.http.get(`${this.addressUrl}/api/addresses`, { headers });
   }
 
-  setAddress(location: any) {
+  setAddress(location: any, token?: string) {
     this.locationSource.next(location);
     localStorage.setItem('location', JSON.stringify(location));
+
+    // If selected address is a saved address with ID and token is provided, mark as primary in DB
+    if (location?.id && token) {
+      this.setPrimaryAddress(location.id, token).subscribe({
+        next: () => console.log(`✅ Saved address #${location.id} marked as primary in DB`),
+        error: (err) => console.warn('Could not mark address as primary in DB:', err)
+      });
+    }
   }
 
   /**
