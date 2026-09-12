@@ -1,6 +1,11 @@
-<ion-header>
+<ion-header class="ion-no-border bg-white pt-2">
   <ion-toolbar>
-    <ion-searchbar placeholder="Search for 'Tata Tiago'" [(ngModel)]="searchText"></ion-searchbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back-outline" color="dark"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="fw-bold text-dark">Vehicles & Properties</ion-title>
   </ion-toolbar>
 </ion-header>
 

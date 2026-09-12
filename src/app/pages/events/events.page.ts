@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonButtons, IonIcon, IonCardSubtitle, IonCardContent, IonCardTitle, IonCardHeader, IonCard, IonModal, IonImg, IonSpinner, IonSearchbar, IonSkeletonText, IonBadge, IonFab, IonFabButton, IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
-import { arrowBack, chevronBack, helpCircleOutline, ticketOutline, searchOutline, heart, heartOutline, locationOutline, calendarOutline } from 'ionicons/icons';
+import { arrowBack, arrowBackOutline, chevronBack, helpCircleOutline, ticketOutline, searchOutline, heart, heartOutline, locationOutline, calendarOutline } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { NavController, ModalController } from '@ionic/angular';
 import { FooterComponent } from "../../components/footer/footer.component";
@@ -41,7 +41,7 @@ export class EventsPage implements OnInit {
     private authService: AuthService, 
     private modalCtrl: ModalController
   ) { 
-    addIcons({arrowBack,calendarOutline,searchOutline,locationOutline,ticketOutline,chevronBack,helpCircleOutline,heart,heartOutline}); 
+    addIcons({arrowBack, arrowBackOutline, calendarOutline,searchOutline,locationOutline,ticketOutline,chevronBack,helpCircleOutline,heart,heartOutline}); 
   }
 
   async ngOnInit() {
@@ -146,5 +146,6 @@ export class EventsPage implements OnInit {
 
   openBookings() { this.navCtrl.navigateForward('/layout/history'); }
   openHelp() { this.navCtrl.navigateForward('/layout/support'); }
-  back() { this.navCtrl.navigateBack('/layout/example/home'); }
+  back() { this.navCtrl.back(); }
+  goBack() { this.navCtrl.back(); }
 }

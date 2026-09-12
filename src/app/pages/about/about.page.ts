@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar,IonSkeletonText, IonButton, IonButtons, IonIcon, IonFooter, IonText, IonItem, IonSelectOption, IonSelect, IonTextarea, IonList, IonInput, IonCard, IonLabel, IonNote, IonSpinner, IonToast, IonAvatar, IonAlert } from '@ionic/angular/standalone';
 import { Router, RouterLink } from '@angular/router';
 import { NavController } from '@ionic/angular';
-import { arrowBack, chevronForward } from 'ionicons/icons';
+import { arrowBack, arrowBackOutline, chevronForward } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { FooterComponent } from "../../components/footer/footer.component";
 import { NodataComponent } from "../../components/nodata/nodata.component";
@@ -69,7 +69,7 @@ export class AboutPage implements OnInit {
   }
 
   constructor(private router: Router, private navCtrl: NavController, private authService: AuthService, private locationService: LocationService, private profileService: ProfileService ) {
-    addIcons({arrowBack,chevronForward});
+    addIcons({arrowBack, arrowBackOutline, chevronForward});
   }
 
   async ngOnInit() {

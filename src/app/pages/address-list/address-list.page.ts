@@ -5,7 +5,7 @@ import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonSkeletonText
 import { Router } from '@angular/router';
 import { NodataComponent } from "src/app/components/nodata/nodata.component";
 import { NavController } from '@ionic/angular';
-import { arrowBack, chevronForward } from 'ionicons/icons';
+import { arrowBack, arrowBackOutline, chevronForward } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { AuthService } from 'src/app/services/auth.service';
 import { LocationService } from 'src/app/services/location.service';
@@ -44,7 +44,7 @@ addresses: any = []
 
 
   constructor(private router: Router, private navCtrl: NavController , private authService: AuthService, private locationService: LocationService, private profileService: ProfileService) {
-    addIcons({arrowBack,chevronForward});
+    addIcons({arrowBack, arrowBackOutline, chevronForward});
    }
 
   async ngOnInit() {

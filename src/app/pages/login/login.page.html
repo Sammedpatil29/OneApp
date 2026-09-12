@@ -1,164 +1,208 @@
-<ion-content [fullscreen]="true">
-  <div class="bg-decoration"></div>
+<ion-content class="login-split-screen" [fullscreen]="true" [scrollY]="true">
+  @if (!verifyingToken) {
+    <div class="split-layout-container">
 
-  @if(!verifyingToken){
-    
-    @if (!showRegisterForm) {
-    <ion-header class="ion-no-border pt-4">
-      <!-- <ion-toolbar>
-        <ion-buttons slot="start">
-          </ion-buttons>
-      </ion-toolbar> -->
-    </ion-header>
+      <!-- ================= TOP 65% SLIDER SECTION ================= -->
+      <section class="top-slider-section">
+        <!-- Ambient Background Glows -->
+        <div class="ambient-glow glow-purple"></div>
+        <div class="ambient-glow glow-indigo"></div>
+        <div class="ambient-grid-pattern"></div>
 
-    <div class="login-wrapper main-container">
-      @if (!otpSent) {
-        <div class="intro-content" style="display: flex; flex-direction: column; align-items: center; text-align: center; margin-top: 8vh; margin-bottom: 3rem;">
-          <!-- <img src="assets/pintu startup.png" alt="Welcome to Pintu" style="width: 100px; height: 100px; object-fit: cover; border-radius: 28px; margin-bottom: 1.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.15);"> -->
-         <h1 style="font-size: 46px; font-weight: 800; line-height: 1.1; color: var(--text-main); margin-bottom: 12px; letter-spacing: -1px;">
-            <!-- No Gimmicks.<br> -->
-            <span style="color: var(--grocery-theme-color);">NEEDS IN<br>MINUTES<br></span>
-          </h1> 
-          <!-- <h2 class="page-title" style="font-size: 28px; font-weight: 800; color: var(--text-main);">Welcome to Pintu</h2> -->
-          <p class="subtitle" style="font-size: 15px; color: var(--text-muted); max-width: 280px;">Your everyday companion. Enter your mobile number to securely log in.</p>
+        <!-- Back Button Overlay (Shown during OTP & Registration steps) -->
+        @if (step !== 'email') {
+          <button type="button" class="btn-circle-back" (click)="goBack()" aria-label="Go Back">
+            <ion-icon name="arrow-back"></ion-icon>
+          </button>
+        }
+
+        <!-- Swiper Carousel Container (Top 65%) -->
+        <div class="carousel-container">
+          <swiper-container
+            autoplay='{"delay": 3500, "disableOnInteraction": false}'
+            loop="true"
+            pagination="true"
+            class="onboarding-swiper">
+            <swiper-slide *ngFor="let slide of onboardingSlides">
+              <div class="slide-card">
+                <div class="slide-badge" [style.background]="slide.badgeBg" [style.color]="slide.badgeColor">
+                  {{ slide.badge }}
+                </div>
+
+                <h2 class="slide-title">
+                  {{ slide.title }}<br />
+                  <span class="highlight-text">{{ slide.highlight }}</span>
+                </h2>
+
+                <p class="slide-desc">{{ slide.subtitle }}</p>
+
+                <!-- Hero Graphic Showcase Stage -->
+                <div class="slide-stage">
+                  <div class="glow-halo"></div>
+                  <img [src]="slide.image" alt="Showcase" class="slide-img" (error)="$any($event.target).style.display='none'" />
+                </div>
+
+                <!-- Feature micro chips -->
+                <div class="chips-row">
+                  <span class="feature-chip" *ngFor="let chip of slide.chips">{{ chip }}</span>
+                </div>
+              </div>
+            </swiper-slide>
+          </swiper-container>
         </div>
 
-        <div class="form-section animate__animated animate__fadeIn" style="padding: 0 20px;">
-          <div class="input-container" style="border: 1.5px solid #e0e0e0; border-radius: 14px; padding: 6px 16px; display: flex; align-items: center; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
-            <div class="country-pill" style="font-size: 16px; font-weight: 600; color: var(--text-main); padding-right: 12px; border-right: 2px solid #f0f0f0; margin-right: 12px;">
-              +91
+        <!-- Soft bottom transition line -->
+        <div class="slider-bottom-fade"></div>
+      </section>
+
+      <!-- ================= BOTTOM 35% LOGIN SECTION ================= -->
+      <section class="bottom-login-section">
+        <!-- Sheet Pull Handle -->
+        <div class="sheet-handle-bar"></div>
+
+        <!-- STEP 1: EMAIL LOGIN / SIGNUP -->
+        @if (step === 'email') {
+          <div class="login-form-body animate__animated animate__fadeIn">
+            <div class="form-header">
+              <h3 class="form-title">Get Started with Pintu</h3>
+              <p class="form-subtitle">Enter your email to sign in or create an account</p>
             </div>
-            <ion-input
-              [(ngModel)]="phoneNumber"
-              type="tel"
-              inputmode="numeric"
-              maxlength="10"
-              placeholder="Enter Mobile Number"
-              class="modern-input"
-              style="--padding-start: 0; font-size: 18px; font-weight: 600; letter-spacing: 1px;">
-            </ion-input>
-          </div>
-          
-          <p style="font-size: 12px; color: #888; text-align: center; margin-top: 24px; line-height: 1.5;">
-            By continuing, you accept our <br>
-            <b style="color: var(--text-main);">Terms & Conditions</b> & <b style="color: var(--text-main);">Privacy Policy</b>
-          </p>
-        </div>
-      } @else {
-        <div class="intro-content animate__animated animate__fadeIn" style="display: flex; flex-direction: column; align-items: center; text-align: center; margin-top: 8vh; margin-bottom: 2rem;">
-          <div style="width: 80px; height: 80px; background: var(--input-bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 20px rgba(0,0,0,0.05); margin-bottom: 1.5rem;">
-            <ion-icon name="mail-outline" style="font-size: 36px; color: var(--text-main);"></ion-icon>
-          </div>
-          <h2 class="page-title" style="font-size: 26px;">Verify Details</h2>
-          <p class="subtitle" style="max-width: 260px;">We've sent a 6-digit code to <br><span class="phone-highlight">+91 {{phoneNumber}}</span></p>
-        </div>
 
-        <div class="form-section animate__animated animate__fadeIn">
-          <div class="otp-wrapper">
-            <ng-otp-input
-              (onInputChange)="onOtpChange($event)"
-              [config]="otpConfig">
-            </ng-otp-input>
-          </div>
-
-          <div class="resend-wrapper">
-            <p>
-              Didn’t receive the code? 
-              @if(timer == 0){
-                <span class="resend-link" (click)="sendVerification()">Resend Now</span>
-              } @else {
-                <span class="timer-text">Try again in <b>{{timer}}s</b></span>
+            <div class="input-container-modern mb-3">
+              <ion-icon name="mail-outline" class="input-icon-left"></ion-icon>
+              <input
+                type="email"
+                class="custom-input flex-grow-1"
+                placeholder="Enter your email address"
+                [(ngModel)]="email"
+                (keyup.enter)="sendVerification()" />
+              @if (isValidEmail()) {
+                <ion-icon name="checkmark-circle-outline" class="text-success fs-5"></ion-icon>
               }
+            </div>
+
+            <button
+              type="button"
+              class="btn-primary-action w-100 mb-2"
+              [disabled]="isSendingOtp || !isValidEmail()"
+              (click)="sendVerification()">
+              @if (isSendingOtp) {
+                <ion-spinner name="crescent" class="spinner-small me-2"></ion-spinner>
+                <span>Sending Code...</span>
+              } @else {
+                <span>Continue with Email</span>
+                <ion-icon name="arrow-forward-outline" class="ms-2 fs-6"></ion-icon>
+              }
+            </button>
+
+            <p class="terms-text text-center small mb-0">
+              By continuing, you agree to Pintu's
+              <span class="text-dark fw-semibold">Terms</span> &amp; <span class="text-dark fw-semibold">Privacy Policy</span>.
             </p>
           </div>
-        </div>
-      }
-    </div>
+        }
 
-    <div class="bottom-action-container">
-      @if (!otpSent) {
-        <ion-button
-          class="book-btn w-100"
-          [disabled]="isSendingOtp || phoneNumber.length != 10"
-          (click)="sendVerification()">
-          <span *ngIf="!isSendingOtp">Continue</span>
-          <ion-spinner *ngIf="isSendingOtp" name="dots"></ion-spinner>
-        </ion-button>
-      } @else {
-        <ion-button
-          expand="block"
-          mode="ios"
-          class="book-btn w-100"
-          [disabled]="isLoading || isSendingOtp"
-          (click)="verifyOTP()">
-          <span *ngIf="!isLoading">{{otpVerificationMessage || 'Verify & Proceed'}}</span>
-          <ion-spinner *ngIf="isLoading" name="dots"></ion-spinner>
-        </ion-button>
-      }
+        <!-- STEP 2: OTP VERIFICATION -->
+        @else if (step === 'otp') {
+          <div class="login-form-body animate__animated animate__fadeIn">
+            <div class="form-header text-center">
+              <h3 class="form-title">Verify 6-Digit Code</h3>
+              <p class="form-subtitle">
+                Code sent to <b class="text-dark">{{ email }}</b>
+                <button type="button" class="btn-link-edit ms-1" (click)="step = 'email'" aria-label="Edit email">
+                  <ion-icon name="create-outline"></ion-icon> Edit
+                </button>
+              </p>
+            </div>
+
+            <div class="otp-wrapper mb-2">
+              <ng-otp-input
+                (onInputChange)="onOtpChange($event)"
+                [config]="otpConfig">
+              </ng-otp-input>
+            </div>
+
+            <div class="resend-row text-center mb-3">
+              @if (timer > 0) {
+                <span class="text-muted small">Resend code in <b>{{ timer }}s</b></span>
+              } @else {
+                <a class="resend-action small" (click)="sendVerification()">Resend Code</a>
+              }
+            </div>
+
+            <button
+              type="button"
+              class="btn-primary-action w-100 mb-2"
+              [disabled]="isVerifyingOtp || enteredOtp.length !== 6"
+              (click)="verifyOTP()">
+              @if (isVerifyingOtp) {
+                <ion-spinner name="crescent" class="spinner-small me-2"></ion-spinner>
+                <span>{{ otpVerificationMessage || 'Verifying...' }}</span>
+              } @else {
+                <ion-icon name="shield-checkmark-outline" class="me-2 fs-5"></ion-icon>
+                <span>Verify &amp; Proceed</span>
+                <ion-icon name="arrow-forward-outline" class="ms-2 fs-6"></ion-icon>
+              }
+            </button>
+          </div>
+        }
+
+        <!-- STEP 3: NEW USER REGISTRATION -->
+        @else if (step === 'register') {
+          <div class="login-form-body animate__animated animate__fadeIn">
+            <div class="form-header">
+              <h3 class="form-title">Complete Profile</h3>
+              <p class="form-subtitle">Welcome to Pintu! Let's set up your profile</p>
+            </div>
+
+            <div class="input-container-modern mb-2">
+              <ion-icon name="person-outline" class="input-icon-left"></ion-icon>
+              <input
+                type="text"
+                class="custom-input flex-grow-1"
+                placeholder="Full Name (e.g. Ramesh Patil)"
+                [(ngModel)]="fullName" />
+            </div>
+
+            <div class="input-container-modern mb-3">
+              <span class="phone-prefix">+91</span>
+              <input
+                type="tel"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                maxlength="10"
+                class="custom-input flex-grow-1"
+                placeholder="10-digit mobile number"
+                [(ngModel)]="phoneNumber"
+                (keyup.enter)="register()" />
+            </div>
+
+            <button
+              type="button"
+              class="btn-primary-action w-100 mb-2"
+              [disabled]="isLoading || !fullName.trim() || phoneNumber.length < 10"
+              (click)="register()">
+              @if (isLoading) {
+                <ion-spinner name="crescent" class="spinner-small me-2"></ion-spinner>
+                <span>Setting up profile...</span>
+              } @else {
+                <span>Complete Setup &amp; Start</span>
+                <ion-icon name="arrow-forward-outline" class="ms-2 fs-6"></ion-icon>
+              }
+            </button>
+          </div>
+        }
+      </section>
+
     </div>
   } @else {
-    <ion-header class="ion-no-border">
-      <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-button (click)="goBack()" class="back-btn">
-            <ion-icon slot="icon-only" name="chevron-back"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
-
-    <div class="login-wrapper main-container">
-      <div class="intro-content" style="display: flex; flex-direction: column; align-items: center; text-align: center; margin-top: 4vh; margin-bottom: 2rem;">
-        <div style="width: 80px; height: 80px; background: var(--input-bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 20px rgba(0,0,0,0.05); margin-bottom: 1.5rem;">
-          <ion-icon name="person-outline" style="font-size: 36px; color: var(--text-main);"></ion-icon>
-        </div>
-        <h2 class="page-title" style="font-size: 26px;">Create Profile</h2>
-        <p class="subtitle" style="max-width: 260px;">Join the <b>Pintu</b> community today. Let's get to know you better!</p>
+    <!-- Initial Token Verification Splash -->
+    <div class="splash-screen">
+      <div class="splash-brand">
+        <img src="assets/pintu startup.png" alt="Pintu" class="splash-logo" (error)="$any($event.target).style.display='none'" />
+        <div class="splash-spinner-ring"></div>
+        <p class="splash-text">Starting Pintu...</p>
       </div>
-
-      <div class="form-section">
-        <div class="modern-field">
-          <ion-label>Full Name</ion-label>
-          <ion-input
-            [(ngModel)]="fullName"
-            placeholder="John Doe"
-            class="outline-input">
-          </ion-input>
-        </div>
-
-        <div class="modern-field mt-3">
-          <ion-label>Email Address</ion-label>
-          <ion-input
-            [(ngModel)]="email"
-            type="email"
-            placeholder="john@example.com"
-            class="outline-input">
-          </ion-input>
-        </div>
-      </div>
-    </div>
-
-    <div class="bottom-action-container">
-      <ion-button
-        expand="block"
-        mode="ios"
-        class="book-btn w-100"
-        [disabled]="isLoading"
-        (click)="register()">
-        <span *ngIf="!isLoading">Complete Setup</span>
-        <ion-spinner *ngIf="isLoading" name="dots"></ion-spinner>
-      </ion-button>
-    </div>
-  }
-
-  } @else {
-    <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center" 
-         style="background: url('assets/pintu startup.png') no-repeat center center / cover; background-color: var(--grocery-theme-color);">
-      
-      <div class="spinner-border text-white" role="status" style="width: 3rem; height: 3rem;">
-        <span class="visually-hidden">Loading...</span>
-      </div>
-      <!-- <div class="text-white mt-3" style="font-weight: 500;">Starting app...</div> -->
     </div>
   }
 

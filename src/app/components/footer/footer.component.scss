@@ -1,87 +1,147 @@
-$green: #1f9d55;
-
-.seal-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background: transparent;
-}
-
-.seal {
-  width: 260px;
-  height: 260px;
-  border-radius: 50%;
-  border: 4px solid $green;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: transparent;
+.app-brand-footer {
+  width: 100%;
+  max-width: 100%;
   box-sizing: border-box;
+  margin-top: 14px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
-  &::before {
-    content: "";
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    border: 2px dashed $green;
-    position: absolute;
+  .footer-divider-line {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(226, 232, 240, 0.9) 25%, rgba(203, 213, 225, 0.9) 50%, rgba(226, 232, 240, 0.9) 75%, transparent 100%);
+    margin-bottom: 20px;
   }
 
-  .inner {
-    width: 160px;
-    height: 160px;
-    border-radius: 50%;
-    border: 2px solid $green;
+  .footer-content-wrapper {
     display: flex;
-    justify-content: center;
-    align-items: center;
     flex-direction: column;
+    align-items: center;
     text-align: center;
-    color: $green;
+    gap: 12px;
+    width: 100%;
+    padding: 0 16px 8px;
     box-sizing: border-box;
+  }
 
-    h1 {
-      font-size: 28px;
-      margin: 0;
-      letter-spacing: 3px;
-      font-weight: 700;
-    }
+  /* Big Playful Brand Watermark */
+  .footer-watermark-box {
+    line-height: 1;
+    margin-bottom: -6px;
+    user-select: none;
+    pointer-events: none;
 
-    span {
-      font-size: 12px;
-      margin-top: 8px;
+    .brand-watermark-text {
+      font-family: 'Luckiest Guy', cursive, -apple-system, sans-serif;
+      font-size: 76px;
       letter-spacing: 2px;
-      text-transform: uppercase;
+      color: transparent;
+      background: linear-gradient(180deg, #e9d5ff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      text-shadow: 0 4px 12px rgba(160, 0, 226, 0.06);
+      display: inline-block;
+      transition: transform 0.3s ease;
     }
   }
 
-  .curve-top {
-    position: absolute;
-    top: 18px;
-    width: 100%;
-    text-align: center;
-    font-size: 14px;
-    letter-spacing: 3px;
-    font-weight: 600;
-    color: $green;
+  /* Made with Love Tagline */
+  .footer-love-tagline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 13.5px;
+    font-weight: 700;
+    letter-spacing: -0.1px;
+
+    .tagline-text {
+      color: #64748b;
+    }
+
+    .tagline-heart {
+      display: inline-block;
+      font-size: 14px;
+      animation: heartbeat 2s ease-in-out infinite;
+    }
   }
 
-  .curve-bottom {
-    position: absolute;
-    bottom: 18px;
-    width: 100%;
-    text-align: center;
-    font-size: 12px;
-    letter-spacing: 2px;
-    color: $green;
+  /* Pillar Chips */
+  .footer-pillars-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+
+    .pillar-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 650;
+      color: #64748b;
+      background: #ffffff;
+      padding: 4px 10px;
+      border-radius: 99px;
+      border: 1px solid #f1f5f9;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+
+      ion-icon {
+        font-size: 12px;
+        color: #a000e2;
+      }
+    }
+
+    .pillar-divider {
+      color: #cbd5e1;
+      font-size: 10px;
+    }
+  }
+
+  /* Footnote & Copyright */
+  .footer-footnote-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    margin-top: 6px;
+
+    .company-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: #94a3b8;
+      letter-spacing: 0.2px;
+      margin: 0;
+    }
+
+    .copyright-text {
+      font-size: 10px;
+      font-weight: 500;
+      color: #94a3b8;
+      margin: 0;
+    }
   }
 }
 
-.luckiest-guy-regular {
-  font-family: "Luckiest Guy", cursive;
-  font-weight: 400;
-  font-style: normal;
-  color: #ede7f2;
+@keyframes heartbeat {
+  0% {
+    transform: scale(1);
+  }
+  14% {
+    transform: scale(1.2);
+  }
+  28% {
+    transform: scale(1);
+  }
+  42% {
+    transform: scale(1.2);
+  }
+  70% {
+    transform: scale(1);
+  }
 }

@@ -1,199 +1,106 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule, AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonApp, IonRouterOutlet, IonText, IonCardTitle, IonAlert } from '@ionic/angular/standalone';
-import { LocationService } from 'src/app/services/location.service';
-import { AuthService } from 'src/app/services/auth.service';
-import { Platform } from '@ionic/angular';
-import { RegisterFcmService } from 'src/app/services/register-fcm.service';
-import { ProfileService } from 'src/app/services/profile.service';
-import { AlertController, IonButton } from '@ionic/angular/standalone';
-import { CommonService } from 'src/app/services/common.service';
-import { ModalController } from '@ionic/angular';
-import { BottomsheetMessageComponent } from 'src/app/components/bottomsheet-message/bottomsheet-message.component';
+import { Router, RouterModule, NavigationEnd } from '@angular/router';
+import { IonRouterOutlet, IonIcon } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import {
+  compass,
+  compassOutline,
+  home,
+  homeOutline,
+  receipt,
+  receiptOutline,
+  bagHandle,
+  bagHandleOutline,
+  gift,
+  giftOutline,
+  chatbubbleEllipses,
+  chatbubbleEllipsesOutline,
+  headset,
+  headsetOutline,
+  person,
+  personOutline
+} from 'ionicons/icons';
+import { filter } from 'rxjs/operators';
+import { AlertModalComponent } from 'src/app/components/alert-modal/alert-modal.component';
+import { AppDialogService } from 'src/app/services/app-dialog.service';
 
 @Component({
   selector: 'app-layout',
   templateUrl: './layout.page.html',
   styleUrls: ['./layout.page.scss'],
   standalone: true,
-  imports: [ IonRouterOutlet, IonApp, CommonModule, FormsModule]
+  imports: [
+    IonRouterOutlet,
+    IonIcon,
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    AlertModalComponent,
+    AsyncPipe
+  ]
 })
 export class LayoutPage implements OnInit {
-  isDragging = false;
-  offsetX = 0;
-  offsetY = 0;
-  token: any
-  addresses: any = []
-  params: any
-  profileData: any;
-  metaData:any;
-    isLoading: boolean = false
-    latestVersion = ''
-    appVersion:any = ''
-    fileUrl = ''
-    updateSeverity = ''
-    alertButtons = [
-    {
-    text: 'UPDATE',
-    cssClass: 'update-button',
-    handler: () => {
-      console.log('OK clicked');
-      const updateUrl = this.fileUrl;
-          window.open(updateUrl, '_system');
-    },
-  },
-    {
-    text: 'CLOSE',
-    cssClass: 'close-button',
-    handler: () => {
-      console.log('OK clicked');
-    },
-  }
+  public dialogService = inject(AppDialogService);
+  private router = inject(Router);
+
+  currentRoute: string = '/layout/home';
+
+  // Global dialog stream
+  readonly dialogState$ = this.dialogService.state$;
+
+  // Primary bottom tabs - Always show navbar when on any of these 5 tabs
+  readonly mainTabRoutes: string[] = [
+    '/layout/home',
+    '/layout/history',
+    '/layout/referral',
+    '/layout/support',
+    '/layout/profile'
   ];
 
-   constructor(private locationService: LocationService, private authService: AuthService, private platform: Platform, private registarFcm: RegisterFcmService, private profileService: ProfileService, private alertController: AlertController, private commonService: CommonService, private modalCtrl: ModalController) {}
-
- async ngOnInit() {
-  
+  get showBottomBar(): boolean {
+    return this.mainTabRoutes.some(tab => 
+      this.currentRoute === tab || this.currentRoute.startsWith(tab + '/')
+    );
   }
 
-//   getProfileData(){
-//   console.log('triggered')
-//   let params = {
-//     "token": this.token
-//   }
-//  this.profileService.getProfileData(params).subscribe({
-//   next: (res) => {
-//     this.profileData = res;
-//   error: (error:any) => {
-//     alert('Error while fetching data');
-//     console.error(error);
-//   }}
-// });
-// }
-
-  startDrag(event: MouseEvent | TouchEvent, element: HTMLElement) {
-    // Check if the event is touch or mouse and get the appropriate coordinates
-    if (event instanceof MouseEvent) {
-      this.offsetX = event.clientX - element.getBoundingClientRect().left;
-      this.offsetY = event.clientY - element.getBoundingClientRect().top;
-    } else if (event instanceof TouchEvent) {
-      this.offsetX = event.touches[0].clientX - element.getBoundingClientRect().left;
-      this.offsetY = event.touches[0].clientY - element.getBoundingClientRect().top;
-    }
-
-    this.isDragging = true;
-
-    // Bind mousemove and mouseup events to window
-    window.addEventListener('mousemove', this.dragMove);
-    window.addEventListener('mouseup', this.stopDrag);
-    window.addEventListener('touchmove', this.dragMove);
-    window.addEventListener('touchend', this.stopDrag);
+  constructor() {
+    addIcons({
+      compass,
+      compassOutline,
+      home,
+      homeOutline,
+      receipt,
+      receiptOutline,
+      bagHandle,
+      bagHandleOutline,
+      gift,
+      giftOutline,
+      chatbubbleEllipses,
+      chatbubbleEllipsesOutline,
+      headset,
+      headsetOutline,
+      person,
+      personOutline
+    });
   }
 
-  dragMove = (event: MouseEvent | TouchEvent) => {
-    if (this.isDragging) {
-      const element = document.querySelector('.orderBubble') as HTMLElement;
+  ngOnInit() {
+    this.currentRoute = this.router.url;
 
-      if (event instanceof MouseEvent) {
-        element.style.left = event.clientX - this.offsetX + 'px';
-        element.style.top = event.clientY - this.offsetY + 'px';
-      } else if (event instanceof TouchEvent) {
-        element.style.left = event.touches[0].clientX - this.offsetX + 'px';
-        element.style.top = event.touches[0].clientY - this.offsetY + 'px';
-      }
-    }
-  };
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: any) => {
+      this.currentRoute = event.urlAfterRedirects || event.url;
+    });
+  }
 
-  stopDrag = () => {
-    this.isDragging = false;
-    window.removeEventListener('mousemove', this.dragMove);
-    window.removeEventListener('mouseup', this.stopDrag);
-    window.removeEventListener('touchmove', this.dragMove);
-    window.removeEventListener('touchend', this.stopDrag);
-  };
+  navigateTab(route: string) {
+    this.router.navigate([route]);
+  }
 
-    async presentAlert() {
-      let title = 'New update available!'
-      if(this.updateSeverity == 'critical'){
-        title = 'Mandatory update available🚨'
-        this.alertButtons = [
-          {
-            text: 'UPDATE',
-            cssClass: 'update-button',
-            handler: () => {
-              console.log('OK clicked');
-              const updateUrl = this.fileUrl;
-              window.open(updateUrl, '_system');
-            },
-          },
-        ];
-      }
-      const alert = await this.alertController.create({
-        header: title,
-        subHeader: '',
-        message: 'New update available with minor bug fixes',
-        buttons: this.alertButtons,
-        backdropDismiss: false,
-        cssClass: 'custom-alert'
-      });
-
-      await alert.present();
-    }
-
-    // getMetaData(){
-    //     this.isLoading = true
-    //     this.commonService.getMetaData().subscribe((res)=> {
-    //       this.metaData = res
-    //       console.log(res)
-    //       this.isLoading = false
-    //       this.latestVersion = this.metaData[2].latest_version
-    //       this.fileUrl = this.metaData[2].download_link
-    //       this.updateSeverity = JSON.parse(this.metaData[2].video)['updateSeverity'] 
-    //       console.log(this.latestVersion)
-    //       // if(this.metaData[2].video.message === 'true'){
-    //       //   let item = {
-    //       //     'title': this.metaData[2].video.Header,
-    //       //     'body': this.metaData[2].video.Content
-    //       //   }
-    //       if(this.latestVersion != '' && this.appVersion != null){
-    //         if(this.latestVersion != this.appVersion){
-    //           this.presentAlert()
-    //       }
-    //       }
-    //       if(JSON.parse(this.metaData[2].video)['showBottomSheetAd'] == "true" ){
-    //           this.openItemModal('item')
-    //       }
-    //       // }
-    //     })
-    //   }
-
-      async getAppVersion(){
-const version = await this.profileService.getAppVersion()
-      this.appVersion = version
-      console.log(this.appVersion)
-     }
-
-     async openItemModal(item: any) {
-  const modal = await this.modalCtrl.create({
-    component: BottomsheetMessageComponent,
-    componentProps: { item },
-    breakpoints: [0.5],           // Allow resizing between 0%, 50%, 100%
-      initialBreakpoint: 0.5,
-      backdropDismiss: true,
-      handle: false,
-      handleBehavior: 'none',
-      cssClass: 'bottom-sheet-modal'
-  });
-
-  modal.onDidDismiss().then((res) => {
-    if (res.data?.dismissed) {
-      console.log('Modal returned:', res.data.data);
-    }
-  });
-
-  await modal.present();
-}
-
+  isTabActive(route: string): boolean {
+    return this.currentRoute === route || this.currentRoute.startsWith(route + '/');
+  }
 }

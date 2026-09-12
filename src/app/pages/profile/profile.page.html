@@ -1,111 +1,199 @@
-<ion-header class="ion-no-border">
+<ion-header class="ion-no-border bg-white pt-2">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button (click)="goBack()" class="custom-back">
-        <ion-icon name="arrow-back-outline"></ion-icon>
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back-outline" color="dark"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>Profile</ion-title>
+
+    <ion-title class="fw-bold text-dark">Profile</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <section class="main-wrapper">
-    @if (!isLoading) {
-    <div class="profile-header">
-      <div class="avatar-wrapper">
-        @if (profileData.profile_image == '' || profileData.profile_image == null) {
-          <div class="initials-avatar">{{nameShorthand() | uppercase}}</div>
-        } @else {
-          <ion-avatar class="img-avatar">
-            <img alt="Avatar" [src]="profileData.profile_image"/>
-          </ion-avatar>
-        }
-      </div>
-      
-      <div class="profile-info">
-        <h2 class="user-name">{{profileData.first_name}} {{ profileData.last_name }}</h2>
-        <p class="user-meta">{{profileData.phone}}</p>
-        <span class="join-badge">Member since {{profileData.date_joined | date: 'MMM YYYY'}}</span>
-      </div>
-    </div>
+<ion-content [fullscreen]="true" class="profile-content-page">
 
-    <div class="menu-card">
-      <ion-item button detail="true" (click)="openDetails('Personal Details')" lines="full">
-        <i class="bi bi-person-circle menu-icon"></i>
-        <ion-label>Personal Details</ion-label>
-      </ion-item>
+  <main class="profile-body-container">
 
-      <ion-item button detail="true" (click)="openDetails('Saved Addresses')" lines="full">
-        <i class="bi bi-geo-alt menu-icon"></i>
-        <ion-label>Saved Addresses</ion-label>
-      </ion-item>
+    <!-- Hero Profile Identity Card -->
+    <section class="profile-hero-card">
+      <div class="hero-glow-orb"></div>
 
-      <ion-item button detail="true" (click)="openDetails('Favourites')" lines="full">
-        <i class="bi bi-heart menu-icon"></i>
-        <ion-label>Favourites</ion-label>
-      </ion-item>
-
-      <ion-item button detail="true" (click)="openDetails('Languages')" lines="full">
-        <i class="bi bi-translate menu-icon"></i>
-        <ion-label>Languages</ion-label>
-      </ion-item>
-
-      <ion-item button detail="true" (click)="openDetails('Preferences')" lines="full">
-        <i class="bi bi-gear menu-icon"></i>
-        <ion-label>Preferences</ion-label>
-      </ion-item>
-
-      <ion-item button detail="true" (click)="openDetails('suggestion')" lines="full">
-        <i class="bi bi-lightbulb menu-icon"></i>
-        <ion-label>Suggest a Product/Service</ion-label>
-      </ion-item>
-
-      <ion-item button detail="true" (click)="openDetails('About Pintu')" lines="none">
-        <i class="bi bi-info-circle menu-icon"></i>
-        <ion-label>About Pintu</ion-label>
-      </ion-item>
-    </div>
-
-    <div class="logout-wrapper mx-3">
-      <ion-button color="danger" (click)="logOut()" class="book-btn w-100">
-        <i class="bi bi-box-arrow-right me-2"></i> Logout
-      </ion-button>
-    </div>
-
-    <!-- <div class="px-3 mt-2 mb-4">
-      <ion-button expand="block" fill="outline" color="medium" class="w-100" style="border-radius: 12px; font-weight: 600;">
-        Cancel
-      </ion-button>
-    </div> -->
-
-    } @else if (isLoading) {
-      <div class="profile-header">
-        <div class="avatar-wrapper d-flex justify-content-center">
-          <ion-skeleton-text animated style="width: 80px; height: 80px; border-radius: 50%;"></ion-skeleton-text>
+      <div class="profile-hero-inner">
+        <!-- Avatar -->
+        <div class="profile-avatar-wrapper">
+          @if (profileData?.profile_image) {
+            <img [src]="profileData.profile_image" alt="Profile" class="avatar-photo" (error)="profileData.profile_image = ''" />
+          } @else {
+            <div class="avatar-initials-badge">
+              {{ getUserInitials() }}
+            </div>
+          }
+          <div class="verified-tick-badge" title="Verified Customer">
+            <ion-icon name="checkmark"></ion-icon>
+          </div>
         </div>
-        
-        <div class="profile-info d-flex flex-column align-items-center mt-3">
-          <ion-skeleton-text animated style="width: 180px; height: 26px; border-radius: 6px; margin-bottom: 8px;"></ion-skeleton-text>
-          <ion-skeleton-text animated style="width: 120px; height: 16px; border-radius: 4px; margin-bottom: 12px;"></ion-skeleton-text>
-          <ion-skeleton-text animated style="width: 150px; height: 26px; border-radius: 20px;"></ion-skeleton-text>
+
+        <!-- User Information -->
+        <div class="profile-identity-info">
+          @if (isLoading) {
+            <ion-skeleton-text animated style="width: 160px; height: 22px; border-radius: 6px; margin: 0 auto 6px;"></ion-skeleton-text>
+            <ion-skeleton-text animated style="width: 110px; height: 14px; border-radius: 4px; margin: 0 auto 8px;"></ion-skeleton-text>
+          } @else {
+            <h2 class="user-display-name">
+              {{ getDisplayName() }}
+            </h2>
+            <p class="user-display-phone">
+              <ion-icon name="call-outline"></ion-icon>
+              <span>{{ profileData?.phone || '+91' }}</span>
+            </p>
+          }
         </div>
       </div>
+    </section>
 
-      <div class="menu-card mt-3">
-        @for (i of [1,2,3,4,5,6,7]; track i) {
-          <ion-item lines="full">
-            <ion-skeleton-text animated style="width: 22px; height: 22px; border-radius: 4px; margin-right: 16px;" slot="start"></ion-skeleton-text>
-            <ion-label>
-              <ion-skeleton-text animated style="width: 60%; height: 18px; border-radius: 4px;"></ion-skeleton-text>
-            </ion-label>
-          </ion-item>
-        }
+    <!-- 3-Column Quick Shortcuts Strip -->
+    <section class="quick-shortcuts-strip">
+      <div class="shortcut-box" (click)="openDetails('Orders')" role="button" tabindex="0">
+        <div class="shortcut-icon-circle bg-purple-light">
+          <ion-icon name="receipt-outline"></ion-icon>
+        </div>
+        <span class="shortcut-label">Orders</span>
       </div>
-    } @else if (showRetry) {
-      <div class="retry-state">
-        <ion-button (click)="retry()" fill="outline" color="dark">Retry</ion-button>
+
+      <div class="shortcut-box" (click)="openDetails('Saved Addresses')" role="button" tabindex="0">
+        <div class="shortcut-icon-circle bg-emerald-light">
+          <ion-icon name="location-outline"></ion-icon>
+        </div>
+        <span class="shortcut-label">Addresses</span>
       </div>
-    }
-  </section>
+
+      <div class="shortcut-box" (click)="goToSupport()" role="button" tabindex="0">
+        <div class="shortcut-icon-circle bg-amber-light">
+          <ion-icon name="headset-outline"></ion-icon>
+        </div>
+        <span class="shortcut-label">Support</span>
+      </div>
+    </section>
+
+    <!-- Group 1: Account Details & Rewards -->
+    <section class="menu-group-card">
+      <div class="group-header-label">ACCOUNT &amp; REWARDS</div>
+
+      <div class="menu-row" (click)="openDetails('Personal Details')" role="button" tabindex="0">
+        <div class="menu-icon-box bg-purple-tint">
+          <ion-icon name="person-outline"></ion-icon>
+        </div>
+        <div class="menu-text-col">
+          <span class="menu-title">Personal Details</span>
+          <span class="menu-subtitle">Name, email &amp; mobile number</span>
+        </div>
+        <ion-icon name="chevron-forward" class="menu-chevron"></ion-icon>
+      </div>
+
+      <div class="menu-divider"></div>
+
+      <div class="menu-row" (click)="openDetails('Saved Addresses')" role="button" tabindex="0">
+        <div class="menu-icon-box bg-emerald-tint">
+          <ion-icon name="map-outline"></ion-icon>
+        </div>
+        <div class="menu-text-col">
+          <span class="menu-title">Saved Delivery Addresses</span>
+          <span class="menu-subtitle">Home, work &amp; other locations</span>
+        </div>
+        <ion-icon name="chevron-forward" class="menu-chevron"></ion-icon>
+      </div>
+
+      <div class="menu-divider"></div>
+
+      <div class="menu-row" (click)="openReferral()" role="button" tabindex="0">
+        <div class="menu-icon-box bg-amber-tint">
+          <ion-icon name="gift-outline"></ion-icon>
+        </div>
+        <div class="menu-text-col">
+          <div class="d-flex align-items-center gap-2">
+            <span class="menu-title">Refer Friends &amp; Earn</span>
+            <span class="reward-tag">₹50 OFF</span>
+          </div>
+          <span class="menu-subtitle">Share Pintu with family &amp; neighbours</span>
+        </div>
+        <ion-icon name="chevron-forward" class="menu-chevron"></ion-icon>
+      </div>
+    </section>
+
+    <!-- Group 2: Preferences & Feedback -->
+    <section class="menu-group-card">
+      <div class="group-header-label">PREFERENCES</div>
+
+      <div class="menu-row" (click)="openDetails('language')" role="button" tabindex="0">
+        <div class="menu-icon-box bg-purple-tint">
+          <ion-icon name="language-outline"></ion-icon>
+        </div>
+        <div class="menu-text-col">
+          <span class="menu-title">App Language</span>
+          <span class="menu-subtitle">English (India)</span>
+        </div>
+        <ion-icon name="chevron-forward" class="menu-chevron"></ion-icon>
+      </div>
+
+      <div class="menu-divider"></div>
+
+      <div class="menu-row" (click)="openDetails('suggestion')" role="button" tabindex="0">
+        <div class="menu-icon-box bg-purple-tint">
+          <ion-icon name="bulb-outline"></ion-icon>
+        </div>
+        <div class="menu-text-col">
+          <span class="menu-title">Suggest a Product or Service</span>
+          <span class="menu-subtitle">Tell us what you'd love on Pintu</span>
+        </div>
+        <ion-icon name="chevron-forward" class="menu-chevron"></ion-icon>
+      </div>
+    </section>
+
+    <!-- Group 3: About & Legal -->
+    <section class="menu-group-card">
+      <div class="group-header-label">ABOUT &amp; LEGAL</div>
+
+      <div class="menu-row" (click)="openDetails('About Pintu')" role="button" tabindex="0">
+        <div class="menu-icon-box bg-slate-tint">
+          <ion-icon name="information-circle-outline"></ion-icon>
+        </div>
+        <div class="menu-text-col">
+          <span class="menu-title">About Pintu Technologies</span>
+          <span class="menu-subtitle">Our mission, services &amp; vision</span>
+        </div>
+        <ion-icon name="chevron-forward" class="menu-chevron"></ion-icon>
+      </div>
+
+      <div class="menu-divider"></div>
+
+      <div class="menu-row" (click)="openDetails('Terms & Privacy')" role="button" tabindex="0">
+        <div class="menu-icon-box bg-slate-tint">
+          <ion-icon name="shield-outline"></ion-icon>
+        </div>
+        <div class="menu-text-col">
+          <span class="menu-title">Terms of Service &amp; Privacy</span>
+          <span class="menu-subtitle">Customer protection &amp; policies</span>
+        </div>
+        <ion-icon name="chevron-forward" class="menu-chevron"></ion-icon>
+      </div>
+    </section>
+
+    <!-- Logout Action Card -->
+    <div class="logout-card-action" (click)="logOut()" role="button" tabindex="0">
+      <div class="logout-icon-box">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </div>
+      <span class="logout-text">Log Out of Account</span>
+    </div>
+
+    <!-- App Version & Footnote -->
+    <div class="app-version-footer">
+      <p class="brand-text">PINTU • MINUTES DELIVERY &amp; RIDES</p>
+      <p class="ver-text">Version 2.4.0 • Made with ❤️ in India</p>
+    </div>
+
+    <!-- Bottom Nav Spacer -->
+    <div class="bottom-nav-spacer"></div>
+
+  </main>
 </ion-content>

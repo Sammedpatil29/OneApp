@@ -1,250 +1,498 @@
-/* ================= VARIABLES ================= */
-:host {
-  --primary-accent: #000000;
-  --secondary-accent: black; // Modern Indigo
-  --soft-bg: #f8fafc;
-  --input-bg: #ffffff;
-  --text-main: #0f172a;
-  --text-muted: #64748b;
+.login-split-screen {
+  --background: #090314;
+  --overflow: auto;
+  position: relative;
+  min-height: 100vh;
 }
 
-/* ================= BASE & BG ================= */
-ion-content {
-  --background: var(--soft-bg);
-}
-
-.bg-decoration {
-  position: absolute;
-  top: -100px;
-  right: -50px;
-  width: 300px;
-  height: 300px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, rgba(255, 255, 255, 0) 70%);
-  z-index: -1;
-  pointer-events: none;
-}
-
-.main-container {
-  padding: 0 24px;
+.split-layout-container {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  background: #090314;
+  position: relative;
 }
 
-/* ================= HEADER ================= */
-ion-header ion-toolbar {
-  --background: transparent;
-  --border-width: 0;
-  padding-top: 10px;
-}
+/* =======================================================
+   TOP 65% SLIDER SECTION
+   ======================================================= */
+.top-slider-section {
+  height: 65vh;
+  height: 65dvh;
+  min-height: 380px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(circle at 80% 20%, #4c1d95 0%, #2e0854 45%, #0d021a 100%);
+  overflow: hidden;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 8px);
+  z-index: 1;
 
-.back-btn {
-  --background: white;
-  --color: black;
-  --border-radius: 12px;
-  --box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  margin-left: 8px;
-  width: 44px;
-  height: 44px;
-}
+  /* Ambient Glows */
+  .ambient-glow {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    filter: blur(80px);
+    z-index: 0;
 
-.header-section {
-  margin-top: 20px;
-  margin-bottom: 40px;
+    &.glow-purple {
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, rgba(160, 0, 226, 0.35) 0%, rgba(160, 0, 226, 0) 70%);
+      top: -60px;
+      left: -80px;
+    }
 
-  .brand-name {
-    font-size: 32px;
-    font-weight: 800;
-    letter-spacing: -1px;
-    margin: 0;
-    color: var(--text-main);
+    &.glow-indigo {
+      width: 360px;
+      height: 360px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.22) 0%, rgba(99, 102, 241, 0) 70%);
+      top: 100px;
+      right: -100px;
+    }
   }
-  .brand-tagline {
-    color: var(--secondary-accent);
-    font-weight: 600;
-    font-size: 14px;
-    margin: 4px 0;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+
+  .ambient-grid-pattern {
+    position: absolute;
+    inset: 0;
+    background-image: 
+      linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+    z-index: 0;
+    mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+  }
+
+  /* Back Button Overlay */
+  .btn-circle-back {
+    position: absolute;
+    top: calc(env(safe-area-inset-top, 0px) + 14px);
+    left: 16px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease;
+    z-index: 20;
+
+    &:active {
+      transform: scale(0.92);
+      background: rgba(255, 255, 255, 0.28);
+    }
   }
 }
 
-/* ================= TYPOGRAPHY ================= */
-.page-title {
-  font-size: 26px;
-  font-weight: 800;
-  color: var(--text-main);
-  margin-bottom: 8px;
-}
-
-.subtitle {
-  font-size: 15px;
-  color: var(--text-muted);
-  line-height: 1.5;
-  margin-bottom: 30px;
-}
-
-.phone-highlight {
-  color: var(--text-main);
-  font-weight: 700;
-  border-bottom: 2px solid var(--secondary-accent);
-}
-
-/* ================= INPUTS ================= */
-.input-container {
+/* --- Carousel & Swiper --- */
+.carousel-container {
+  flex: 1;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
-  background: var(--input-bg);
-  border-radius: 18px;
-  padding: 8px 16px;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-  &:focus-within {
-    border-color: var(--text-main);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
-  }
-}
-
-.country-pill {
-  background: #f1f5f9;
-  padding: 6px 12px;
-  border-radius: 10px;
-  font-weight: 700;
-  color: var(--text-main);
-  margin-right: 12px;
-}
-
-.modern-input {
-  --padding-start: 0;
-  font-size: 18px;
-  font-weight: 600;
-  letter-spacing: 1px;
-}
-
-/* For Registration Fields */
-.modern-field {
-  ion-label {
-    display: block;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--text-main);
-    margin-bottom: 8px;
-    margin-left: 4px;
-  }
-}
-
-.outline-input {
-  --background: var(--input-bg);
-  --border-radius: 16px;
-  --padding-start: 16px;
-  --border-color: #e2e8f0;
-  --border-style: solid;
-  --border-width: 1px;
-  font-weight: 500;
-  height: 56px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-}
-
-/* ================= OTP ================= */
-.otp-wrapper {
-  margin: 20px 0;
-  display: flex;
   justify-content: center;
-}
+  position: relative;
+  z-index: 3;
+  padding-bottom: 20px;
+  box-sizing: border-box;
 
-::v-deep ng-otp-input input {
-  width: 50px !important;
-  height: 60px !important;
-  border-radius: 16px !important;
-  border: 2px solid #e2e8f0 !important;
-  background: white !important;
-  font-size: 22px !important;
-  margin: 0 5px !important;
-  transition: all 0.2s ease !important;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+  .onboarding-swiper {
+    width: 100%;
+    height: 100%;
 
-  &:focus {
-    border-color: var(--secondary-accent) !important;
-    transform: scale(1.05);
+    --swiper-pagination-bottom: 6px;
+    --swiper-pagination-color: #facc15;
+    --swiper-pagination-bullet-inactive-color: rgba(255, 255, 255, 0.35);
+    --swiper-pagination-bullet-inactive-opacity: 0.8;
+  }
+
+  swiper-slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  swiper-container::part(bullet) {
+    width: 6px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.4);
+    transition: all 0.3s ease;
+    border-radius: 99px;
+  }
+
+  swiper-container::part(bullet-active) {
+    width: 20px;
+    height: 6px;
+    background: #facc15;
+    border-radius: 99px;
+  }
+
+  .slide-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4px 20px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 380px;
+    margin: auto;
+
+    .slide-badge {
+      display: inline-block;
+      font-size: 10.5px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      padding: 3.5px 11px;
+      border-radius: 99px;
+      margin-bottom: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      text-transform: uppercase;
+    }
+
+    .slide-title {
+      font-size: 21px;
+      font-weight: 800;
+      line-height: 1.25;
+      color: #ffffff;
+      margin: 0 0 4px 0;
+      letter-spacing: -0.3px;
+
+      .highlight-text {
+        color: #facc15;
+        background: linear-gradient(120deg, #fef08a 0%, #facc15 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+    }
+
+    .slide-desc {
+      font-size: 12.5px;
+      color: #e9d5ff;
+      line-height: 1.4;
+      margin: 0 0 8px 0;
+      max-width: 320px;
+    }
+
+    .slide-stage {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 130px;
+      width: 100%;
+      margin: 2px 0 8px;
+
+      .glow-halo {
+        position: absolute;
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(250, 204, 21, 0.25) 0%, rgba(160, 0, 226, 0) 70%);
+        filter: blur(14px);
+      }
+
+      .slide-img {
+        max-height: 125px;
+        max-width: 80%;
+        object-fit: contain;
+        filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.35));
+        position: relative;
+        z-index: 2;
+      }
+    }
+
+    .chips-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+      max-width: 320px;
+
+      .feature-chip {
+        background: rgba(255, 255, 255, 0.14);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+        font-size: 10.5px;
+        font-weight: 700;
+        padding: 3.5px 9px;
+        border-radius: 99px;
+      }
+    }
   }
 }
 
-.resend-wrapper {
-  margin-top: 25px;
-  text-align: center;
-  font-size: 14px;
-  color: var(--text-muted);
-
-  .resend-link {
-    color: var(--secondary-accent);
-    font-weight: 700;
-    text-decoration: none;
-    margin-left: 5px;
-  }
-
-  .timer-text b {
-    color: var(--text-main);
-  }
-}
-
-/* ================= BUTTONS ================= */
-.bottom-action-container {
-  position: fixed;
+.slider-bottom-fade {
+  position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 24px 24px 40px; // Extra bottom padding for notch phones
-  background: linear-gradient(to top, var(--soft-bg) 80%, transparent);
+  height: 20px;
+  background: linear-gradient(to bottom, rgba(13, 2, 26, 0) 0%, rgba(13, 2, 26, 0.35) 100%);
+  pointer-events: none;
+  z-index: 4;
 }
 
-.primary-modern-btn {
-  --border-radius: 18px;
-  --box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  height: 60px;
-  margin: 0;
-  font-size: 17px;
-  letter-spacing: 0.5px;
-  
-  &::part(native) {
-    transition: all 0.2s ease;
+/* =======================================================
+   BOTTOM 35% LOGIN SECTION
+   ======================================================= */
+.bottom-login-section {
+  min-height: 35vh;
+  min-height: 35dvh;
+  flex: 1 1 auto;
+  background: #ffffff;
+  border-radius: 28px 28px 0 0;
+  box-shadow: 0 -12px 36px rgba(0, 0, 0, 0.24);
+  padding: 16px 22px calc(20px + env(safe-area-inset-bottom, 12px));
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+
+  .sheet-handle-bar {
+    width: 38px;
+    height: 4px;
+    border-radius: 99px;
+    background: #cbd5e1;
+    margin: 0 auto 12px;
+    flex-shrink: 0;
   }
+
+  .login-form-body {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 440px;
+    margin: 0 auto;
+  }
+
+  .form-header {
+    margin-bottom: 12px;
+
+    .form-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0 0 3px;
+      letter-spacing: -0.3px;
+    }
+
+    .form-subtitle {
+      font-size: 12.5px;
+      color: #64748b;
+      margin: 0;
+      line-height: 1.4;
+
+      .btn-link-edit {
+        background: transparent;
+        border: none;
+        color: #a000e2;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        padding: 0 4px;
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+/* --- Input Fields --- */
+.input-container-modern {
+  display: flex;
+  align-items: center;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 4px 14px;
+  transition: all 0.2s ease;
+
+  &:focus-within {
+    border-color: #a000e2;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(160, 0, 226, 0.12);
+  }
+
+  .input-icon-left {
+    color: #94a3b8;
+    font-size: 19px;
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+
+  .phone-prefix {
+    font-size: 15px;
+    font-weight: 700;
+    color: #0f172a;
+    padding-right: 10px;
+    margin-right: 10px;
+    border-right: 1.5px solid #e2e8f0;
+  }
+
+  .custom-input {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 14.5px;
+    font-weight: 600;
+    color: #0f172a;
+    padding: 10px 0;
+    width: 100%;
+
+    &::placeholder {
+      color: #94a3b8;
+      font-weight: 400;
+    }
+  }
+}
+
+/* --- OTP Box Wrapper --- */
+.otp-wrapper {
+  display: flex;
+  justify-content: center;
+
+  ::ng-deep .otp-input {
+    width: 42px !important;
+    height: 48px !important;
+    border-radius: 12px !important;
+    border: 1.5px solid #cbd5e1 !important;
+    background: #f8fafc !important;
+    font-size: 19px !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    text-align: center !important;
+    margin: 0 4px !important;
+    outline: none !important;
+    transition: all 0.18s ease !important;
+
+    &:focus {
+      border-color: #a000e2 !important;
+      background: #ffffff !important;
+      box-shadow: 0 0 0 3px rgba(160, 0, 226, 0.12) !important;
+    }
+  }
+}
+
+.resend-row {
+  .resend-action {
+    color: #a000e2;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+}
+
+/* --- Action Buttons --- */
+.btn-primary-action {
+  background: linear-gradient(135deg, #a000e2 0%, #7e00b3 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 14px;
+  padding: 13px 20px;
+  font-size: 14.5px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 18px rgba(160, 0, 226, 0.28);
+  transition: all 0.2s ease;
+  cursor: pointer;
 
   &:active {
-    transform: scale(0.97);
+    transform: scale(0.985);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
   }
 }
 
-/* ================= TOAST ================= */
-.custom-toast {
-  --background: var(--text-main);
-  --color: white;
-  --border-radius: 12px;
-  --button-color: white;
+.terms-text {
+  font-size: 11.5px;
+  color: #94a3b8;
+  line-height: 1.4;
+  margin-top: 8px;
 }
 
-.input-container:focus-within {
-  border-color: var(--text-main); /* Changes the whole box border to black */
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Adds a soft glow */
-  transform: translateY(-1px); /* Slight lift effect */
+.spinner-small {
+  width: 18px;
+  height: 18px;
 }
 
-/* Add this to your SCSS file */
+/* =======================================================
+   SPLASH SCREEN
+   ======================================================= */
+.splash-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  z-index: 10000;
 
-.modern-input, .outline-input {
-  /* This removes the default underline/highlight line on focus */
-  --highlight-height: 0;
-  --inner-padding-end: 0;
-  --padding-bottom: 0;
-  
-  /* Ensures no bottom border from the item container */
-  border-bottom: none !important;
+  .splash-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .splash-logo {
+      width: 72px;
+      height: 72px;
+      border-radius: 20px;
+      object-fit: contain;
+      margin-bottom: 24px;
+      box-shadow: 0 12px 32px rgba(160, 0, 226, 0.15);
+    }
+
+    .splash-spinner-ring {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 3px solid #e2e8f0;
+      border-top-color: #a000e2;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 14px;
+    }
+
+    .splash-text {
+      font-size: 14px;
+      font-weight: 700;
+      color: #334155;
+      letter-spacing: 0.5px;
+      margin: 0;
+    }
+  }
 }
 
-/* If you are using ion-item wrappers, targeting the item highlight specifically */
-ion-item {
-  --highlight-color-focused: transparent !important;
-  --highlight-color-valid: transparent !important;
-  --highlight-color-invalid: transparent !important;
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }

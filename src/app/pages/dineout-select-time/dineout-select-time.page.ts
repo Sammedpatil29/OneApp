@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { addIcons } from 'ionicons';
 import { 
-  arrowBack, calendarOutline, timeOutline, moonOutline, 
+  arrowBack, arrowBackOutline, calendarOutline, timeOutline, moonOutline, 
   chevronDownOutline, checkmarkCircle, informationCircleOutline, giftOutline 
 } from 'ionicons/icons';
 import { DineoutService } from 'src/app/services/dineout.service';
@@ -53,9 +53,13 @@ export class DineoutSelectTimePage implements OnInit {
     private authServcie: AuthService
   ) { 
     addIcons({ 
-      arrowBack, calendarOutline, timeOutline, moonOutline, 
+      arrowBack, arrowBackOutline, calendarOutline, timeOutline, moonOutline, 
       chevronDownOutline, checkmarkCircle, informationCircleOutline, giftOutline 
     });
+  }
+
+  goBack() {
+    this.navCtrl.back();
   }
 
   async ngOnInit() {

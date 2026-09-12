@@ -1,6 +1,6 @@
 {
   "name": "Pintu - Minutes App",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "author": "Ionic Framework",
   "homepage": "https://ionicframework.com/",
   "scripts": {
@@ -15,7 +15,8 @@
     "deploy-vercel": "npx ionic build && cd www && vercel --prod --yes --scope sammedpatil29s-projects -n pintu",
     "ota:publish": "node scripts/publish-ota.mjs",
     "ota:publish:immediate": "node scripts/publish-ota.mjs --immediate",
-    "ota:publish:quick": "node scripts/publish-ota.mjs --skip-build"
+    "ota:publish:quick": "node scripts/publish-ota.mjs --skip-build",
+    "fix:git": "powershell -ExecutionPolicy Bypass -File ../fix-git.ps1"
   },
   "private": true,
   "dependencies": {
@@ -29,12 +30,11 @@
     "@angular/platform-browser-dynamic": "^19.0.0",
     "@angular/router": "^19.0.0",
     "@capacitor-community/http": "^1.4.1",
-    "@capacitor-firebase/authentication": "^7.3.0",
     "@capacitor-firebase/messaging": "^7.2.0",
     "@capacitor/android": "7.0.1",
     "@capacitor/app": "^7.0.0",
     "@capacitor/browser": "^7.0.2",
-    "@capacitor/camera": "^8.0.0",
+    "@capacitor/camera": "^7.0.0",
     "@capacitor/core": "^7.2.0",
     "@capacitor/filesystem": "^7.1.4",
     "@capacitor/geolocation": "^7.1.2",
@@ -46,7 +46,7 @@
     "@capacitor/push-notifications": "^7.0.2",
     "@capacitor/screen-orientation": "^7.0.1",
     "@capacitor/share": "^7.0.1",
-    "@capacitor/splash-screen": "^8.0.0",
+    "@capacitor/splash-screen": "^7.0.2",
     "@capacitor/status-bar": "7.0.0",
     "@ionic/angular": "^8.0.0",
     "@otakit/capacitor-updater": "^2.3.3",

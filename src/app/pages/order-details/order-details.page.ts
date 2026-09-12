@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonCardSubtitle, IonInput, IonItem, IonSpinner, IonSelect, IonSelectOption, IonText, IonToast, IonRange } from '@ionic/angular/standalone';
 import { NavController, Platform } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { arrowBack, checkmarkCircle, calendarOutline, timeOutline, locationOutline, alertCircleOutline, downloadOutline, shareSocialOutline, mapOutline, homeOutline } from 'ionicons/icons';
+import { arrowBack, arrowBackOutline, checkmarkCircle, calendarOutline, timeOutline, locationOutline, alertCircleOutline, downloadOutline, shareSocialOutline, mapOutline, homeOutline } from 'ionicons/icons';
 import { Router } from '@angular/router';
 import { EventsService } from 'src/app/services/events.service';
 import { AuthService } from 'src/app/services/auth.service';
@@ -54,7 +54,7 @@ export class OrderDetailsPage implements OnInit, OnDestroy {
     private zone: NgZone,
     private platform: Platform
   ) {
-    addIcons({arrowBack,homeOutline,checkmarkCircle,calendarOutline,timeOutline,locationOutline,alertCircleOutline,downloadOutline,shareSocialOutline,mapOutline});
+    addIcons({arrowBack, arrowBackOutline, homeOutline,checkmarkCircle,calendarOutline,timeOutline,locationOutline,alertCircleOutline,downloadOutline,shareSocialOutline,mapOutline});
   }
 
   async ngOnInit() {

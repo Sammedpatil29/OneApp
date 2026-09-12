@@ -26,6 +26,12 @@
 @import "@ionic/angular/css/flex-utils.css";
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 
 
 /**
@@ -295,4 +301,105 @@ ion-footer {
     text-align: center !important;
     background-color: #ff00002e;
     padding: 10px;
+}
+
+/* ==========================================================================
+   Modern Custom Partner / Customer Alerts & Prompts
+   ========================================================================== */
+.custom-partner-alert {
+  --background: #ffffff;
+  --backdrop-opacity: 0.65;
+
+  .alert-wrapper {
+    border-radius: 24px !important;
+    padding: 18px 16px 14px !important;
+    box-shadow: 0 24px 48px -12px rgba(160, 0, 226, 0.25), 0 12px 24px -8px rgba(0, 0, 0, 0.15) !important;
+    border: 1px solid rgba(160, 0, 226, 0.15) !important;
+    max-width: 340px !important;
+    width: 90% !important;
+    animation: alertPop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .alert-head {
+    text-align: center !important;
+    padding-bottom: 8px !important;
+
+    h2.alert-title {
+      font-size: 19px !important;
+      font-weight: 800 !important;
+      letter-spacing: -0.3px !important;
+      color: #0f172a !important;
+      margin-bottom: 4px !important;
+    }
+  }
+
+  .alert-message {
+    text-align: center !important;
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    color: #475569 !important;
+    padding: 0 8px 16px !important;
+  }
+
+  /* Inputs for Prompts */
+  .alert-input-group {
+    padding: 4px 6px 16px !important;
+
+    .alert-input {
+      border-radius: 12px !important;
+      border: 1.5px solid #e2e8f0 !important;
+      padding: 12px 14px !important;
+      font-size: 15px !important;
+      font-weight: 600 !important;
+      background: #f8fafc !important;
+      color: #0f172a !important;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+
+      &:focus {
+        border-color: var(--app-theme-color, #a000e2) !important;
+        box-shadow: 0 0 0 3px rgba(160, 0, 226, 0.15) !important;
+        background: #ffffff !important;
+      }
+    }
+  }
+
+  /* Action Buttons */
+  .alert-button-group {
+    padding: 0 4px !important;
+    display: flex !important;
+    gap: 8px !important;
+
+    button.alert-button {
+      flex: 1 !important;
+      border-radius: 14px !important;
+      font-weight: 700 !important;
+      font-size: 14px !important;
+      letter-spacing: 0.2px !important;
+      padding: 12px 16px !important;
+      height: 46px !important;
+      transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+
+      &:active {
+        transform: scale(0.97) !important;
+      }
+
+      /* Cancel / Secondary */
+      &.alert-button-role-cancel {
+        background: #f1f5f9 !important;
+        color: #475569 !important;
+      }
+
+      /* Confirm / Primary */
+      &:not(.alert-button-role-cancel) {
+        background: var(--app-theme-color, #a000e2) !important;
+        color: #ffffff !important;
+        box-shadow: 0 4px 14px rgba(160, 0, 226, 0.35) !important;
+      }
+    }
+  }
+}
+
+@keyframes alertPop {
+  0% { transform: scale(0.85); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }
