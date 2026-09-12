@@ -1,0 +1,436 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.saved-addresses-container {
+  padding: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+// ── SKELETON LOADING ──
+.skeleton-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.address-skeleton-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+
+  .skel-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+// ── EMPTY STATE ──
+.empty-state-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 48px 24px;
+  min-height: 55vh;
+
+  .empty-icon-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(160, 0, 226, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);
+    border: 2px dashed rgba(160, 0, 226, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+
+    ion-icon {
+      font-size: 38px;
+      color: #a000e2;
+    }
+  }
+
+  .empty-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 8px 0;
+  }
+
+  .empty-subtitle {
+    font-size: 0.88rem;
+    color: #64748b;
+    line-height: 1.45;
+    max-width: 280px;
+    margin: 0 0 28px 0;
+  }
+
+  .btn-select-map-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    max-width: 280px;
+    height: 48px;
+    background: linear-gradient(135deg, #a000e2 0%, #7c00b3 100%);
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(160, 0, 226, 0.35);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+    &:active {
+      transform: scale(0.98);
+      box-shadow: 0 2px 8px rgba(160, 0, 226, 0.25);
+    }
+
+    ion-icon {
+      font-size: 20px;
+    }
+  }
+}
+
+// ── SAVED ADDRESSES CONTENT ──
+.address-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 84px; // Spacing for floating footer button
+}
+
+.section-badge-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 2px 8px;
+
+  .section-label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    color: #64748b;
+  }
+
+  .badge-count {
+    font-size: 0.72rem;
+    font-weight: 700;
+    background: #f1f5f9;
+    color: #475569;
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+}
+
+.address-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.address-card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:active {
+    transform: scale(0.99);
+  }
+
+  &.is-active {
+    border-color: #a000e2;
+    background: linear-gradient(to bottom, rgba(160, 0, 226, 0.02) 0%, #ffffff 100%);
+    box-shadow: 0 4px 16px rgba(160, 0, 226, 0.12);
+
+    .active-accent-bar {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: linear-gradient(to bottom, #a000e2, #c026d3);
+      border-radius: 4px 0 0 4px;
+    }
+  }
+
+  .card-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    gap: 8px;
+  }
+
+  .labels-cluster {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .address-label-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    background: #f1f5f9;
+    color: #475569;
+
+    &[data-label="home"] {
+      background: rgba(16, 185, 129, 0.12);
+      color: #059669;
+    }
+
+    &[data-label="work"] {
+      background: rgba(59, 130, 246, 0.12);
+      color: #2563eb;
+    }
+
+    &[data-label="other"] {
+      background: rgba(160, 0, 226, 0.1);
+      color: #a000e2;
+    }
+
+    ion-icon {
+      font-size: 14px;
+    }
+  }
+
+  .star-indicator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    padding: 2px 4px;
+    line-height: 1;
+
+    &.is-primary {
+      color: #eab308;
+      filter: drop-shadow(0 1px 2px rgba(234, 179, 8, 0.35));
+
+      ion-icon {
+        font-size: 18px;
+      }
+    }
+
+    &.not-primary {
+      color: #94a3b8;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.15s ease;
+
+      ion-icon {
+        font-size: 18px;
+      }
+
+      &:hover {
+        color: #eab308;
+        transform: scale(1.15);
+      }
+
+      &:active {
+        transform: scale(0.9);
+      }
+    }
+  }
+
+  .card-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .selected-check-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #10b981;
+      line-height: 1;
+      filter: drop-shadow(0 1px 2px rgba(16, 185, 129, 0.25));
+
+      ion-icon {
+        font-size: 20px;
+      }
+    }
+
+    .btn-action-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+
+      &.btn-edit {
+        background: #f3e8ff;
+        color: var(--app-theme-color, #a000e2);
+
+        &:hover {
+          background: #e9d5ff;
+        }
+
+        &:active {
+          transform: scale(0.92);
+        }
+      }
+
+      &.btn-delete {
+        background: #fee2e2;
+        color: #ef4444;
+
+        &:hover {
+          background: #fecaca;
+        }
+
+        &:active {
+          transform: scale(0.92);
+        }
+      }
+    }
+  }
+
+  .card-body {
+    .address-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0 0 4px 0;
+      line-height: 1.3;
+    }
+
+    .full-address-text {
+      font-size: 0.82rem;
+      color: #64748b;
+      line-height: 1.45;
+      margin: 0 0 6px 0;
+
+      .landmark-text {
+        font-weight: 600;
+        color: #475569;
+      }
+    }
+
+    .receiver-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 3px 8px;
+      border-radius: 6px;
+      color: #475569;
+      margin-top: 4px;
+
+      .rec-label {
+        color: #94a3b8;
+        font-weight: 500;
+      }
+
+      .rec-name {
+        font-weight: 600;
+      }
+
+      .rec-phone {
+        color: #64748b;
+      }
+    }
+  }
+}
+
+// ── STICKY FOOTER: SELECT ON MAP ──
+.map-action-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 16px max(12px, env(safe-area-inset-bottom, 12px));
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-top: 1px solid #e2e8f0;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: center;
+  z-index: 100;
+
+  .btn-select-map {
+    width: 100%;
+    max-width: 560px;
+    height: 48px;
+    background: linear-gradient(135deg, #a000e2 0%, #7c00b3 100%);
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(160, 0, 226, 0.35);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+    &:active {
+      transform: scale(0.98);
+      box-shadow: 0 2px 8px rgba(160, 0, 226, 0.25);
+    }
+
+    ion-icon {
+      font-size: 20px;
+    }
+  }
+}
+
+// ── EDIT ADDRESS BOTTOM SHEET MODAL ──
+.edit-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  .edit-modal-sheet {
+    width: 100%;
+    max-width: 560px;
+    max-height: 90vh;
+    background: #ffffff;
+    border-radius: 24px 24px 0 0;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    animation-duration: 0.25s;
+  }
+}

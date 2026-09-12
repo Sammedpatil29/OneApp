@@ -5,9 +5,229 @@
         <ion-icon name="arrow-back-outline" color="dark"></ion-icon>
       </ion-button>
     </ion-buttons>
+
     <ion-title class="fw-bold text-dark">Personal Details</ion-title>
+
+    <ion-buttons slot="end" class="pe-2">
+      @if (!isLoading) {
+        @if (!isEditing) {
+          <ion-button fill="clear" color="primary" (click)="toggleEdit()" class="fw-semibold">
+            <ion-icon name="pencil-outline" slot="start"></ion-icon>
+            Edit
+          </ion-button>
+        } @else {
+          <ion-button fill="clear" color="medium" (click)="toggleEdit()" class="fw-semibold">
+            <ion-icon name="close-outline" slot="start"></ion-icon>
+            Cancel
+          </ion-button>
+        }
+      }
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" class="details-content-page">
+  <div class="details-container">
+
+    @if (isLoading) {
+      <!-- Skeleton Loading State -->
+      <div class="skeleton-wrapper py-4 px-3">
+        <div class="d-flex flex-column align-items-center mb-4">
+          <ion-skeleton-text animated style="width: 84px; height: 84px; border-radius: 50%; margin-bottom: 12px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 150px; height: 20px; border-radius: 6px; margin-bottom: 6px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 100px; height: 14px; border-radius: 4px;"></ion-skeleton-text>
+        </div>
+        <ion-skeleton-text animated style="width: 100%; height: 160px; border-radius: 16px; margin-bottom: 16px;"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width: 100%; height: 180px; border-radius: 16px;"></ion-skeleton-text>
+      </div>
+    } @else {
+
+      <!-- Top Identity Header Card -->
+      <section class="identity-header-card">
+        <div class="avatar-ring-container">
+          @if (profileData?.profile_image) {
+            <img [src]="profileData.profile_image" alt="User Profile" class="avatar-img" (error)="profileData.profile_image = ''" />
+          } @else {
+            <div class="avatar-initials">
+              {{ getUserInitials() }}
+            </div>
+          }
+          <div class="verified-icon-badge" title="Verified Customer">
+            <ion-icon name="shield-checkmark-outline"></ion-icon>
+          </div>
+        </div>
+
+        <h3 class="user-name-title">{{ getDisplayName() }}</h3>
+        @if (memberSince) {
+          <p class="membership-subtitle">
+            Member since {{ memberSince | date: 'MMMM yyyy' }}
+          </p>
+        }
+      </section>
+
+      <!-- Section 1: Basic Information (Editable) -->
+      <section class="card-box mb-3">
+        <div class="card-box-header">
+          <div class="d-flex align-items-center justify-content-between w-100">
+            <span class="box-label">BASIC INFORMATION</span>
+            @if (!isEditing) {
+              <button class="edit-badge-btn" (click)="toggleEdit()">
+                <ion-icon name="pencil-outline"></ion-icon>
+                <span>Edit Name</span>
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="card-box-body">
+          <!-- First Name -->
+          <div class="form-group mb-3">
+            <label class="input-field-label">First Name</label>
+            @if (isEditing) {
+              <div class="input-field-wrapper is-active">
+                <ion-icon name="person-outline" class="input-lead-icon"></ion-icon>
+                <input 
+                  type="text" 
+                  class="custom-text-input" 
+                  placeholder="Enter first name" 
+                  [(ngModel)]="firstName" 
+                  maxlength="40" 
+                />
+              </div>
+            } @else {
+              <div class="value-display-row">
+                <ion-icon name="person-outline" class="value-icon"></ion-icon>
+                <span class="value-text">{{ firstName || '—' }}</span>
+              </div>
+            }
+          </div>
+
+          <!-- Last Name -->
+          <div class="form-group mb-2">
+            <label class="input-field-label">Last Name</label>
+            @if (isEditing) {
+              <div class="input-field-wrapper is-active">
+                <ion-icon name="person-outline" class="input-lead-icon"></ion-icon>
+                <input 
+                  type="text" 
+                  class="custom-text-input" 
+                  placeholder="Enter last name" 
+                  [(ngModel)]="lastName" 
+                  maxlength="40" 
+                />
+              </div>
+            } @else {
+              <div class="value-display-row">
+                <ion-icon name="person-outline" class="value-icon"></ion-icon>
+                <span class="value-text">{{ lastName || '—' }}</span>
+              </div>
+            }
+          </div>
+
+          <!-- Save / Cancel Buttons when editing -->
+          @if (isEditing) {
+            <div class="d-flex gap-2 mt-4 pt-2">
+              <ion-button 
+                expand="block" 
+                fill="outline" 
+                color="medium" 
+                class="flex-1 cancel-btn" 
+                (click)="toggleEdit()"
+                [disabled]="isSaving"
+              >
+                Cancel
+              </ion-button>
+              <ion-button 
+                expand="block" 
+                class="flex-2 save-btn" 
+                (click)="saveProfile()"
+                [disabled]="isSaving"
+              >
+                @if (isSaving) {
+                  <ion-spinner name="crescent" class="me-2"></ion-spinner>
+                  Saving...
+                } @else {
+                  <ion-icon name="checkmark-circle" slot="start"></ion-icon>
+                  Save Changes
+                }
+              </ion-button>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- Section 2: Account Identifiers (Strictly Locked) -->
+      <section class="card-box mb-3">
+        <div class="card-box-header">
+          <span class="box-label">ACCOUNT IDENTIFIERS</span>
+          <span class="locked-indicator-badge">
+            <ion-icon name="lock-closed-outline"></ion-icon>
+            <span>Verified &amp; Locked</span>
+          </span>
+        </div>
+
+        <div class="card-box-body">
+          <!-- Security Explanatory Note -->
+          <div class="lock-notice-box mb-3">
+            <ion-icon name="lock-closed-outline" class="lock-notice-icon"></ion-icon>
+            <div class="lock-notice-text">
+              Phone number and email are permanently bound to your account and strictly non-editable for security &amp; verification.
+            </div>
+          </div>
+
+          <!-- Phone Number (Strictly Locked) -->
+          <div class="form-group mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <label class="input-field-label m-0">Mobile Phone Number</label>
+              <span class="field-status-tag">Locked</span>
+            </div>
+            <div class="locked-field-wrapper">
+              <ion-icon name="call-outline" class="locked-icon"></ion-icon>
+              <span class="locked-value">{{ phone || '+91' }}</span>
+              <ion-icon name="lock-closed-outline" class="locked-padlock"></ion-icon>
+            </div>
+            <div class="field-hint-caption">Primary OTP authentication number</div>
+          </div>
+
+          <!-- Email Address (Strictly Locked) -->
+          <div class="form-group mb-2">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <label class="input-field-label m-0">Registered Email Address</label>
+              <span class="field-status-tag">Locked</span>
+            </div>
+            <div class="locked-field-wrapper">
+              <ion-icon name="mail-outline" class="locked-icon"></ion-icon>
+              <span class="locked-value">{{ email || 'No email attached' }}</span>
+              <ion-icon name="lock-closed-outline" class="locked-padlock"></ion-icon>
+            </div>
+            <div class="field-hint-caption">Used for official order invoices and security alerts</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: Danger Zone / Delete Account -->
+      <section class="card-box danger-box mb-4">
+        <div class="card-box-header border-0 pb-0">
+          <span class="box-label text-danger">ACCOUNT ACTIONS</span>
+        </div>
+        <div class="card-box-body pt-2">
+          <p class="danger-desc mb-3">
+            Permanently deletes your account history, saved addresses, and active orders. This action cannot be reversed.
+          </p>
+          <ion-button 
+            expand="block" 
+            fill="outline" 
+            color="danger" 
+            class="delete-account-btn" 
+            (click)="deleteAccount()"
+          >
+            <ion-icon name="trash-outline" slot="start"></ion-icon>
+            Delete Account Permanently
+          </ion-button>
+        </div>
+      </section>
+
+    }
+
+  </div>
 </ion-content>

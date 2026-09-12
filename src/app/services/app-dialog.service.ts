@@ -39,6 +39,10 @@ export class AppDialogService {
   private _state = new BehaviorSubject<GlobalAlertState>(CLOSED_STATE);
   readonly state$ = this._state.asObservable();
 
+  get isAlertOpen(): boolean {
+    return this._state.value.isOpen;
+  }
+
   constructor(private toastCtrl: ToastController) {}
 
   // ─── Simple Alert (one button, centred) ───────────────────────────────────

@@ -5,7 +5,7 @@
         <ion-icon name="arrow-back-outline" color="dark"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title class="fw-bold text-dark">{{data | titlecase }}</ion-title>
+    <ion-title class="fw-bold text-dark">{{ getPageTitle() }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -78,58 +78,199 @@
       <app-nodata></app-nodata>
     </section>
   </ion-content>
-} @else if (data == 'Preferences') {
-  <ion-content [fullscreen]="true">
-    <ion-item class="mt-2 mx-3" style="border-radius: 10px;" lines="none"> 
-  <ion-select label="App theme" placeholder="Device default theme">
-    <!-- <ion-select-option value="">No Game Console</ion-select-option> -->
-  </ion-select>
-</ion-item>
-    <!-- <app-nodata></app-nodata> -->
+} @else if (data == 'App Settings' || data == 'Preferences' || data == 'Languages') {
+  <ion-content [fullscreen]="true" class="page-content-wrapper">
+    <div class="inner-container">
+
+      <!-- Language Settings Block -->
+      <div class="settings-card mb-3">
+        <div class="settings-card-header">
+          <ion-icon name="language-outline" class="settings-header-icon"></ion-icon>
+          <div class="settings-header-text">
+            <div class="settings-card-title">App Language</div>
+            <div class="settings-card-subtitle">Choose your preferred display language</div>
+          </div>
+        </div>
+
+        <div class="settings-card-body">
+          @for (lang of languages; track lang.code) {
+            <div 
+              class="selection-row" 
+              [class.is-selected]="selectedLanguage === lang.code"
+              (click)="setLanguage(lang.code)"
+              role="button"
+              tabindex="0"
+            >
+              <div class="selection-info">
+                <span class="primary-text">{{ lang.name }}</span>
+                <span class="native-badge">{{ lang.nativeName }}</span>
+              </div>
+
+              <div class="selection-radio-indicator">
+                @if (selectedLanguage === lang.code) {
+                  <ion-icon name="checkmark-circle" class="check-icon-active"></ion-icon>
+                } @else {
+                  <div class="radio-unselected-circle"></div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Theme & Appearance Block -->
+      <div class="settings-card mb-3">
+        <div class="settings-card-header">
+          <ion-icon name="color-palette-outline" class="settings-header-icon"></ion-icon>
+          <div class="settings-header-text">
+            <div class="settings-card-title">Appearance &amp; Theme</div>
+            <div class="settings-card-subtitle">Select your light or dark viewing mode</div>
+          </div>
+        </div>
+
+        <div class="settings-card-body">
+          @for (theme of themes; track theme.id) {
+            <div 
+              class="selection-row" 
+              [class.is-selected]="selectedTheme === theme.id"
+              (click)="setTheme(theme.id)"
+              role="button"
+              tabindex="0"
+            >
+              <div class="d-flex align-items-center gap-3">
+                <div class="theme-icon-box" [ngClass]="'theme-' + theme.id">
+                  <ion-icon [name]="theme.icon"></ion-icon>
+                </div>
+                <div class="selection-info">
+                  <span class="primary-text">{{ theme.name }}</span>
+                  <span class="secondary-text">{{ theme.subtitle }}</span>
+                </div>
+              </div>
+
+              <div class="selection-radio-indicator">
+                @if (selectedTheme === theme.id) {
+                  <ion-icon name="checkmark-circle" class="check-icon-active"></ion-icon>
+                } @else {
+                  <div class="radio-unselected-circle"></div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- App Info Block -->
+      <div class="settings-card mb-4">
+        <div class="settings-card-header border-0 pb-0">
+          <ion-icon name="information-circle-outline" class="settings-header-icon"></ion-icon>
+          <div class="settings-header-text">
+            <div class="settings-card-title">About Application</div>
+          </div>
+        </div>
+        <div class="settings-card-body pt-2">
+          <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+            <span class="info-label">App Version</span>
+            <span class="info-value">v{{ appVersion || '0.0.16' }}</span>
+          </div>
+          <div class="d-flex justify-content-between align-items-center py-2">
+            <span class="info-label">Platform</span>
+            <span class="info-value">Pintu Hyperlocal</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </ion-content>
 } @else if (data == 'suggestion') {
-  <ion-content [fullscreen]="true">
-    <ion-list class="text-area mx-4 mt-4">
-  <ion-item class="suggestion" lines="none">
-    <ion-input placeholder="Subject" [(ngModel)]="subject" value=""></ion-input>
-  </ion-item>
-</ion-list>
-    <ion-item class="text-area mx-4 mt-4" lines="none">
-  <ion-textarea
-    class="suggestion"
-    placeholder="Add your suggestion or Service here"
-    [autoGrow]="true"
-    [(ngModel)]="subjectBody"
-    [value]="subjectBody"
-    appearance = "outline"
-  >
-  </ion-textarea>
-</ion-item>
-<div class="mx-4">
-  <ion-button class="w-100 mt-3 book-btn" (click)="postSuggestion()" [disabled]="isLoading">Submit
-    @if (isLoading) {
-        <ion-spinner class="button ms-2"  name="crescent"></ion-spinner>
-}
-  </ion-button>
-</div>
+  <ion-content [fullscreen]="true" class="page-content-wrapper">
+    <div class="inner-container">
 
-  </ion-content>
-} @else if (data == 'Languages') {
-  <ion-content [fullscreen]="true">
-    <section class="mx-4 mt-4">
-      <div class="d-flex flex-row align-items-ceter py-4 language">
-          <ion-title class="fs-1 fw-bolder">
-            English <span class="fw-normal">(default)</span>
-          </ion-title>
-          <i class="bi bi-check-circle-fill text-success mt-1 mx-4 fs-3"></i>
+      <!-- Hero Suggestion Card -->
+      <div class="suggest-hero-card mb-3">
+        <div class="suggest-hero-icon-circle">
+          <ion-icon name="bulb-outline"></ion-icon>
+        </div>
+        <h2 class="suggest-hero-title">Help Shape Pintu</h2>
+        <p class="suggest-hero-desc">
+          Missing a favorite snack, grocery item, delivery service, or want a new app feature? Tell us below!
+        </p>
       </div>
-      <!-- <div class="d-flex flex-row align-items-ceter py-4 language mt-2">
-          <ion-title class="fs-1 fw-bolder">
-            ಜವಾರಿ ಕನ್ನಡ  <span class="fw-normal"></span>
-          </ion-title>
-          <i class="bi bi-circle text-success mt-1 mx-4 fs-3"></i>
-      </div> -->
-    </section>
+
+      <!-- Category Pills -->
+      <div class="form-section-card mb-3">
+        <label class="section-label">WHAT WOULD YOU LIKE TO SUGGEST?</label>
+        <div class="category-chips-grid">
+          @for (cat of suggestionCategories; track cat) {
+            <button 
+              type="button"
+              class="cat-chip-pill" 
+              [class.active]="suggestionCategory === cat"
+              (click)="selectCategory(cat)"
+            >
+              @if (cat === 'Grocery Product') {
+                <ion-icon name="cart-outline"></ion-icon>
+              } @else if (cat === 'Delivery Service') {
+                <ion-icon name="bicycle-outline"></ion-icon>
+              } @else if (cat === 'App Feature') {
+                <ion-icon name="sparkles-outline"></ion-icon>
+              } @else {
+                <ion-icon name="bulb-outline"></ion-icon>
+              }
+              <span>{{ cat }}</span>
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Subject & Suggestion Details -->
+      <div class="form-section-card mb-4">
+        <div class="form-field-group mb-3">
+          <label class="form-field-label">Subject / Title</label>
+          <div class="form-input-box">
+            <input 
+              type="text" 
+              class="styled-input" 
+              placeholder="e.g. Add Aashirvaad Multigrain Atta (5kg)" 
+              [(ngModel)]="subject" 
+              maxlength="80" 
+            />
+          </div>
+        </div>
+
+        <div class="form-field-group">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <label class="form-field-label m-0">Suggestion Details</label>
+            <span class="char-count-tag">{{ subjectBody.length }}/500</span>
+          </div>
+          <div class="form-textarea-box">
+            <textarea 
+              rows="4" 
+              class="styled-textarea" 
+              placeholder="Describe the product or feature, brand name, pack size, or why it would be helpful to your neighborhood..." 
+              [(ngModel)]="subjectBody" 
+              maxlength="500"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <ion-button 
+        expand="block" 
+        class="submit-suggestion-btn" 
+        (click)="postSuggestion()" 
+        [disabled]="isLoading || !subject.trim() || !subjectBody.trim()"
+      >
+        @if (isLoading) {
+          <ion-spinner name="crescent" class="me-2"></ion-spinner>
+          Submitting Idea...
+        } @else {
+          <ion-icon name="send-outline" slot="start"></ion-icon>
+          Submit Suggestion
+        }
+      </ion-button>
+
+    </div>
   </ion-content>
 } @else if (data == 'Saved Addresses') {
   <ion-content [fullscreen]="true">

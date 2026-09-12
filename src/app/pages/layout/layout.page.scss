@@ -19,6 +19,7 @@
 
 // Bottom Navigation Bar - Rich Modern Theme Matching Partner App
 .customer-bottom-bar {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-around;
@@ -28,6 +29,43 @@
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
   z-index: 100;
   padding: 0 4px env(safe-area-inset-bottom, 0px);
+
+  // OTA Progress Bar layer right on top border (3px)
+  .ota-top-progress-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 3px;
+    background: #f1f5f9;
+    overflow: hidden;
+    z-index: 105;
+
+    .ota-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #a000e2 0%, #d946ef 50%, #ec4899 100%);
+      box-shadow: 0 0 8px rgba(160, 0, 226, 0.6);
+      transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.7),
+          transparent
+        );
+        animation: otaShimmer 1.4s infinite linear;
+      }
+    }
+  }
 
   .nav-tab {
     flex: 1;
@@ -119,4 +157,192 @@
   justify-content: center !important;
   border-radius: 20px !important;
   padding: 10px !important;
+}
+
+// Floating Progress Bar when customer-bottom-bar is hidden
+.ota-floating-progress-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 3px;
+  background: #f1f5f9;
+  overflow: hidden;
+  z-index: 9999;
+
+  .ota-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #a000e2 0%, #d946ef 50%, #ec4899 100%);
+    box-shadow: 0 0 8px rgba(160, 0, 226, 0.6);
+    transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.7),
+        transparent
+      );
+      animation: otaShimmer 1.4s infinite linear;
+    }
+  }
+}
+
+@keyframes otaShimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+// ─── Mandatory Google Play Store Update Modal (Strict / Non-Dismissible) ──────
+.playstore-mandatory-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 20px;
+  z-index: 100000;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.playstore-mandatory-card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 36px 24px 28px;
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+  box-shadow: 0 32px 64px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  animation: scaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.playstore-icon-wrap {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: #fbf0ff;
+  color: var(--app-theme-color, #a000e2);
+  box-shadow: 0 0 0 10px rgba(160, 0, 226, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 42px;
+  margin: 0 auto 20px;
+}
+
+.playstore-update-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 8px;
+  letter-spacing: -0.2px;
+}
+
+.playstore-update-subtitle {
+  font-size: 13.5px;
+  color: #64748b;
+  line-height: 1.55;
+  margin: 0 0 18px;
+
+  strong {
+    color: #1e293b;
+    font-weight: 700;
+  }
+}
+
+.playstore-version-badge-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 6px 14px;
+  margin-bottom: 18px;
+
+  .version-tag {
+    font-size: 12px;
+    font-weight: 700;
+
+    &.current {
+      color: #64748b;
+    }
+
+    &.latest {
+      color: #a000e2;
+    }
+  }
+
+  .arrow-between {
+    font-size: 14px;
+    color: #94a3b8;
+  }
+}
+
+.playstore-strict-note {
+  font-size: 12px;
+  font-weight: 600;
+  color: #b91c1c;
+  background: #fef2f2;
+  border-radius: 12px;
+  padding: 8px 12px;
+  margin-bottom: 24px;
+  line-height: 1.4;
+}
+
+.btn-playstore-update {
+  width: 100%;
+  padding: 15px 20px;
+  border-radius: 16px;
+  font-size: 15px;
+  font-weight: 800;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, #a000e2 0%, #7c00b3 100%);
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(160, 0, 226, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  &:active {
+    transform: scale(0.98);
+    box-shadow: 0 4px 12px rgba(160, 0, 226, 0.25);
+  }
+
+  ion-icon {
+    font-size: 20px;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleUp {
+  0% { transform: scale(0.85); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }

@@ -124,13 +124,13 @@
     <section class="menu-group-card">
       <div class="group-header-label">PREFERENCES</div>
 
-      <div class="menu-row" (click)="openDetails('language')" role="button" tabindex="0">
+      <div class="menu-row" (click)="openDetails('settings')" role="button" tabindex="0">
         <div class="menu-icon-box bg-purple-tint">
-          <ion-icon name="language-outline"></ion-icon>
+          <ion-icon name="settings-outline"></ion-icon>
         </div>
         <div class="menu-text-col">
-          <span class="menu-title">App Language</span>
-          <span class="menu-subtitle">English (India)</span>
+          <span class="menu-title">App Settings</span>
+          <span class="menu-subtitle">Language, theme &amp; display</span>
         </div>
         <ion-icon name="chevron-forward" class="menu-chevron"></ion-icon>
       </div>
@@ -152,6 +152,42 @@
     <!-- Group 3: About & Legal -->
     <section class="menu-group-card">
       <div class="group-header-label">ABOUT &amp; LEGAL</div>
+
+      <!-- Check for OTA Updates -->
+      <div class="menu-row ota-update-row" (click)="checkOtaUpdate(true)" role="button" tabindex="0">
+        <div class="menu-icon-box bg-purple-tint">
+          <ion-icon name="cloud-download-outline"></ion-icon>
+        </div>
+        <div class="menu-text-col">
+          <span class="menu-title">Check for OTA Updates</span>
+          <div class="menu-subtitle ota-version-row">
+            <span class="version-num">v{{ currentAppVersion }}</span>
+            @if (isOtaUpToDate) {
+              <span class="ota-status-inline up-to-date" title="App is up to date">
+                <ion-icon name="checkmark-circle"></ion-icon>
+                <span>Up to date</span>
+              </span>
+            } @else if (hasOtaUpdateAvailable) {
+              <span class="ota-status-inline update-ready" title="New update available">
+                <ion-icon name="arrow-up-circle"></ion-icon>
+                <span>v{{ latestOtaVersion }} Ready</span>
+              </span>
+            }
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="btn-ota-refresh"
+          [class.spinning]="isCheckingOta"
+          (click)="onRefreshOtaClick($event)"
+          title="Check for updates now"
+          aria-label="Check for OTA Updates">
+          <ion-icon name="refresh-outline"></ion-icon>
+        </button>
+      </div>
+
+      <div class="menu-divider"></div>
 
       <div class="menu-row" (click)="openDetails('About Pintu')" role="button" tabindex="0">
         <div class="menu-icon-box bg-slate-tint">
@@ -186,11 +222,8 @@
       <span class="logout-text">Log Out of Account</span>
     </div>
 
-    <!-- App Version & Footnote -->
-    <div class="app-version-footer">
-      <p class="brand-text">PINTU • MINUTES DELIVERY &amp; RIDES</p>
-      <p class="ver-text">Version 2.4.0 • Made with ❤️ in India</p>
-    </div>
+    <!-- Rich Brand Footer -->
+    <app-footer></app-footer>
 
     <!-- Bottom Nav Spacer -->
     <div class="bottom-nav-spacer"></div>

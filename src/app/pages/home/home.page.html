@@ -1,27 +1,148 @@
-<!-- Customer Top Header (Matching Partner App) -->
-<ion-header class="customer-header" [translucent]="false">
+<!-- =======================================================
+     LOCATION CHECKING & STRICT RESOLUTION POPUP MODAL
+     ======================================================= -->
+@if (isCheckingLocation) {
+  <div class="location-checking-backdrop animate__animated animate__fadeIn">
+    <div class="location-checking-card animate__animated animate__zoomIn">
+
+      <!-- 0. LOADING SAVED ADDRESS STATE -->
+      @if (locationCheckPhase === 'loading_address') {
+        <div class="loc-badge-wrap pulse-anim">
+          <div class="radar-ring r1"></div>
+          <div class="radar-ring r2"></div>
+          <div class="loc-badge-circle">
+            <ion-icon name="location"></ion-icon>
+          </div>
+        </div>
+
+        <h3 class="loc-modal-title">Loading Your Address...</h3>
+        <p class="loc-modal-desc">
+          Retrieving your saved delivery address for instant access...
+        </p>
+
+        <div class="loc-progress-bar">
+          <div class="loc-progress-indicator"></div>
+        </div>
+
+        <span class="loc-modal-footnote">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+          <span>Pintu Delivery Coverage System</span>
+        </span>
+      }
+
+      <!-- 1. DETECTING / VALIDATING STATE -->
+      @if (locationCheckPhase === 'detecting' || locationCheckPhase === 'validating') {
+        <div class="loc-badge-wrap pulse-anim">
+          <div class="radar-ring r1"></div>
+          <div class="radar-ring r2"></div>
+          <div class="loc-badge-circle">
+            <ion-icon name="location"></ion-icon>
+          </div>
+        </div>
+
+        <h3 class="loc-modal-title">
+          {{ locationCheckPhase === 'detecting' ? 'Detecting Location...' : 'Checking Service Area...' }}
+        </h3>
+        <p class="loc-modal-desc">
+          {{ locationCheckPhase === 'detecting' 
+              ? 'Locating your current GPS coordinates to verify fast delivery coverage...' 
+              : 'Verifying active stores and service boundaries for your area...' }}
+        </p>
+
+        <div class="loc-progress-bar">
+          <div class="loc-progress-indicator"></div>
+        </div>
+
+        <span class="loc-modal-footnote">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+          <span>Pintu Delivery Coverage System</span>
+        </span>
+      }
+
+      <!-- 2. PERMISSION REQUIRED STATE (STRICT) -->
+      @if (locationCheckPhase === 'permission_needed') {
+        <div class="loc-badge-wrap warning-badge">
+          <div class="loc-badge-circle warning">
+            <ion-icon name="alert-circle"></ion-icon>
+          </div>
+        </div>
+
+        <h3 class="loc-modal-title">Location Permission Required</h3>
+        <p class="loc-modal-desc">
+          Pintu needs your location permission to verify deliverability, find open stores, and calculate accurate arrival times in Athani.
+        </p>
+
+        <button type="button" class="btn-loc-resolve" (click)="requestLocationPermissionAndPosition()">
+          <ion-icon name="location"></ion-icon>
+          <span>ALLOW LOCATION ACCESS</span>
+        </button>
+
+        <div class="loc-monitoring-pill">
+          <span class="pulse-dot-amber"></span>
+          <span>Waiting for permission... auto-detects once allowed</span>
+        </div>
+      }
+
+      <!-- 3. GPS HARDWARE DISABLED STATE (STRICT) -->
+      @if (locationCheckPhase === 'gps_disabled') {
+        <div class="loc-badge-wrap warning-badge">
+          <div class="loc-badge-circle rose">
+            <ion-icon name="locate"></ion-icon>
+          </div>
+        </div>
+
+        <h3 class="loc-modal-title">Device GPS is Turned Off</h3>
+        <p class="loc-modal-desc">
+          Please turn ON your device location (GPS) from the notification shade or quick settings to detect your delivery area.
+        </p>
+
+        <button type="button" class="btn-loc-resolve" (click)="requestLocationPermissionAndPosition()">
+          <ion-icon name="refresh"></ion-icon>
+          <span>I'VE TURNED ON GPS / RETRY</span>
+        </button>
+
+        <div class="loc-monitoring-pill">
+          <span class="pulse-dot-rose"></span>
+          <span>Continuously monitoring... will detect automatically</span>
+        </div>
+      }
+
+    </div>
+  </div>
+}
+
+<!-- Fixed White Customer Top Header -->
+<ion-header class="customer-header ion-no-border">
   <ion-toolbar>
     <div class="header-inner">
-      <!-- Left: Location Selector Chip -->
+      <!-- Left: Enhanced Location Selector Chip -->
       <div class="location-pill-btn" (click)="openLocation()" role="button" tabindex="0">
         <div class="location-icon-box">
           <ion-icon name="location"></ion-icon>
         </div>
         <div class="location-text-col">
-          <span class="location-eyebrow">DELIVERING TO</span>
           <div class="location-title-row">
-            <span class="location-name">{{ displayLocationName }}</span>
+            
+            <span class="location-name">{{ displayLocationName }}</span><!-- Dynamic Status Dot: Red (Not Serviceable) | Green (Saved) | Orange (Unsaved) -->
+            @if (isOutOfServiceArea) {
+              <span class="location-status-dot red" title="Location Not Serviceable"></span>
+            } @else if (isSavedAddress) {
+              <span class="location-status-dot green" title="Saved Address"></span>
+            } @else {
+              <span class="location-status-dot orange" title="Unsaved Location"></span>
+            }
             <ion-icon name="chevron-down" class="chevron-icon"></ion-icon>
           </div>
+          @if (displayFullAddress) {
+            <div class="location-sub-row">
+              <span class="location-full-address text-truncate">{{ displayFullAddress }}</span>
+            </div>
+          }
         </div>
       </div>
 
-      <!-- Right: Action & Profile Avatar (Matching Partner App) -->
+      <!-- Right: Customer Profile Avatar -->
       <div class="header-actions">
-        <button type="button" class="icon-btn help-btn" (click)="goToSupport()" title="Customer Support" aria-label="Customer Support">
-          <ion-icon name="headset-outline"></ion-icon>
-        </button>
-
         <div class="customer-avatar-btn" (click)="goToProfile()" role="button" tabindex="0" title="My Profile">
           @if (profileAvatar) {
             <img [src]="profileAvatar" alt="Profile" (error)="profileAvatar = ''" />
@@ -34,11 +155,66 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content (ionScroll)="onScroll($event)" [scrollEvents]="true" class="home-page-content">
-  <!-- Native Pull-to-Refresh -->
-  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)" class="custom-refresher">
-    <ion-refresher-content pullingIcon="arrow-down-outline" refreshingSpinner="crescent"></ion-refresher-content>
+<ion-content class="home-page-content" [fullscreen]="false">
+  <!-- Native Pull-to-Refresh (MD Floating Indicator: Only the spinner drops down, page stays fixed) -->
+  <ion-refresher mode="md" slot="fixed" (ionRefresh)="handleRefresh($event)" class="custom-refresher">
+    <ion-refresher-content mode="md" pullingIcon="arrow-down-outline" refreshingSpinner="crescent"></ion-refresher-content>
   </ion-refresher>
+
+  <!-- Top Hero Banner Slider (Full-Bleed: 0 margin, 0 padding, 0 border-radius) -->
+  @if (!isOfflineOrOutOfServiceArea && banners && banners.length > 0) {
+    <section class="home-top-hero-slider">
+      <swiper-container
+        slides-per-view="1"
+        pagination="true"
+        autoplay-delay="3800"
+        autoplay-disable-on-interaction="false"
+        loop="true"
+        class="hero-swiper">
+        @for (banner of banners; track banner.id || $index) {
+          <swiper-slide>
+            <div
+              class="hero-banner-card"
+              [style.background]="banner.bgGradient || 'linear-gradient(135deg, #2e0854 0%, #1e1b4b 50%, #3b0764 100%)'"
+              (click)="navigateToBanner(banner)"
+              role="button"
+              tabindex="0">
+
+              <!-- Real Image Banner -->
+              @if (isBannerImageValid(banner)) {
+                <img
+                  [src]="getBannerImgUrl(banner)"
+                  alt="Promotional Banner"
+                  class="hero-banner-img"
+                  (error)="banner.img = ''" />
+              } @else {
+                <!-- Gradient Graphic Card Fallback -->
+                <div class="hero-banner-content-box">
+                  @if (banner.badge) {
+                    <span
+                      class="banner-badge-pill"
+                      [style.background]="banner.badgeBg || 'rgba(255, 255, 255, 0.2)'"
+                      [style.color]="banner.badgeColor || '#ffffff'">
+                      {{ banner.badge }}
+                    </span>
+                  }
+                  <h3 class="banner-title">{{ banner.title || 'Special Delivery Offer' }}</h3>
+                  <p class="banner-subtitle">{{ banner.subtitle || 'Discover premium fast delivery with Pintu' }}</p>
+
+                  <div class="banner-cta-row">
+                    <span class="banner-cta-text">Explore Now</span>
+                    <div class="banner-cta-arrow">
+                      <ion-icon name="arrow-forward"></ion-icon>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </swiper-slide>
+        }
+      </swiper-container>
+    </section>
+  }
 
   <!-- Main Scrollable Home Body -->
   <main class="home-body-container">
@@ -58,139 +234,201 @@
       </section>
     }
 
-    <!-- Swipable Banners Section (Top of Services) -->
-    @if (banners && banners.length > 0) {
-      <section class="home-banners-section">
-        <swiper-container
-          slides-per-view="1"
-          space-between="12"
-          pagination="true"
-          autoplay-delay="3800"
-          autoplay-disable-on-interaction="false"
-          loop="true"
-          class="home-banners-swiper">
-          @for (banner of banners; track banner.id || $index) {
-            <swiper-slide>
-              <div
-                class="banner-card"
-                [style.background]="banner.bgGradient || 'linear-gradient(135deg, #2e0854 0%, #1e1b4b 50%, #3b0764 100%)'"
-                (click)="navigateToBanner(banner)"
-                role="button"
-                tabindex="0">
-
-                <!-- Real Image Banner -->
-                @if (isBannerImageValid(banner)) {
-                  <img
-                    [src]="getBannerImgUrl(banner)"
-                    alt="Promotional Banner"
-                    class="banner-full-img"
-                    (error)="banner.img = ''" />
-                }
-
-                <!-- Gradient Graphic Card Fallback -->
-                @else {
-                  <div class="banner-content-box">
-                    <div class="banner-text-col">
-                      @if (banner.badge) {
-                        <span
-                          class="banner-badge-pill"
-                          [style.background]="banner.badgeBg || 'rgba(255, 255, 255, 0.2)'"
-                          [style.color]="banner.badgeColor || '#ffffff'">
-                          {{ banner.badge }}
-                        </span>
-                      }
-                      <h3 class="banner-title">{{ banner.title || 'Special Offer' }}</h3>
-                      <p class="banner-subtitle">{{ banner.subtitle || 'Discover premium fast delivery with Pintu' }}</p>
-
-                      <div class="banner-cta-row">
-                        <span class="banner-cta-text">Explore Now</span>
-                        <div class="banner-cta-arrow">
-                          <ion-icon name="arrow-forward"></ion-icon>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="banner-art-col">
-                      <div class="banner-orb-glow"></div>
-                      <span class="banner-art-emoji">
-                        {{ $index === 0 ? '⚡' : ($index === 1 ? '🛵' : '🥦') }}
-                      </span>
-                    </div>
-                  </div>
-                }
-
-              </div>
-            </swiper-slide>
-          }
-        </swiper-container>
+    <!-- 1. Location Permission Required Alert Banner -->
+    @if (isLocationPermissionDenied) {
+      <section class="service-alert-banner permission-banner animate__animated animate__fadeIn">
+        <div class="alert-icon-box warning">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+        </div>
+        <div class="alert-text-col">
+          <div class="alert-badge warning">
+            <span class="status-pulse-dot amber"></span>
+            <span>LOCATION PERMISSION REQUIRED</span>
+          </div>
+          <h4 class="alert-title">GPS Access Disabled</h4>
+          <p class="alert-desc">Please enable location permissions to verify deliverability and explore active stores in Athani.</p>
+        </div>
+        <button type="button" class="btn-alert-action enable-btn" (click)="requestLocationPermissionAndPosition()">
+          <span>ENABLE</span>
+          <ion-icon name="chevron-forward"></ion-icon>
+        </button>
       </section>
     }
 
-    <!-- Dynamic Mosaic Services Grid (From Backend) -->
-    <section class="services-mosaic-section">
-      <div class="section-title-row">
-        <div class="d-flex align-items-center gap-2">
-          <span class="sparkle-icon">✨</span>
-          <h3 class="section-heading">Services</h3>
-        </div>
-        <!-- <span class="services-count-pill">{{ allServices.length }} Available</span> -->
+    <!-- Centered Offline / Out of Service Area Status Screen (Kept in Very Center of Page) -->
+    @if (!isLocationPermissionDenied && isOfflineOrOutOfServiceArea) {
+      <div class="home-centered-status-wrapper animate__animated animate__fadeIn">
+
+        <!-- 2. Services Closed in City Alert Card -->
+        @if (isAreaClosed) {
+          <section class="centered-status-card closed-card">
+            <div class="status-graphic-wrapper closed">
+              <div class="graphic-glow-ring"></div>
+              <div class="graphic-icon-box">
+                <ion-icon name="moon-outline"></ion-icon>
+              </div>
+            </div>
+
+            <div class="status-badge closed">
+              <span class="status-pulse-dot red"></span>
+              <span>SERVICES TEMPORARILY CLOSED</span>
+            </div>
+
+            <h3 class="status-title">
+              Operations Paused in {{ closedAreaCity || displayLocationName || 'this city' }}
+            </h3>
+
+            <p class="status-desc">
+              {{ areaClosureMessage || 'Our delivery partners and stores in this city are temporarily offline. We will resume operations soon.' }}
+            </p>
+
+            <div class="status-actions-group">
+              <button type="button" class="btn-primary-action" (click)="openLocation()">
+                <ion-icon name="map-outline"></ion-icon>
+                <span>Change Location</span>
+              </button>
+              <button type="button" class="btn-secondary-action" (click)="recheckLocationAndServiceArea()" title="Re-check status">
+                <ion-icon name="refresh-outline"></ion-icon>
+                <span>Check Again</span>
+              </button>
+            </div>
+          </section>
+        }
+
+        <!-- 3. Out of Service Area Alert Card -->
+        @else if (isOutOfServiceArea) {
+          <section class="centered-status-card out-of-area-card">
+            <div class="status-graphic-wrapper out">
+              <div class="graphic-glow-ring"></div>
+              <div class="graphic-icon-box">
+                <ion-icon name="location-outline"></ion-icon>
+              </div>
+            </div>
+
+            <div class="status-badge out">
+              <span class="status-pulse-dot red"></span>
+              <span>OUT OF SERVICE AREA</span>
+            </div>
+
+            <h3 class="status-title">Outside Serviceable Zone</h3>
+
+            <p class="status-desc">
+              Your selected location is currently outside our operating delivery service boundaries.
+            </p>
+
+            @if (nearestServiceArea) {
+              <div class="nearest-area-box">
+                <div class="nearest-title">
+                  <ion-icon name="navigate-circle-outline"></ion-icon>
+                  <span>Nearest City Zone: <strong>{{ nearestServiceArea.cityName }}</strong></span>
+                </div>
+                <div class="nearest-distance-badge">
+                  Approx. <strong>{{ nearestServiceArea.distanceKm }} km</strong> away
+                </div>
+                <p class="nearest-instruction">
+                  Please travel inside <strong>{{ nearestServiceArea.cityName }}</strong> or change delivery location to place orders.
+                </p>
+              </div>
+            } @else {
+              <div class="nearest-tip-box">
+                <ion-icon name="navigate-circle-outline"></ion-icon>
+                <span>Please move inside our active service area to explore and place orders.</span>
+              </div>
+            }
+
+            <div class="status-actions-group">
+              <button type="button" class="btn-primary-action" (click)="openLocation()">
+                <ion-icon name="map-outline"></ion-icon>
+                <span>Change Location</span>
+              </button>
+              <button type="button" class="btn-secondary-action" (click)="recheckLocationAndServiceArea()" title="Recheck Location">
+                <ion-icon name="refresh-outline"></ion-icon>
+                <span>Check Again</span>
+              </button>
+            </div>
+          </section>
+        }
+
       </div>
+    }
 
-      <!-- Skeleton Loaders if loading -->
-      @if (isLoadingServices && allServices.length === 0) {
-        <div class="services-mosaic-grid bento-grid">
-          <div class="mosaic-tile mosaic-tile-tall skeleton-card">
-            <ion-skeleton-text animated style="width: 70px; height: 16px; border-radius: 99px; margin-bottom: 12px;"></ion-skeleton-text>
-            <ion-skeleton-text animated style="width: 110px; height: 22px; border-radius: 6px; margin-bottom: 6px;"></ion-skeleton-text>
-            <ion-skeleton-text animated style="width: 130px; height: 14px; border-radius: 4px;"></ion-skeleton-text>
-            <ion-skeleton-text animated style="width: 70px; height: 70px; border-radius: 18px; margin-top: auto; align-self: center;"></ion-skeleton-text>
-          </div>
-          <div class="mosaic-tile mosaic-tile-normal skeleton-card">
-            <ion-skeleton-text animated style="width: 50px; height: 14px; border-radius: 99px; margin-bottom: 6px;"></ion-skeleton-text>
-            <ion-skeleton-text animated style="width: 90px; height: 16px; border-radius: 6px;"></ion-skeleton-text>
-          </div>
-          <div class="mosaic-tile mosaic-tile-normal skeleton-card">
-            <ion-skeleton-text animated style="width: 50px; height: 14px; border-radius: 99px; margin-bottom: 6px;"></ion-skeleton-text>
-            <ion-skeleton-text animated style="width: 90px; height: 16px; border-radius: 6px;"></ion-skeleton-text>
-          </div>
-          <div class="mosaic-tile mosaic-tile-wide skeleton-card">
-            <ion-skeleton-text animated style="width: 140px; height: 18px; border-radius: 6px; margin-bottom: 6px;"></ion-skeleton-text>
-            <ion-skeleton-text animated style="width: 180px; height: 14px; border-radius: 4px;"></ion-skeleton-text>
+    @if (!isOfflineOrOutOfServiceArea) {
+      <!-- Dynamic Mosaic Services Grid (From Backend) -->
+      <section class="services-mosaic-section">
+        <div class="section-title-row">
+          <div class="d-flex align-items-center gap-2">
+            <span class="sparkle-icon">✨</span>
+            <h3 class="section-heading">Services</h3>
           </div>
         </div>
-      }
 
-      <!-- Dynamic Mosaic Grid -->
-      @else {
-        <div
-          class="services-mosaic-grid"
-          [ngClass]="'count-' + allServices.length + (allServices.length > 2 ? ' bento-grid' : '')">
-          @for (service of allServices; track service.id || service.title || $index) {
-            <div
-              class="mosaic-tile"
-              [ngClass]="getMosaicTileType($index, allServices.length)"
-              [style.background]="getServiceCardGradient(service)"
-              (click)="navigateToService(service)"
-              role="button"
-              tabindex="0">
+        <!-- Skeleton Loaders if loading -->
+        @if (isLoadingServices && allServices.length === 0) {
+          <div class="services-mosaic-grid bento-grid">
+            <div class="mosaic-tile mosaic-tile-tall skeleton-card">
+              <div class="skeleton-corner-tag"></div>
+              <ion-skeleton-text animated style="width: 110px; height: 20px; border-radius: 6px; margin: 26px 0 6px 0;"></ion-skeleton-text>
+              <ion-skeleton-text animated style="width: 130px; height: 14px; border-radius: 4px;"></ion-skeleton-text>
+              <ion-skeleton-text animated class="skeleton-corner-circle tall"></ion-skeleton-text>
+            </div>
+            <div class="mosaic-tile mosaic-tile-normal skeleton-card">
+              <div class="skeleton-corner-tag"></div>
+              <ion-skeleton-text animated style="width: 80px; height: 16px; border-radius: 6px; margin: 24px 0 4px 0;"></ion-skeleton-text>
+              <ion-skeleton-text animated style="width: 55px; height: 12px; border-radius: 4px;"></ion-skeleton-text>
+              <ion-skeleton-text animated class="skeleton-corner-circle normal"></ion-skeleton-text>
+            </div>
+            <div class="mosaic-tile mosaic-tile-normal skeleton-card">
+              <div class="skeleton-corner-tag"></div>
+              <ion-skeleton-text animated style="width: 80px; height: 16px; border-radius: 6px; margin: 24px 0 4px 0;"></ion-skeleton-text>
+              <ion-skeleton-text animated style="width: 55px; height: 12px; border-radius: 4px;"></ion-skeleton-text>
+              <ion-skeleton-text animated class="skeleton-corner-circle normal"></ion-skeleton-text>
+            </div>
+            <div class="mosaic-tile mosaic-tile-wide skeleton-card">
+              <div class="skeleton-corner-tag"></div>
+              <ion-skeleton-text animated style="width: 130px; height: 18px; border-radius: 6px; margin: 24px 0 6px 0;"></ion-skeleton-text>
+              <ion-skeleton-text animated style="width: 100px; height: 13px; border-radius: 4px;"></ion-skeleton-text>
+              <ion-skeleton-text animated class="skeleton-corner-circle wide"></ion-skeleton-text>
+            </div>
+          </div>
+        }
 
-              <!-- TALL MOSAIC TILE (Left Hero Span 2 Rows in Bento mode) -->
-              @if (getMosaicTileType($index, allServices.length) === 'mosaic-tile-tall') {
-                <div class="tall-tile-inner">
-                  <div class="tile-header-area">
-                    @if (hasOffer(service)) {
-                      <span class="service-pill-tag tag-vibrant">{{ service.offers }}</span>
-                    }
-                    <h3 class="tile-title-tall">{{ service.title }}</h3>
-                    <p class="tile-subtitle-tall">{{ service.subtitle || 'Instant & reliable service' }}</p>
+        <!-- Dynamic Mosaic Grid -->
+        @else {
+          <div
+            class="services-mosaic-grid"
+            [ngClass]="'count-' + allServices.length + (allServices.length > 2 ? ' bento-grid' : '')">
+            @for (service of allServices; track service.id || service.title || $index) {
+              <div
+                class="mosaic-tile"
+                [ngClass]="getMosaicTileType($index, allServices.length)"
+                [style.background]="getServiceCardGradient(service)"
+                (click)="navigateToService(service)"
+                role="button"
+                tabindex="0">
+
+                <!-- Corner Offer Tag (Touches Top-Left Corner with changed borders) -->
+                @if (hasOffer(service)) {
+                  <div class="service-corner-tag" [ngClass]="getOfferTagClass(service)">
+                    <span>{{ service.offers }}</span>
                   </div>
+                }
 
-                  <div class="tile-bottom-area">
-                    <div class="tile-visual-box-tall">
+                <!-- TALL MOSAIC TILE (Main Card: Center Art as earlier) -->
+                @if (getMosaicTileType($index, allServices.length) === 'mosaic-tile-tall') {
+                  <div class="tall-tile-inner" [class.has-corner-tag]="hasOffer(service)">
+                    <div class="tile-header-area">
+                      <h3 class="tile-title-tall">{{ service.title }}</h3>
+                      <p class="tile-subtitle-tall" [class.status-active]="isStatusActive(service)">
+                        {{ service.subtitle || (isStatusActive(service) ? 'Active' : 'Instant & reliable service') }}
+                      </p>
+                    </div>
+
+                    <!-- Centered Art in Main Card as earlier -->
+                    <div class="tile-center-art-tall">
                       @if (isImageValid(service) && !service.hasImgError) {
-                        <img [src]="getServiceImgUrl(service)" [alt]="service.title" class="service-art-img" (error)="service.hasImgError = true" />
+                        <img [src]="getServiceImgUrl(service)" [alt]="service.title" class="service-art-img-tall-center" (error)="service.hasImgError = true" />
                       } @else {
-                        <div class="service-art-fallback" [style.background]="getServiceBg(service)">
+                        <div class="service-art-fallback tall-fallback" [style.background]="getServiceBg(service)">
                           <span class="fallback-emoji">{{ getServiceIcon(service) }}</span>
                         </div>
                       }
@@ -203,25 +441,25 @@
                       </div>
                     </div>
                   </div>
-                </div>
-              }
+                }
 
-              <!-- WIDE MOSAIC TILE (100% Width: when count=1, or full row span) -->
-              @else if (getMosaicTileType($index, allServices.length) === 'mosaic-tile-wide') {
-                <div class="wide-tile-inner">
-                  <div class="wide-left-content">
-                    @if (hasOffer(service)) {
-                      <span class="service-pill-tag">{{ service.offers }}</span>
-                    }
-                    <h4 class="tile-title-wide">{{ service.title }}</h4>
-                    <p class="tile-subtitle-wide">{{ service.subtitle || 'Available now' }}</p>
-                    <div class="wide-cta-chip">
-                      <span>Explore</span>
-                      <ion-icon name="arrow-forward"></ion-icon>
+                <!-- WIDE MOSAIC TILE (100% Width: when count=1, or full row span) -->
+                @else if (getMosaicTileType($index, allServices.length) === 'mosaic-tile-wide') {
+                  <div class="wide-tile-inner" [class.has-corner-tag]="hasOffer(service)">
+                    <div class="wide-left-content">
+                      <h4 class="tile-title-wide">{{ service.title }}</h4>
+                      <p class="tile-subtitle-wide" [class.status-active]="isStatusActive(service)">
+                        {{ service.subtitle || (isStatusActive(service) ? 'Active' : 'Available now') }}
+                      </p>
+                      <div class="wide-cta-chip">
+                        <span>Explore</span>
+                        <ion-icon name="arrow-forward"></ion-icon>
+                      </div>
                     </div>
                   </div>
 
-                  <div class="wide-right-visual">
+                  <!-- Wide Corner Art (Tucked in Bottom-Right Corner) -->
+                  <div class="tile-corner-art wide-corner-art">
                     @if (isImageValid(service) && !service.hasImgError) {
                       <img [src]="getServiceImgUrl(service)" [alt]="service.title" class="service-art-img-wide" (error)="service.hasImgError = true" />
                     } @else {
@@ -230,27 +468,26 @@
                       </div>
                     }
                   </div>
-                </div>
-              }
+                }
 
-              <!-- NORMAL COMPACT TILE (50% Width inline when count=2, or 1x1 in Bento) -->
-              @else {
-                <div class="normal-tile-inner">
-                  <div class="normal-top-row">
-                    @if (hasOffer(service)) {
-                      <span class="service-pill-tag tag-compact">{{ service.offers }}</span>
-                    }
+                <!-- NORMAL COMPACT TILE (50% Width inline when count=2, or 1x1 in Bento) -->
+                @else {
+                  <div class="normal-tile-inner" [class.has-corner-tag]="hasOffer(service)">
+                    <div class="normal-left-info">
+                      <h4 class="tile-title-normal">{{ service.title }}</h4>
+                      <p class="tile-subtitle-normal" [class.status-active]="isStatusActive(service)">
+                        {{ service.subtitle || (isStatusActive(service) ? 'Active' : 'Book now') }}
+                      </p>
+                    </div>
+
+                    <!-- Arrow as earlier -->
                     <div class="arrow-circle-mini">
                       <ion-icon name="arrow-forward"></ion-icon>
                     </div>
                   </div>
 
-                  <div class="normal-center-info">
-                    <h4 class="tile-title-normal">{{ service.title }}</h4>
-                    <p class="tile-subtitle-normal">{{ service.subtitle || 'Book now' }}</p>
-                  </div>
-
-                  <div class="normal-bottom-art">
+                  <!-- Normal Corner Art (Tucked in Bottom-Right Corner like user screenshot) -->
+                  <div class="tile-corner-art normal-corner-art">
                     @if (isImageValid(service) && !service.hasImgError) {
                       <img [src]="getServiceImgUrl(service)" [alt]="service.title" class="service-art-img-normal" (error)="service.hasImgError = true" />
                     } @else {
@@ -259,67 +496,69 @@
                       </div>
                     }
                   </div>
-                </div>
-              }
-
-            </div>
-          }
-        </div>
-      }
-    </section>
-
-    <!-- 2 Promotional Banners (Below Services) -->
-    <section class="home-bottom-banners-section">
-      @for (banner of bottomBanners; track banner.id || $index) {
-        <div
-          class="bottom-promo-card"
-          [style.background]="banner.bgGradient || 'linear-gradient(135deg, #2e0854 0%, #1e1b4b 60%, #3b0764 100%)'"
-          (click)="navigateToBanner(banner)"
-          role="button"
-          tabindex="0">
-
-          @if (isBannerImageValid(banner)) {
-            <img
-              [src]="getBannerImgUrl(banner)"
-              alt="Promotional Banner"
-              class="banner-full-img"
-              (error)="banner.img = ''" />
-          } @else {
-            <div class="bottom-promo-content">
-              <div class="promo-text-col">
-                @if (banner.badge) {
-                  <span
-                    class="promo-badge-pill"
-                    [style.background]="banner.badgeBg || 'rgba(255, 255, 255, 0.2)'"
-                    [style.color]="banner.badgeColor || '#ffffff'">
-                    {{ banner.badge }}
-                  </span>
                 }
-                <h4 class="promo-title">{{ banner.title || 'Special Promotion' }}</h4>
-                <p class="promo-subtitle">{{ banner.subtitle || 'Discover premium offers and savings with Pintu' }}</p>
 
-                <div class="promo-cta-row">
-                  <span class="promo-cta-text">{{ $index === 0 ? 'Invite Friends' : 'Shop Now' }}</span>
-                  <div class="promo-cta-arrow">
-                    <ion-icon name="arrow-forward"></ion-icon>
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+      <!-- 2 Promotional Banners (Below Services) -->
+      <section class="home-bottom-banners-section">
+        @for (banner of bottomBanners; track banner.id || $index) {
+          <div
+            class="bottom-promo-card"
+            [style.background]="banner.bgGradient || 'linear-gradient(135deg, #2e0854 0%, #1e1b4b 60%, #3b0764 100%)'"
+            (click)="navigateToBanner(banner)"
+            role="button"
+            tabindex="0">
+
+            @if (isBannerImageValid(banner)) {
+              <img
+                [src]="getBannerImgUrl(banner)"
+                alt="Promotional Banner"
+                class="banner-full-img"
+                (error)="banner.img = ''" />
+            } @else {
+              <div class="bottom-promo-content">
+                <div class="promo-text-col">
+                  @if (banner.badge) {
+                    <span
+                      class="promo-badge-pill"
+                      [style.background]="banner.badgeBg || 'rgba(255, 255, 255, 0.2)'"
+                      [style.color]="banner.badgeColor || '#ffffff'">
+                      {{ banner.badge }}
+                    </span>
+                  }
+                  <h4 class="promo-title">{{ banner.title || 'Special Promotion' }}</h4>
+                  <p class="promo-subtitle">{{ banner.subtitle || 'Discover premium offers and savings with Pintu' }}</p>
+
+                  <div class="promo-cta-row">
+                    <span class="promo-cta-text">{{ $index === 0 ? 'Invite Friends' : 'Shop Now' }}</span>
+                    <div class="promo-cta-arrow">
+                      <ion-icon name="arrow-forward"></ion-icon>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div class="promo-art-col">
-                <div class="promo-orb-glow"></div>
-                <span class="promo-art-emoji">
-                  {{ $index === 0 ? '🎁' : '🥦' }}
-                </span>
+                <div class="promo-art-col">
+                  <div class="promo-orb-glow"></div>
+                  <span class="promo-art-emoji">
+                    {{ $index === 0 ? '🎁' : '🥦' }}
+                  </span>
+                </div>
               </div>
-            </div>
-          }
-        </div>
-      }
-    </section>
+            }
+          </div>
+        }
+      </section>
+    }
 
-    <!-- Rich Brand Footer -->
-    <app-footer></app-footer>
+    <!-- Rich Brand Footer (Only shown when serviceable) -->
+    @if (!isOfflineOrOutOfServiceArea) {
+      <app-footer></app-footer>
+    }
 
     <!-- Bottom Nav Spacer -->
     <div class="bottom-nav-spacer"></div>
