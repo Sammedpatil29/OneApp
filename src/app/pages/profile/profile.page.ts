@@ -16,6 +16,7 @@ import {
 import { addIcons } from 'ionicons';
 import {
   checkmark,
+  checkmarkCircle,
   callOutline,
   receiptOutline,
   locationOutline,
@@ -29,11 +30,16 @@ import {
   shieldOutline,
   logOutOutline,
   chevronForward,
-  arrowBackOutline
+  arrowBackOutline,
+  cloudDownloadOutline,
+  refreshOutline,
+  arrowUpCircle,
+  warningOutline
 } from 'ionicons/icons';
 import { AuthService } from 'src/app/services/auth.service';
 import { ProfileService } from 'src/app/services/profile.service';
 import { AppDialogService } from 'src/app/services/app-dialog.service';
+import { OtaService } from 'src/app/services/ota.service';
 import { FooterComponent } from 'src/app/components/footer/footer.component';
 
 @Component({
@@ -60,15 +66,24 @@ export class ProfilePage implements OnInit {
   isLoading: boolean = false;
   token: string = '';
 
+  // OTA Update State
+  currentAppVersion: string = '0.0.16';
+  latestOtaVersion: string = '';
+  isCheckingOta: boolean = false;
+  isOtaUpToDate: boolean = true;
+  hasOtaUpdateAvailable: boolean = false;
+
   constructor(
     private router: Router,
     private navCtrl: NavController,
     private authService: AuthService,
     private profileService: ProfileService,
-    private dialogService: AppDialogService
+    private dialogService: AppDialogService,
+    private otaService: OtaService
   ) {
     addIcons({
       checkmark,
+      checkmarkCircle,
       callOutline,
       receiptOutline,
       locationOutline,
@@ -82,7 +97,11 @@ export class ProfilePage implements OnInit {
       shieldOutline,
       logOutOutline,
       chevronForward,
-      arrowBackOutline
+      arrowBackOutline,
+      cloudDownloadOutline,
+      refreshOutline,
+      arrowUpCircle,
+      warningOutline
     });
   }
 
@@ -95,6 +114,88 @@ export class ProfilePage implements OnInit {
     if (this.token) {
       this.getProfileData();
     }
+    this.initAppVersionAndOta();
+  }
+
+  async initAppVersionAndOta() {
+    this.currentAppVersion = await this.otaService.getCurrentVersion();
+    // Silent initial check to determine up-to-date indicator
+    const res = await this.otaService.checkUpdateDetails();
+    if (res.success) {
+      this.currentAppVersion = res.currentVersion;
+      this.isOtaUpToDate = res.isUpToDate;
+      this.hasOtaUpdateAvailable = res.updateAvailable;
+      this.latestOtaVersion = res.latestVersion || '';
+    }
+  }
+
+  async checkOtaUpdate(isUserClick: boolean = true) {
+    if (this.isCheckingOta) return;
+    this.isCheckingOta = true;
+
+    const res = await this.otaService.checkUpdateDetails();
+    this.isCheckingOta = false;
+    this.currentAppVersion = res.currentVersion;
+
+    if (res.success) {
+      this.isOtaUpToDate = res.isUpToDate;
+      this.hasOtaUpdateAvailable = res.updateAvailable;
+      this.latestOtaVersion = res.latestVersion || '';
+
+      if (isUserClick) {
+        if (res.isUpToDate) {
+          await this.dialogService.showAlert(
+            'Everything is Up to Date',
+            `You are running the latest version (v${this.currentAppVersion}).\nNo new updates found on the server. 🎉`,
+            'info',
+            'OK'
+          );
+        } else if (res.updateAvailable) {
+          const proceed = await this.dialogService.showConfirm({
+            title: 'New OTA Update Available',
+            message: `Version v${res.latestVersion} is ready to download (current: v${this.currentAppVersion}).\n\nWould you like to apply the update now?`,
+            confirmText: 'Update Now',
+            cancelText: 'Later'
+          });
+
+          if (proceed) {
+            this.dialogService.showToast('Downloading and applying update...', 'success', 3000);
+            const applyRes = await this.otaService.applyUpdateNow();
+            if (!applyRes.success) {
+              await this.dialogService.showAlert(
+                'Update Failed',
+                applyRes.message || 'Could not apply update bundle.',
+                'warning',
+                'Close'
+              );
+            }
+          }
+        }
+      }
+    } else {
+      // Server error or network issue
+      this.isOtaUpToDate = false;
+      if (isUserClick) {
+        const debugDetails = [
+          `Error: ${res.error || 'Server error'}`,
+          res.httpStatus ? `HTTP Status: ${res.httpStatus}` : '',
+          res.errorDetails ? `Server Response: ${res.errorDetails}` : '',
+          `Manifest URL:\n${res.manifestUrl}`
+        ].filter(Boolean).join('\n\n');
+
+        await this.dialogService.showAlert(
+          'OTA Check Failed (Debug)',
+          debugDetails,
+          'warning',
+          'Close'
+        );
+      }
+    }
+  }
+
+  onRefreshOtaClick(event: Event) {
+    event.stopPropagation();
+    this.checkOtaUpdate(true);
   }
 
   getProfileData() {

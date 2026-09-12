@@ -153,6 +153,42 @@
     <section class="menu-group-card">
       <div class="group-header-label">ABOUT &amp; LEGAL</div>
 
+      <!-- Check for OTA Updates -->
+      <div class="menu-row ota-update-row" (click)="checkOtaUpdate(true)" role="button" tabindex="0">
+        <div class="menu-icon-box bg-purple-tint">
+          <ion-icon name="cloud-download-outline"></ion-icon>
+        </div>
+        <div class="menu-text-col">
+          <div class="d-flex align-items-center gap-2 flex-wrap">
+            <span class="menu-title">Check for OTA Updates</span>
+            @if (isOtaUpToDate) {
+              <span class="ota-status-badge up-to-date" title="App is up to date">
+                <ion-icon name="checkmark-circle"></ion-icon>
+                <span>UP TO DATE</span>
+              </span>
+            } @else if (hasOtaUpdateAvailable) {
+              <span class="ota-status-badge update-ready" title="New update available">
+                <ion-icon name="arrow-up-circle"></ion-icon>
+                <span>v{{ latestOtaVersion }} READY</span>
+              </span>
+            }
+          </div>
+          <span class="menu-subtitle">Present Version: <strong>v{{ currentAppVersion }}</strong></span>
+        </div>
+
+        <button
+          type="button"
+          class="btn-ota-refresh"
+          [class.spinning]="isCheckingOta"
+          (click)="onRefreshOtaClick($event)"
+          title="Check for updates now"
+          aria-label="Check for OTA Updates">
+          <ion-icon name="refresh-outline"></ion-icon>
+        </button>
+      </div>
+
+      <div class="menu-divider"></div>
+
       <div class="menu-row" (click)="openDetails('About Pintu')" role="button" tabindex="0">
         <div class="menu-icon-box bg-slate-tint">
           <ion-icon name="information-circle-outline"></ion-icon>

@@ -1,7 +1,21 @@
 import { Injectable, NgZone } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
+import { App } from '@capacitor/app';
 import { ToastController } from '@ionic/angular/standalone';
 import { OtaKit } from '@otakit/capacitor-updater';
+
+export interface OtaDiagnosticResult {
+  success: boolean;
+  currentVersion: string;
+  latestVersion?: string;
+  isUpToDate: boolean;
+  updateAvailable: boolean;
+  manifestUrl: string;
+  httpStatus?: number;
+  responseBody?: any;
+  error?: string;
+  errorDetails?: string;
+}
 
 /** Key used to flag that an OTA update was just applied (survives reload) */
 const OTA_UPDATED_KEY = 'ota_just_updated';
@@ -116,6 +130,121 @@ export class OtaService {
       console.log('✅ [OtaKit] Post-update toast shown for version', version);
     } catch (e) {
       console.error('Toast display error:', e);
+    }
+  }
+
+  // ─── Manual Check & Diagnostics ───────────────────────────────────
+
+  async getCurrentVersion(): Promise<string> {
+    try {
+      if (Capacitor.isNativePlatform()) {
+        const state = await OtaKit.getState();
+        if (state?.current?.version) {
+          return state.current.version;
+        }
+        const appInfo = await App.getInfo();
+        if (appInfo?.version) {
+          return appInfo.version;
+        }
+      }
+    } catch (e) {
+      console.warn('[OtaService] Error getting version:', e);
+    }
+    return '0.0.16';
+  }
+
+  async checkUpdateDetails(): Promise<OtaDiagnosticResult> {
+    const currentVersion = await this.getCurrentVersion();
+    const manifestUrl = 'https://pintu-api.democompany.in.net/ota/manifests/io.ionic.oneapp/__base__/__default__/manifest.json';
+
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 9000);
+
+      const res = await fetch(manifestUrl, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache'
+        },
+        signal: controller.signal
+      });
+      clearTimeout(timer);
+
+      if (!res.ok) {
+        const text = await res.text().catch(() => '');
+        return {
+          success: false,
+          currentVersion,
+          isUpToDate: false,
+          updateAvailable: false,
+          manifestUrl,
+          httpStatus: res.status,
+          error: `Server HTTP ${res.status} (${res.statusText || 'Error'})`,
+          errorDetails: text || `Server at pintu-api.democompany.in.net returned status ${res.status}.`
+        };
+      }
+
+      const manifest = await res.json();
+      const latestVersion = manifest.version || '';
+      const isUpToDate = Boolean(latestVersion && latestVersion === currentVersion);
+      const updateAvailable = Boolean(latestVersion && latestVersion !== currentVersion);
+
+      // If native, also trigger OtaKit.check()
+      if (Capacitor.isNativePlatform()) {
+        try {
+          await OtaKit.check();
+        } catch (e) {}
+      }
+
+      return {
+        success: true,
+        currentVersion,
+        latestVersion,
+        isUpToDate,
+        updateAvailable,
+        manifestUrl,
+        httpStatus: res.status,
+        responseBody: manifest
+      };
+    } catch (err: any) {
+      const isAbort = err.name === 'AbortError';
+      return {
+        success: false,
+        currentVersion,
+        isUpToDate: false,
+        updateAvailable: false,
+        manifestUrl,
+        error: isAbort ? 'Request Timeout (> 9s)' : (err.name || 'Network Error'),
+        errorDetails: err.message || String(err)
+      };
+    }
+  }
+
+  async applyUpdateNow(): Promise<{ success: boolean; message: string }> {
+    if (!Capacitor.isNativePlatform()) {
+      return { success: false, message: 'OTA updates can only be downloaded on physical devices.' };
+    }
+
+    try {
+      const state = await OtaKit.getState();
+      if (state?.staged) {
+        const ver = state.staged?.version || '';
+        localStorage.setItem(OTA_UPDATED_KEY, ver);
+        await OtaKit.apply();
+        return { success: true, message: 'Update applied! Reloading app...' };
+      }
+
+      const downloadRes = await OtaKit.download();
+      if (downloadRes.kind === 'staged') {
+        const ver = downloadRes.bundle?.version || '';
+        localStorage.setItem(OTA_UPDATED_KEY, ver);
+        await OtaKit.apply();
+        return { success: true, message: 'Update applied! Reloading app...' };
+      }
+      return { success: false, message: `Download returned status: ${downloadRes.kind}` };
+    } catch (e: any) {
+      return { success: false, message: e.message || 'Failed to download and apply OTA bundle.' };
     }
   }
 }
