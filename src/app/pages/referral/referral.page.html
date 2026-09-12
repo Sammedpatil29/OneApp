@@ -1,53 +1,93 @@
-<ion-header class="ion-no-border">
+<ion-header class="ion-no-border bg-white pt-2">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/tabs/home" text="" icon="arrow-back-outline"></ion-back-button>
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back-outline" color="dark"></ion-icon>
+      </ion-button>
     </ion-buttons>
-    <ion-title>Refer & Earn</ion-title>
+    <ion-title class="fw-bold text-dark">Refer &amp; Earn</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content style="--background: #f8fafc;">
-  <div class="h-100 d-flex flex-column justify-content-center">
-    <div class="text-center">
-      <!-- <img src="assets/refer.png" alt="Refer a friend" style="max-width: 200px; margin-bottom: 2rem;">
-        -->
-      <div class="mb-2">  
-        <svg fill="#a000e2" width="100px" height="100px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20,18a1,1,0,0,0,1-1V13a1,1,0,0,0-1-1H13V9.858a4,4,0,1,0-2,0V12H4a1,1,0,0,0-1,1v4a1,1,0,0,0,2,0V14h6v3a1,1,0,0,0,2,0V14h6v3A1,1,0,0,0,20,18ZM12,8a2,2,0,1,1,2-2A2,2,0,0,1,12,8ZM23,21a1,1,0,0,1-1,1H18a1,1,0,0,1,0-2h4A1,1,0,0,1,23,21ZM1,21a1,1,0,0,1,1-1H6a1,1,0,0,1,0,2H2A1,1,0,0,1,1,21Zm13-1a1,1,0,0,1,0,2H10a1,1,0,0,1,0-2Z"/></svg>
-      </div>
-      
-      <h2 style="font-size: 24px; font-weight: 800; color: #0f172a; margin-bottom: 1rem;">
-        Refer & Earn ₹50
-      </h2>
-      
-      <p style="font-size: 15px; color: #64748b; max-width: 300px; line-height: 1.6; margin: 0 auto 2.5rem;">
-        Share your referral code with friends and you'll both get ₹50 when they place their first order.
-      </p>
+<ion-content [fullscreen]="true" class="referral-page-content">
 
-      <div class="referral-code-container">
-        <span class="code-label">Your Referral Code</span>
-        <div class="code-box">
-          <span id="referralCode" class="fw-bold">{{ referralCode }}</span>
-          <ion-button fill="clear" size="small" (click)="copyCode()">
-            <ion-icon slot="icon-only" name="copy-outline"></ion-icon>
-          </ion-button>
+  <main class="referral-body-container">
+    <!-- Hero Reward Banner Card -->
+    <div class="referral-hero-card">
+      <div class="hero-glow-orb"></div>
+      <div class="hero-visual-col">
+        <span class="hero-gift-emoji">🎁</span>
+      </div>
+      <div class="hero-info-col">
+        <span class="hero-badge">PINTU REWARDS</span>
+        <h2 class="hero-headline">Give ₹50, Get ₹50</h2>
+        <p class="hero-desc">Invite your friends to Pintu and both of you will receive ₹50 wallet cash after their 1st delivery.</p>
+      </div>
+    </div>
+
+    <!-- Referral Code Interactive Box -->
+    <div class="referral-code-card">
+      <span class="code-eyebrow">YOUR UNIQUE REFERRAL CODE</span>
+      <div class="code-action-box" (click)="copyCode()" role="button" tabindex="0">
+        <span class="code-text">{{ referralCode }}</span>
+        <button type="button" class="btn-copy-chip" [class.copied]="isCopied">
+          <ion-icon [name]="isCopied ? 'checkmark-circle' : 'copy-outline'"></ion-icon>
+          <span>{{ isCopied ? 'Copied!' : 'Tap to Copy' }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Quick Sharing Action Strip -->
+    <div class="share-actions-row">
+      <button type="button" class="btn-share-primary" (click)="share()">
+        <ion-icon name="share-social-outline"></ion-icon>
+        <span>Share with Friends</span>
+      </button>
+
+      <button type="button" class="btn-whatsapp-action" (click)="shareViaWhatsApp()" aria-label="Share via WhatsApp">
+        <ion-icon name="logo-whatsapp"></ion-icon>
+        <span>WhatsApp</span>
+      </button>
+    </div>
+
+    <!-- How It Works 3-Step Timeline -->
+    <section class="how-it-works-section">
+      <h3 class="section-title">How It Works</h3>
+
+      <div class="timeline-container">
+        <div class="timeline-step">
+          <div class="step-icon-box purple-bg">
+            <ion-icon name="share-social-outline"></ion-icon>
+          </div>
+          <div class="step-text-col">
+            <h4 class="step-title">1. Share your code</h4>
+            <p class="step-desc">Send your referral invite link or code to friends &amp; family.</p>
+          </div>
+        </div>
+
+        <div class="timeline-step">
+          <div class="step-icon-box blue-bg">
+            <ion-icon name="person-add-outline"></ion-icon>
+          </div>
+          <div class="step-text-col">
+            <h4 class="step-title">2. Friend places first order</h4>
+            <p class="step-desc">They sign up with your code and get instant ₹50 welcome discount.</p>
+          </div>
+        </div>
+
+        <div class="timeline-step">
+          <div class="step-icon-box emerald-bg">
+            <ion-icon name="wallet-outline"></ion-icon>
+          </div>
+          <div class="step-text-col">
+            <h4 class="step-title">3. You get ₹50 cash</h4>
+            <p class="step-desc">₹50 is credited directly into your Pintu wallet instantly.</p>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="how-it-works">
-      <h5 class="fw-bolder text-dark">How it works</h5>
-      <ol class="steps-list">
-        <li>Share your referral code with your friends.</li>
-        <li>Your friend signs up using your referral code.</li>
-        <li>You both get ₹50 in your wallet after their first successful order.</li>
-      </ol>
-    </div>
-  </div>
-
-  <ion-footer class="ion-no-border">
-    <ion-toolbar>
-      <ion-button expand="block" class="book-btn w-100" (click)="share()">Refer a Friend</ion-button>
-    </ion-toolbar>
-  </ion-footer>
+    <!-- Bottom Nav Clearance Spacer -->
+    <div class="bottom-nav-spacer"></div>
+  </main>
 </ion-content>

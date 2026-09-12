@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonToolbar, IonSearchbar, IonButtons, IonButton, IonIcon, IonFooter, IonTitle, IonSkeletonText } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { arrowBack, timeOutline, closeCircleOutline, caretForwardOutline, trendingUpOutline, add, remove } from 'ionicons/icons';
+import { arrowBack, arrowBackOutline, timeOutline, closeCircleOutline, caretForwardOutline, trendingUpOutline, add, remove } from 'ionicons/icons';
 import { NavController } from '@ionic/angular';
 import { GroceryService } from 'src/app/services/grocery.service';
 import { AuthService } from 'src/app/services/auth.service';
@@ -55,7 +55,7 @@ export class GrocerySearchPage implements OnInit {
     private cdr: ChangeDetectorRef,
     private router: Router
   ) { 
-    addIcons({ arrowBack, timeOutline, closeCircleOutline, caretForwardOutline, trendingUpOutline, add, remove });
+    addIcons({ arrowBack, arrowBackOutline, timeOutline, closeCircleOutline, caretForwardOutline, trendingUpOutline, add, remove });
   }
 
   async ngOnInit() {

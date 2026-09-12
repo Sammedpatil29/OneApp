@@ -1,9 +1,9 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, IonIcon, IonFooter, IonButton, IonSkeletonText } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonIcon, IonFooter, IonButton, IonSkeletonText } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { searchOutline, filterOutline, caretForwardOutline, arrowBack } from 'ionicons/icons';
+import { searchOutline, filterOutline, caretForwardOutline, arrowBack, arrowBackOutline } from 'ionicons/icons';
 import { GroceryService } from 'src/app/services/grocery.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
@@ -16,7 +16,7 @@ import { NavController } from "@ionic/angular"
   templateUrl: './grocery-special.page.html',
   styleUrls: ['./grocery-special.page.scss'],
   standalone: true,
-  imports: [IonSkeletonText, IonButton, IonIcon, IonBackButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, ProductCardComponent, ErrorComponent]
+  imports: [IonSkeletonText, IonButton, IonIcon, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, ProductCardComponent, ErrorComponent]
 })
 export class GrocerySpecialPage implements OnInit {
 
@@ -53,7 +53,7 @@ export class GrocerySpecialPage implements OnInit {
   // ];
 
   constructor(private router: Router, private groceryService: GroceryService, private authService: AuthService, private cdr: ChangeDetectorRef, private navCtrl: NavController,) { 
-    addIcons({ searchOutline, filterOutline, caretForwardOutline, arrowBack });
+    addIcons({ searchOutline, filterOutline, caretForwardOutline, arrowBack, arrowBackOutline });
   }
 
  async ngOnInit() {

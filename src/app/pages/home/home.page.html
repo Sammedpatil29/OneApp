@@ -1,262 +1,328 @@
-@if(insideServiceArea){
-  <ion-content [fullscreen]="true" (ionScroll)="onScroll($event)" scrollEvents="true">
-
-  @if(isLoading){
-    <div class="w-100 position-fixed pe-2 pt-3" style="z-index: 999; background: transparent;">
-      <div class="container pt-4 pb-2">
-        <div class="d-flex justify-content-between align-items-center">
-          <div class="d-flex align-items-center w-75">
-            <div class="d-flex flex-column me-2 w-100">
-              <ion-skeleton-text animated style="width: 30%; height: 15px; margin-bottom: 5px; border-radius: 5px;"></ion-skeleton-text>
-              <ion-skeleton-text animated style="width: 60%; height: 15px; border-radius: 5px;"></ion-skeleton-text>
-            </div>
-          </div>
-          <div class="float-end">
-            <ion-skeleton-text animated style="width: 35px; height: 35px; border-radius: 50%;"></ion-skeleton-text>
+<!-- Customer Top Header (Matching Partner App) -->
+<ion-header class="customer-header" [translucent]="false">
+  <ion-toolbar>
+    <div class="header-inner">
+      <!-- Left: Location Selector Chip -->
+      <div class="location-pill-btn" (click)="openLocation()" role="button" tabindex="0">
+        <div class="location-icon-box">
+          <ion-icon name="location"></ion-icon>
+        </div>
+        <div class="location-text-col">
+          <span class="location-eyebrow">DELIVERING TO</span>
+          <div class="location-title-row">
+            <span class="location-name">{{ displayLocationName }}</span>
+            <ion-icon name="chevron-down" class="chevron-icon"></ion-icon>
           </div>
         </div>
       </div>
-    </div>
 
-    <div style="margin-top: 0;">
-      <ion-skeleton-text animated style="width: 100%; height: 40vh; margin: 0;"></ion-skeleton-text>
-    </div>
+      <!-- Right: Action & Profile Avatar (Matching Partner App) -->
+      <div class="header-actions">
+        <button type="button" class="icon-btn help-btn" (click)="goToSupport()" title="Customer Support" aria-label="Customer Support">
+          <ion-icon name="headset-outline"></ion-icon>
+        </button>
 
-    <div class="pt-1" style="background-color: white; margin-top: -30px; border-radius: 20px 20px 0px 0px; position: relative; z-index: 1;">
-      <div class="modal-handle"></div>
-      
-      @for (group of [1, 2]; track $index) {
-        <div class="container mt-4">
-          <ion-skeleton-text animated style="width: 40%; height: 20px; margin-bottom: 15px; border-radius: 5px;"></ion-skeleton-text>
-          
-          <ion-grid class="p-0">
-            <ion-row>
-              @for (card of [1, 2]; track $index) {
-                <ion-col size="6" class="pe-2 pb-2">
-                  <ion-card class="m-0" style="box-shadow: none; border: 1px solid #f0f0f0;">
-                    <ion-skeleton-text animated style="width: 100%; height: 120px; margin: 0;"></ion-skeleton-text>
-                    <ion-card-header>
-                      <ion-skeleton-text animated style="width: 80%; height: 15px;"></ion-skeleton-text>
-                      <ion-skeleton-text animated style="width: 50%; height: 10px;"></ion-skeleton-text>
-                    </ion-card-header>
-                  </ion-card>
-                </ion-col>
-              }
-            </ion-row>
-          </ion-grid>
-        </div>
-      }
-    </div>
-  } 
-  
-  @else {
-    
-    <div class="w-100 position-fixed pe-2 pt-3" style="z-index: 999" [ngStyle]="{ 'background-color': headerBg }">
-      <div class="container pt-4 pb-2">
-        <div class="d-flex justify-content-between align-items-center">
-          <div class="d-flex align-items-center w-75" (click)="openLocation()">
-            <i class="bi bi-geo-alt-fill me-2 text-dark"></i>
-            <div class="d-flex flex-column me-2" style="line-height: 1.2">
-              <ion-card-subtitle class="text-truncate" style="max-width: 50vw">
-                @if (currentLocation == '') {
-                  <span class="text-dark">Location</span> <br />
-                  <span class="text-primary">Select your location</span>
-                } @else {
-                  @if(label == ""){
-                    <span class="text-dark">Location</span>
-                  } @else {
-                    <span class="text-dark"><b>{{currentLocation?.label | titlecase}}</b></span>
-                  }
-                  <br /><span class="text-dark">{{currentLocation?.address}}</span>
-                }
-              </ion-card-subtitle>
-            </div>
-            <i class="bi bi-chevron-down me-2 text-dark"></i>
-          </div>
-
-          <div class="float-end" (click)="goToProfile()">
-            <img style="width: 30px" src="../../../assets/gif/system-solid-8-account-hover-pinch.gif" />
-          </div>
+        <div class="customer-avatar-btn" (click)="goToProfile()" role="button" tabindex="0" title="My Profile">
+          @if (profileAvatar) {
+            <img [src]="profileAvatar" alt="Profile" (error)="profileAvatar = ''" />
+          } @else {
+            <div class="avatar-initial">{{ userInitials }}</div>
+          }
         </div>
       </div>
     </div>
+  </ion-toolbar>
+</ion-header>
 
-    <ion-refresher slot="fixed" class="my-refresher mt-5" color="dark" (ionRefresh)="handleRefresh($event)" pullingIcon="arrow-dropdown" refreshingSpinner="crescent">
-      <ion-refresher-content></ion-refresher-content>
-    </ion-refresher>
+<ion-content [fullscreen]="true" (ionScroll)="onScroll($event)" [scrollEvents]="true" class="home-page-content">
+  <!-- Native Pull-to-Refresh -->
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)" class="custom-refresher">
+    <ion-refresher-content pullingIcon="arrow-down-outline" refreshingSpinner="crescent"></ion-refresher-content>
+  </ion-refresher>
 
-    <div style="min-height: 100vh; display: flex; flex-direction: column;">
-      
-      @if (slides.length != 0) {
+  <!-- Main Scrollable Home Body -->
+  <main class="home-body-container">
+
+    <!-- Active Order Live Tracker Pill (Shown when customer has ongoing orders) -->
+    @if (orders && orders.length > 0) {
+      <section class="active-order-floating-strip animate__animated animate__fadeInDown" (click)="goToOrderDetails(orders[0]?.orderId || orders[0]?.id)">
+        <div class="live-pulse-dot"></div>
+        <div class="order-info-col">
+          <span class="order-badge">ACTIVE ORDER</span>
+          <span class="order-headline">Your delivery is arriving soon</span>
+        </div>
+        <button type="button" class="btn-track-pill">
+          <span>Track</span>
+          <ion-icon name="arrow-forward" class="ms-1"></ion-icon>
+        </button>
+      </section>
+    }
+
+    <!-- Swipable Banners Section (Top of Services) -->
+    @if (banners && banners.length > 0) {
+      <section class="home-banners-section">
         <swiper-container
-          [slidesPerView]="1"
-          [spaceBetween]="0"
-          [loop]="true"
-          [autoplay]="{ delay: 2500, disableOnInteraction: true }"
-          class="full-swiper"
-          style="height: 40vh; position: sticky; top: 0; z-index: -999"
-        >
-        @if(slides.length == 0){
-          @for (item of slides; track $index) {
-            <swiper-slide (click)="navigateFromSlide(item.route)">
-              <img [src]="item.img" alt="slide" class="square-image" />
+          slides-per-view="1"
+          space-between="12"
+          pagination="true"
+          autoplay-delay="3800"
+          autoplay-disable-on-interaction="false"
+          loop="true"
+          class="home-banners-swiper">
+          @for (banner of banners; track banner.id || $index) {
+            <swiper-slide>
+              <div
+                class="banner-card"
+                [style.background]="banner.bgGradient || 'linear-gradient(135deg, #2e0854 0%, #1e1b4b 50%, #3b0764 100%)'"
+                (click)="navigateToBanner(banner)"
+                role="button"
+                tabindex="0">
+
+                <!-- Real Image Banner -->
+                @if (isBannerImageValid(banner)) {
+                  <img
+                    [src]="getBannerImgUrl(banner)"
+                    alt="Promotional Banner"
+                    class="banner-full-img"
+                    (error)="banner.img = ''" />
+                }
+
+                <!-- Gradient Graphic Card Fallback -->
+                @else {
+                  <div class="banner-content-box">
+                    <div class="banner-text-col">
+                      @if (banner.badge) {
+                        <span
+                          class="banner-badge-pill"
+                          [style.background]="banner.badgeBg || 'rgba(255, 255, 255, 0.2)'"
+                          [style.color]="banner.badgeColor || '#ffffff'">
+                          {{ banner.badge }}
+                        </span>
+                      }
+                      <h3 class="banner-title">{{ banner.title || 'Special Offer' }}</h3>
+                      <p class="banner-subtitle">{{ banner.subtitle || 'Discover premium fast delivery with Pintu' }}</p>
+
+                      <div class="banner-cta-row">
+                        <span class="banner-cta-text">Explore Now</span>
+                        <div class="banner-cta-arrow">
+                          <ion-icon name="arrow-forward"></ion-icon>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="banner-art-col">
+                      <div class="banner-orb-glow"></div>
+                      <span class="banner-art-emoji">
+                        {{ $index === 0 ? '⚡' : ($index === 1 ? '🛵' : '🥦') }}
+                      </span>
+                    </div>
+                  </div>
+                }
+
+              </div>
             </swiper-slide>
           }
-        } @else {
-            <swiper-slide>
-              <img src="assets/default_banner.png" alt="slide" class="square-image" />
-            </swiper-slide>
-        }
         </swiper-container>
-      } @else {
-         <div style="height: 40vh;"></div>
+      </section>
+    }
+
+    <!-- Dynamic Mosaic Services Grid (From Backend) -->
+    <section class="services-mosaic-section">
+      <div class="section-title-row">
+        <div class="d-flex align-items-center gap-2">
+          <span class="sparkle-icon">✨</span>
+          <h3 class="section-heading">Services</h3>
+        </div>
+        <!-- <span class="services-count-pill">{{ allServices.length }} Available</span> -->
+      </div>
+
+      <!-- Skeleton Loaders if loading -->
+      @if (isLoadingServices && allServices.length === 0) {
+        <div class="services-mosaic-grid bento-grid">
+          <div class="mosaic-tile mosaic-tile-tall skeleton-card">
+            <ion-skeleton-text animated style="width: 70px; height: 16px; border-radius: 99px; margin-bottom: 12px;"></ion-skeleton-text>
+            <ion-skeleton-text animated style="width: 110px; height: 22px; border-radius: 6px; margin-bottom: 6px;"></ion-skeleton-text>
+            <ion-skeleton-text animated style="width: 130px; height: 14px; border-radius: 4px;"></ion-skeleton-text>
+            <ion-skeleton-text animated style="width: 70px; height: 70px; border-radius: 18px; margin-top: auto; align-self: center;"></ion-skeleton-text>
+          </div>
+          <div class="mosaic-tile mosaic-tile-normal skeleton-card">
+            <ion-skeleton-text animated style="width: 50px; height: 14px; border-radius: 99px; margin-bottom: 6px;"></ion-skeleton-text>
+            <ion-skeleton-text animated style="width: 90px; height: 16px; border-radius: 6px;"></ion-skeleton-text>
+          </div>
+          <div class="mosaic-tile mosaic-tile-normal skeleton-card">
+            <ion-skeleton-text animated style="width: 50px; height: 14px; border-radius: 99px; margin-bottom: 6px;"></ion-skeleton-text>
+            <ion-skeleton-text animated style="width: 90px; height: 16px; border-radius: 6px;"></ion-skeleton-text>
+          </div>
+          <div class="mosaic-tile mosaic-tile-wide skeleton-card">
+            <ion-skeleton-text animated style="width: 140px; height: 18px; border-radius: 6px; margin-bottom: 6px;"></ion-skeleton-text>
+            <ion-skeleton-text animated style="width: 180px; height: 14px; border-radius: 4px;"></ion-skeleton-text>
+          </div>
+        </div>
       }
 
-      <div class="pt-1" style="background-color: white; margin-top: -30px; border-radius: 20px 20px 0px 0px; flex: 1;">
-        <div>
-          <div class="modal-handle"></div>
-        </div>
+      <!-- Dynamic Mosaic Grid -->
+      @else {
+        <div
+          class="services-mosaic-grid"
+          [ngClass]="'count-' + allServices.length + (allServices.length > 2 ? ' bento-grid' : '')">
+          @for (service of allServices; track service.id || service.title || $index) {
+            <div
+              class="mosaic-tile"
+              [ngClass]="getMosaicTileType($index, allServices.length)"
+              [style.background]="getServiceCardGradient(service)"
+              (click)="navigateToService(service)"
+              role="button"
+              tabindex="0">
 
-        <div class="px-3 mt-4 mb-2">
-          <!-- <h5 class="fw-bolder text-dark m-0 text-center">Closed Test Started</h5>
-          <h5 class="fw-bolder text-dark m-0 text-center">12/14 days Completed</h5> -->
-          <h5 class="fw-bolder text-dark m-0">All Services</h5>
-        </div>
-
-        <div class="container px-2 pb-5">
-          <div class="row g-2">
-            @if (allServices.length > 0) {
-              @for (item of allServices; track item) {
-              <div class="col-6 p-2">
-                <div class="swiggy-card" (click)="navigateTo(item.route)">
-                  <div class="card-content">
-                    <h3 class="swiggy-title text-nowrap">{{ item.title }}</h3>
-                    <p class="swiggy-subtitle">{{ item.subtitle || 'FROM RESTAURANTS' }}</p>
-                    @if (item.offers && item.offers !== 'Nothing') {
-                      <span class="swiggy-offer text-nowrap">{{ item.offers }}</span>
+              <!-- TALL MOSAIC TILE (Left Hero Span 2 Rows in Bento mode) -->
+              @if (getMosaicTileType($index, allServices.length) === 'mosaic-tile-tall') {
+                <div class="tall-tile-inner">
+                  <div class="tile-header-area">
+                    @if (hasOffer(service)) {
+                      <span class="service-pill-tag tag-vibrant">{{ service.offers }}</span>
                     }
+                    <h3 class="tile-title-tall">{{ service.title }}</h3>
+                    <p class="tile-subtitle-tall">{{ service.subtitle || 'Instant & reliable service' }}</p>
                   </div>
-                  <div class="swiggy-image-container">
-                    <img [src]="item.img" loading="lazy" [alt]="item.title" />
+
+                  <div class="tile-bottom-area">
+                    <div class="tile-visual-box-tall">
+                      @if (isImageValid(service) && !service.hasImgError) {
+                        <img [src]="getServiceImgUrl(service)" [alt]="service.title" class="service-art-img" (error)="service.hasImgError = true" />
+                      } @else {
+                        <div class="service-art-fallback" [style.background]="getServiceBg(service)">
+                          <span class="fallback-emoji">{{ getServiceIcon(service) }}</span>
+                        </div>
+                      }
+                    </div>
+
+                    <div class="tile-action-row">
+                      <span class="action-btn-text">Explore</span>
+                      <div class="arrow-circle-btn">
+                        <ion-icon name="arrow-forward"></ion-icon>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            }
-            } @else {
-              <span class="alert-box">
-                No services Available. <br> <small>Please check back later</small>
-              </span>
-            }
-          </div>
-        </div>
-      </div>
+              }
 
-      <app-footer class="mb-5"></app-footer>
-    </div>
-    <ion-modal [isOpen]="isModalOpen" (didDismiss)="handleModalClose()">
-      <ng-template>
-        <ion-header>
-          <ion-toolbar class="pt-4">
-            <ion-buttons slot="start">
-              <ion-button (click)="goBack()">
-                <ion-icon name="arrow-back"></ion-icon>
-              </ion-button>
-            </ion-buttons>
-            <ion-title>Select Location</ion-title>
-          </ion-toolbar>
-        </ion-header>
-        <ion-content>
-          <app-address (location)="receiveData($event)"></app-address>
-        </ion-content>
-      </ng-template>
-    </ion-modal>
-
-    @if (showVideo && video) {
-      <div class="bubble">
-        <div class="video-wrapper">
-          <video [src]="video" autoplay muted loop playsinline></video>
-          <button class="close-btn" (click)="closeBubble()">
-            <i class="bi bi-x-lg"></i>
-          </button>
-        </div>
-      </div>
-    }
-
-    @if(isFlashOfferVisible){
-      <div class="offer-banner w-100">
-        <div class="offer-content mb-2 position-relative">
-          <div class="p-2">
-            <ion-card-title class="fw-bolder">BUY ONE GET ONE</ion-card-title>
-            <ion-card-subtitle>Only for new Customer</ion-card-subtitle>
-            <button class="btn btn-outline-dark mt-2">Get it Now</button>
-            <img src="../../../assets/icons/3dicons-cup-dynamic-color.png" alt="" />
-            <span class="position-absolute" style="top: -18px; right: -8px">
-              <i (click)="closeFlashOffer()" class="bi bi-x-circle-fill text-secondary"></i>
-            </span>
-          </div>
-        </div>
-      </div>
-    }
-
-    <div class="orders-list position-fixed bottom-0 w-100" style="color: whitesmoke; z-index: 99999 !important">
-      @if(orders.length != 0){
-        <swiper-container style="background-color: rgb(32, 144, 4); padding: 10px 10px; border-radius: 10px 10px 0px 0px; height: 45px !important;"
-          [slidesPerView]="1" 
-          [spaceBetween]="0" 
-          [loop]="false" 
-          [autoplay]="{ delay: 5000 }">
-          
-          @for (item of activeOrderDetails; track $index) {
-            <swiper-slide (click)="goToOrderDetails(item.orderId)">
-              <div class="d-flex flex-row align-items-center justify-content-between w-100" style="padding-right: 0px !important">
-                <div class="d-flex align-items-center gap-3">
-                  <div class="d-flex align-items-center justify-content-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF">
-                      <path d="M438-226 296-368l58-58 84 84 168-168 58 58-226 226ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Z"/>
-                    </svg>
+              <!-- WIDE MOSAIC TILE (100% Width: when count=1, or full row span) -->
+              @else if (getMosaicTileType($index, allServices.length) === 'mosaic-tile-wide') {
+                <div class="wide-tile-inner">
+                  <div class="wide-left-content">
+                    @if (hasOffer(service)) {
+                      <span class="service-pill-tag">{{ service.offers }}</span>
+                    }
+                    <h4 class="tile-title-wide">{{ service.title }}</h4>
+                    <p class="tile-subtitle-wide">{{ service.subtitle || 'Available now' }}</p>
+                    <div class="wide-cta-chip">
+                      <span>Explore</span>
+                      <ion-icon name="arrow-forward"></ion-icon>
+                    </div>
                   </div>
-                  
-                  <div class="d-flex align-items-center">
-                    @for(orderItem of item.items; track $index){
-                      <div class="d-flex align-items-center justify-content-center" [style.margin-left]="$index !== 0 ? '-10px' : '0'">
-                        <img style="height: 25px; width: 25px; object-fit: cover; border: 2px solid rgb(32, 144, 4); background-color: #c1fcc1; border-radius: 7px;" [src]="orderItem.image" alt="">
+
+                  <div class="wide-right-visual">
+                    @if (isImageValid(service) && !service.hasImgError) {
+                      <img [src]="getServiceImgUrl(service)" [alt]="service.title" class="service-art-img-wide" (error)="service.hasImgError = true" />
+                    } @else {
+                      <div class="service-art-fallback wide-fallback" [style.background]="getServiceBg(service)">
+                        <span class="fallback-emoji">{{ getServiceIcon(service) }}</span>
                       </div>
                     }
                   </div>
                 </div>
+              }
 
-                <div class="d-flex align-items-center gap-1">
-                  <small class="fw-bold">{{item.status | titlecase}}</small>
-                  <i class="bi bi-chevron-right" style="font-size: 16px;"></i>
+              <!-- NORMAL COMPACT TILE (50% Width inline when count=2, or 1x1 in Bento) -->
+              @else {
+                <div class="normal-tile-inner">
+                  <div class="normal-top-row">
+                    @if (hasOffer(service)) {
+                      <span class="service-pill-tag tag-compact">{{ service.offers }}</span>
+                    }
+                    <div class="arrow-circle-mini">
+                      <ion-icon name="arrow-forward"></ion-icon>
+                    </div>
+                  </div>
+
+                  <div class="normal-center-info">
+                    <h4 class="tile-title-normal">{{ service.title }}</h4>
+                    <p class="tile-subtitle-normal">{{ service.subtitle || 'Book now' }}</p>
+                  </div>
+
+                  <div class="normal-bottom-art">
+                    @if (isImageValid(service) && !service.hasImgError) {
+                      <img [src]="getServiceImgUrl(service)" [alt]="service.title" class="service-art-img-normal" (error)="service.hasImgError = true" />
+                    } @else {
+                      <div class="service-art-fallback normal-fallback" [style.background]="getServiceBg(service)">
+                        <span class="fallback-emoji-small">{{ getServiceIcon(service) }}</span>
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+
+            </div>
+          }
+        </div>
+      }
+    </section>
+
+    <!-- 2 Promotional Banners (Below Services) -->
+    <section class="home-bottom-banners-section">
+      @for (banner of bottomBanners; track banner.id || $index) {
+        <div
+          class="bottom-promo-card"
+          [style.background]="banner.bgGradient || 'linear-gradient(135deg, #2e0854 0%, #1e1b4b 60%, #3b0764 100%)'"
+          (click)="navigateToBanner(banner)"
+          role="button"
+          tabindex="0">
+
+          @if (isBannerImageValid(banner)) {
+            <img
+              [src]="getBannerImgUrl(banner)"
+              alt="Promotional Banner"
+              class="banner-full-img"
+              (error)="banner.img = ''" />
+          } @else {
+            <div class="bottom-promo-content">
+              <div class="promo-text-col">
+                @if (banner.badge) {
+                  <span
+                    class="promo-badge-pill"
+                    [style.background]="banner.badgeBg || 'rgba(255, 255, 255, 0.2)'"
+                    [style.color]="banner.badgeColor || '#ffffff'">
+                    {{ banner.badge }}
+                  </span>
+                }
+                <h4 class="promo-title">{{ banner.title || 'Special Promotion' }}</h4>
+                <p class="promo-subtitle">{{ banner.subtitle || 'Discover premium offers and savings with Pintu' }}</p>
+
+                <div class="promo-cta-row">
+                  <span class="promo-cta-text">{{ $index === 0 ? 'Invite Friends' : 'Shop Now' }}</span>
+                  <div class="promo-cta-arrow">
+                    <ion-icon name="arrow-forward"></ion-icon>
+                  </div>
                 </div>
               </div>
-            </swiper-slide>
+
+              <div class="promo-art-col">
+                <div class="promo-orb-glow"></div>
+                <span class="promo-art-emoji">
+                  {{ $index === 0 ? '🎁' : '🥦' }}
+                </span>
+              </div>
+            </div>
           }
-        </swiper-container>
+        </div>
       }
-    </div>
+    </section>
 
-  } 
+    <!-- Rich Brand Footer -->
+    <app-footer></app-footer>
+
+    <!-- Bottom Nav Spacer -->
+    <div class="bottom-nav-spacer"></div>
+
+  </main>
 </ion-content>
-} @else {
-  <ion-content class="ion-padding" style="--background: #f8fafc;">
-    <div class="h-100 d-flex flex-column align-items-center justify-content-center text-center pb-5">
-      <div style="width: 100px; height: 100px; background: rgba(235, 68, 90, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 2rem;">
-        <ion-icon name="map-outline" style="font-size: 50px; color: var(--ion-color-danger, #eb445a);"></ion-icon>
-      </div>
-      
-      <h2 style="font-size: 24px; font-weight: 800; color: #0f172a; margin-bottom: 1rem;">
-        Out of Delivery Area
-      </h2>
-      
-      <p style="font-size: 15px; color: #64748b; max-width: 280px; line-height: 1.6; margin-bottom: 2.5rem;">
-        Oops! Pintu hasn't reached your location yet. We are expanding rapidly, please check back soon!
-      </p>
-
-      <ion-button (click)="openLocation()" class="book-btn w-100">
-        <ion-icon name="location-outline" slot="start"></ion-icon>
-        Change Location
-      </ion-button>
-    </div>
-  </ion-content>
-}

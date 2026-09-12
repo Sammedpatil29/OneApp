@@ -1,5 +1,244 @@
+<ion-header class="ion-no-border bg-white pt-2">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back-outline" color="dark"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="fw-bold text-dark">Help &amp; Support</ion-title>
+  </ion-toolbar>
+</ion-header>
 
+<ion-content [fullscreen]="true" class="support-content-page">
+  <!-- Support Mode Tabs -->
+  <div class="support-tabs-strip">
+    <button
+      type="button"
+      class="tab-pill"
+      [class.active]="activeTab === 'channels'"
+      (click)="activeTab = 'channels'">
+      <span>Contact &amp; FAQ</span>
+    </button>
+    <button
+      type="button"
+      class="tab-pill"
+      [class.active]="activeTab === 'create'"
+      (click)="activeTab = 'create'">
+      <span>Raise Issue</span>
+    </button>
 
-<ion-content [fullscreen]="true">
-  <app-support></app-support>
+    <button
+      type="button"
+      class="tab-pill"
+      [class.active]="activeTab === 'tickets'"
+      (click)="activeTab = 'tickets'; loadTickets()">
+      <span>My Tickets</span>
+      @if (tickets.length > 0) {
+        <span class="ticket-badge">{{ tickets.length }}</span>
+      }
+    </button>
+  </div>
+
+  <main class="support-body-container">
+
+    <!-- TAB 1: CONTACT CHANNELS & FAQS -->
+    @if (activeTab === 'channels') {
+      <!-- Instant Channels Grid -->
+      <section class="channels-grid animate__animated animate__fadeIn">
+        <!-- WhatsApp Card -->
+        <div class="channel-card whatsapp-channel" (click)="openWhatsAppSupport()" role="button" tabindex="0">
+          <div class="channel-icon-circle bg-whatsapp">
+            <ion-icon name="logo-whatsapp"></ion-icon>
+          </div>
+          <div class="channel-info-col">
+            <div class="d-flex align-items-center justify-content-between">
+              <span class="channel-name">WhatsApp Chat</span>
+              <span class="speed-pill">⚡ 2 MINS</span>
+            </div>
+            <p class="channel-desc">Chat live with our dedicated customer team</p>
+          </div>
+          <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
+        </div>
+
+        <!-- Phone Call Card -->
+        <a href="tel:+918999335606" class="channel-card call-channel">
+          <div class="channel-icon-circle bg-call">
+            <ion-icon name="call-outline"></ion-icon>
+          </div>
+          <div class="channel-info-col">
+            <span class="channel-name">Priority Hotline</span>
+            <p class="channel-desc">Toll-free customer assistance line</p>
+          </div>
+          <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
+        </a>
+
+        <!-- Email Card -->
+        <a href="mailto:support@pintu.com?subject=Customer%20Support%20Request" class="channel-card email-channel">
+          <div class="channel-icon-circle bg-email">
+            <ion-icon name="mail-outline"></ion-icon>
+          </div>
+          <div class="channel-info-col">
+            <span class="channel-name">Email Support</span>
+            <p class="channel-desc">support&#64;pintu.com</p>
+          </div>
+          <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
+        </a>
+      </section>
+
+      <!-- Interactive FAQ Section -->
+      <section class="faq-section animate__animated animate__fadeIn">
+        <div class="faq-header-row">
+          <h2 class="faq-title">Frequently Asked Questions</h2>
+          <span class="faq-tag">INSTANT ANSWERS</span>
+        </div>
+
+        <div class="faq-accordion-list">
+          @for (faq of faqs; track faq.id) {
+            <div class="faq-card" [class.expanded]="expandedFaqId === faq.id">
+              <div class="faq-question-row" (click)="toggleFaq(faq.id)" role="button" tabindex="0">
+                <div class="faq-q-text-box">
+                  <span class="faq-category-label">{{ faq.category }}</span>
+                  <h4 class="faq-question">{{ faq.question }}</h4>
+                </div>
+                <div class="faq-toggle-icon">
+                  <ion-icon [name]="expandedFaqId === faq.id ? 'chevron-up' : 'chevron-down'"></ion-icon>
+                </div>
+              </div>
+
+              @if (expandedFaqId === faq.id) {
+                <div class="faq-answer-box animate__animated animate__fadeIn">
+                  <p class="faq-answer-text">{{ faq.answer }}</p>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- TAB 2: RAISE A NEW TICKET -->
+    @else if (activeTab === 'create') {
+      <section class="create-ticket-section animate__animated animate__fadeIn">
+        <div class="form-header-box">
+          <h2 class="form-title">Submit a Support Ticket</h2>
+          <p class="form-desc">Provide details of your query and our team will resolve it within 1 hour.</p>
+        </div>
+
+        <form (ngSubmit)="submitTicket()" class="ticket-form">
+          <!-- Topic Selector -->
+          <div class="form-group mb-3">
+            <label class="input-label">Select Issue Category</label>
+            <div class="custom-select-wrapper">
+              <select class="custom-select" [(ngModel)]="ticketForm.category" name="category" required>
+                <option value="Grocery Order Issue">🥦 Grocery Order &amp; Delivery</option>
+                <option value="Ride & Fare Dispute">🛵 Daily Rides &amp; Driver Issue</option>
+                <option value="Payment & Refund">💰 Payment &amp; Refund Status</option>
+                <option value="Account & Profile">👤 Account, Login &amp; Addresses</option>
+                <option value="General Feedback">💬 General App Feedback</option>
+              </select>
+              <ion-icon name="chevron-down" class="select-chevron"></ion-icon>
+            </div>
+          </div>
+
+          <!-- Subject Field -->
+          <div class="form-group mb-3">
+            <label class="input-label">Brief Subject</label>
+            <div class="input-container-modern">
+              <input
+                type="text"
+                class="custom-input"
+                placeholder="e.g. Missing items in order #3928"
+                [(ngModel)]="ticketForm.title"
+                name="title"
+                required />
+            </div>
+          </div>
+
+          <!-- Description Field -->
+          <div class="form-group mb-4">
+            <label class="input-label">Detailed Description</label>
+            <div class="input-container-modern textarea-container">
+              <textarea
+                class="custom-textarea"
+                rows="4"
+                placeholder="Explain the issue with relevant order IDs or details..."
+                [(ngModel)]="ticketForm.description"
+                name="description"
+                required>
+              </textarea>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button
+            type="submit"
+            class="btn-primary-action w-100"
+            [disabled]="isSubmitting || !ticketForm.title.trim() || !ticketForm.description.trim()">
+            @if (isSubmitting) {
+              <ion-spinner name="crescent" class="spinner-small me-2"></ion-spinner>
+              <span>Submitting Ticket...</span>
+            } @else {
+              <ion-icon name="paper-plane-outline" class="me-2 fs-5"></ion-icon>
+              <span>Submit Support Request</span>
+            }
+          </button>
+        </form>
+      </section>
+    }
+
+    <!-- TAB 3: MY TICKETS -->
+    @else if (activeTab === 'tickets') {
+      <section class="my-tickets-section animate__animated animate__fadeIn">
+        @if (isLoadingTickets) {
+          <div class="tickets-skeleton-list">
+            @for (i of [1, 2, 3]; track i) {
+              <div class="ticket-skeleton-card">
+                <ion-skeleton-text animated style="width: 40%; height: 16px; border-radius: 4px; margin-bottom: 8px;"></ion-skeleton-text>
+                <ion-skeleton-text animated style="width: 70%; height: 20px; border-radius: 6px; margin-bottom: 8px;"></ion-skeleton-text>
+                <ion-skeleton-text animated style="width: 30%; height: 14px; border-radius: 4px;"></ion-skeleton-text>
+              </div>
+            }
+          </div>
+        } @else if (tickets && tickets.length > 0) {
+          <div class="tickets-cards-list">
+            @for (ticket of tickets; track ticket.id || ticket.ticket_id || $index) {
+              <div class="ticket-card">
+                <div class="ticket-top-row">
+                  <span class="ticket-id-tag">#{{ ticket.ticket_id || ticket.id }}</span>
+                  <span class="ticket-status-pill" [class.open-pill]="isOpenTicket(ticket)" [class.closed-pill]="!isOpenTicket(ticket)">
+                    {{ isOpenTicket(ticket) ? 'Active / Open' : 'Resolved' }}
+                  </span>
+                </div>
+
+                <h4 class="ticket-title">{{ ticket.title || ticket.subject }}</h4>
+                <p class="ticket-desc">{{ ticket.description || 'Customer inquiry submitted.' }}</p>
+
+                <div class="ticket-footer-row">
+                  <span class="ticket-time">
+                    <ion-icon name="time-outline"></ion-icon>
+                    {{ (ticket.createdAt || ticket.created_at) | date:'dd MMM yyyy, hh:mm a' }}
+                  </span>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="empty-tickets-box">
+            <div class="empty-icon-circle">
+              <ion-icon name="chatbubbles-outline"></ion-icon>
+            </div>
+            <h3 class="empty-title">No Tickets Found</h3>
+            <p class="empty-subtitle">You have not raised any support requests yet. If you ever need help, we are here!</p>
+            <button type="button" class="btn-raise-ticket-cta" (click)="activeTab = 'create'">
+              <ion-icon name="add-circle-outline" class="me-1"></ion-icon>
+              <span>Raise an Issue</span>
+            </button>
+          </div>
+        }
+      </section>
+    }
+
+    <!-- Bottom Nav Spacer -->
+    <div class="bottom-nav-spacer"></div>
+  </main>
 </ion-content>

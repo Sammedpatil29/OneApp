@@ -1,3 +1,14 @@
+<ion-header class="ion-no-border bg-white pt-2">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back-outline" color="dark"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="fw-bold text-dark">Booking Details</ion-title>
+  </ion-toolbar>
+</ion-header>
+
 <ion-content class="bg-light">
 
   @if (isLoading) {

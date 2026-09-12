@@ -1,5 +1,45 @@
-// For information on how to create your own theme, please see:
-// http://ionicframework.com/docs/theming/
-$refresher-icon-color: red;
+:root {
+  /** Pintu Brand Theme Color: #a000e2 **/
+  --app-theme-color: #a000e2;
+  --app-theme-rgb: 160, 0, 226;
+  --app-theme-contrast: #ffffff;
+  --app-theme-shade: #8d00c7;
+  --app-theme-tint: #aa1ae5;
 
+  /** Ionic Global Primary Color Overrides **/
+  --ion-color-primary: #a000e2;
+  --ion-color-primary-rgb: 160, 0, 226;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #8d00c7;
+  --ion-color-primary-tint: #aa1ae5;
 
+  /** Theme Icon Palette **/
+  --app-icon-color: #a000e2;
+
+  /** Grocery & Service Overrides **/
+  --grocery-theme-color: #a000e2;
+  --grocery-theme-color-light: #f8eaff;
+}
+
+/** Theme-based Icon Rules **/
+ion-icon[color="primary"],
+.theme-icon,
+.theme-icon ion-icon {
+  color: var(--app-theme-color, #a000e2) !important;
+}
+
+.text-theme {
+  color: var(--app-theme-color, #a000e2) !important;
+}
+
+.bg-theme {
+  background-color: var(--app-theme-color, #a000e2) !important;
+  color: #ffffff !important;
+}
+
+.btn-theme {
+  background-color: var(--app-theme-color, #a000e2) !important;
+  color: #ffffff !important;
+  border-color: var(--app-theme-color, #a000e2) !important;
+}

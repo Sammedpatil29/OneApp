@@ -1,38 +1,67 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { register } from 'swiper/element/bundle';
+
+register();
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {
-  IonContent,
-  IonHeader,
-  IonIcon,
-  IonTitle,
-  IonToolbar, IonButtons, IonButton, IonSpinner, IonCol, IonRow, IonGrid, IonRefresher, IonRefresherContent, AlertController, IonSkeletonText } from '@ionic/angular/standalone';
-
-import { addIcons } from 'ionicons';
-import { library, playCircle, radio, search, home, cube, bag, receiptOutline, person, personCircle, personCircleOutline, constructOutline, briefcaseOutline, buildOutline, arrowBack, cloudOfflineOutline, locationOutline, mapOutline } from 'ionicons/icons';
-import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle } from '@ionic/angular/standalone';
-import { FooterComponent } from "../../components/footer/footer.component";
-import { Router, RouterLink } from '@angular/router';
-import { AddressComponent } from "../../components/address/address.component";
-import { LocationService } from 'src/app/services/location.service';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { register } from 'swiper/element/bundle';
-import { Platform } from '@ionic/angular';
-import { Location } from '@angular/common';
+import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
-import { CommonService } from 'src/app/services/common.service';
-import { ProfileService } from 'src/app/services/profile.service';
-import { RegisterFcmService } from 'src/app/services/register-fcm.service';
+import {
+  IonHeader,
+  IonToolbar,
+  IonContent,
+  IonRefresher,
+  IonRefresherContent,
+  IonSkeletonText,
+  IonIcon
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import {
+  location,
+  chevronDown,
+  arrowForward,
+  arrowForwardOutline,
+  flashOutline,
+  shieldCheckmarkOutline,
+  sparklesOutline,
+  chatbubbleEllipsesOutline,
+  arrowDownOutline,
+  headsetOutline
+} from 'ionicons/icons';
 import { AuthService } from 'src/app/services/auth.service';
-import { EventsService } from 'src/app/services/events.service';
-import { GroceryService } from 'src/app/services/grocery.service';
-import { Geolocation } from '@capacitor/geolocation';
-import { Observable, forkJoin, of } from 'rxjs';
-import { catchError, finalize, tap } from 'rxjs/operators';
+import { LocationService } from 'src/app/services/location.service';
+import { ProfileService } from 'src/app/services/profile.service';
+import { CommonService } from 'src/app/services/common.service';
+import { FooterComponent } from 'src/app/components/footer/footer.component';
+import { environment } from 'src/environments/environment';
 
+export interface BannerItem {
+  id?: number | string;
+  img?: string;
+  route?: string;
+  title?: string;
+  subtitle?: string;
+  badge?: string;
+  badgeBg?: string;
+  badgeColor?: string;
+  bgGradient?: string;
+  type?: string;
+  term?: string;
+  is_active?: boolean;
+}
 
-declare var google: any;
-register();
+export interface ServiceItem {
+  id?: number | string;
+  title: string;
+  subtitle?: string;
+  img?: string;
+  offers?: string;
+  width?: string;
+  route?: string;
+  category?: string;
+  status?: string;
+  hasImgError?: boolean;
+}
 
 @Component({
   selector: 'app-home',
@@ -40,472 +69,494 @@ register();
   styleUrls: ['./home.page.scss'],
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  encapsulation: ViewEncapsulation.None,
-  imports: [IonSkeletonText, IonRefresherContent, IonRefresher, IonGrid, IonRow, IonCol, IonButton, IonButtons, IonContent, CommonModule, FormsModule, IonIcon, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, FooterComponent, IonTitle, IonToolbar, IonHeader, AddressComponent]
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonHeader,
+    IonToolbar,
+    IonContent,
+    IonRefresher,
+    IonRefresherContent,
+    IonSkeletonText,
+    IonIcon,
+    FooterComponent
+  ]
 })
 export class HomePage implements OnInit {
-  // UI State
-  headerBg = 'rgba(255, 255, 255, 0)';
-  isModalOpen = false;
-  showVideo: boolean = true;
-  isClicked: boolean = true;
-  isLoading: boolean = false;
-  isServiceLoading: boolean = false;
-  isSpecialDataLoading: boolean = false;
-  isBannerLoading: boolean = false;
-  isLocationLoading: boolean = false;
-  isFlashOfferVisible: boolean = false;
-  disableProfileClick: boolean = false;
-  insideServiceArea: boolean = true;
-  // Data
-  token: any = '';
-  banners: any[] = [];
-  slides: any = [];
-  allServices: any;
-  groupedData: { [key: string]: any[] } = {};
-  availableServices: any = [];
-  events: any;
-  groceryList: any;
-  orders: any = [];
-  activeOrderDetails: any;
-  profileData: any = '';
-  metaData: any;
+  headerBg = 'rgba(248, 250, 252, 0.94)';
+  displayLocationName: string = 'Select Location';
+  profileAvatar: string = '';
+  userInitials: string = 'P';
+  orders: any[] = [];
+  token: string = '';
+  isLoadingServices: boolean = true;
 
-  // Location
-  addresses: any[] = [];
-  currentLocation: any;
-  locationData: any;
-  city: any = '';
-  address: any = '';
-  label: any = '';
-  currentCoords: any;
+  banners: BannerItem[] = [
+    {
+      id: 1,
+      badge: '⚡ 10-15 MINS',
+      badgeBg: 'rgba(250, 204, 21, 0.25)',
+      badgeColor: '#fef08a',
+      title: 'Instant Grocery Delivery',
+      subtitle: 'Daily essentials delivered in 10-15 mins with flat ₹100 off.',
+      bgGradient: 'linear-gradient(135deg, #2e0854 0%, #1e1b4b 50%, #4a044e 100%)',
+      route: '/layout/grocery-layout'
+    },
+    {
+      id: 2,
+      badge: '🛵 ZERO SURGE',
+      badgeBg: 'rgba(56, 189, 248, 0.25)',
+      badgeColor: '#7dd3fc',
+      title: 'Daily Commute & Cabs',
+      subtitle: 'Fast bike taxis, autos & cabs at transparent daily flat rates.',
+      bgGradient: 'linear-gradient(135deg, #091e3a 0%, #082f49 50%, #1e1b4b 100%)',
+      route: '/layout/rides'
+    },
+    {
+      id: 3,
+      badge: '🥦 100% FARM FRESH',
+      badgeBg: 'rgba(52, 211, 153, 0.25)',
+      badgeColor: '#a7f3d0',
+      title: 'Fresh Farm Harvest',
+      subtitle: 'Handpicked daily fruits & vegetables with zero compromise.',
+      bgGradient: 'linear-gradient(135deg, #064e3b 0%, #065f46 50%, #134e4a 100%)',
+      route: '/layout/grocery-layout'
+    }
+  ];
 
-  // App Versioning
-  isOld: any;
-  appVersion: any;
-  latestVersion = '';
-  fileName = '';
-  fileUrl = '';
+  bottomBanners: BannerItem[] = [
+    {
+      id: 'bottom-1',
+      badge: '🎁 REFER & EARN',
+      badgeBg: 'rgba(250, 204, 21, 0.25)',
+      badgeColor: '#fef08a',
+      title: 'Earn ₹50 Instant Cash',
+      subtitle: 'Invite friends to Pintu. Both get ₹50 on their 1st delivery!',
+      bgGradient: 'linear-gradient(135deg, #2e0854 0%, #1e1b4b 60%, #4a044e 100%)',
+      route: '/layout/referral'
+    },
+    {
+      id: 'bottom-2',
+      badge: '🥦 FRESH HARVEST',
+      badgeBg: 'rgba(52, 211, 153, 0.25)',
+      badgeColor: '#a7f3d0',
+      title: 'Farm Fresh Produce Daily',
+      subtitle: 'Handpicked daily fruits & vegetables with 10-15 min delivery',
+      bgGradient: 'linear-gradient(135deg, #064e3b 0%, #065f46 60%, #0f766e 100%)',
+      route: '/layout/grocery-layout'
+    }
+  ];
 
-  // Misc
-  backButtonSubscription: any;
-  video = '';
+  allServices: ServiceItem[] = [];
 
   constructor(
     private router: Router,
+    private navCtrl: NavController,
     private authService: AuthService,
-    private groceryService: GroceryService,
-    private registarFcm: RegisterFcmService,
     private locationService: LocationService,
     private profileService: ProfileService,
-    private platform: Platform,
-    private location: Location,
-    private navCtrl: NavController,
-    private commonService: CommonService,
-    private eventService: EventsService,
-    private alertController: AlertController,
-    private fcmService: RegisterFcmService
+    private commonService: CommonService
   ) {
-    addIcons({arrowBack,locationOutline,mapOutline,cloudOfflineOutline,home,buildOutline,receiptOutline,personCircleOutline,briefcaseOutline,constructOutline,library,personCircle,person,search,bag,cube,radio,playCircle});
+    addIcons({
+      location,
+      chevronDown,
+      arrowForward,
+      arrowForwardOutline,
+      flashOutline,
+      shieldCheckmarkOutline,
+      sparklesOutline,
+      chatbubbleEllipsesOutline,
+      arrowDownOutline,
+      headsetOutline
+    });
+  }
+
+  goToSupport() {
+    this.router.navigate(['/layout/support']);
   }
 
   async ngOnInit() {
-    try {
-      this.isLoading = true;
-      this.locationService.location$.subscribe((res:any)=>{
-        if (res) {
-          this.currentLocation = res;
-          this.checkServiceAvailability();
-        }
-      });
+    this.token = (await this.authService.getToken()) || '';
 
-      this.token = await this.authService.getToken();
-
-      if (!this.token) {
-        return;
+    this.locationService.address$.subscribe((addr: string) => {
+      if (addr && addr.trim()) {
+        this.displayLocationName = addr;
       }
-      this.fcmService.initPush();
-
-      // Using forkJoin to run API calls in parallel
-      forkJoin({
-        home: this.homeData(),
-        orders: this.getActiveOrders()
-      }).pipe(
-        finalize(() => {
-          // Delay slightly to allow DOM to paint properly
-          setTimeout(() => this.isLoading = false, 300);
-        })
-      ).subscribe();
-      
-
-    } catch (error) {
-      console.error('❌ Error initializing home:', error);
-      this.isLoading = false;
-    }
-  }
-
-  checkServiceAvailability() {
-    if (!this.currentLocation || !this.currentLocation.lat || !this.currentLocation.lng) {
-      this.insideServiceArea = false;
-      return;
-    }
-
-    this.locationService.getPolygonData().subscribe((res:any)=>{
-      if (res && res.data && res.data.polygon) {
-        const polygonCoords = res.data.polygon.map((point:any) => ({ lat: point.lat, lng: point.lng }));
-        const userLocation = { lat: this.currentLocation.lat, lng: this.currentLocation.lng };
-        this.insideServiceArea = this.isPointInPolygon(userLocation, polygonCoords);
-      } else {
-        this.insideServiceArea = false;
-      }
-    }, error => {
-      console.error('Error fetching polygon data:', error);
-      this.insideServiceArea = false;
     });
-  }
 
-  isPointInPolygon(point: any, polygon: any[]): boolean {
-    let isInside = false;
-    const x = point.lat, y = point.lng;
-
-    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-      if (((polygon[i].lng > y) !== (polygon[j].lng > y)) &&
-          (x < (polygon[j].lat - polygon[i].lat) * (y - polygon[i].lng) / (polygon[j].lng - polygon[i].lng) + polygon[i].lat)) {
-        isInside = !isInside;
+    this.locationService.city$.subscribe((city: string) => {
+      if (city && city.trim() && this.displayLocationName === 'Select Location') {
+        this.displayLocationName = city;
       }
+    });
+
+    try {
+      this.locationService.getCurrentPosition();
+    } catch (e) {
+      console.warn('Could not auto-fetch current GPS position', e);
     }
-    return isInside;
+
+    if (this.token) {
+      this.loadUserProfile();
+      this.loadHomeData();
+      this.loadActiveOrders();
+    } else {
+      this.loadHomeData();
+    }
   }
 
-  ionViewDidEnter() {
-    const localStr = localStorage.getItem('location');
-    if (localStr) {
-      try {
-        const storedLocation = JSON.parse(localStr);
-        console.log('✅ Using Location from LocalStorage');
-        this.locationService.setAddress(storedLocation);
-      } catch (e) {}
+  onScroll(event: any) {
+    const scrollTop = event?.detail?.scrollTop || 0;
+    if (scrollTop > 20) {
+      this.headerBg = 'rgba(255, 255, 255, 0.98)';
+    } else {
+      this.headerBg = 'rgba(248, 250, 252, 0.94)';
     }
-  }
-
-  // --- Data Fetching ---
-
-  homeData(): Observable<any> {
-    this.sendFcmToken();
-    return this.commonService.getHomeData(this.token).pipe(
-      tap((res: any) => {
-        this.banners = res.data.banners;
-        this.allServices = res.data.services;
-        this.slides = this.banners;
-        this.addresses = res.data.addresses;
-        this.groupedData = this.groupByCategory(this.allServices);
-        
-        this.resolveUserLocation();
-      }),
-      catchError(error => {
-        console.error('Error fetching home data:', error);
-        return of(null); // Let forkJoin complete
-      })
-    );
   }
 
   handleRefresh(event: any) {
-    // Refresh both home data and active orders on pull-to-refresh
-    forkJoin({
-      home: this.homeData(),
-      orders: this.getActiveOrders()
-    }).subscribe({
-      next: () => event.target.complete(),
+    if (this.token) {
+      this.loadUserProfile();
+      this.loadHomeData();
+      this.loadActiveOrders();
+    } else {
+      this.loadHomeData();
+    }
+    setTimeout(() => {
+      event.target.complete();
+    }, 800);
+  }
+
+  loadUserProfile() {
+    this.profileService.getProfileData(this.token).subscribe({
+      next: (res: any) => {
+        const user = res?.user || res?.data || res || {};
+        const name = user.first_name || user.name || '';
+        this.userInitials = name.charAt(0).toUpperCase() || 'P';
+        this.profileAvatar = user.profile_image || '';
+      },
+      error: () => {}
+    });
+  }
+
+  loadHomeData() {
+    this.isLoadingServices = true;
+    this.commonService.getHomeData(this.token).subscribe({
+      next: (res: any) => {
+        const data = res?.data || res || {};
+        const backendBanners = data?.banners || [];
+        if (Array.isArray(backendBanners) && backendBanners.length > 0) {
+          const activeBanners = backendBanners.filter((b: any) => b.is_active !== false);
+          if (activeBanners.length > 0) {
+            this.banners = activeBanners;
+            if (activeBanners.length > 2) {
+              this.bottomBanners = activeBanners.slice(1, 3);
+            }
+          }
+        }
+        const services = data?.services || (Array.isArray(data) ? data : []);
+        if (Array.isArray(services) && services.length > 0) {
+          const active = services.filter((s: any) => s.status === 'active' || !s.status);
+          if (active.length > 0) {
+            this.allServices = active;
+          }
+        }
+        this.isLoadingServices = false;
+      },
       error: () => {
-        event.target.complete();
+        // Graceful fallback to location service active services
+        this.locationService.getData().subscribe({
+          next: (fallbackRes: any) => {
+            const fallbackData = fallbackRes?.data || fallbackRes || [];
+            if (Array.isArray(fallbackData) && fallbackData.length > 0) {
+              const active = fallbackData.filter((s: any) => s.status === 'active' || !s.status);
+              if (active.length > 0) {
+                this.allServices = active;
+              }
+            }
+            this.isLoadingServices = false;
+          },
+          error: () => {
+            this.isLoadingServices = false;
+            if (this.allServices.length === 0) {
+              this.allServices = [
+                {
+                  id: 1,
+                  title: 'Pintu Grocery',
+                  subtitle: '10-15 Min Instant Delivery',
+                  offers: '⚡ 10-15 MINS',
+                  img: '',
+                  category: 'grocery',
+                  route: '/layout/grocery-layout'
+                },
+                {
+                  id: 2,
+                  title: 'Daily Commute',
+                  subtitle: 'Bike, Auto & Cabs',
+                  offers: 'ZERO SURGE',
+                  img: '',
+                  category: 'rides',
+                  route: '/layout/rides'
+                }
+              ];
+            }
+          }
+        });
       }
     });
   }
 
-  sendFcmToken(){
-    let params = {
-      "fcm_token": localStorage.getItem('FcmToken')
-    }
-    this.commonService.sendFcmToken(params, this.token).subscribe((res: any) => {
-      console.log(res)
-    });
-
-  }
-
-  getActiveOrders(): Observable<any> {
-    return this.commonService.getActiveOrders(this.token).pipe(
-      tap((res: any) => {
-        this.orders = res.data;
-        this.activeOrderDetails = res.data;
-      }),
-      catchError(error => {
-        console.error('Error fetching active orders:', error);
-        return of(null); // Let forkJoin complete
-      })
-    );
-  }
-
-  getServicesData() {
-    this.isServiceLoading = true;
-    this.locationService.getData().subscribe((res) => {
-      this.allServices = res;
-      this.groupedData = this.groupByCategory(this.allServices);
-      console.log(this.groupedData);
-      this.isServiceLoading = false;
-    }, error => {
-
-    });
-  }
-
-  checkServices() {
-    this.allServices.forEach((item: any) => {
-      this.availableServices.push(item.title);
-    });
-  }
-
-  async getAppVersion() {
-    const version = await this.profileService.getAppVersion();
-    this.appVersion = version;
-    console.log(this.appVersion);
-  }
-
-  // --- Location Logic ---
-
-  async resolveUserLocation() {
-    let storedLocation:any;
-    const sub = this.locationService.location$.subscribe((res:any)=>{
-      storedLocation = res;
-    });
-    sub.unsubscribe();
-
-    if (!storedLocation) {
-      const localStr = localStorage.getItem('location');
-      if (localStr) {
-        try {
-          storedLocation = JSON.parse(localStr);
-        } catch(e) {}
+  loadActiveOrders() {
+    this.commonService.getActiveOrders(this.token).subscribe({
+      next: (res: any) => {
+        this.orders = res?.data || (Array.isArray(res) ? res : []);
+      },
+      error: () => {
+        this.orders = [];
       }
+    });
+  }
+
+  /**
+   * User-defined count-based Bento layout rules:
+   * - 1 service  -> 100% width (wide)
+   * - 2 services -> 50% width 2 in inline (normal)
+   * - > 2 services -> dynamic bento mosaic
+   */
+  getMosaicTileType(index: number, total: number): 'mosaic-tile-tall' | 'mosaic-tile-normal' | 'mosaic-tile-wide' {
+    // 1 service: 100% width
+    if (total === 1) {
+      return 'mosaic-tile-wide';
     }
 
-    if (storedLocation) {
-      console.log('✅ Using Location from LocalStorage');
-      this.setAndStoreLocation(storedLocation);
+    // 2 services: 50% width, 2 in inline
+    if (total === 2) {
+      return 'mosaic-tile-normal';
+    }
+
+    // More than 2 services: apply Bento to real data
+    if (total === 3) {
+      return index === 0 ? 'mosaic-tile-tall' : 'mosaic-tile-normal';
+    }
+
+    if (total === 4) {
+      if (index === 0) return 'mosaic-tile-tall';
+      if (index === 1 || index === 2) return 'mosaic-tile-normal';
+      return 'mosaic-tile-wide';
+    }
+
+    if (total === 5) {
+      return index === 0 ? 'mosaic-tile-tall' : 'mosaic-tile-normal';
+    }
+
+    if (total === 6) {
+      if (index === 0) return 'mosaic-tile-tall';
+      if (index === 5) return 'mosaic-tile-wide';
+      return 'mosaic-tile-normal';
+    }
+
+    // 7 or more: alternating interlocking bento rhythm
+    const mod = index % 7;
+    if (mod === 0) return 'mosaic-tile-tall';
+    if (mod === 3 || mod === 6) return 'mosaic-tile-wide';
+    return 'mosaic-tile-normal';
+  }
+
+  isImageValid(service: ServiceItem): boolean {
+    if (!service?.img) return false;
+    const img = String(service.img).trim();
+    if (!img || img.includes('example.com') || img === 'img.jpg' || img === 'null' || img === 'undefined') {
+      return false;
+    }
+    return true;
+  }
+
+  getServiceImgUrl(service: ServiceItem): string {
+    if (!service?.img) return '';
+    const img = String(service.img).trim();
+    if (img.startsWith('http://') || img.startsWith('https://') || img.startsWith('assets/')) {
+      return img;
+    }
+    if (img.startsWith('/')) {
+      return `${environment.apiUrl}${img}`;
+    }
+    return `${environment.apiUrl}/${img}`;
+  }
+
+  hasOffer(service: ServiceItem): boolean {
+    if (!service?.offers) return false;
+    const o = String(service.offers).trim().toLowerCase();
+    return o !== '' && o !== 'nothing' && o !== 'null' && o !== 'undefined';
+  }
+
+  getServiceIcon(service: ServiceItem): string {
+    const title = (service?.title || '').toLowerCase();
+    const cat = (service?.category || '').toLowerCase();
+
+    if (title.includes('grocery') || title.includes('vegitables') || title.includes('vegetable') || title.includes('milk') || cat.includes('daily')) {
+      return '🥦';
+    }
+    if (title.includes('ride') || title.includes('cab') || title.includes('auto') || title.includes('commute')) {
+      return '🛵';
+    }
+    if (title.includes('food') || title.includes('dineout') || title.includes('restaurant') || title.includes('dining')) {
+      return '🍔';
+    }
+    if (title.includes('doctor') || title.includes('medicine') || title.includes('lab') || cat.includes('health')) {
+      return '💊';
+    }
+    if (title.includes('laundry')) {
+      return '🧺';
+    }
+    if (title.includes('history') || title.includes('order') || title.includes('track')) {
+      return '📦';
+    }
+    return '⚡';
+  }
+
+  getServiceBg(service: ServiceItem): string {
+    const title = (service?.title || '').toLowerCase();
+    if (title.includes('grocery') || title.includes('vegitables')) return 'rgba(16, 185, 129, 0.12)';
+    if (title.includes('ride') || title.includes('cab') || title.includes('auto')) return 'rgba(59, 130, 246, 0.12)';
+    if (title.includes('food') || title.includes('dineout') || title.includes('dining')) return 'rgba(249, 115, 22, 0.12)';
+    if (title.includes('doctor') || title.includes('medicine')) return 'rgba(168, 85, 247, 0.12)';
+    if (title.includes('history') || title.includes('track')) return 'rgba(160, 0, 226, 0.12)';
+    return 'rgba(160, 0, 226, 0.1)';
+  }
+
+  getServiceCardGradient(service: ServiceItem): string {
+    const title = (service?.title || '').toLowerCase();
+    if (title.includes('grocery') || title.includes('vegitables')) {
+      return 'linear-gradient(155deg, #ffffff 0%, #f0fdf4 100%)';
+    }
+    if (title.includes('ride') || title.includes('cab') || title.includes('auto')) {
+      return 'linear-gradient(155deg, #ffffff 0%, #eff6ff 100%)';
+    }
+    if (title.includes('food') || title.includes('dineout') || title.includes('dining')) {
+      return 'linear-gradient(155deg, #ffffff 0%, #fff7ed 100%)';
+    }
+    if (title.includes('doctor') || title.includes('medicine')) {
+      return 'linear-gradient(155deg, #ffffff 0%, #fdf4ff 100%)';
+    }
+    if (title.includes('history') || title.includes('track')) {
+      return 'linear-gradient(155deg, #ffffff 0%, #faf5ff 100%)';
+    }
+    return '#ffffff';
+  }
+
+  navigateToService(service: ServiceItem) {
+    if (!service) return;
+    const route = (service.route || '').trim();
+
+    if (route.startsWith('http://') || route.startsWith('https://')) {
+      window.open(route, '_system');
       return;
     }
 
-    if (this.addresses && this.addresses.length > 0) {
-      console.log('✅ Using Primary Address from API');
-      const primaryAddress = {
-        lat: this.addresses[0].lat,
-        lng: this.addresses[0].lng,
-        address: this.addresses[0].address,
-        id: this.addresses[0].id,
-        label: this.addresses[0].label
-      };
-
-      this.setAndStoreLocation(primaryAddress);
+    if (route === 'grocery' || route === '/layout/grocery' || route === '/layout/grocery-layout' || route === '/grocery') {
+      this.router.navigate(['/layout/grocery-layout']);
       return;
     }
 
-    // CHECK 3: GPS / Current Position
-    console.log('📍 No saved data. Fetching GPS...');
-    await this.fetchGPSLocation();
-  }
+    if (route === 'rides' || route === 'ride' || route === 'cab' || route === '/layout/rides' || route === '/layout/ride') {
+      this.router.navigate(['/layout/rides']);
+      return;
+    }
 
-  async fetchGPSLocation() {
-    try {
-      // Check permissions first (Optional but recommended)
-      const permission = await Geolocation.checkPermissions();
+    if (route === 'food' || route === 'dineout' || route === '/layout/dineout-layout') {
+      this.router.navigate(['/layout/dineout-layout']);
+      return;
+    }
 
-      if (permission.location !== 'granted') {
-        const request = await Geolocation.requestPermissions();
-        if (request.location !== 'granted') throw new Error('PermissionDenied');
+    if (route === 'history' || route === '/layout/history') {
+      this.router.navigate(['/layout/history']);
+      return;
+    }
+
+    if (route.startsWith('/')) {
+      this.router.navigate([route]);
+    } else if (route) {
+      this.router.navigate([`/layout/${route}`]);
+    } else {
+      const title = (service.title || '').toLowerCase();
+      if (title.includes('grocery') || title.includes('vegitables') || title.includes('milk')) {
+        this.router.navigate(['/layout/grocery-layout']);
+      } else if (title.includes('ride') || title.includes('cab') || title.includes('auto') || title.includes('commute')) {
+        this.router.navigate(['/layout/rides']);
+      } else if (title.includes('dineout') || title.includes('food') || title.includes('dining')) {
+        this.router.navigate(['/layout/dineout-layout']);
+      } else if (title.includes('history') || title.includes('order') || title.includes('track')) {
+        this.router.navigate(['/layout/history']);
       }
-
-      // Get Position
-      const coordinates = await Geolocation.getCurrentPosition({
-        enableHighAccuracy: true,
-        timeout: 10000, // Wait max 10s
-        maximumAge: 0   // Do not use cached position
-      });
-
-      console.log('✅ GPS Success:', coordinates);
-
-      let address = 'Current Location';
-      try {
-        const result = await this.reverseGeocode(coordinates.coords.latitude, coordinates.coords.longitude);
-        if (result) {
-          address = result;
-        }
-      } catch (e) {
-        console.error('Reverse geocoding error:', e);
-      }
-
-      // Create location object
-      const gpsLocation = {
-        lat: coordinates.coords.latitude,
-        lng: coordinates.coords.longitude,
-        address: address,
-      };
-
-      this.setAndStoreLocation(gpsLocation);
-
-    } catch (error: any) {
-      console.error('GPS Error:', error);
-      this.insideServiceArea = false;
     }
   }
 
-  reverseGeocode(lat: number, lng: number): Promise<string> {
-    return new Promise((resolve, reject) => {
-      if (typeof google === 'undefined' || !google.maps) {
-        reject('Google Maps API not loaded');
-        return;
-      }
-      const geocoder = new google.maps.Geocoder();
-      const latlng = { lat, lng };
-      geocoder.geocode({ location: latlng }, (results: any, status: any) => {
-        if (status === 'OK' && results[0]) {
-          resolve(results[0].formatted_address);
-        } else {
-          reject('Geocoder failed due to: ' + status);
-        }
-      });
-    });
+  navigateToBanner(banner: BannerItem) {
+    if (!banner) return;
+    const route = (banner.route || '').trim();
+    if (!route) return;
+
+    if (route.startsWith('http://') || route.startsWith('https://')) {
+      window.open(route, '_system');
+      return;
+    }
+
+    if (route === 'grocery' || route === '/layout/grocery' || route === '/layout/grocery-layout' || route === '/grocery') {
+      this.router.navigate(['/layout/grocery-layout']);
+      return;
+    }
+
+    if (route === 'rides' || route === 'ride' || route === 'cab' || route === '/layout/rides' || route === '/layout/ride') {
+      this.router.navigate(['/layout/rides']);
+      return;
+    }
+
+    if (route === 'food' || route === 'dineout' || route === '/layout/dineout-layout') {
+      this.router.navigate(['/layout/dineout-layout']);
+      return;
+    }
+
+    if (route.startsWith('/')) {
+      this.router.navigate([route]);
+    } else {
+      this.router.navigate([`/layout/${route}`]);
+    }
   }
 
-  setAndStoreLocation(data: any) {
-    this.locationService.setAddress(data);
+  getBannerImgUrl(banner: BannerItem): string {
+    if (!banner?.img) return '';
+    const img = String(banner.img).trim();
+    if (img.startsWith('http://') || img.startsWith('https://') || img.startsWith('assets/')) {
+      return img;
+    }
+    if (img.startsWith('/')) {
+      return `${environment.apiUrl}${img}`;
+    }
+    return `${environment.apiUrl}/${img}`;
   }
 
-  receiveData(data: any) {
-    this.city = data.city;
-    this.address = data.address;
+  isBannerImageValid(banner: BannerItem): boolean {
+    if (!banner?.img) return false;
+    const img = String(banner.img).trim();
+    if (!img || img.includes('example.com') || img === 'null' || img === 'undefined') {
+      return false;
+    }
+    return true;
   }
 
   openLocation() {
-    this.navCtrl.navigateForward('/layout/address-list', {
-      state: { data: 'home' }
-    });
-  }
-
-  // --- Navigation ---
-
-  navigateTo(route: any) {
-    console.log(`/layout/${route}`);
-    this.navCtrl.navigateForward(`/layout/${route}`, {
-      animated: false
-    });
-  }
-
-  navigateFromSlide(route: any) {
-    this.navCtrl.navigateForward(`${route}`);
+    this.router.navigate(['/layout/address-list']);
   }
 
   goToProfile() {
-    console.log('Navigating to profile...');
-    this.navCtrl.navigateForward('/layout/profile', {
-      animated: false
-    });
+    this.router.navigate(['/layout/profile']);
   }
 
   goToOrderDetails(orderId: any) {
-    this.navCtrl.navigateForward('/layout/example/history')
-    // let orderDetails;
-    // this.orders.forEach((item: any) => {
-    //   let details = JSON.parse(item.details);
-    //   if (details.orderId == orderId) {
-    //     orderDetails = item;
-    //   }
-    // });
-    // this.navCtrl.navigateRoot('/layout/track-order', {
-    //   state: {
-    //     orderDetails: orderDetails
-    //   }
-    // });
-  }
-
-  
-
-  gotoGrocery() {
-    this.navCtrl.navigateForward('/layout/grocery');
-  }
-
-  gotoEvents() {
-    this.navCtrl.navigateForward('/layout/events', {
-      animationDirection: 'forward',
-    });
-  }
-
-  goBack() {
-    this.isModalOpen = false;
-    console.log('Back button clicked');
-  }
-
-  // --- UI Interaction ---
-
-  onScroll(event: any) {
-    const scrollTop = event.detail.scrollTop;
-    const maxScroll = 150; // point at which it becomes fully white
-
-    // Calculate opacity between 0 and 1
-    let opacity = Math.min(scrollTop / maxScroll, 1);
-
-    this.headerBg = `rgba(255, 255, 255, ${opacity})`;
-  }
-
-  handleModalClose() {
-    this.isModalOpen = false;
-  }
-
-  closeBubble() {
-    this.showVideo = false;
-  }
-
-  closeFlashOffer() {
-    this.isFlashOfferVisible = false;
-  }
-
-  // --- Helpers ---
-
-  groupByCategory(data: any[]) {
-    // Correct logic: Just return the reduced object
-    return data.reduce((acc, item) => {
-      const category = item.category;
-      if (!acc[category]) {
-        acc[category] = [];
-      }
-      acc[category].push(item);
-      
-      // If you want to shuffle the items WITHIN the category:
-      // this.shuffleArray(acc[category]); 
-      
-      return acc;
-    }, {} as { [key: string]: any[] });
-  }
-
-  shuffleArray(array: any[]) {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
+    if (orderId) {
+      this.router.navigate([`/layout/grocery-layout/grocery-order-details/${orderId}`]);
+    } else {
+      this.router.navigate(['/layout/history']);
     }
-    return array;
-  }
-
-  compareVersions(versionA: string, versionB: string): number {
-    const aParts = versionA.trim().split('.').map(Number);
-    const bParts = versionB.trim().split('.').map(Number);
-
-    const maxLen = Math.max(aParts.length, bParts.length);
-
-    for (let i = 0; i < maxLen; i++) {
-      const a = aParts[i] || 0;
-      const b = bParts[i] || 0;
-
-      if (a > b) return -1;
-      if (a < b) return 1;
-    }
-
-    return 0; // Versions are equal
   }
 }

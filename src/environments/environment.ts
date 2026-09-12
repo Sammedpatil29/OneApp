@@ -4,15 +4,9 @@
 
 export const environment = {
   production: false,
-  // apiUrl: 'http://localhost:3000'
-  apiUrl: 'https://pintu-api.democompany.in.net'
+  apiUrl: 'http://localhost:3000',
+  socketUrl: 'http://localhost:3000',
+  googleMapsApiKey: 'AIzaSyA85HFedGjgP12MG_dvR-MVgooWTcJNIb0',
+  razorpayKeyId: 'rzp_test_TaT9JyM7hmv5t1',
+  version: '0.0.3 (Development)'
 };
-
-/*
- * For easier debugging in development mode, you can import the following file
- * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
- *
- * This import should be commented out in production mode because it will have a negative impact
- * on performance if an error is thrown.
- */
-// import 'zone.js/plugins/zone-error';  // Included with Angular CLI.

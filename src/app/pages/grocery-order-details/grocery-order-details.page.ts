@@ -14,7 +14,8 @@ import {
   mapOutline,
   checkmarkOutline,
   closeOutline,
-  arrowBack
+  arrowBack,
+  arrowBackOutline
 } from 'ionicons/icons';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GroceryService } from 'src/app/services/grocery.service';
@@ -97,7 +98,7 @@ export class GroceryOrderDetailsPage implements OnInit {
     addIcons({ 
       checkmarkCircle, timeOutline, bicycleOutline, homeOutline, 
       receiptOutline, chevronBackOutline, chatbubbleEllipsesOutline,
-      cubeOutline, checkmarkDoneCircleOutline, closeCircleOutline, star, callOutline, mapOutline, checkmarkOutline, closeOutline, arrowBack 
+      cubeOutline, checkmarkDoneCircleOutline, closeCircleOutline, star, callOutline, mapOutline, checkmarkOutline, closeOutline, arrowBack, arrowBackOutline 
     });
   }
 

@@ -1,75 +1,136 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { EmailValidator, FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonCardTitle, IonInput, IonText, IonLabel, IonItem, IonImg, IonSpinner, IonToast, IonCardSubtitle, IonApp, IonCard, IonCardContent, IonCardHeader } from '@ionic/angular/standalone';
+import { FormsModule } from '@angular/forms';
+import {
+  IonContent,
+  IonIcon,
+  IonSpinner,
+  IonToast
+} from '@ionic/angular/standalone';
 import { NavController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { arrowBack, chevronBack, timeOutline, personOutline, mailOutline, arrowForward } from 'ionicons/icons';
+import {
+  arrowBack,
+  chevronBack,
+  timeOutline,
+  personOutline,
+  mailOutline,
+  mail,
+  callOutline,
+  arrowForwardOutline,
+  checkmarkCircleOutline,
+  alertCircleOutline,
+  lockClosedOutline,
+  shieldCheckmarkOutline,
+  createOutline,
+  keypadOutline,
+  logoWhatsapp
+} from 'ionicons/icons';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
-import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
 import { NgOtpInputModule } from 'ng-otp-input';
+import { register } from 'swiper/element/bundle';
+
+register();
+
+export interface OnboardingSlide {
+  badge: string;
+  badgeBg: string;
+  badgeColor: string;
+  title: string;
+  highlight: string;
+  subtitle: string;
+  image: string;
+  chips: string[];
+}
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
   standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [
     NgOtpInputModule,
     IonToast,
     IonSpinner,
-    IonLabel,
-    IonInput,
     IonIcon,
-    IonButton,
-    IonButtons,
     IonContent,
-    IonHeader,
-    IonToolbar,
     CommonModule,
     FormsModule,
   ],
 })
-export class LoginPage implements OnInit {
-  phoneNumber = '';
-  verificationCode = '';
-  verificationId: string = '';
-  codeSent = false;
-  user: any = null;
+export class LoginPage implements OnInit, OnDestroy {
+  // Step navigation: 'email' -> 'otp' -> 'register'
+  step: 'email' | 'otp' | 'register' = 'email';
 
-  otpSent: boolean = false;
-  
-  // FIX: Initialize as true immediately to show loader while checking storage
-  verifyingToken: boolean = true; 
-  
-  mobileNumber = '';
-  otp = '';
-  enteredOtp = '';
-  users: any;
-  showRegisterForm: boolean = false;
-  fullName = '';
-  email = '';
-  isLoading: boolean = false;
-  toastMessage = '';
-  isToastOpen: boolean = false;
+  // 65% Top Onboarding Showcase Slides
+  onboardingSlides: OnboardingSlide[] = [
+    {
+      badge: '⚡ 10-15 MIN DELIVERY',
+      badgeBg: 'rgba(250, 204, 21, 0.2)',
+      badgeColor: '#fde047',
+      title: 'Everyday Needs,',
+      highlight: 'Delivered in Minutes',
+      subtitle: 'Groceries, snacks, daily essentials & more delivered to your doorstep at lightning speed.',
+      image: 'assets/icons/vecteezy_young-delivery-man-in-a-yellow-uniform-flying-to-deliver-an_55983285.png',
+      chips: ['⚡ 10-15 Mins', '🛍️ 5,000+ Products', '🛵 Fast Delivery']
+    },
+    {
+      badge: '🛵 RIDES & COMMUTE',
+      badgeBg: 'rgba(168, 85, 247, 0.2)',
+      badgeColor: '#d8b4fe',
+      title: 'Fast & Affordable',
+      highlight: 'Daily Rides & Taxis',
+      subtitle: 'Instant bike taxis, autos & verified cabs with fair fares and zero surge shocks.',
+      image: 'assets/icons/vecteezy_young-delivery-man-in-a-yellow-uniform-flying-to-deliver-an_55983285.png',
+      chips: ['🛵 Bike Taxi', '🛺 Auto', '🚗 Cabs', '🛡️ Safe Rides']
+    },
+    {
+      badge: '🥦 FRESH GROCERIES',
+      badgeBg: 'rgba(52, 211, 153, 0.2)',
+      badgeColor: '#6ee7b7',
+      title: 'Farm Fresh Fruits &',
+      highlight: 'Daily Vegetables',
+      subtitle: 'Handpicked fresh vegetables and fruits delivered in clean hygienic packaging.',
+      image: 'assets/icons/wired-lineal-526-paper-bag-vegetables-hover-pinch.webp',
+      chips: ['🌿 100% Farm Fresh', '🏷️ Best Prices', '✨ Handpicked']
+    }
+  ];
+
+  // Input models
+  email: string = '';
+  enteredOtp: string = '';
+  fullName: string = '';
+  phoneNumber: string = '';
+
+  // State flags
+  verifyingToken: boolean = false;
   isSendingOtp: boolean = false;
-  intervalId: any;
-  intervalIdforCount: any;
+  isVerifyingOtp: boolean = false;
+  isLoading: boolean = false;
+
+  // Countdown timer
+  timer: number = 45;
+  intervalIdforCount: any = null;
+
+  // Toast feedback
+  toastMessage: string = '';
+  isToastOpen: boolean = false;
   otpVerificationMessage: string = '';
-  timer = 45
-  tokenDecoded: any;
-  token: any;
 
   otpConfig = {
     length: 6,
     inputStyles: {
-      width: '45px',
+      width: '44px',
       height: '50px',
-      'font-size': '18px',
-      margin: '0 6px',
-      'border-radius': '8px',
-      border: '1px solid black',
+      'font-size': '20px',
+      'font-weight': '700',
+      margin: '0 4px',
+      'border-radius': '12px',
+      border: '1.5px solid #cbd5e1',
+      background: '#f8fafc',
+      'text-align': 'center'
     },
   };
 
@@ -78,308 +139,200 @@ export class LoginPage implements OnInit {
     private authService: AuthService,
     private router: Router
   ) {
-    addIcons({arrowBack,timeOutline,personOutline,mailOutline,arrowForward,chevronBack});
+    addIcons({
+      arrowBack,
+      chevronBack,
+      timeOutline,
+      personOutline,
+      mailOutline,
+      mail,
+      callOutline,
+      arrowForwardOutline,
+      checkmarkCircleOutline,
+      alertCircleOutline,
+      lockClosedOutline,
+      shieldCheckmarkOutline,
+      createOutline,
+      keypadOutline,
+      logoWhatsapp
+    });
   }
 
   async ngOnInit() {
-    this.verifyingToken = true;
-    // FIX: Removed the 2000ms setTimeout. This was causing the slow startup.
-    this.token = await this.authService.getToken();
-    console.log(this.token);
-    
-    if (this.token) {
-      this.verifyToken();
-    } else {
-      // No token found, stop loading and show login screen immediately
-      this.verifyingToken = false;
-    }
-  }
-
-  async verifyToken() {
-    if (this.token) {
+    if (this.authService.hasToken()) {
       this.verifyingToken = true;
-      this.authService.verifyToken(this.token).subscribe(
-        (res: any) => {
-          console.log(res);
-          if (res.valid == true) {
-            // Token is valid, go to home. 
-            // verifyingToken stays true so user doesn't see login screen flash before nav.
-            this.navCtrl.navigateRoot('/layout/example/home');
-          } else {
-            // Token invalid, show login
-            this.verifyingToken = false;
-          }
-        },
-        (error) => {
-          // Error checking token, show login
-          console.error('Token verification failed', error);
-          this.verifyingToken = false;
-        }
-      );
-    } else {
-       this.verifyingToken = false;
+      this.navCtrl.navigateRoot('/layout/home');
+      return;
+    }
+    this.verifyingToken = false;
+  }
+
+  ngOnDestroy() {
+    if (this.intervalIdforCount) {
+      clearInterval(this.intervalIdforCount);
     }
   }
 
-  async sendVerification() {
-    this.otpVerificationMessage = 'Verify Otp'
-    FirebaseAuthentication.addListener('phoneCodeSent', (event) => {
-      this.verificationId = event.verificationId;
-      console.log('✅ Verification ID received:', this.verificationId);
-    });
-
-    FirebaseAuthentication.addListener('phoneVerificationFailed', (event) => {
-      console.error('❌ Verification failed event:', event);
-      this.isSendingOtp = false;
-      this.isToastOpen = true;
-      this.toastMessage = `❌ OTP send failed. Reason: ${
-        event?.message || 'Unknown error'
-      }`;
-      setTimeout(() => {
-        this.isToastOpen = false;
-      }, 3000);
-      clearInterval(this.intervalId);
-    });
-
-    try {
-      this.isSendingOtp = true;
-      this.verificationId = '';
-      const result = await FirebaseAuthentication.signInWithPhoneNumber({
-        phoneNumber: `+91${this.phoneNumber}`,
-      });
-      console.log('✅ SMS code sent:', result);
-      this.intervalId = setInterval(() => {
-        console.log('interval running');
-        if (this.verificationId != '') {
-          this.otpSent = true;
-          this.timer = 45
-          this.intervalIdforCount = setInterval(()=> {
-            if(this.timer != 0){
-              this.timer = this.timer - 1
-            } else {
-              clearInterval(this.intervalIdforCount)
-            }
-          },1000)
-          this.isSendingOtp = false;
-          this.isToastOpen = true;
-          this.toastMessage = `OTP sent successfully`;
-          clearInterval(this.intervalId);
-          setTimeout(() => {
-            this.isToastOpen = false;
-          }, 3000);
-        }
-      }, 100);
-    } catch (e: any) {
-      this.isSendingOtp = false;
-      this.isToastOpen = true;
-      this.toastMessage = `Failed to send Otp, ${e}`;
-      clearInterval(this.intervalId);
-      setTimeout(() => {
-        this.isToastOpen = false;
-      }, 3000);
-
-      const code = e.code || e.message || 'unknown';
-
-      switch (code) {
-        case 'auth/invalid-verification-code':
-          alert('🚫 The OTP you entered is incorrect. Please try again.');
-          break;
-
-        case 'auth/code-expired':
-          alert('⌛ The OTP has expired. Please request a new one.');
-          break;
-
-        case 'auth/invalid-verification-id':
-          alert(
-            '⚠️ Invalid verification session. Please try restarting the login.'
-          );
-          break;
-
-        case 'auth/missing-verification-code':
-          alert('🔢 Please enter the OTP.');
-          break;
-
-        case 'auth/network-request-failed':
-          alert('🌐 Network error. Please check your internet connection.');
-          break;
-
-        default:
-          alert('❌ Verification failed. Please try again.');
-          break;
-      }
-    }
+  private showToast(msg: string) {
+    this.toastMessage = msg;
+    this.isToastOpen = true;
+    setTimeout(() => {
+      this.isToastOpen = false;
+    }, 3000);
   }
 
-  async verifyOTP() {
-    try {
-      this.isLoading = true;
-      this.otpVerificationMessage = 'Verifying Otp';
-      const result = await FirebaseAuthentication.confirmVerificationCode({
-        verificationId: this.verificationId,
-        verificationCode: this.verificationCode,
-      });
+  isValidEmail(): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email.trim());
+  }
 
-      console.log('✅ OTP verification successful!', result);
-      this.isLoading = false;
-      this.otpVerificationMessage = '';
-      this.checkUser(); 
-    } catch (error: any) {
-      this.isLoading = false;
-      this.otpVerificationMessage = '';
-      console.error('❌ OTP verification failed:', error);
-
-      const code = error.code || error.message || 'unknown';
-
-      switch (code) {
-        case 'auth/invalid-verification-code':
-          this.isToastOpen = true;
-          this.toastMessage = `🚫 The OTP you entered is incorrect. Please try again.`;
-          setTimeout(() => {
-            this.isToastOpen = false;
-          }, 3000);
-          break;
-
-        case 'auth/code-expired':
-          alert('⌛ The OTP has expired. Please request a new one.');
-          break;
-
-        case 'auth/invalid-verification-id':
-          alert(
-            '⚠️ Invalid verification session. Please try restarting the login.'
-          );
-          break;
-
-        case 'auth/missing-verification-code':
-          alert('🔢 Please enter the OTP.');
-          break;
-
-        case 'auth/network-request-failed':
-          alert('🌐 Network error. Please check your internet connection.');
-          break;
-
-        default:
-          this.isToastOpen = true;
-          this.toastMessage = `❌ Verification failed. Please try again..`;
-          setTimeout(() => {
-            this.isToastOpen = false;
-          }, 3000);
-          break;
-      }
+  // ─── 1. Send OTP ──────────────────────────────────────────────────────────
+  sendVerification() {
+    if (!this.isValidEmail()) {
+      this.showToast('Please enter a valid email address.');
+      return;
     }
+
+    this.isSendingOtp = true;
+    this.authService.sendEmailOtp(this.email.trim().toLowerCase()).subscribe({
+      next: (res: any) => {
+        this.isSendingOtp = false;
+        if (res?.success) {
+          this.step = 'otp';
+          this.enteredOtp = '';
+          this.startCountdown();
+          this.showToast(res.message || 'Verification code sent to your email.');
+        } else {
+          this.showToast(res?.message || 'Failed to send verification code.');
+        }
+      },
+      error: (err: any) => {
+        this.isSendingOtp = false;
+        const msg = err?.error?.message || err?.message || 'Error sending code. Please try again.';
+        this.showToast(msg);
+      }
+    });
+  }
+
+  // ─── 2. Timer Control ─────────────────────────────────────────────────────
+  private startCountdown() {
+    if (this.intervalIdforCount) {
+      clearInterval(this.intervalIdforCount);
+    }
+    this.timer = 45;
+    this.intervalIdforCount = setInterval(() => {
+      if (this.timer > 0) {
+        this.timer--;
+      } else {
+        clearInterval(this.intervalIdforCount);
+      }
+    }, 1000);
   }
 
   onOtpChange(value: string) {
-    this.verificationCode = value;
-    if (this.verificationCode.length == 6) {
+    this.enteredOtp = value;
+    if (this.enteredOtp.length === 6) {
       this.verifyOTP();
     }
   }
 
-  async logout() {
-    try {
-      await FirebaseAuthentication.signOut();
-      alert('User signed out.');
-    } catch (error) {
-      console.error('Logout failed:', error);
-      alert('Failed to log out.');
+  // ─── 3. Verify OTP ────────────────────────────────────────────────────────
+  verifyOTP() {
+    if (!this.enteredOtp || this.enteredOtp.length !== 6) {
+      this.showToast('Please enter the full 6-digit code.');
+      return;
     }
-  }
 
-  goBack() {
-    if (!this.otpSent) {
-      this.navCtrl.back();
-    } else {
-      this.otpSent = false;
-      clearInterval(this.intervalIdforCount)
-    }
-  }
+    this.isVerifyingOtp = true;
+    this.otpVerificationMessage = 'Verifying Code...';
 
-  checkUser() {
-    this.isLoading = true;
-    this.otpVerificationMessage = 'Validating User';
-    let params = {
-      phone: `${this.phoneNumber}`,
-    };
-    this.authService.checkUser(params).subscribe(
-      (res:any) => {
-        console.log(res);
-
-        if (res.isNewUser == true) {
-          this.isToastOpen = true;
-          this.toastMessage = `New User please register!`;
-          setTimeout(() => {
-            this.isToastOpen = false;
-          }, 3000);
-          this.isLoading = false;
-          this.otpVerificationMessage = '';
-          this.showRegisterForm = true
-        } else {
-        //   Preferences.set({
-        //   key: 'auth-token',
-        //   value: res.token,
-        // });
-        localStorage.setItem('auth-token', res.token);
-        console.log(localStorage.getItem('auth-token'));
-        this.navCtrl.navigateRoot('/layout/example/home');
-        }
-      },
-      (error) => {
-        this.isLoading = false;
+    this.authService.verifyEmailOtp(this.email.trim().toLowerCase(), this.enteredOtp).subscribe({
+      next: (res: any) => {
+        this.isVerifyingOtp = false;
         this.otpVerificationMessage = '';
-        console.error('Error fetching users:', error);
-        this.isToastOpen = true;
-        this.toastMessage = `Failed to check user!`;
-        setTimeout(() => {
-          this.isToastOpen = false;
-        }, 3000);
-      }
-    );
-  }
 
-  register() {
-    let params = {
-      phone: `${this.phoneNumber}`,
-      email: this.email,
-      first_name: this.fullName,
-      last_name: '',
-      username: `${this.phoneNumber}`,
-      is_active: true,
-      is_verified: true,
-    };
-    this.isLoading = true;
-    this.authService.register(params).subscribe(
-      (res:any) => {
-        if(res.success == true){
-        //   Preferences.set({
-        //   key: 'auth-token',
-        //   value: res.token,
-        // });
-        localStorage.setItem('auth-token', res.token);
-        let values = {
-          name: res.user.first_name,
-          phone: res.user.phone,
-          email: res.user.email
-        }
-        localStorage.setItem('userDetails', JSON.stringify(values))
-
-        this.navCtrl.navigateRoot('/layout/example/home');
-        this.isLoading = false;
+        if (res?.success) {
+          if (res.isNewUser) {
+            // New user -> show registration step to capture name & phone
+            this.step = 'register';
+            this.showToast('Email verified! Please complete your profile.');
+          } else if (res.token) {
+            // Existing user -> log in immediately
+            this.authService.saveSession(res.token, res.user);
+            this.showToast('Welcome back!');
+            this.navCtrl.navigateRoot('/layout/home');
+          }
         } else {
-          this.isToastOpen = true
-          this.toastMessage = `${res.message}`
-          setTimeout(() => {
-            this.isToastOpen = false;
-          }, 3000);
-          this.isLoading = false;
+          this.showToast(res?.message || 'Invalid verification code.');
         }
       },
-      (error) => {
-        this.isLoading = false;
-        console.error('Error fetching users:', error);
-        this.toastMessage = error;
-        this.isToastOpen = true;
+      error: (err: any) => {
+        this.isVerifyingOtp = false;
+        this.otpVerificationMessage = '';
+        const msg = err?.error?.message || err?.message || 'Verification failed. Please try again.';
+        this.showToast(msg);
       }
-    );
+    });
   }
 
+  // ─── 4. Complete Registration (New User) ──────────────────────────────────
+  register() {
+    if (!this.fullName.trim()) {
+      this.showToast('Please enter your full name.');
+      return;
+    }
+
+    if (!this.phoneNumber || this.phoneNumber.trim().length < 10) {
+      this.showToast('Please enter a valid 10-digit mobile number.');
+      return;
+    }
+
+    this.isLoading = true;
+    const cleanPhone = this.phoneNumber.replace(/\D/g, '').slice(-10);
+
+    const params = {
+      email: this.email.trim().toLowerCase(),
+      username: this.email.trim().toLowerCase(),
+      first_name: this.fullName.trim(),
+      last_name: '',
+      phone: cleanPhone,
+      is_active: true,
+      is_verified: true
+    };
+
+    this.authService.register(params).subscribe({
+      next: (res: any) => {
+        this.isLoading = false;
+        if (res?.success && res?.token) {
+          this.authService.saveSession(res.token, res.user);
+          this.showToast('Profile created successfully!');
+          this.navCtrl.navigateRoot('/layout/home');
+        } else {
+          this.showToast(res?.message || 'Registration failed. Please try again.');
+        }
+      },
+      error: (err: any) => {
+        this.isLoading = false;
+        const msg = err?.error?.message || err?.message || 'Registration error. Please check your details.';
+        this.showToast(msg);
+      }
+    });
+  }
+
+  // ─── 5. Navigation & Support ──────────────────────────────────────────────
+  goBack() {
+    if (this.step === 'otp') {
+      this.step = 'email';
+      if (this.intervalIdforCount) {
+        clearInterval(this.intervalIdforCount);
+      }
+    } else if (this.step === 'register') {
+      this.step = 'email';
+    } else {
+      this.navCtrl.back();
+    }
+  }
+
+  openWhatsAppSupport() {
+    window.open('https://wa.me/919999999999', '_system');
+  }
 }

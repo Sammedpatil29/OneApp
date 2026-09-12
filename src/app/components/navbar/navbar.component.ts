@@ -1,42 +1,65 @@
-import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { Router } from '@angular/router';
-import { IonTabs, IonTabBar, IonTabButton, IonIcon, IonCard } from "@ionic/angular/standalone";
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router, NavigationEnd } from '@angular/router';
+import { IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { library, playCircle, radio, search, helpCircleOutline,timeOutline,helpCircle,homeSharp,searchOutline,time,homeOutline, home, person, shareSocialOutline, shareSocialSharp } from 'ionicons/icons';
-import { register } from 'swiper/element/bundle';
+import {
+  compass,
+  compassOutline,
+  home,
+  homeOutline,
+  receipt,
+  receiptOutline,
+  gift,
+  giftOutline,
+  chatbubbleEllipses,
+  chatbubbleEllipsesOutline,
+  person,
+  personOutline
+} from 'ionicons/icons';
+import { filter } from 'rxjs/operators';
 
-register();
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports:[IonTabs, IonTabBar, IonTabButton, IonIcon]
+  standalone: true,
+  imports: [CommonModule, IonIcon]
 })
-export class NavbarComponent  implements OnInit {
+export class NavbarComponent implements OnInit {
+  currentRoute: string = '/layout/home';
 
-
-  orders: any = [
-    {
-      orderId: '37364643764'
-    },
-    {
-      orderId: '78374'
-    }
-  ] 
-
-  constructor(private router: Router) { 
-    addIcons({ home,search,helpCircleOutline,shareSocialOutline, shareSocialSharp, timeOutline,helpCircle,homeSharp,searchOutline,time,homeOutline,radio,library,person,playCircle });
+  constructor(private router: Router) {
+    addIcons({
+      compass,
+      compassOutline,
+      home,
+      homeOutline,
+      receipt,
+      receiptOutline,
+      gift,
+      giftOutline,
+      chatbubbleEllipses,
+      chatbubbleEllipsesOutline,
+      person,
+      personOutline
+    });
   }
 
-  ngOnInit() {}
-
-  onOrderClick(orderId: any){
-    alert(`clicked on ${orderId}`)
+  ngOnInit() {
+    this.currentRoute = this.router.url;
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: any) => {
+      this.currentRoute = event.urlAfterRedirects || event.url;
+    });
   }
 
-  goToHome(){
-    this.router.navigate(['/layout/example/home']);
+  goToTab(tab: string) {
+    this.router.navigate([`/layout/${tab}`]);
   }
 
+  isTabActive(route: string): boolean {
+    return this.currentRoute === route || this.currentRoute.startsWith(route + '/');
+  }
 }

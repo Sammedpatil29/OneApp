@@ -1,8 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Preferences } from '@capacitor/preferences';
-import jwt_decode from 'jwt-decode';
 import { Observable } from 'rxjs';
 import { NavController } from '@ionic/angular';
 import { environment } from 'src/environments/environment';
@@ -11,72 +9,103 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class AuthService {
-url =environment.apiUrl;
-// tokenUrl = 'https://oneapp-backend.onrender.com/api/login/'
-token: any;
+  url = environment.apiUrl;
+  token: any = null;
 
-  constructor(private http: HttpClient, private router: Router, private navCtrl: NavController) { }
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private navCtrl: NavController
+  ) {}
 
-  getUsers(){
-return this.http.get(this.url)
+  getUsers(): Observable<any> {
+    return this.http.get(this.url);
   }
 
+  /**
+   * Send Email OTP to customer
+   */
+  sendEmailOtp(email: string): Observable<any> {
+    return this.http.post(`${this.url}/send-otp`, { email });
+  }
+
+  /**
+   * Verify Customer Email OTP
+   */
+  verifyEmailOtp(email: string, otp: string): Observable<any> {
+    return this.http.post(`${this.url}/verify-otp`, { email, otp });
+  }
+
+  /**
+   * Legacy phone send OTP (fallback for SMS)
+   */
   sendOtp(testMobileNumber: string, otp: string): Observable<any> {
-  return this.http.post(`${this.url}/send-otp`, {
-    mobileNumber: testMobileNumber,
-    otp: otp,
-  });
-}
-
-  register(params:any){
-    return this.http.post(`${this.url}/register`, params)
+    return this.http.post(`${this.url}/send-otp`, {
+      mobileNumber: testMobileNumber,
+      otp: otp,
+    });
   }
 
-  checkUser(params:any){
-    return this.http.post(`${this.url}/login`, params)
+  register(params: any): Observable<any> {
+    return this.http.post(`${this.url}/register`, params);
   }
 
-  verifyToken(token: any) {
-    // 1. Create the headers
+  checkUser(params: any): Observable<any> {
+    return this.http.post(`${this.url}/login`, params);
+  }
+
+  verifyToken(token: any): Observable<any> {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
-
-    // 2. Pass headers in the request options
-    // Note: I removed the trailing slash '/' to match your Node route exactly
-    return this.http.get(`${this.url}/verify-token`, { headers: headers });
+    return this.http.get(`${this.url}/verify-token`, { headers });
   }
 
-  async logout(){
-    // await Preferences.remove({key: 'auth-token'})
-    // await Preferences.remove({key: 'user_id'})
-    localStorage.removeItem('location')
-    localStorage.removeItem('auth-token')
-    localStorage.removeItem('user_id')
+  hasToken(): boolean {
+    const token = localStorage.getItem('auth-token');
+    return !!token && token.trim().length > 0;
+  }
+
+  getCurrentUser(): any {
+    try {
+      const u = localStorage.getItem('userDetails');
+      return u ? JSON.parse(u) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  saveSession(token: string, user: any) {
+    if (token) {
+      localStorage.setItem('auth-token', token);
+    }
+    if (user) {
+      const details = {
+        id: user.id,
+        name: `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.username,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        phone: user.phone,
+        email: user.email,
+        profile_image: user.profile_image
+      };
+      localStorage.setItem('userDetails', JSON.stringify(details));
+      if (user.id) {
+        localStorage.setItem('user_id', String(user.id));
+      }
+    }
+  }
+
+  async logout() {
+    localStorage.removeItem('location');
+    localStorage.removeItem('auth-token');
+    localStorage.removeItem('user_id');
+    localStorage.removeItem('userDetails');
     this.navCtrl.navigateRoot(['/login']);
   }
 
-  async getToken(){
-    // const token = await Preferences.get({ key: 'auth-token' });
+  async getToken(): Promise<string | null> {
     const token = localStorage.getItem('auth-token');
-    console.log(token)
     return token;
   }
-
-  // response:any
-  // async getUserId(){
-  //   const token = await this.getToken()
-  //   console.log(token)
-  //   let params = {
-  //     "token": token
-  //   }
-  //   this.verifyToken(params).subscribe(res => {
-  //     this.response = res
-  //     const user_id = this.response.data.user_id
-  //     console.log(user_id)
-  //     Preferences.set({key: 'user_id', value: String(user_id)})
-  //   })
-  // }
-
-  
 }

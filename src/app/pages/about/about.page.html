@@ -1,11 +1,11 @@
-<ion-header>
-  <ion-toolbar class="pt-4">
+<ion-header class="ion-no-border bg-white pt-2">
+  <ion-toolbar>
     <ion-buttons slot="start">
       <ion-button (click)="goBack()">
-        <ion-icon name="arrow-back"></ion-icon>
+        <ion-icon name="arrow-back-outline" color="dark"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>{{data | titlecase }}</ion-title>
+    <ion-title class="fw-bold text-dark">{{data | titlecase }}</ion-title>
   </ion-toolbar>
 </ion-header>
 

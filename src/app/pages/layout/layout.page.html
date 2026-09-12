@@ -1,11 +1,103 @@
-<ion-app>
-  <ion-router-outlet></ion-router-outlet>
-</ion-app>
-<!-- <div class="orderBubble text-truncate"
-#orderBubble
-       (mousedown)="startDrag($event, orderBubble)" 
-       (touchstart)="startDrag($event, orderBubble)">
-  <div>
-    <ion-card-title> <i class="spinner-grow mt-0 spinner-grow-sm text-success" role="status"></i> Live Orders</ion-card-title>
+<div class="customer-app-wrapper">
+  <div class="main-content-outlet">
+    <ion-router-outlet></ion-router-outlet>
   </div>
-</div> -->
+
+  <!-- Partner-Styled Bottom Navigation Bar (5 Tabs) -->
+  @if (showBottomBar) {
+    <nav class="customer-bottom-bar">
+      <!-- 1. Home (Compass icon matching partner app Cockpit/Home) -->
+      <button
+        type="button"
+        class="nav-tab"
+        [class.active]="isTabActive('/layout/home')"
+        (click)="navigateTab('/layout/home')"
+        aria-label="Home">
+        <div class="tab-icon-wrapper">
+          <ion-icon [name]="isTabActive('/layout/home') ? 'compass' : 'compass-outline'"></ion-icon>
+        </div>
+        <span>Home</span>
+        @if (isTabActive('/layout/home')) {
+          <span class="active-dot"></span>
+        }
+      </button>
+
+      <!-- 2. Orders (Receipt icon) -->
+      <button
+        type="button"
+        class="nav-tab"
+        [class.active]="isTabActive('/layout/history')"
+        (click)="navigateTab('/layout/history')"
+        aria-label="Orders History">
+        <div class="tab-icon-wrapper">
+          <ion-icon [name]="isTabActive('/layout/history') ? 'receipt' : 'receipt-outline'"></ion-icon>
+        </div>
+        <span>Orders</span>
+        @if (isTabActive('/layout/history')) {
+          <span class="active-dot"></span>
+        }
+      </button>
+
+      <!-- 3. Refer & Earn -->
+      <button
+        type="button"
+        class="nav-tab"
+        [class.active]="isTabActive('/layout/referral')"
+        (click)="navigateTab('/layout/referral')"
+        aria-label="Refer and Earn">
+        <div class="tab-icon-wrapper">
+          <ion-icon [name]="isTabActive('/layout/referral') ? 'gift' : 'gift-outline'"></ion-icon>
+        </div>
+        <span>Refer</span>
+        @if (isTabActive('/layout/referral')) {
+          <span class="active-dot"></span>
+        }
+      </button>
+
+      <!-- 4. Support -->
+      <button
+        type="button"
+        class="nav-tab"
+        [class.active]="isTabActive('/layout/support')"
+        (click)="navigateTab('/layout/support')"
+        aria-label="Help & Support">
+        <div class="tab-icon-wrapper">
+          <ion-icon [name]="isTabActive('/layout/support') ? 'chatbubble-ellipses' : 'chatbubble-ellipses-outline'"></ion-icon>
+        </div>
+        <span>Support</span>
+        @if (isTabActive('/layout/support')) {
+          <span class="active-dot"></span>
+        }
+      </button>
+
+      <!-- 5. Account Profile -->
+      <button
+        type="button"
+        class="nav-tab"
+        [class.active]="isTabActive('/layout/profile')"
+        (click)="navigateTab('/layout/profile')"
+        aria-label="Account Profile">
+        <div class="tab-icon-wrapper">
+          <ion-icon [name]="isTabActive('/layout/profile') ? 'person' : 'person-outline'"></ion-icon>
+        </div>
+        <span>Account</span>
+        @if (isTabActive('/layout/profile')) {
+          <span class="active-dot"></span>
+        }
+      </button>
+    </nav>
+  }
+
+  <!-- Global Partner-Styled Alert Modal -->
+  <app-alert-modal
+    [isOpen]="(dialogState$ | async)?.isOpen ?? false"
+    [type]="(dialogState$ | async)?.type ?? 'info'"
+    [title]="(dialogState$ | async)?.title ?? ''"
+    [message]="(dialogState$ | async)?.message ?? ''"
+    [confirmText]="(dialogState$ | async)?.confirmText ?? 'OK'"
+    [cancelText]="(dialogState$ | async)?.cancelText ?? 'Cancel'"
+    [showCancel]="(dialogState$ | async)?.showCancel ?? false"
+    (confirmed)="dialogService.handleConfirm()"
+    (cancelled)="dialogService.handleCancel()">
+  </app-alert-modal>
+</div>

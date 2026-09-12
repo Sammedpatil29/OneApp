@@ -1,15 +1,26 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { IonHeader, IonChip, IonSearchbar, IonContent, IonToolbar, IonCard, IonCardContent, IonBadge, IonButton } from "@ionic/angular/standalone";
+import { IonHeader, IonChip, IonContent, IonToolbar, IonCard, IonCardContent, IonBadge, IonButton, IonButtons, IonIcon, IonTitle } from "@ionic/angular/standalone";
+import { NavController } from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import { arrowBackOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-property',
   templateUrl: './property.page.html',
   styleUrls: ['./property.page.scss'],
-  imports: [ IonBadge, FormsModule, IonCardContent, IonCard, IonToolbar, IonContent, IonSearchbar, IonChip, IonHeader, CommonModule]
+  imports: [ IonBadge, FormsModule, IonCardContent, IonCard, IonToolbar, IonContent, IonChip, IonHeader, IonButtons, IonButton, IonIcon, IonTitle, CommonModule]
 })
 export class PropertyPage {
+
+  constructor(private navCtrl: NavController) {
+    addIcons({ arrowBackOutline });
+  }
+
+  goBack() {
+    this.navCtrl.back();
+  }
 
   searchText = '';
 

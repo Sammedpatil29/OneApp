@@ -1,0 +1,13 @@
+<div class="api-error-card">
+  <div class="error-icon-box">
+    <ion-icon name="alert-circle-outline"></ion-icon>
+  </div>
+  <h4 class="title">{{ title }}</h4>
+  <p class="desc">{{ description }}</p>
+
+  <button class="btn-retry" (click)="onRetry()" [disabled]="isRetrying">
+    <ion-icon name="refresh-outline" [class.spinning]="isRetrying"></ion-icon>
+    <span>{{ isRetrying ? 'Retrying...' : retryText }}</span>
+  </button>
+</div>
+
