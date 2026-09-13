@@ -4,6 +4,7 @@ import { App } from '@capacitor/app';
 import { ToastController } from '@ionic/angular/standalone';
 import { OtaKit } from '@otakit/capacitor-updater';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface OtaDiagnosticResult {
   success: boolean;
@@ -254,7 +255,7 @@ export class OtaService {
 
   async checkUpdateDetails(): Promise<OtaDiagnosticResult> {
     const currentVersion = await this.getCurrentVersion();
-    const manifestUrl = 'https://pintu-api.democompany.in.net/ota/manifests/io.ionic.oneapp/__base__/__default__/manifest.json';
+    const manifestUrl = `${environment.apiUrl}/ota/manifests/io.ionic.oneapp/__base__/__default__/manifest.json`;
 
     try {
       const controller = new AbortController();

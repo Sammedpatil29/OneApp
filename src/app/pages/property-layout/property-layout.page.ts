@@ -1,20 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
+import { IonRouterOutlet } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-property-layout',
   templateUrl: './property-layout.page.html',
   styleUrls: ['./property-layout.page.scss'],
   standalone: true,
-  imports: [IonRouterOutlet, IonApp, CommonModule, FormsModule]
+  imports: [IonRouterOutlet, CommonModule]
 })
-export class PropertyLayoutPage implements OnInit {
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-
+export class PropertyLayoutPage {
+  constructor() {}
 }

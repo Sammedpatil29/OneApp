@@ -44,6 +44,9 @@
             "scripts": [
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
             ],
+            "optimization": {
+              "fonts": false
+            },
             "browser": "src/main.ts"
           },
           "configurations": {
@@ -68,6 +71,27 @@
               ],
               "outputHashing": "all"
             },
+            "testing": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "30kb",
+                  "maximumError": "50kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.testing.ts"
+                }
+              ],
+              "outputHashing": "all"
+            },
             "development": {
               "optimization": false,
               "extractLicenses": false,
@@ -88,6 +112,9 @@
           "configurations": {
             "production": {
               "buildTarget": "app:build:production"
+            },
+            "testing": {
+              "buildTarget": "app:build:testing"
             },
             "development": {
               "buildTarget": "app:build:development"

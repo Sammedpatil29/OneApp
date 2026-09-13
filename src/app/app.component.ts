@@ -15,6 +15,7 @@ import { OtaService } from './services/ota.service';
 import { AuthService } from './services/auth.service';
 import { AppDialogService } from './services/app-dialog.service';
 import { PlayStoreUpdateService } from './services/play-store-update.service';
+import { AdmobService } from './services/admob.service';
 import { CustomSplashComponent } from './pages/custom-splash/custom-splash.component';
 
 @Component({
@@ -40,7 +41,8 @@ export class AppComponent implements OnInit {
     private otaService: OtaService,
     private authService: AuthService,
     private dialogService: AppDialogService,
-    private playStoreUpdateService: PlayStoreUpdateService
+    private playStoreUpdateService: PlayStoreUpdateService,
+    private admobService: AdmobService
   ) {
     const startTime = Date.now();
     this.routeBasedOnAuth(startTime);

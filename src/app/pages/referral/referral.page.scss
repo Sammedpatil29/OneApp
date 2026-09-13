@@ -222,6 +222,259 @@ ion-toolbar {
   }
 }
 
+/* Spinner for code loading */
+.spinner-code-loading {
+  width: 14px;
+  height: 14px;
+  --color: #a000e2;
+}
+
+/* Referral Live Stats Card */
+.referral-stats-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 16px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  .stats-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .stats-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0;
+    }
+
+    .stats-rate-badge {
+      font-size: 11px;
+      font-weight: 700;
+      color: #a000e2;
+      background: #fdf4ff;
+      border: 1px solid #f5d0fe;
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+
+    .stat-box {
+      background: #f8fafc;
+      border: 1px solid #f1f5f9;
+      border-radius: 16px;
+      padding: 12px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 4px;
+
+      .stat-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+        margin-bottom: 2px;
+
+        &.purple {
+          background: #f3e8ff;
+          color: #a000e2;
+        }
+
+        &.emerald {
+          background: #ecfdf5;
+          color: #10b981;
+        }
+
+        &.amber {
+          background: #fef3c7;
+          color: #d97706;
+        }
+      }
+
+      .stat-value {
+        font-size: 16px;
+        font-weight: 850;
+        color: #0f172a;
+        line-height: 1.1;
+      }
+
+      .stat-label {
+        font-size: 10.5px;
+        font-weight: 600;
+        color: #64748b;
+        letter-spacing: -0.1px;
+      }
+    }
+  }
+}
+
+/* Referred Friends Activity Section */
+.referrals-activity-section {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 18px 16px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  .activity-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 850;
+      color: #0f172a;
+      margin: 0;
+      letter-spacing: -0.2px;
+    }
+
+    .activity-count {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #64748b;
+      background: #f1f5f9;
+      padding: 3px 8px;
+      border-radius: 8px;
+    }
+  }
+
+  .referrals-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .friend-item-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      background: #f8fafc;
+      border-radius: 14px;
+      border: 1px solid #f1f5f9;
+
+      .friend-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #a000e2 0%, #7c3aed 100%);
+        color: #ffffff;
+        font-weight: 800;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .friend-info {
+        flex: 1;
+        min-width: 0;
+
+        .friend-name {
+          font-size: 13.5px;
+          font-weight: 750;
+          color: #0f172a;
+          margin: 0 0 2px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .friend-date {
+          font-size: 11px;
+          color: #94a3b8;
+          margin: 0;
+        }
+      }
+
+      .friend-status {
+        flex-shrink: 0;
+
+        .status-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          padding: 4px 9px;
+          border-radius: 999px;
+          font-size: 11px;
+          font-weight: 750;
+
+          &.status-completed {
+            background: #ecfdf5;
+            color: #059669;
+            border: 1px solid #a7f3d0;
+          }
+
+          &.status-pending {
+            background: #fffbeb;
+            color: #b45309;
+            border: 1px solid #fde68a;
+          }
+
+          ion-icon {
+            font-size: 13px;
+          }
+        }
+      }
+    }
+  }
+
+  .empty-referrals-box {
+    text-align: center;
+    padding: 24px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+
+    .empty-icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #fdf4ff;
+      color: #a000e2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+
+    .empty-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0;
+    }
+
+    .empty-desc {
+      font-size: 12px;
+      color: #64748b;
+      margin: 0;
+      max-width: 260px;
+      line-height: 1.4;
+    }
+  }
+}
+
 /* How It Works Section */
 .how-it-works-section {
   background: #ffffff;
@@ -232,6 +485,7 @@ ion-toolbar {
   display: flex;
   flex-direction: column;
   gap: 14px;
+
 
   .section-title {
     font-size: 15px;

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonSkeletonText, IonButton, IonButtons, IonIcon, IonFooter, IonText, IonItem, IonList, IonInput, IonLabel, IonNote, IonSpinner, IonToast, IonAvatar, IonAlert } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonSkeletonText, IonButton, IonButtons, IonIcon, IonText, IonItem, IonList, IonInput, IonLabel, IonNote, IonSpinner, IonToast, IonAvatar, IonAlert } from '@ionic/angular/standalone';
 import { Router, RouterLink } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { 
@@ -22,7 +22,26 @@ import {
   settingsOutline,
   languageOutline,
   colorPaletteOutline,
-  sendOutline
+  sendOutline,
+  shieldCheckmarkOutline,
+  shieldOutline,
+  documentTextOutline,
+  lockClosedOutline,
+  walletOutline,
+  locationOutline,
+  notificationsOutline,
+  mailOutline,
+  helpCircleOutline,
+  checkmarkDoneCircleOutline,
+  flashOutline,
+  storefrontOutline,
+  peopleOutline,
+  timeOutline,
+  ribbonOutline,
+  callOutline,
+  trashOutline,
+  readerOutline,
+  businessOutline
 } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { FooterComponent } from "../../components/footer/footer.component";
@@ -37,7 +56,7 @@ import { AppDialogService } from 'src/app/services/app-dialog.service';
   templateUrl: './about.page.html',
   styleUrls: ['./about.page.scss'],
   standalone: true,
-  imports: [IonAlert, IonAvatar, IonButton, IonToast, IonSkeletonText, IonSpinner, IonNote, IonLabel, IonInput, IonList, IonItem, IonText, IonFooter, IonIcon, IonButtons, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, FooterComponent, NodataComponent]
+  imports: [IonAlert, IonAvatar, IonButton, IonToast, IonSkeletonText, IonSpinner, IonNote, IonLabel, IonInput, IonList, IonItem, IonText, IonIcon, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, NodataComponent]
 })
 export class AboutPage implements OnInit {
 
@@ -58,8 +77,7 @@ export class AboutPage implements OnInit {
 
   languages = [
     { code: 'en', name: 'English', nativeName: 'English', subtitle: 'Standard language' },
-    { code: 'kn', name: 'Kannada', nativeName: 'ಕನ್ನಡ', subtitle: 'Regional language' },
-    { code: 'hi', name: 'Jawari Kannada', nativeName: 'ಜವಾರಿ', subtitle: 'National language' }
+    { code: 'hi', name: 'Jawari Kannada', nativeName: 'ಜವಾರಿ ಕನ್ನಡ', subtitle: 'Regional language' }
   ];
 
   themes = [
@@ -110,6 +128,8 @@ export class AboutPage implements OnInit {
     phone: ""
   }
 
+  policyTab: 'terms' | 'privacy' = 'terms';
+
   constructor(
     private router: Router,
     private navCtrl: NavController,
@@ -118,7 +138,6 @@ export class AboutPage implements OnInit {
     private profileService: ProfileService,
     private dialogService: AppDialogService
   ) {
-    addIcons({arrowBack, arrowBackOutline, chevronForward});
     addIcons({
       arrowBack, 
       arrowBackOutline, 
@@ -137,7 +156,26 @@ export class AboutPage implements OnInit {
       settingsOutline,
       languageOutline,
       colorPaletteOutline,
-      sendOutline
+      sendOutline,
+      shieldCheckmarkOutline,
+      shieldOutline,
+      documentTextOutline,
+      lockClosedOutline,
+      walletOutline,
+      locationOutline,
+      notificationsOutline,
+      mailOutline,
+      helpCircleOutline,
+      checkmarkDoneCircleOutline,
+      flashOutline,
+      storefrontOutline,
+      peopleOutline,
+      timeOutline,
+      ribbonOutline,
+      callOutline,
+      trashOutline,
+      readerOutline,
+      businessOutline
     });
   }
 
@@ -147,23 +185,30 @@ export class AboutPage implements OnInit {
     if (this.data === 'settings' || this.data === 'language' || this.data === 'Languages' || this.data === 'Preferences') {
       this.data = 'App Settings';
     }
+
+    if (this.data === 'privacy' || this.data === 'Privacy Policy') {
+      this.policyTab = 'privacy';
+    } else {
+      this.policyTab = 'terms';
+    }
+
     this.initSettings();
 
     this.Addressid = this.locationService.location$.subscribe((res:any)=>{
-      this.Addressid = res
-      console.log('address set as', this.Addressid)
-    })
-    this.getYear()
-    this.token = await this.authService.getToken()
+      this.Addressid = res;
+      console.log('address set as', this.Addressid);
+    });
+    this.getYear();
+    this.token = await this.authService.getToken();
     if(this.data == 'Personal Details'){
-      this.getProfileData()
+      this.getProfileData();
     }
-    if(this.data == 'About Pintu' || this.data == 'App Settings'){
-      const version = await this.profileService.getAppVersion()
-      this.appVersion = version
+    if(this.data == 'About Pintu' || this.data == 'App Settings' || this.isPolicyPage()){
+      const version = await this.profileService.getAppVersion();
+      this.appVersion = version;
     }
     if(this.data == 'Saved Addresses'){
-      this.getAddressList()
+      this.getAddressList();
     }
   }
   
@@ -287,11 +332,27 @@ this.isSpinnerLoading = true
     });
   }
 
+  setPolicyTab(tab: 'terms' | 'privacy') {
+    this.policyTab = tab;
+  }
+
+  isPolicyPage(): boolean {
+    return (
+      this.data === 'Terms & Privacy' ||
+      this.data === 'terms' ||
+      this.data === 'Terms & Conditions' ||
+      this.data === 'privacy' ||
+      this.data === 'Privacy Policy'
+    );
+  }
+
   getPageTitle(): string {
     if (this.data === 'suggestion') return 'Suggest a Product or Service';
     if (this.data === 'App Settings') return 'App Settings';
-    if (this.data === 'terms' || this.data === 'Terms & Conditions') return 'Terms & Conditions';
-    if (this.data === 'privacy' || this.data === 'Privacy Policy') return 'Privacy Policy';
+    if (this.isPolicyPage()) {
+      return this.policyTab === 'terms' ? 'Terms of Service' : 'Privacy Policy';
+    }
+    if (this.data === 'About Pintu') return 'About Pintu';
     return this.data || 'About Pintu';
   }
 

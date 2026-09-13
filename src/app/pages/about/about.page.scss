@@ -1,8 +1,655 @@
-.about{
-    margin: 1rem;
-    border: 2px dashed var(--ion-color-medium);
-    border-radius: 20px;
-    padding: 1rem;
+/* =======================================================
+   ABOUT PINTU & POLICY PAGES (MODERN HIGH-END CARD SYSTEM)
+   ======================================================= */
+.about-page-content,
+.policy-page-content {
+  --background: #f8fafc;
+}
+
+.about-page-container,
+.policy-page-container {
+  padding: 14px 16px 28px;
+  max-width: 600px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* ─── HERO BRAND BANNER CARD ─── */
+.brand-hero-card {
+  position: relative;
+  background: linear-gradient(135deg, #2e0854 0%, #1e1b4b 60%, #3b0764 100%);
+  border-radius: 22px;
+  padding: 22px 18px;
+  color: #ffffff;
+  overflow: hidden;
+  box-shadow: 0 10px 28px rgba(46, 8, 84, 0.28);
+  margin-bottom: 16px;
+
+  .hero-glow-circle {
+    position: absolute;
+    right: -25px;
+    top: -25px;
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(160, 0, 226, 0.45) 0%, transparent 70%);
+    filter: blur(16px);
+    pointer-events: none;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+
+    .brand-badge-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+
+      .brand-pill {
+        background: rgba(255, 255, 255, 0.16);
+        backdrop-filter: blur(6px);
+        color: #ffffff;
+        font-size: 10.5px;
+        font-weight: 800;
+        padding: 3px 9px;
+        border-radius: 99px;
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+      }
+
+      .version-pill {
+        background: rgba(160, 0, 226, 0.35);
+        color: #e9d5ff;
+        font-size: 10px;
+        font-weight: 750;
+        padding: 2px 7px;
+        border-radius: 6px;
+        border: 1px solid rgba(233, 213, 255, 0.2);
+      }
+    }
+
+    .brand-title {
+      font-size: 28px;
+      font-weight: 900;
+      color: #ffffff;
+      margin: 0 0 4px;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-tagline {
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.85);
+      margin: 0 0 14px;
+      line-height: 1.35;
+    }
+
+    .brand-promise-banner {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(8px);
+      padding: 6px 11px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      font-size: 11px;
+      font-weight: 750;
+      color: #fef08a;
+
+      .promise-icon {
+        font-size: 14px;
+        color: #facc15;
+      }
+    }
+  }
+}
+
+/* ─── CLEAN GENERIC CARD ─── */
+.clean-card {
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1.5px solid #e2e8f0;
+  padding: 16px;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+  margin-bottom: 14px;
+
+  &.mission-card {
+    border-left: 4px solid #a000e2;
+
+    .card-header-with-icon {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+
+      .card-title {
+        font-size: 15px;
+        font-weight: 850;
+        color: #0f172a;
+        margin: 0;
+      }
+
+      .card-subtitle {
+        font-size: 11.5px;
+        color: #64748b;
+        font-weight: 500;
+      }
+    }
+
+    .card-desc-text {
+      font-size: 12.5px;
+      color: #334155;
+      line-height: 1.55;
+      margin: 0;
+    }
+  }
+}
+
+/* ─── SECTION HEADING BARS ─── */
+.section-heading-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 18px 0 12px;
+
+  .heading-accent {
+    width: 4px;
+    height: 16px;
+    border-radius: 99px;
+    background: #a000e2;
+  }
+
+  .section-heading {
+    font-size: 15px;
+    font-weight: 850;
+    color: #0f172a;
+    margin: 0;
+    letter-spacing: -0.2px;
+  }
+}
+
+/* ─── OFFERINGS 4-CARD GRID ─── */
+.offerings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+
+  @media (max-width: 320px) {
+    grid-template-columns: 1fr;
+  }
+
+  .service-offering-card {
+    background: #ffffff;
+    border-radius: 18px;
+    border: 1.5px solid #e2e8f0;
+    padding: 14px 12px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    transition: transform 0.16s ease, border-color 0.16s ease;
+
+    &:active {
+      transform: scale(0.98);
+      border-color: #cbd5e1;
+    }
+
+    .offering-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .offering-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0 0 5px;
+      line-height: 1.3;
+    }
+
+    .offering-desc {
+      font-size: 11px;
+      color: #64748b;
+      margin: 0;
+      line-height: 1.45;
+      flex: 1;
+    }
+  }
+}
+
+/* ─── TRUST PILLARS STACK ─── */
+.trust-pillars-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+
+  .trust-pillar-card {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1.5px solid #e2e8f0;
+    padding: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+
+    .pillar-content {
+      flex: 1;
+
+      .pillar-title {
+        font-size: 13.5px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 3px;
+      }
+
+      .pillar-desc {
+        font-size: 11.5px;
+        color: #64748b;
+        margin: 0;
+        line-height: 1.45;
+      }
+    }
+  }
+}
+
+/* ─── CORPORATE LEGAL CARD ─── */
+.corporate-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+
+  .corp-header {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e2e8f0;
+
+    .corp-icon {
+      font-size: 18px;
+      color: #a000e2;
+    }
+
+    .corp-title {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0;
+    }
+  }
+
+  .corp-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+
+    .corp-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+
+      .corp-label {
+        font-size: 10.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #94a3b8;
+        letter-spacing: 0.3px;
+      }
+
+      .corp-value {
+        font-size: 12px;
+        font-weight: 700;
+        color: #1e293b;
+      }
+    }
+  }
+}
+
+/* ─── ABOUT & POLICY FOOTER ─── */
+.about-page-footer,
+.policy-page-footer {
+  text-align: center;
+  padding: 16px 8px 8px;
+
+  .footer-heart-text {
+    font-size: 12px;
+    font-weight: 700;
+    color: #475569;
+    margin: 0 0 4px;
+  }
+
+  .footer-copy-text {
+    font-size: 11px;
+    color: #94a3b8;
+    margin: 0;
+  }
+}
+
+/* ─── ICON CIRCLES & CHIPS ─── */
+.icon-circle {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 19px;
+
+  &.icon-purple {
+    background: #f5f3ff;
+    color: #7c3aed;
+  }
+
+  &.icon-emerald {
+    background: #ecfdf5;
+    color: #059669;
+  }
+
+  &.icon-amber {
+    background: #fff7ed;
+    color: #ea580c;
+  }
+
+  &.icon-blue {
+    background: #eff6ff;
+    color: #2563eb;
+  }
+}
+
+.pillar-icon-box {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+
+  &.icon-purple {
+    background: #f5f3ff;
+    color: #7c3aed;
+  }
+
+  &.icon-emerald {
+    background: #ecfdf5;
+    color: #059669;
+  }
+
+  &.icon-amber {
+    background: #fff7ed;
+    color: #ea580c;
+  }
+
+  &.icon-blue {
+    background: #eff6ff;
+    color: #2563eb;
+  }
+}
+
+.card-chip {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 99px;
+  letter-spacing: 0.3px;
+
+  &.chip-emerald {
+    background: #ecfdf5;
+    color: #059669;
+  }
+
+  &.chip-amber {
+    background: #fff7ed;
+    color: #ea580c;
+  }
+
+  &.chip-blue {
+    background: #eff6ff;
+    color: #2563eb;
+  }
+
+  &.chip-purple {
+    background: #f5f3ff;
+    color: #7c3aed;
+  }
+}
+
+/* =======================================================
+   TERMS & PRIVACY POLICY COMPONENT STYLES
+   ======================================================= */
+.policy-segmented-bar {
+  display: flex;
+  background: #e2e8f0;
+  border-radius: 14px;
+  padding: 4px;
+  gap: 4px;
+  margin-bottom: 12px;
+
+  .segment-pill {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 9px 8px;
+    border-radius: 10px;
+    font-size: 12.5px;
+    font-weight: 750;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+    ion-icon {
+      font-size: 15px;
+    }
+
+    &.active {
+      background: #ffffff;
+      color: #a000e2;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    }
+  }
+}
+
+/* Trust Badges Horizontal Strip */
+.policy-trust-badges-strip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 2px 12px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  .trust-badge-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 99px;
+    padding: 5px 10px;
+    font-size: 11px;
+    font-weight: 750;
+    color: #334155;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    .badge-icon {
+      font-size: 14px;
+
+      &.green { color: #10b981; }
+      &.purple { color: #8b5cf6; }
+      &.blue { color: #3b82f6; }
+      &.amber { color: #f59e0b; }
+    }
+  }
+}
+
+/* Policy Notice Cards */
+.policy-notice-card {
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 14px;
+
+  &.terms-notice {
+    background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+    border: 1.5px solid rgba(160, 0, 226, 0.25);
+  }
+
+  &.privacy-notice {
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    border: 1.5px solid rgba(5, 150, 105, 0.25);
+  }
+
+  .notice-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+
+    .notice-icon {
+      font-size: 24px;
+      color: #7c3aed;
+
+      &.text-emerald {
+        color: #059669;
+      }
+    }
+
+    .notice-title {
+      font-size: 14px;
+      font-weight: 850;
+      color: #0f172a;
+      margin: 0;
+      line-height: 1.25;
+    }
+
+    .notice-date {
+      font-size: 10.5px;
+      color: #64748b;
+      font-weight: 600;
+    }
+  }
+
+  .notice-text {
+    font-size: 12px;
+    color: #334155;
+    line-height: 1.55;
+    margin: 0;
+  }
+}
+
+/* Policy Section Cards */
+.policy-card {
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1.5px solid #e2e8f0;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+
+  .policy-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f1f5f9;
+
+    .policy-num-badge {
+      width: 28px;
+      height: 28px;
+      min-width: 28px;
+      border-radius: 8px;
+      background: #f5f3ff;
+      color: #7c3aed;
+      font-size: 12px;
+      font-weight: 850;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &.badge-emerald {
+        background: #ecfdf5;
+        color: #059669;
+      }
+    }
+
+    .policy-section-title {
+      font-size: 13.5px;
+      font-weight: 850;
+      color: #0f172a;
+      margin: 0;
+      line-height: 1.25;
+    }
+
+    .policy-section-sub {
+      font-size: 10.5px;
+      color: #64748b;
+      font-weight: 600;
+    }
+  }
+
+  .policy-card-body {
+    p {
+      font-size: 12px;
+      color: #334155;
+      line-height: 1.55;
+      margin: 0 0 8px;
+    }
+
+    .policy-bullet-list {
+      margin: 0;
+      padding-left: 18px;
+
+      li {
+        font-size: 12px;
+        color: #475569;
+        line-height: 1.5;
+        margin-bottom: 6px;
+
+        strong {
+          color: #0f172a;
+        }
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+
+    .grievance-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-top: 8px;
+      font-size: 11.5px;
+      color: #334155;
+
+      a {
+        color: #a000e2;
+        text-decoration: none;
+        font-weight: 700;
+      }
+    }
+  }
 }
 
 .text-area {

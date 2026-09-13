@@ -24,9 +24,13 @@ import {
   shieldCheckmarkOutline,
   createOutline,
   keypadOutline,
-  logoWhatsapp
+  logoWhatsapp,
+  giftOutline,
+  gift,
+  checkmarkCircle
 } from 'ionicons/icons';
 import { AuthService } from 'src/app/services/auth.service';
+import { ReferralService } from 'src/app/services/referral.service';
 import { Router } from '@angular/router';
 import { NgOtpInputModule } from 'ng-otp-input';
 import { register } from 'swiper/element/bundle';
@@ -103,6 +107,12 @@ export class LoginPage implements OnInit, OnDestroy {
   enteredOtp: string = '';
   fullName: string = '';
   phoneNumber: string = '';
+  referralCode: string = '';
+
+  // Referral verification state
+  referralStatus: 'idle' | 'checking' | 'valid' | 'invalid' = 'idle';
+  referralMessage: string = '';
+  private referralCheckTimeout: any = null;
 
   // State flags
   verifyingToken: boolean = false;
@@ -137,6 +147,7 @@ export class LoginPage implements OnInit, OnDestroy {
   constructor(
     private navCtrl: NavController,
     private authService: AuthService,
+    private referralService: ReferralService,
     private router: Router
   ) {
     addIcons({
@@ -154,7 +165,10 @@ export class LoginPage implements OnInit, OnDestroy {
       shieldCheckmarkOutline,
       createOutline,
       keypadOutline,
-      logoWhatsapp
+      logoWhatsapp,
+      giftOutline,
+      gift,
+      checkmarkCircle
     });
   }
 
@@ -171,6 +185,51 @@ export class LoginPage implements OnInit, OnDestroy {
     if (this.intervalIdforCount) {
       clearInterval(this.intervalIdforCount);
     }
+    if (this.referralCheckTimeout) {
+      clearTimeout(this.referralCheckTimeout);
+    }
+  }
+
+  onReferralCodeChange(val: string) {
+    if (this.referralCheckTimeout) {
+      clearTimeout(this.referralCheckTimeout);
+    }
+
+    const trimmed = (val || '').trim();
+    if (!trimmed) {
+      this.referralStatus = 'idle';
+      this.referralMessage = '';
+      return;
+    }
+
+    if (trimmed.length < 3) {
+      this.referralStatus = 'idle';
+      this.referralMessage = '';
+      return;
+    }
+
+    this.referralStatus = 'checking';
+    this.referralCheckTimeout = setTimeout(() => {
+      this.validateReferralCode(trimmed);
+    }, 450);
+  }
+
+  validateReferralCode(code: string) {
+    this.referralService.validateReferralCode(code).subscribe({
+      next: (res: any) => {
+        if (res?.valid) {
+          this.referralStatus = 'valid';
+          this.referralMessage = res?.message || `Referral code applied from ${res.referrer_name}!`;
+        } else {
+          this.referralStatus = 'invalid';
+          this.referralMessage = res?.message || 'Invalid code. You can continue without it.';
+        }
+      },
+      error: () => {
+        this.referralStatus = 'invalid';
+        this.referralMessage = 'Could not verify code right now. You can continue without it.';
+      }
+    });
   }
 
   private showToast(msg: string) {
@@ -199,22 +258,28 @@ export class LoginPage implements OnInit, OnDestroy {
         if (res?.success) {
           this.step = 'otp';
           this.enteredOtp = '';
-          this.startCountdown();
-          this.showToast(res.message || 'Verification code sent to your email.');
+          this.startTimer();
+          const devHint = res.devOtp ? ` (Dev Code: ${res.devOtp})` : '';
+          this.showToast(`Verification code sent to your email!${devHint}`);
         } else {
           this.showToast(res?.message || 'Failed to send verification code.');
         }
       },
       error: (err: any) => {
         this.isSendingOtp = false;
-        const msg = err?.error?.message || err?.message || 'Error sending code. Please try again.';
+        const msg = err?.error?.message || err?.message || 'Failed to send verification code. Please check your connection.';
         this.showToast(msg);
       }
     });
   }
 
-  // ─── 2. Timer Control ─────────────────────────────────────────────────────
-  private startCountdown() {
+  // ─── 2. Resend OTP ────────────────────────────────────────────────────────
+  resendVerification() {
+    if (this.timer > 0 || this.isSendingOtp) return;
+    this.sendVerification();
+  }
+
+  private startTimer() {
     if (this.intervalIdforCount) {
       clearInterval(this.intervalIdforCount);
     }
@@ -228,22 +293,22 @@ export class LoginPage implements OnInit, OnDestroy {
     }, 1000);
   }
 
-  onOtpChange(value: string) {
-    this.enteredOtp = value;
-    if (this.enteredOtp.length === 6) {
-      this.verifyOTP();
+  // ─── 3. Verify OTP ────────────────────────────────────────────────────────
+  onOtpChange(otp: string) {
+    this.enteredOtp = otp;
+    if (otp && otp.length === 6) {
+      this.verifyOtp();
     }
   }
 
-  // ─── 3. Verify OTP ────────────────────────────────────────────────────────
-  verifyOTP() {
-    if (!this.enteredOtp || this.enteredOtp.length !== 6) {
-      this.showToast('Please enter the full 6-digit code.');
+  verifyOtp() {
+    if (!this.enteredOtp || this.enteredOtp.length < 6) {
+      this.showToast('Please enter the 6-digit verification code.');
       return;
     }
 
     this.isVerifyingOtp = true;
-    this.otpVerificationMessage = 'Verifying Code...';
+    this.otpVerificationMessage = 'Verifying your code...';
 
     this.authService.verifyEmailOtp(this.email.trim().toLowerCase(), this.enteredOtp).subscribe({
       next: (res: any) => {
@@ -289,7 +354,7 @@ export class LoginPage implements OnInit, OnDestroy {
     this.isLoading = true;
     const cleanPhone = this.phoneNumber.replace(/\D/g, '').slice(-10);
 
-    const params = {
+    const params: any = {
       email: this.email.trim().toLowerCase(),
       username: this.email.trim().toLowerCase(),
       first_name: this.fullName.trim(),
@@ -299,12 +364,18 @@ export class LoginPage implements OnInit, OnDestroy {
       is_verified: true
     };
 
+    // Pass referral code if provided and valid (or entered by user)
+    const cleanReferral = this.referralCode ? this.referralCode.trim().toUpperCase() : '';
+    if (cleanReferral && this.referralStatus !== 'invalid') {
+      params.referral_code = cleanReferral;
+    }
+
     this.authService.register(params).subscribe({
       next: (res: any) => {
         this.isLoading = false;
         if (res?.success && res?.token) {
           this.authService.saveSession(res.token, res.user);
-          this.showToast('Profile created successfully!');
+          this.showToast('Profile created successfully! Welcome bonus credited.');
           this.navCtrl.navigateRoot('/layout/home');
         } else {
           this.showToast(res?.message || 'Registration failed. Please try again.');
@@ -334,5 +405,17 @@ export class LoginPage implements OnInit, OnDestroy {
 
   openWhatsAppSupport() {
     window.open('https://wa.me/919999999999', '_system');
+  }
+
+  openTerms() {
+    this.router.navigate(['/layout/about'], {
+      state: { data: 'terms' }
+    });
+  }
+
+  openPrivacy() {
+    this.router.navigate(['/layout/about'], {
+      state: { data: 'privacy' }
+    });
   }
 }

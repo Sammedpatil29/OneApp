@@ -195,19 +195,24 @@ export const routes: Routes = [
         ]
       },
       {
-        path: 'property-layout',
+        path: 'property',
         loadComponent: () =>
           import('./pages/property-layout/property-layout.page').then((m) => m.PropertyLayoutPage),
         children: [
           {
-            path: 'property',
+            path: '',
             loadComponent: () =>
               import('./pages/property/property.page').then((m) => m.PropertyPage),
           },
           {
-            path: '',
-            redirectTo: 'property',
-            pathMatch: 'full',
+            path: 'details/:id',
+            loadComponent: () =>
+              import('./pages/property-details/property-details.page').then((m) => m.PropertyDetailsPage),
+          },
+          {
+            path: 'register',
+            loadComponent: () =>
+              import('./pages/property-register/property-register.page').then((m) => m.PropertyRegisterPage),
           }
         ]
       },
@@ -238,6 +243,7 @@ export const routes: Routes = [
       { path: 'grocery-layout/grocery-item-details/:id', redirectTo: 'grocery/item/:id', pathMatch: 'full' },
       { path: 'payment', redirectTo: 'grocery/payment', pathMatch: 'full' },
       { path: 'cart', redirectTo: 'grocery/cart', pathMatch: 'full' },
+      { path: 'property-layout', redirectTo: 'property', pathMatch: 'prefix' },
     ]
   },
 

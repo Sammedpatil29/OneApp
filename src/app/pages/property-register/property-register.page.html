@@ -1,0 +1,776 @@
+<ion-header class="register-header ion-no-border">
+  <ion-toolbar class="register-toolbar">
+    <div class="header-inner">
+      <button type="button" class="btn-back" (click)="goBack()" aria-label="Go Back">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </button>
+      <div class="header-title-col">
+        <h1 class="header-title">Post Your Property</h1>
+        <span class="header-subtitle">Zero brokerage • Direct verified buyers</span>
+      </div>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="register-content">
+  <main class="register-form-container">
+
+    <!-- ================= SECTION 1: INTENT & CATEGORY ================= -->
+    <section class="form-card">
+      <div class="card-header-row">
+        <div class="card-num">1</div>
+        <div class="card-title-col">
+          <h2 class="card-title">Property Category</h2>
+          <span class="card-subtitle">What type of property do you want to list?</span>
+        </div>
+      </div>
+
+      <!-- Segmented Category Selector -->
+      <div class="category-grid">
+        @for (opt of categoryOptions; track opt.id) {
+          <button
+            type="button"
+            class="cat-choice-btn"
+            [class.active]="category === opt.id"
+            (click)="onCategoryChange(opt.id)">
+            <ion-icon [name]="opt.icon" class="cat-icon"></ion-icon>
+            <span class="cat-label">{{ opt.label }}</span>
+            @if (category === opt.id) {
+              <ion-icon name="checkmark-circle" class="cat-active-check"></ion-icon>
+            }
+          </button>
+        }
+      </div>
+
+      <!-- Property Sub-Type Selection -->
+      <div class="input-field-group mt-3">
+        <label class="field-label">Property Sub-Type *</label>
+        <div class="type-chips-row">
+          @for (type of typeOptionsByCat[category]; track type) {
+            <button
+              type="button"
+              class="type-pill-chip"
+              [class.active]="propertyType === type"
+              (click)="propertyType = type">
+              {{ type }}
+            </button>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SECTION 2: TITLE & DESCRIPTION ================= -->
+    <section class="form-card">
+      <div class="card-header-row">
+        <div class="card-num">2</div>
+        <div class="card-title-col">
+          <h2 class="card-title">Basic Details</h2>
+          <span class="card-subtitle">Give your property an attractive headline</span>
+        </div>
+      </div>
+
+      <div class="input-field-group">
+        <label class="field-label" for="propTitle">Property Title / Headline *</label>
+        <input
+          type="text"
+          id="propTitle"
+          class="form-text-input"
+          placeholder="e.g. 3 BHK Luxury Duplex Villa in Girinagar"
+          [(ngModel)]="title" />
+      </div>
+
+      <div class="input-field-group mt-3">
+        <label class="field-label" for="propDesc">Detailed Description</label>
+        <textarea
+          id="propDesc"
+          class="form-textarea"
+          rows="3"
+          placeholder="Highlight unique features, road connectivity, water availability, ventilation, neighborhood..."
+          [(ngModel)]="description"></textarea>
+      </div>
+    </section>
+
+    <!-- ================= SECTION 3: PRICING ================= -->
+    <section class="form-card">
+      <div class="card-header-row">
+        <div class="card-num">3</div>
+        <div class="card-title-col">
+          <h2 class="card-title">Pricing</h2>
+          <span class="card-subtitle">Set your expected price or monthly rent</span>
+        </div>
+      </div>
+
+      <div class="input-field-group">
+        <label class="field-label" for="propPrice">
+          {{ category === 'rent_house' ? 'Monthly Rent (₹) *' : 'Total Expected Price (₹) *' }}
+        </label>
+        <div class="price-input-wrapper">
+          <span class="currency-symbol">₹</span>
+          <input
+            type="number"
+            id="propPrice"
+            class="form-text-input price-input"
+            [placeholder]="category === 'rent_house' ? 'e.g. 15000' : 'e.g. 6850000'"
+            [(ngModel)]="price" />
+        </div>
+      </div>
+
+      <!-- Rent-specific pricing: Security Deposit and Maintenance -->
+      @if (category === 'rent_house') {
+        <div class="row-two-inputs mt-3">
+          <div class="input-field-group flex-1">
+            <label class="field-label">Security Deposit (₹)</label>
+            <div class="price-input-wrapper">
+              <span class="currency-symbol">₹</span>
+              <input
+                type="number"
+                class="form-text-input price-input"
+                placeholder="e.g. 50000"
+                [(ngModel)]="securityDeposit" />
+            </div>
+          </div>
+
+          <div class="input-field-group flex-1">
+            <label class="field-label">Maintenance (₹ / mo)</label>
+            <div class="price-input-wrapper">
+              <span class="currency-symbol">₹</span>
+              <input
+                type="number"
+                class="form-text-input price-input"
+                placeholder="e.g. 1500"
+                [(ngModel)]="maintenancePerMonth" />
+            </div>
+          </div>
+        </div>
+      }
+
+      <div class="toggle-row mt-3" (click)="priceNegotiable = !priceNegotiable">
+        <div class="toggle-text-col">
+          <span class="toggle-label">Price is Negotiable</span>
+          <span class="toggle-sub">Buyers and tenants are more likely to contact negotiable listings</span>
+        </div>
+        <div class="custom-switch" [class.on]="priceNegotiable">
+          <div class="switch-handle"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SECTION 4: LOCATION & ADDRESS ================= -->
+    <section class="form-card">
+      <div class="card-header-row">
+        <div class="card-num">4</div>
+        <div class="card-title-col">
+          <h2 class="card-title">Location &amp; Address</h2>
+          <span class="card-subtitle">Pin exact property spot on map to auto-fetch address &amp; GPS</span>
+        </div>
+      </div>
+
+      <!-- Single Primary Map Pin Option -->
+      <div class="map-picker-cta-card" (click)="openMapPicker()">
+        <div class="cta-left">
+          <div class="cta-icon-box" [class.pinned]="!!coordinates">
+            <ion-icon [name]="coordinates ? 'checkmark-circle' : 'map-outline'"></ion-icon>
+          </div>
+          <div class="cta-text-col">
+            <span class="cta-title">
+              {{ coordinates ? 'Property Location Pinned' : 'Pin Property on Map *' }}
+            </span>
+            <span class="cta-sub">
+              {{ coordinates ? 'Address & coordinates locked from map pin • Tap to change' : 'Tap to open map and drop pin at exact property location' }}
+            </span>
+          </div>
+        </div>
+        <button type="button" class="btn-cta-map" (click)="openMapPicker(); $event.stopPropagation()">
+          <ion-icon name="navigate-outline"></ion-icon>
+          <span>{{ coordinates ? 'Change Pin' : 'Pick on Map' }}</span>
+        </button>
+      </div>
+
+      <!-- Readonly Full Address Input with Pin badge -->
+      <div class="input-field-group mt-3">
+        <div class="field-label-row">
+          <label class="field-label">Full Address / Landmark (Acquired from Map) *</label>
+          @if (coordinates) {
+            <span class="coords-pill">
+              <ion-icon name="location-outline"></ion-icon>
+              {{ coordinates.lat.toFixed(4) }}, {{ coordinates.lng.toFixed(4) }}
+            </span>
+          }
+        </div>
+        <div class="address-input-readonly" (click)="openMapPicker()">
+          <ion-icon name="lock-closed-outline" class="readonly-lock-icon"></ion-icon>
+          <input
+            type="text"
+            class="form-text-input readonly-input"
+            [readonly]="true"
+            [(ngModel)]="fullAddress"
+            placeholder="Location not pinned. Tap to drop pin on map" />
+        </div>
+      </div>
+
+      <div class="row-two-inputs mt-3">
+        <div class="input-field-group flex-1">
+          <label class="field-label">City *</label>
+          <input type="text" class="form-text-input" [(ngModel)]="city" placeholder="Jamkhandi" />
+        </div>
+
+        <div class="input-field-group flex-1">
+          <label class="field-label">Locality / Area *</label>
+          <input type="text" class="form-text-input" [(ngModel)]="locality" placeholder="e.g. Girinagar Layout" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SECTION 5: NEARBY LANDMARKS & CONNECTIVITY ================= -->
+    <section class="form-card">
+      <div class="card-header-row">
+        <div class="card-num">5</div>
+        <div class="card-title-col">
+          <h2 class="card-title">Nearby Places &amp; Connectivity</h2>
+          <span class="card-subtitle">Highlight nearby schools, hospitals, transit, markets etc.</span>
+        </div>
+      </div>
+
+      <!-- Added Landmarks List -->
+      @if (customLandmarks.length > 0) {
+        <div class="landmarks-list-container">
+          @for (lm of customLandmarks; track $index) {
+            <div class="landmark-entry-item">
+              <div class="lm-entry-left">
+                <div class="lm-type-icon-box">
+                  <ion-icon [name]="landmarkTypeIcons[lm.type] || 'location-outline'"></ion-icon>
+                </div>
+                <div class="lm-entry-info">
+                  <span class="lm-entry-name">{{ lm.name }}</span>
+                  <span class="lm-entry-type-tag">{{ lm.type | uppercase }}</span>
+                </div>
+              </div>
+              <div class="lm-entry-right">
+                <span class="lm-distance-badge">{{ lm.distance }}</span>
+                <button type="button" class="btn-del-landmark" (click)="removeLandmark($index)" aria-label="Remove landmark">
+                  <ion-icon name="trash-outline"></ion-icon>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Manual Entry Block for Landmarks -->
+      <div class="custom-entry-card mt-3">
+        <span class="custom-entry-header-title">Enter Nearby Landmark</span>
+        
+        <!-- Type Selector Chips -->
+        <div class="landmark-type-pills">
+          @for (t of landmarkTypeOptions; track t.id) {
+            <button
+              type="button"
+              class="landmark-type-pill"
+              [class.active]="newLandmarkType === t.id"
+              (click)="newLandmarkType = t.id">
+              <ion-icon [name]="t.icon"></ion-icon>
+              <span>{{ t.label }}</span>
+            </button>
+          }
+        </div>
+
+        <div class="row-two-inputs mt-2">
+          <div class="input-field-group flex-1">
+            <label class="field-label">Landmark / Place Name</label>
+            <input
+              type="text"
+              class="form-text-input"
+              placeholder="e.g. City Central Bus Stand, KSRTC"
+              [(ngModel)]="newLandmarkName"
+              (keyup.enter)="addLandmark()" />
+          </div>
+          <div class="input-field-group landmark-dist-input">
+            <label class="field-label">Distance</label>
+            <input
+              type="text"
+              class="form-text-input"
+              placeholder="e.g. 500 m"
+              [(ngModel)]="newLandmarkDistance"
+              (keyup.enter)="addLandmark()" />
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="btn-custom-add-block mt-3"
+          (click)="addLandmark()"
+          [disabled]="!newLandmarkName.trim() || !newLandmarkDistance.trim()">
+          <ion-icon name="add-outline"></ion-icon>
+          <span>Add Nearby Landmark</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ================= SECTION 6: DIMENSIONS & SPECS ================= -->
+    <section class="form-card">
+      <div class="card-header-row">
+        <div class="card-num">6</div>
+        <div class="card-title-col">
+          <h2 class="card-title">Dimensions &amp; Specifications</h2>
+          <span class="card-subtitle">Area, rooms, facing and condition</span>
+        </div>
+      </div>
+
+      <!-- Area inputs: Total Acres for Land vs Super Built-up & Carpet Area for others -->
+      @if (category === 'buy_land') {
+        <div class="row-two-inputs">
+          <div class="input-field-group flex-1">
+            <label class="field-label">Total Land Area (Acres) *</label>
+            <input type="number" step="0.01" class="form-text-input" [(ngModel)]="totalAcres" placeholder="e.g. 2.5 Acres" />
+          </div>
+
+          <div class="input-field-group flex-1">
+            <label class="field-label">Area (Guntha / Sq.ft optional)</label>
+            <input type="number" class="form-text-input" [(ngModel)]="superBuiltUpArea" placeholder="e.g. 108900 sq.ft" />
+          </div>
+        </div>
+      } @else {
+        <div class="row-two-inputs">
+          <div class="input-field-group flex-1">
+            <label class="field-label">{{ category === 'buy_plot' ? 'Plot Area (sq.ft) *' : 'Super Built-up Area (sq.ft) *' }}</label>
+            <input type="number" class="form-text-input" [(ngModel)]="superBuiltUpArea" placeholder="e.g. 1850" />
+          </div>
+
+          <div class="input-field-group flex-1">
+            <label class="field-label">{{ category === 'buy_plot' ? 'Dimensions (e.g. 30x40)' : 'Carpet Area (sq.ft)' }}</label>
+            <input type="number" class="form-text-input" [(ngModel)]="carpetArea" placeholder="e.g. 1200" />
+          </div>
+        </div>
+      }
+
+      <!-- Bedrooms & Bathrooms (Houses & Rent only) -->
+      @if (category === 'buy_house' || category === 'rent_house') {
+        <div class="input-field-group mt-3">
+          <label class="field-label">Bedrooms (BHK)</label>
+          <div class="chips-number-selector">
+            @for (n of [1, 2, 3, 4, 5]; track n) {
+              <button
+                type="button"
+                class="num-chip"
+                [class.active]="bedrooms === n"
+                (click)="bedrooms = n">
+                {{ n }} BHK
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="input-field-group mt-3">
+          <label class="field-label">Bathrooms</label>
+          <div class="chips-number-selector">
+            @for (n of [1, 2, 3, 4]; track n) {
+              <button
+                type="button"
+                class="num-chip"
+                [class.active]="bathrooms === n"
+                (click)="bathrooms = n">
+                {{ n }} Baths
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="input-field-group mt-3">
+          <label class="field-label">Furnishing Status</label>
+          <div class="chips-number-selector">
+            @for (f of ['Furnished', 'Semi-Furnished', 'Unfurnished']; track f) {
+              <button
+                type="button"
+                class="num-chip"
+                [class.active]="furnishing === f"
+                (click)="furnishing = $any(f)">
+                {{ f }}
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+      <div class="input-field-group mt-3">
+        <label class="field-label">Facing Direction</label>
+        <div class="chips-number-selector">
+          @for (dir of ['East', 'North', 'North-East', 'West', 'South']; track dir) {
+            <button
+              type="button"
+              class="num-chip"
+              [class.active]="facing === dir"
+              (click)="facing = $any(dir)">
+              {{ dir }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Possession Status: Hidden for Land; Plot gets 'Under Development' instead of 'Under Construction' -->
+      @if (category !== 'buy_land') {
+        <div class="input-field-group mt-3">
+          <label class="field-label">Possession Status</label>
+          <div class="chips-number-selector">
+            @if (category === 'buy_plot') {
+              @for (p of ['Ready to Move', 'Under Development', 'Immediate']; track p) {
+                <button
+                  type="button"
+                  class="num-chip"
+                  [class.active]="possessionStatus === p"
+                  (click)="possessionStatus = $any(p)">
+                  {{ p }}
+                </button>
+              }
+            } @else {
+              @for (p of ['Ready to Move', 'Under Construction', 'Immediate']; track p) {
+                <button
+                  type="button"
+                  class="num-chip"
+                  [class.active]="possessionStatus === p"
+                  (click)="possessionStatus = $any(p)">
+                  {{ p }}
+                </button>
+              }
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Floor Level and Parking: Only for Houses and Rent -->
+      @if (category === 'buy_house' || category === 'rent_house') {
+        <div class="row-two-inputs mt-3">
+          <div class="input-field-group flex-1">
+            <label class="field-label">Floor Level</label>
+            <input type="text" class="form-text-input" [(ngModel)]="floor" placeholder="e.g. G+1 Villa" />
+          </div>
+
+          <div class="input-field-group flex-1">
+            <label class="field-label">Parking</label>
+            <input type="text" class="form-text-input" [(ngModel)]="parking" placeholder="Covered Car Parking" />
+          </div>
+        </div>
+      }
+
+      <div class="input-field-group mt-3">
+        <label class="field-label">Water Supply</label>
+        <input
+          type="text"
+          class="form-text-input"
+          [(ngModel)]="waterSupply"
+          [placeholder]="category === 'buy_land' ? 'Borewell / Canal / Open Well' : '24/7 Municipal & Borewell'" />
+      </div>
+    </section>
+
+    <!-- ================= SECTION 7: AMENITIES ================= -->
+    <section class="form-card">
+      <div class="card-header-row">
+        <div class="card-num">7</div>
+        <div class="card-title-col">
+          <h2 class="card-title">Features &amp; Amenities</h2>
+          <span class="card-subtitle">Select all available amenities</span>
+        </div>
+      </div>
+
+      <div class="amenities-selection-grid">
+        @for (amenity of availableAmenities; track amenity) {
+          <div
+            class="amenity-selectable-card"
+            [class.selected]="isAmenitySelected(amenity)"
+            (click)="toggleAmenity(amenity)">
+            <div class="amenity-icon-box">
+              <ion-icon [name]="isAmenitySelected(amenity) ? 'checkmark-circle' : 'add-outline'"></ion-icon>
+            </div>
+            <span class="amenity-name">{{ amenity }}</span>
+          </div>
+        }
+      </div>
+
+      <!-- Add Custom Amenity Input -->
+      <div class="custom-entry-card mt-3">
+        <span class="custom-entry-header-title">Add Custom Feature / Amenity</span>
+        <div class="custom-add-row mt-2">
+          <input
+            type="text"
+            class="form-text-input flex-1"
+            placeholder="e.g. 3-Phase Power, Solar Inverter, EV Charger"
+            [(ngModel)]="customAmenityInput"
+            (keyup.enter)="addCustomAmenity()" />
+          <button
+            type="button"
+            class="btn-custom-add"
+            (click)="addCustomAmenity()"
+            [disabled]="!customAmenityInput.trim()">
+            <ion-icon name="add-outline"></ion-icon>
+            <span>Add</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SECTION 8: LEGAL & DOCUMENTS STATUS ================= -->
+    <section class="form-card">
+      <div class="card-header-row">
+        <div class="card-num">8</div>
+        <div class="card-title-col">
+          <h2 class="card-title">Docs &amp; Legal Verification</h2>
+          <span class="card-subtitle">
+            {{ category === 'rent_house' ? 'Rental agreement & tenant onboarding status' : 'Highlight clear documents for buyer trust' }}
+          </span>
+        </div>
+      </div>
+
+      <div class="legal-toggles-stack">
+        <!-- RENT SPECIFIC DOCUMENTS -->
+        @if (category === 'rent_house') {
+          <div class="doc-toggle-row" (click)="rentAgreementReady = !rentAgreementReady">
+            <div class="doc-info-col">
+              <span class="doc-title">Registered Rental Agreement</span>
+              <span class="doc-desc">Standard 11-month agreement drafted and ready</span>
+            </div>
+            <div class="custom-switch" [class.on]="rentAgreementReady"><div class="switch-handle"></div></div>
+          </div>
+
+          <div class="doc-toggle-row" (click)="nocOwnerClear = !nocOwnerClear">
+            <div class="doc-info-col">
+              <span class="doc-title">Owner ID &amp; Tenancy NOC</span>
+              <span class="doc-desc">Verified electricity bill, ownership &amp; tenancy NOC</span>
+            </div>
+            <div class="custom-switch" [class.on]="nocOwnerClear"><div class="switch-handle"></div></div>
+          </div>
+
+          <div class="doc-toggle-row" (click)="policeVerificationReady = !policeVerificationReady">
+            <div class="doc-info-col">
+              <span class="doc-title">Police Tenant Verification Form</span>
+              <span class="doc-desc">Local station tenant verification form available</span>
+            </div>
+            <div class="custom-switch" [class.on]="policeVerificationReady"><div class="switch-handle"></div></div>
+          </div>
+        } @else {
+          <!-- SALE SPECIFIC DOCUMENTS (House, Land, Plot) -->
+          <div class="doc-toggle-row" (click)="titleDeedClear = !titleDeedClear">
+            <div class="doc-info-col">
+              <span class="doc-title">Title Deed &amp; Sale Deed Registered</span>
+              <span class="doc-desc">Clear 30-year mother deed title chain</span>
+            </div>
+            <div class="custom-switch" [class.on]="titleDeedClear"><div class="switch-handle"></div></div>
+          </div>
+
+          <div class="doc-toggle-row" (click)="khataClear = !khataClear">
+            <div class="doc-info-col">
+              <span class="doc-title">{{ category === 'buy_land' ? '7/12 RTC & Mutation Clear' : 'A-Khata / Municipal Khata' }}</span>
+              <span class="doc-desc">Updated mutation and land revenue tax assessment</span>
+            </div>
+            <div class="custom-switch" [class.on]="khataClear"><div class="switch-handle"></div></div>
+          </div>
+
+          <div class="doc-toggle-row" (click)="ecClear = !ecClear">
+            <div class="doc-info-col">
+              <span class="doc-title">Encumbrance Certificate (EC)</span>
+              <span class="doc-desc">Nil encumbrance (15+ Years) free from bank mortgages</span>
+            </div>
+            <div class="custom-switch" [class.on]="ecClear"><div class="switch-handle"></div></div>
+          </div>
+
+          <div class="doc-toggle-row" (click)="planApproved = !planApproved">
+            <div class="doc-info-col">
+              <span class="doc-title">{{ category === 'buy_land' ? 'DC Conversion (NA Order) / Form 9/11' : 'Sanctioned Building Plan / DC Layout' }}</span>
+              <span class="doc-desc">Town planning and competent revenue authority approved</span>
+            </div>
+            <div class="custom-switch" [class.on]="planApproved"><div class="switch-handle"></div></div>
+          </div>
+
+          <div class="doc-toggle-row" (click)="taxPaid = !taxPaid">
+            <div class="doc-info-col">
+              <span class="doc-title">Property Tax Paid</span>
+              <span class="doc-desc">Paid up to current financial year (2025-26)</span>
+            </div>
+            <div class="custom-switch" [class.on]="taxPaid"><div class="switch-handle"></div></div>
+          </div>
+
+          @if (category === 'buy_house') {
+            <div class="doc-toggle-row" (click)="ocAvailable = !ocAvailable">
+              <div class="doc-info-col">
+                <span class="doc-title">Occupancy Certificate (OC)</span>
+                <span class="doc-desc">Official completion and occupancy certificate</span>
+              </div>
+              <div class="custom-switch" [class.on]="ocAvailable"><div class="switch-handle"></div></div>
+            </div>
+          }
+
+          <div class="doc-toggle-row" (click)="bankLoanEligible = !bankLoanEligible">
+            <div class="doc-info-col">
+              <span class="doc-title">Bank Home / Plot Loan Pre-Approved</span>
+              <span class="doc-desc">Eligible for fast loans with SBI, HDFC &amp; Canara Bank</span>
+            </div>
+            <div class="custom-switch" [class.on]="bankLoanEligible"><div class="switch-handle"></div></div>
+          </div>
+        }
+
+        <!-- User Added Custom Legal Documents -->
+        @for (customDoc of customLegalDocs; track $index) {
+          <div class="doc-toggle-row custom-added-doc">
+            <div class="doc-info-col" (click)="customDoc.clear = !customDoc.clear">
+              <div class="doc-title-row">
+                <span class="doc-title">{{ customDoc.title }}</span>
+                <span class="doc-category-badge">{{ customDoc.category }}</span>
+              </div>
+              <span class="doc-desc">{{ customDoc.details }}</span>
+            </div>
+            <div class="custom-doc-right-col">
+              <div class="custom-switch" [class.on]="customDoc.clear" (click)="customDoc.clear = !customDoc.clear">
+                <div class="switch-handle"></div>
+              </div>
+              <button type="button" class="btn-remove-custom-doc" (click)="removeCustomLegalDoc($index)" aria-label="Remove document">
+                <ion-icon name="trash-outline"></ion-icon>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Add Custom Legal Document Block with Title & Description -->
+      <div class="custom-entry-card mt-3">
+        <span class="custom-entry-header-title">Add Custom Legal Document</span>
+        
+        <div class="input-field-group mt-2">
+          <label class="field-label">Document Title *</label>
+          <input
+            type="text"
+            class="form-text-input"
+            placeholder="e.g. Gram Panchayat NOC, TMC Conversion Order"
+            [(ngModel)]="newCustomDocTitle"
+            (keyup.enter)="addCustomLegalDoc()" />
+        </div>
+
+        <div class="input-field-group mt-2">
+          <label class="field-label">Document Details / Description</label>
+          <input
+            type="text"
+            class="form-text-input"
+            placeholder="e.g. Issued in 2024 with valid seal and survey demarcation"
+            [(ngModel)]="newCustomDocDetails"
+            (keyup.enter)="addCustomLegalDoc()" />
+        </div>
+
+        <button
+          type="button"
+          class="btn-custom-add-block mt-3"
+          (click)="addCustomLegalDoc()"
+          [disabled]="!newCustomDocTitle.trim()">
+          <ion-icon name="add-outline"></ion-icon>
+          <span>Add Legal Document</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ================= SECTION 9: PHOTOS ================= -->
+    <section class="form-card">
+      <div class="card-header-row">
+        <div class="card-num">9</div>
+        <div class="card-title-col">
+          <h2 class="card-title">Property Photos</h2>
+          <span class="card-subtitle">Listings with high quality photos get 5x more calls</span>
+        </div>
+      </div>
+
+      <div class="image-previews-grid">
+        <!-- Rendered photos (left of upload button) -->
+        @for (img of imageUrls; track $index) {
+          <div class="image-thumb-card">
+            <img [src]="img" alt="Property Photo" class="thumb-pic" />
+            <button type="button" class="btn-del-pic" (click)="removeImage($index)" aria-label="Remove photo">
+              <ion-icon name="trash-outline"></ion-icon>
+            </button>
+          </div>
+        }
+
+        <!-- Empty Upload Button with + Icon sized equal to photo card -->
+        <button
+          type="button"
+          class="btn-upload-photo-card"
+          (click)="selectPhotoSource()"
+          aria-label="Upload photo from gallery or camera">
+          <div class="upload-icon-circle">
+            <ion-icon name="add-outline"></ion-icon>
+          </div>
+          <span class="upload-btn-label">Add Photo</span>
+        </button>
+      </div>
+
+      <div class="add-image-url-row mt-3">
+        <input
+          type="url"
+          class="form-text-input flex-1"
+          placeholder="Or paste web photo URL (https://...)"
+          [(ngModel)]="newImageUrl"
+          (keyup.enter)="addImage()" />
+        <button type="button" class="btn-add-img" (click)="addImage()" [disabled]="!newImageUrl.trim()">
+          <ion-icon name="add-outline"></ion-icon>
+          <span>Add</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ================= SECTION 10: CONTACT & SELLER ================= -->
+    <section class="form-card">
+      <div class="card-header-row">
+        <div class="card-num">10</div>
+        <div class="card-title-col">
+          <h2 class="card-title">Contact &amp; Seller Info</h2>
+          <span class="card-subtitle">Who should interested buyers contact?</span>
+        </div>
+      </div>
+
+      <div class="input-field-group">
+        <label class="field-label">Your Name *</label>
+        <input type="text" class="form-text-input" [(ngModel)]="sellerName" placeholder="Full Name" />
+      </div>
+
+      <div class="input-field-group mt-3">
+        <label class="field-label">You Are Listing As</label>
+        <div class="chips-number-selector">
+          @for (role of ['Owner', 'Builder', 'Verified Agent']; track role) {
+            <button
+              type="button"
+              class="num-chip"
+              [class.active]="sellerType === role"
+              (click)="sellerType = $any(role)">
+              {{ role }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="row-two-inputs mt-3">
+        <div class="input-field-group flex-1">
+          <label class="field-label">Phone Number *</label>
+          <input type="tel" class="form-text-input" [(ngModel)]="sellerPhone" placeholder="+91 98765 43210" />
+        </div>
+
+        <div class="input-field-group flex-1">
+          <label class="field-label">WhatsApp Number</label>
+          <input type="tel" class="form-text-input" [(ngModel)]="sellerWhatsapp" placeholder="+91 98765 43210" />
+        </div>
+      </div>
+    </section>
+
+    <div class="bottom-form-spacer"></div>
+  </main>
+
+  <!-- ================= STICKY BOTTOM SUBMIT BAR ================= -->
+  <footer class="sticky-register-footer">
+    <button
+      type="button"
+      class="btn-submit-property"
+      [disabled]="isSubmitting"
+      (click)="submitProperty()">
+      @if (isSubmitting) {
+        <span>Publishing Property...</span>
+      } @else {
+        <ion-icon name="sparkles"></ion-icon>
+        <span>Post Property for Free</span>
+      }
+    </button>
+  </footer>
+</ion-content>
+

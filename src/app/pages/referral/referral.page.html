@@ -21,13 +21,19 @@
       <div class="hero-info-col">
         <span class="hero-badge">PINTU REWARDS</span>
         <h2 class="hero-headline">Give ₹50, Get ₹50</h2>
-        <p class="hero-desc">Invite your friends to Pintu and both of you will receive ₹50 wallet cash after their 1st delivery.</p>
+        <p class="hero-desc">Invite friends to Pintu. Both of you receive ₹50 wallet cash when they complete their 1st order.</p>
       </div>
     </div>
 
     <!-- Referral Code Interactive Box -->
     <div class="referral-code-card">
-      <span class="code-eyebrow">YOUR UNIQUE REFERRAL CODE</span>
+      <div class="d-flex justify-content-between align-items-center mb-1">
+        <span class="code-eyebrow">YOUR UNIQUE REFERRAL CODE</span>
+        @if (isLoading) {
+          <ion-spinner name="crescent" class="spinner-code-loading"></ion-spinner>
+        }
+      </div>
+
       <div class="code-action-box" (click)="copyCode()" role="button" tabindex="0">
         <span class="code-text">{{ referralCode }}</span>
         <button type="button" class="btn-copy-chip" [class.copied]="isCopied">
@@ -50,6 +56,87 @@
       </button>
     </div>
 
+    <!-- Referral Live Stats Row -->
+    <div class="referral-stats-card">
+      <div class="stats-header">
+        <h3 class="stats-title">Your Referral Rewards</h3>
+        <span class="stats-rate-badge">₹50 / Friend</span>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-icon purple">
+            <ion-icon name="people-outline"></ion-icon>
+          </div>
+          <span class="stat-value">{{ stats.total_invites }}</span>
+          <span class="stat-label">Invited</span>
+        </div>
+
+        <div class="stat-box">
+          <div class="stat-icon emerald">
+            <ion-icon name="checkmark-circle"></ion-icon>
+          </div>
+          <span class="stat-value">{{ stats.completed_invites }}</span>
+          <span class="stat-label">Completed</span>
+        </div>
+
+        <div class="stat-box">
+          <div class="stat-icon amber">
+            <ion-icon name="wallet-outline"></ion-icon>
+          </div>
+          <span class="stat-value">₹{{ stats.total_earnings | number:'1.0-0' }}</span>
+          <span class="stat-label">Total Earned</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Referred Friends Activity Section -->
+    <section class="referrals-activity-section">
+      <div class="activity-header">
+        <h3 class="section-title">Referred Friends</h3>
+        @if (referrals.length > 0) {
+          <span class="activity-count">{{ referrals.length }} Friends</span>
+        }
+      </div>
+
+      @if (referrals.length > 0) {
+        <div class="referrals-list">
+          @for (ref of referrals; track ref.id) {
+            <div class="friend-item-card">
+              <div class="friend-avatar">
+                {{ ref.referee_name ? ref.referee_name.charAt(0).toUpperCase() : 'F' }}
+              </div>
+              <div class="friend-info">
+                <h4 class="friend-name">{{ ref.referee_name }}</h4>
+                <p class="friend-date">Joined {{ ref.signup_date | date:'mediumDate' }}</p>
+              </div>
+              <div class="friend-status">
+                @if (ref.status === 'COMPLETED') {
+                  <span class="status-pill status-completed">
+                    <ion-icon name="checkmark-circle"></ion-icon>
+                    +₹50 Earned
+                  </span>
+                } @else {
+                  <span class="status-pill status-pending">
+                    <ion-icon name="time-outline"></ion-icon>
+                    Joined
+                  </span>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="empty-referrals-box">
+          <div class="empty-icon-wrap">
+            <ion-icon name="sparkles-outline"></ion-icon>
+          </div>
+          <h4 class="empty-title">No referrals yet</h4>
+          <p class="empty-desc">Share your invite code with friends and family. Once they make their first order, you both get ₹50!</p>
+        </div>
+      }
+    </section>
+
     <!-- How It Works 3-Step Timeline -->
     <section class="how-it-works-section">
       <h3 class="section-title">How It Works</h3>
@@ -61,7 +148,7 @@
           </div>
           <div class="step-text-col">
             <h4 class="step-title">1. Share your code</h4>
-            <p class="step-desc">Send your referral invite link or code to friends &amp; family.</p>
+            <p class="step-desc">Send your referral invite code or link to your friends and contacts.</p>
           </div>
         </div>
 
@@ -70,8 +157,8 @@
             <ion-icon name="person-add-outline"></ion-icon>
           </div>
           <div class="step-text-col">
-            <h4 class="step-title">2. Friend places first order</h4>
-            <p class="step-desc">They sign up with your code and get instant ₹50 welcome discount.</p>
+            <h4 class="step-title">2. Friend signs up &amp; orders</h4>
+            <p class="step-desc">They sign up with your code and get an instant ₹50 welcome discount.</p>
           </div>
         </div>
 
@@ -80,8 +167,8 @@
             <ion-icon name="wallet-outline"></ion-icon>
           </div>
           <div class="step-text-col">
-            <h4 class="step-title">3. You get ₹50 cash</h4>
-            <p class="step-desc">₹50 is credited directly into your Pintu wallet instantly.</p>
+            <h4 class="step-title">3. You get ₹50 wallet cash</h4>
+            <p class="step-desc">₹50 is credited directly into your Pintu wallet when their order completes.</p>
           </div>
         </div>
       </div>

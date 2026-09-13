@@ -1,6 +1,6 @@
 {
   "name": "Pintu - Minutes App",
-  "version": "0.0.22",
+  "version": "0.0.35",
   "author": "Ionic Framework",
   "homepage": "https://ionicframework.com/",
   "scripts": {
@@ -13,9 +13,15 @@
     "deploy": "npx ionic build --prod && npx cap run android --target 65PJQ8SCOJRCS8EI",
     "sync": "npx cap sync android && ionic build && npx cap run android --target 65PJQ8SCOJRCS8EI",
     "deploy-vercel": "npx ionic build && cd www && vercel --prod --yes --scope sammedpatil29s-projects -n pintu",
-    "ota:publish": "node scripts/publish-ota.mjs",
-    "ota:publish:immediate": "node scripts/publish-ota.mjs --immediate",
-    "ota:publish:quick": "node scripts/publish-ota.mjs --skip-build",
+    "set-env:testing": "node scripts/set-env.mjs testing",
+    "set-env:prod": "node scripts/set-env.mjs prod",
+    "ota:publish:testing": "node scripts/publish-ota.mjs --env=testing",
+    "ota:publish:testing:immediate": "node scripts/publish-ota.mjs --env=testing --immediate",
+    "ota:publish:testing:quick": "node scripts/publish-ota.mjs --env=testing --skip-build",
+    "ota:publish:prod": "node scripts/publish-ota.mjs --env=prod",
+    "ota:publish:prod:immediate": "node scripts/publish-ota.mjs --env=prod --immediate",
+    "ota:publish:prod:quick": "node scripts/publish-ota.mjs --env=prod --skip-build",
+    "ota:publish": "node scripts/publish-ota.mjs --env=prod",
     "fix:git": "powershell -ExecutionPolicy Bypass -File ../fix-git.ps1"
   },
   "private": true,

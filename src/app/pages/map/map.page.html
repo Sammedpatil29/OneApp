@@ -93,7 +93,12 @@
 
     <!-- Service Area Status Chip -->
     <div class="sheet-status-row">
-      @if (inside) {
+      @if (isPropertyListingFlow) {
+        <div class="status-badge available">
+          <span class="status-dot green"></span>
+          <span>Property Location Pin • {{ currentServiceAreaName || mainAreaName || 'Service Area' }}</span>
+        </div>
+      } @else if (inside) {
         <div class="status-badge available">
           <span class="status-dot green"></span>
           <span>Delivering to {{ currentServiceAreaName || mainAreaName || 'Service Area' }} • 10-15 Min Delivery</span>
@@ -108,7 +113,7 @@
 
     <!-- Address Details Block -->
     <div class="sheet-address-row">
-      <div class="address-icon-box" [class.is-serviceable]="inside">
+      <div class="address-icon-box" [class.is-serviceable]="inside || isPropertyListingFlow">
         <ion-icon name="location"></ion-icon>
       </div>
       <div class="address-text-col">
@@ -131,10 +136,13 @@
         type="button"
         class="btn-confirm-location"
         (click)="confirmLocation()"
-        [disabled]="!inside || isPolygonLoading">
+        [disabled]="(!inside && !isPropertyListingFlow) || isPolygonLoading">
         @if (isPolygonLoading) {
           <ion-spinner name="crescent"></ion-spinner>
           <span>Verifying location...</span>
+        } @else if (isPropertyListingFlow) {
+          <span>Use This Property Location</span>
+          <ion-icon name="checkmark-circle"></ion-icon>
         } @else if (inside) {
           <span>{{ isSaveAddressFlow ? 'Save Address' : 'Confirm Location' }}</span>
           <ion-icon [name]="isSaveAddressFlow ? 'bookmark-outline' : 'navigate-outline'"></ion-icon>
