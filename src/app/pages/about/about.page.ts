@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonSkeletonText, IonButton, IonButtons, IonIcon, IonFooter, IonText, IonItem, IonList, IonInput, IonLabel, IonNote, IonSpinner, IonToast, IonAvatar, IonAlert } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonSkeletonText, IonButton, IonButtons, IonIcon, IonText, IonItem, IonList, IonInput, IonLabel, IonNote, IonSpinner, IonToast, IonAvatar, IonAlert } from '@ionic/angular/standalone';
 import { Router, RouterLink } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { 
@@ -56,7 +56,7 @@ import { AppDialogService } from 'src/app/services/app-dialog.service';
   templateUrl: './about.page.html',
   styleUrls: ['./about.page.scss'],
   standalone: true,
-  imports: [IonAlert, IonAvatar, IonButton, IonToast, IonSkeletonText, IonSpinner, IonNote, IonLabel, IonInput, IonList, IonItem, IonText, IonFooter, IonIcon, IonButtons, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, FooterComponent, NodataComponent]
+  imports: [IonAlert, IonAvatar, IonButton, IonToast, IonSkeletonText, IonSpinner, IonNote, IonLabel, IonInput, IonList, IonItem, IonText, IonIcon, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, NodataComponent]
 })
 export class AboutPage implements OnInit {
 

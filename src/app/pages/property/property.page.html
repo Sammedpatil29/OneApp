@@ -134,9 +134,9 @@
                   <span class="sold-tag">
                     {{ prop.category === 'rent_house' ? 'Rented' : 'Sold' }}
                   </span>
-                } @else if (prop.status === 'verifying') {
-                  <span class="verifying-tag">
-                    Verifying
+                } @else if (prop.status === 'closed') {
+                  <span class="sold-tag">
+                    Closed
                   </span>
                 } @else if (prop.tags.includes('Verified') || prop.is_verified) {
                   <span class="verified-tag">

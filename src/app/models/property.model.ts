@@ -62,7 +62,7 @@ export interface PropertyItem {
   isFavorite?: boolean;
   is_verified?: boolean;
   isVerified?: boolean;
-  status?: 'approved' | 'pending_verification' | 'verifying' | 'sold' | 'rejected' | string;
+  status?: 'approved' | 'pending_verification' | 'sold' | 'closed' | 'rejected' | string;
   legalChecks?: PropertyDocumentCheck[];
 }
 

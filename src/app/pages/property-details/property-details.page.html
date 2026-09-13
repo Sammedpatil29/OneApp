@@ -56,9 +56,9 @@
             <span class="sold-pill">
               {{ property.category === 'rent_house' ? 'Rented Out' : 'Sold Out' }}
             </span>
-          } @else if (property.status === 'verifying') {
-            <span class="verifying-pill">
-              Under Verification
+          } @else if (property.status === 'closed') {
+            <span class="sold-pill">
+              Closed
             </span>
           } @else if (property.tags.includes('Verified') || property.is_verified) {
             <span class="verified-pill">
