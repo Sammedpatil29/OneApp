@@ -98,6 +98,17 @@ export class MapPage implements OnInit, AfterViewInit, OnDestroy {
     return src === 'profile' || src === 'savedaddress' || src === 'savedaddresses' || src === 'addaddress';
   }
 
+  // Property Listing Flow check
+  get isPropertyListingFlow(): boolean {
+    const src = String(
+      this.routeSource ||
+      this.route.snapshot.queryParams['from'] ||
+      localStorage.getItem('map_picker_source') ||
+      ''
+    ).toLowerCase();
+    return src === 'property_register' || src === 'property' || src === 'property-register';
+  }
+
   // Live Location Indicator (Blue Dot)
   userLiveMarker: any = null;
   userLiveAccuracyCircle: any = null;
@@ -130,8 +141,19 @@ export class MapPage implements OnInit, AfterViewInit, OnDestroy {
 
   async ngOnInit() {
     this.token = await this.authService.getToken();
-    this.routeSource = history.state?.data;
+    this.updateRouteSource();
     this.fetchServiceArea();
+  }
+
+  ionViewWillEnter() {
+    this.updateRouteSource();
+  }
+
+  private updateRouteSource() {
+    const qFrom = this.route.snapshot.queryParams['from'];
+    const stateData = history.state?.data;
+    const storageSource = localStorage.getItem('map_picker_source');
+    this.routeSource = qFrom || stateData || storageSource || this.routeSource;
   }
 
   ngAfterViewInit() {
@@ -580,16 +602,48 @@ export class MapPage implements OnInit, AfterViewInit, OnDestroy {
   confirmLocation() {
     if (!this.map) return;
     const center = this.map.getCenter();
+    if (!center) return;
+
+    const lat = typeof center.lat === 'function' ? center.lat() : center.lat;
+    const lng = typeof center.lng === 'function' ? center.lng() : center.lng;
+
+    let addressVal = this.currentAddress;
+    if (!addressVal || addressVal.includes('Loading') || addressVal.includes('Fetching')) {
+      addressVal = this.mainAreaName || this.currentServiceAreaName || `Location (${Number(lat).toFixed(4)}, ${Number(lng).toFixed(4)})`;
+    }
+
+    const areaVal = this.mainAreaName || this.currentServiceAreaName || (addressVal ? addressVal.split(',')[0] : 'Selected Area');
+
     const locationData: any = {
-      lat: center.lat(),
-      lng: center.lng(),
-      address: this.currentAddress,
-      area: this.mainAreaName || this.currentServiceAreaName || 'Selected Location'
+      lat: Number(lat),
+      lng: Number(lng),
+      address: addressVal,
+      area: areaVal,
+      city: this.currentServiceAreaName || 'Jamkhandi'
     };
 
     // If in save address flow, open the address save form component
     if (this.isSaveAddressFlow) {
       this.openSaveAddressModal();
+      return;
+    }
+
+    // If coming from Property Registration, save selected property location and return back
+    if (this.isPropertyListingFlow) {
+      localStorage.setItem('property_selected_location', JSON.stringify(locationData));
+      localStorage.removeItem('map_picker_source');
+      this.showToast('Property location pinned successfully!');
+      this.router.navigate(['/layout/property/register'], {
+        queryParams: {
+          from_map: '1',
+          lat: locationData.lat,
+          lng: locationData.lng,
+          address: locationData.address,
+          area: locationData.area,
+          city: locationData.city,
+          t: Date.now()
+        }
+      });
       return;
     }
 
@@ -612,6 +666,11 @@ export class MapPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goBack() {
+    if (this.isPropertyListingFlow) {
+      localStorage.removeItem('map_picker_source');
+      this.router.navigate(['/layout/property/register']);
+      return;
+    }
     this.navCtrl.back();
   }
 }
