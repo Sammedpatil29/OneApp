@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonAvatar, IonLabel, IonItem, IonList } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonButtons, IonIcon, IonAvatar, IonLabel, IonItem, IonList } from '@ionic/angular/standalone';
+import { NavController } from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import { arrowBackOutline } from 'ionicons/icons';
 
 import { registerPlugin } from '@capacitor/core';
 
@@ -18,11 +21,18 @@ declare var RazorpayCheckout: any;
   templateUrl: './payment.page.html',
   styleUrls: ['./payment.page.scss'],
   standalone: true,
-  imports: [IonList, IonItem, IonLabel, IonAvatar, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonButtons, IonIcon, IonList, IonItem, IonLabel, IonAvatar, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
 export class PaymentPage implements OnInit {
-upiApps: any;
-  constructor(private http: HttpClient, private razorpayService: RazorpayService) { }
+  upiApps: any;
+
+  constructor(private http: HttpClient, private razorpayService: RazorpayService, private navCtrl: NavController) {
+    addIcons({ arrowBackOutline });
+  }
+
+  goBack() {
+    this.navCtrl.back();
+  }
 
   ngOnInit() {
   }

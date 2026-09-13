@@ -1,9 +1,9 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonFooter, IonBackButton, IonSkeletonText } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonFooter, IonSkeletonText } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { arrowBack, heartOutline, shareSocialOutline, timeOutline, shieldCheckmarkOutline, leafOutline, star, hourglassOutline, globeOutline, alertCircleOutline } from 'ionicons/icons';
+import { arrowBack, arrowBackOutline, heartOutline, shareSocialOutline, timeOutline, shieldCheckmarkOutline, leafOutline, star, hourglassOutline, globeOutline, alertCircleOutline } from 'ionicons/icons';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { GroceryService } from 'src/app/services/grocery.service';
@@ -16,7 +16,7 @@ import { NavController } from '@ionic/angular';
   templateUrl: './grocery-item-details.page.html',
   styleUrls: ['./grocery-item-details.page.scss'],
   standalone: true,
-  imports: [IonSkeletonText, IonBackButton, IonFooter, IonIcon, IonButtons, IonContent, IonHeader, IonToolbar, CommonModule, FormsModule, ErrorComponent, ProductCardComponent]
+  imports: [IonSkeletonText, IonFooter, IonIcon, IonButtons, IonButton, IonTitle, IonContent, IonHeader, IonToolbar, CommonModule, FormsModule, ErrorComponent, ProductCardComponent]
 })
 export class GroceryItemDetailsPage implements OnInit {
 
@@ -53,7 +53,7 @@ export class GroceryItemDetailsPage implements OnInit {
   // ];
 
   constructor(private router: Router, private groceryService: GroceryService, private authService: AuthService, private cdr: ChangeDetectorRef, private navCtrl: NavController) { 
-    addIcons({shareSocialOutline,heartOutline,leafOutline,hourglassOutline,globeOutline,alertCircleOutline,arrowBack,timeOutline,shieldCheckmarkOutline,star});
+    addIcons({shareSocialOutline,heartOutline,leafOutline,hourglassOutline,globeOutline,alertCircleOutline,arrowBack,arrowBackOutline,timeOutline,shieldCheckmarkOutline,star});
   }
 
   async ngOnInit() {
@@ -112,6 +112,10 @@ export class GroceryItemDetailsPage implements OnInit {
       this.isLoading = false;
       this.isError = true
     });
+  }
+
+  goBack() {
+    this.navCtrl.back();
   }
 
   goToDetails(product?: any) {

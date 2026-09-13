@@ -5,7 +5,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { addIcons } from 'ionicons';
 import { register } from 'swiper/element/bundle';
 import { 
-  arrowBack, shareSocialOutline, heartOutline, heart,
+  arrowBack, arrowBackOutline, shareSocialOutline, heartOutline, heart,
   star, timeOutline, callOutline, locationOutline,
   navigateOutline, imagesOutline, chevronDownOutline, chevronUpOutline, closeOutline,
   informationCircleOutline, wifiOutline, snowOutline,
@@ -221,7 +221,7 @@ export class DineoutHotelDetailsPage implements OnInit {
 
   constructor(private sanitizer: DomSanitizer, private dineoutService: DineoutService, private navCtrl: NavController) {
     addIcons({ 
-      arrowBack, shareSocialOutline, heartOutline, heart,
+      arrowBack, arrowBackOutline, shareSocialOutline, heartOutline, heart,
       star, timeOutline, callOutline, locationOutline,
       navigateOutline, imagesOutline, chevronDownOutline, chevronUpOutline, closeOutline,
       informationCircleOutline, wifiOutline, snowOutline,

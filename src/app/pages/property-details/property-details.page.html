@@ -1,0 +1,399 @@
+<ion-content [fullscreen]="true" class="property-details-content">
+  @if (property) {
+    <main class="details-body-container">
+
+      <!-- ================= HERO IMAGE GALLERY (SWIPABLE) ================= -->
+      <section class="hero-gallery-section">
+        <!-- Floating Navigation Header -->
+        <header class="floating-nav-header">
+          <button type="button" class="btn-circle-nav" (click)="goBack()" aria-label="Back">
+            <ion-icon name="arrow-back-outline"></ion-icon>
+          </button>
+
+          <div class="header-right-actions">
+            <button type="button" class="btn-circle-nav" (click)="shareProperty()" aria-label="Share">
+              <ion-icon name="share-social-outline"></ion-icon>
+            </button>
+            <button type="button" class="btn-circle-nav" [class.active]="isFavorite" (click)="toggleFavorite()" aria-label="Save">
+              <ion-icon [name]="isFavorite ? 'heart' : 'heart-outline'"></ion-icon>
+            </button>
+          </div>
+        </header>
+
+        <!-- Main Image Display with Touch Swipe Support -->
+        <div
+          class="main-image-viewport"
+          (touchstart)="onTouchStart($event)"
+          (touchend)="onTouchEnd($event)">
+          <img [src]="property.images[activeImageIndex]" [alt]="property.title" class="hero-property-img" />
+          <div class="hero-image-overlay"></div>
+
+          <!-- Left/Right Nav Arrows for Quick Tap Affordance -->
+          @if (property.images.length > 1) {
+            <button type="button" class="btn-gallery-nav btn-prev" (click)="prevImage()" aria-label="Previous photo">
+              <ion-icon name="chevron-back-outline"></ion-icon>
+            </button>
+            <button type="button" class="btn-gallery-nav btn-next" (click)="nextImage()" aria-label="Next photo">
+              <ion-icon name="chevron-forward-outline"></ion-icon>
+            </button>
+          }
+
+          <!-- Bottom Photo Counter -->
+          <div class="photo-counter-badge">
+            <ion-icon name="camera-outline"></ion-icon>
+            <span>{{ activeImageIndex + 1 }} / {{ property.images.length }} Photos</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= MAIN PROPERTY CONTENT ================= -->
+      <section class="property-info-card">
+
+        <!-- Tags Row -->
+        <div class="tags-badge-row">
+          <span class="type-pill">{{ property.propertyType }}</span>
+          @if (property.status === 'sold') {
+            <span class="sold-pill">
+              {{ property.category === 'rent_house' ? 'Rented Out' : 'Sold Out' }}
+            </span>
+          } @else if (property.status === 'closed') {
+            <span class="sold-pill">
+              Closed
+            </span>
+          } @else if (property.tags.includes('Verified') || property.is_verified) {
+            <span class="verified-pill">
+              <ion-icon name="checkmark-circle"></ion-icon>
+              Pintu Verified
+            </span>
+          }
+          <span class="possession-pill">{{ property.possessionStatus }}</span>
+        </div>
+
+        <!-- Pricing Section -->
+        <div class="pricing-header-row">
+          <div class="price-block">
+            <div class="price-main-row">
+              <span class="price-val">{{ property.priceDisplay }}</span>
+              @if (property.priceUnit) {
+                <span class="price-unit">{{ property.priceUnit }}</span>
+              }
+            </div>
+            @if (property.pricePerSqFt) {
+              <span class="price-rate">{{ property.pricePerSqFt }}</span>
+            }
+          </div>
+
+          @if (property.emiEstimate) {
+            <div class="emi-pill">
+              <span class="emi-label">Estimate</span>
+              <span class="emi-amount">{{ property.emiEstimate }}</span>
+            </div>
+          }
+        </div>
+
+        <!-- Rent Info: Deposit & Maintenance details -->
+        @if (property.category === 'rent_house' && (property.securityDeposit || property.maintenancePerMonth)) {
+          <div class="rent-meta-row">
+            @if (property.securityDeposit) {
+              <div class="rent-meta-chip">
+                <span class="meta-label">Security Deposit:</span>
+                <span class="meta-value">₹{{ property.securityDeposit | number }}</span>
+              </div>
+            }
+            @if (property.maintenancePerMonth) {
+              <div class="rent-meta-chip">
+                <span class="meta-label">Maintenance:</span>
+                <span class="meta-value">₹{{ property.maintenancePerMonth | number }}/mo</span>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Title & Locality with External Google Maps Navigation -->
+        <h1 class="details-title">{{ property.title }}</h1>
+        <div class="locality-address-box">
+          <ion-icon name="location" class="loc-icon"></ion-icon>
+          <div class="loc-text-wrap">
+            <span class="loc-name">{{ property.locality }}, {{ property.city }}</span>
+            <span class="loc-full">{{ property.fullAddress }}</span>
+          </div>
+          <button type="button" class="btn-view-map" (click)="openMapLocation()">
+            <ion-icon name="open-outline"></ion-icon>
+            <span>Google Maps</span>
+          </button>
+        </div>
+
+        <!-- ================= OVERVIEW & DIMENSIONS (BENTO GRID - 100% WIDTH) ================= -->
+        <div class="specs-bento-section">
+          <div class="specs-heading-row">
+            <h3 class="section-heading">Overview &amp; Dimensions</h3>
+            <span class="specs-sub-badge">Verified Specs</span>
+          </div>
+
+          <div class="specs-bento-grid">
+            <!-- Total Acres (For Land) -->
+            @if (property.totalAcres) {
+              <div class="bento-tile span-6">
+                <div class="spec-icon-halo emerald">
+                  <ion-icon name="leaf-outline"></ion-icon>
+                </div>
+                <div class="spec-text-col">
+                  <span class="spec-val">{{ property.totalAcres }} Acres</span>
+                  <span class="spec-lbl">Total Land Area</span>
+                </div>
+              </div>
+            }
+
+            <!-- Bedrooms -->
+            @if (property.bedrooms) {
+              <div class="bento-tile span-6">
+                <div class="spec-icon-halo purple">
+                  <ion-icon name="bed-outline"></ion-icon>
+                </div>
+                <div class="spec-text-col">
+                  <span class="spec-val">{{ property.bedrooms }} Bedrooms</span>
+                  <span class="spec-lbl">Configuration</span>
+                </div>
+              </div>
+            }
+
+            <!-- Bathrooms -->
+            @if (property.bathrooms) {
+              <div class="bento-tile span-6">
+                <div class="spec-icon-halo blue">
+                  <ion-icon name="water-outline"></ion-icon>
+                </div>
+                <div class="spec-text-col">
+                  <span class="spec-val">{{ property.bathrooms }} Bathrooms</span>
+                  <span class="spec-lbl">Baths</span>
+                </div>
+              </div>
+            }
+
+            <!-- Super Built-Up / Plot Area -->
+            <div class="bento-tile span-6">
+              <div class="spec-icon-halo emerald">
+                <ion-icon name="expand-outline"></ion-icon>
+              </div>
+              <div class="spec-text-col">
+                <span class="spec-val">{{ property.superBuiltUpAreaSqFt | number }} sq.ft</span>
+                <span class="spec-lbl">{{ property.category === 'buy_plot' ? 'Plot Area' : (property.category === 'buy_land' ? 'Converted Area' : 'Super Area') }}</span>
+              </div>
+            </div>
+
+            <!-- Facing Direction -->
+            <div class="bento-tile span-6">
+              <div class="spec-icon-halo amber">
+                <ion-icon name="compass-outline"></ion-icon>
+              </div>
+              <div class="spec-text-col">
+                <span class="spec-val">{{ property.facing }} Facing</span>
+                <span class="spec-lbl">Orientation</span>
+              </div>
+            </div>
+
+            <!-- Furnishing Status (Houses & Rent only) -->
+            @if (property.category === 'buy_house' || property.category === 'rent_house') {
+              <div class="bento-tile span-12">
+                <div class="spec-icon-halo indigo">
+                  <ion-icon name="business-outline"></ion-icon>
+                </div>
+                <div class="spec-text-col">
+                  <span class="spec-val">{{ property.furnishing }}</span>
+                  <span class="spec-lbl">Furnishing Status</span>
+                </div>
+              </div>
+            }
+
+            <!-- Parking (Houses & Rent only) -->
+            @if (property.parking) {
+              <div class="bento-tile span-12">
+                <div class="spec-icon-halo teal">
+                  <ion-icon name="car-outline"></ion-icon>
+                </div>
+                <div class="spec-text-col">
+                  <span class="spec-val">{{ property.parking }}</span>
+                  <span class="spec-lbl">Parking Space</span>
+                </div>
+              </div>
+            }
+
+            <!-- Floor Level (if specified) -->
+            @if (property.floor) {
+              <div class="bento-tile span-6">
+                <div class="spec-icon-halo rose">
+                  <ion-icon name="calendar-outline"></ion-icon>
+                </div>
+                <div class="spec-text-col">
+                  <span class="spec-val">{{ property.floor }}</span>
+                  <span class="spec-lbl">Floor Level</span>
+                </div>
+              </div>
+            }
+
+            <!-- Water Supply -->
+            <div class="bento-tile" [class.span-6]="property.floor" [class.span-12]="!property.floor">
+              <div class="spec-icon-halo green">
+                <ion-icon name="shield-checkmark-outline"></ion-icon>
+              </div>
+              <div class="spec-text-col">
+                <span class="spec-val">{{ property.waterSupply }}</span>
+                <span class="spec-lbl">Water Supply</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= DOCS & LEGAL CHECKING BLOCK ================= -->
+        <div class="legal-docs-section">
+          <div class="legal-heading-row">
+            <div class="legal-title-col">
+              <h3 class="section-heading">Docs &amp; Legal Verification</h3>
+              <span class="legal-subtitle">Complete title search &amp; compliance status</span>
+            </div>
+            <div class="legal-status-counter" [class.all-clear]="clearChecksCount === propertyLegalChecks.length">
+              <ion-icon name="shield-checkmark-outline"></ion-icon>
+              <span>{{ clearChecksCount }}/{{ propertyLegalChecks.length }} Verified</span>
+            </div>
+          </div>
+
+          <!-- Document Verification Cards List (Collapsible, 3 default) -->
+          <div class="legal-checks-list">
+            @for (check of displayedLegalChecks; track check.title) {
+              <div class="legal-check-card" [class.is-clear]="check.status === 'clear'" [class.is-pending]="check.status === 'pending'">
+                <!-- Left Status Icon -->
+                <div class="check-icon-col">
+                  @if (check.status === 'clear') {
+                    <div class="status-badge-circle clear">
+                      <ion-icon name="checkmark-circle"></ion-icon>
+                    </div>
+                  } @else {
+                    <div class="status-badge-circle pending">
+                      <ion-icon name="alert-circle-outline"></ion-icon>
+                    </div>
+                  }
+                </div>
+
+                <!-- Center Info -->
+                <div class="check-info-col">
+                  <div class="check-title-row">
+                    <span class="check-doc-title">{{ check.title }}</span>
+                    @if (check.status === 'clear') {
+                      <span class="status-pill clear">{{ check.statusLabel }}</span>
+                    } @else {
+                      <span class="status-pill pending">{{ check.statusLabel }}</span>
+                    }
+                  </div>
+                  <span class="check-doc-category">{{ check.category }}</span>
+                  <p class="check-doc-details">{{ check.details }}</p>
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Expand / Collapse Button -->
+          @if (propertyLegalChecks.length > 3) {
+            <button type="button" class="btn-toggle-docs" (click)="toggleDocsExpanded()">
+              <span>{{ isDocsExpanded ? 'Show Less' : 'View All ' + propertyLegalChecks.length + ' Documents' }}</span>
+              <ion-icon [name]="isDocsExpanded ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
+            </button>
+          }
+        </div>
+
+        <!-- ================= DESCRIPTION ================= -->
+        <div class="description-section">
+          <h3 class="section-heading">About This Property</h3>
+          <p class="description-text">{{ property.description }}</p>
+        </div>
+
+        <!-- ================= FEATURES & AMENITIES (100% WIDTH GRID) ================= -->
+        @if (property.amenities.length > 0) {
+          <div class="amenities-section">
+            <h3 class="section-heading">Features &amp; Amenities</h3>
+            <div class="amenities-full-grid">
+              @for (item of property.amenities; track item) {
+                <div class="amenity-grid-item">
+                  <div class="amenity-check-halo">
+                    <ion-icon name="checkmark-circle"></ion-icon>
+                  </div>
+                  <span class="amenity-item-text">{{ item }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- ================= NEARBY LANDMARKS ================= -->
+        @if (property.nearbyLandmarks.length > 0) {
+          <div class="landmarks-section">
+            <h3 class="section-heading">Nearby &amp; Connectivity</h3>
+            <div class="landmarks-list">
+              @for (lm of property.nearbyLandmarks; track lm.name) {
+                <div class="landmark-item">
+                  <div class="lm-left">
+                    <ion-icon name="location" class="lm-pin"></ion-icon>
+                    <span class="lm-name">{{ lm.name }}</span>
+                  </div>
+                  <span class="lm-distance">{{ lm.distance }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- ================= SELLER PROFILE CARD ================= -->
+        <div class="seller-card">
+          <div class="seller-avatar-wrap">
+            {{ property.seller.name.charAt(0).toUpperCase() }}
+          </div>
+          <div class="seller-details-col">
+            <div class="seller-title-row">
+              <h4 class="seller-name">{{ property.seller.name }}</h4>
+              @if (property.seller.verified) {
+                <span class="seller-verified-badge">
+                  <ion-icon name="checkmark-circle"></ion-icon>
+                  Verified
+                </span>
+              }
+            </div>
+            <span class="seller-type-text">{{ property.seller.type }} • Pintu Real Estate Partner</span>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Bottom Spacer for Sticky Action Bar with Safe Area -->
+      <div class="bottom-action-spacer"></div>
+    </main>
+
+    <!-- ================= STICKY BOTTOM ACTION BAR (3 BUTTONS IN 100% WIDTH) ================= -->
+    <footer class="sticky-contact-footer">
+      @if (property.status === 'sold') {
+        <div class="sold-footer-notice">
+          <ion-icon name="lock-closed-outline"></ion-icon>
+          <div class="sold-notice-text">
+            <span class="sold-notice-title">This Property is {{ property.category === 'rent_house' ? 'Rented Out' : 'Sold Out' }}</span>
+            <span class="sold-notice-sub">Direct contact and callback requests are currently disabled</span>
+          </div>
+        </div>
+      } @else {
+        <div class="footer-actions-grid">
+          <button type="button" class="btn-footer-action btn-callback" (click)="bookCallback()">
+            <ion-icon name="calendar-outline"></ion-icon>
+            <span>Callback</span>
+          </button>
+
+          <button type="button" class="btn-footer-action btn-call" (click)="callSeller()">
+            <ion-icon name="call-outline"></ion-icon>
+            <span>Call</span>
+          </button>
+
+          <button type="button" class="btn-footer-action btn-whatsapp" (click)="openWhatsApp()">
+            <ion-icon name="logo-whatsapp"></ion-icon>
+            <span>WhatsApp</span>
+          </button>
+        </div>
+      }
+    </footer>
+  }
+</ion-content>

@@ -32,10 +32,28 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #ffffff;
+      overflow: hidden;
+    }
+  </style>
 </head>
 
-<body class="light">
-  <app-root></app-root>
+<body>
+  <app-root>
+    <div id="initial-app-loader" style="position:fixed;top:0;left:0;right:0;bottom:0;background:#ffffff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;z-index:99999;">
+      <div style="width:42px;height:42px;border:3.5px solid #f3e8ff;border-top-color:#a000e2;border-radius:50%;animation:initialSpin 0.75s cubic-bezier(0.68,-0.55,0.27,1.55) infinite;"></div>
+      <p style="font-size:13px;font-weight:600;color:#64748b;margin:16px 0 0;letter-spacing:0.2px;">Starting Pintu...</p>
+      <style>
+        @keyframes initialSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+      </style>
+    </div>
+  </app-root>
 <script
   async
   defer

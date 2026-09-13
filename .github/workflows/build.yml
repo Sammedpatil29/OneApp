@@ -1,11 +1,21 @@
-name: Build and Sign Android App (AAB & APK)
+name: Build and Sign Android App (Multi-Environment)
 
 on:
-  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target Build Environment (testing or production)'
+        required: true
+        default: 'testing'
+        type: choice
+        options:
+          - testing
+          - production
   push:
     branches:
       - main
       - master
+      - prod
 
 jobs:
   build-and-sign:
@@ -14,6 +24,27 @@ jobs:
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
+
+      - name: Determine Target Environment
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            SELECTED_ENV="${{ github.event.inputs.environment }}"
+          elif [ "${{ github.ref }}" = "refs/heads/prod" ]; then
+            SELECTED_ENV="production"
+          else
+            SELECTED_ENV="testing"
+          fi
+
+          echo "TARGET_ENV=$SELECTED_ENV" >> $GITHUB_ENV
+          if [ "$SELECTED_ENV" = "production" ]; then
+            echo "BUILD_CONFIG=production" >> $GITHUB_ENV
+          else
+            echo "BUILD_CONFIG=testing" >> $GITHUB_ENV
+          fi
+
+          echo "=================================================="
+          echo "Targeted Environment: $SELECTED_ENV"
+          echo "=================================================="
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -26,8 +57,13 @@ jobs:
           npm install -g @ionic/cli
           npm install --legacy-peer-deps
 
+      - name: Configure Capacitor Environment
+        run: |
+          node scripts/set-env.mjs ${{ env.TARGET_ENV }}
+
       - name: Build Web Assets
-        run: ionic build --prod
+        run: |
+          npm run build -- --configuration=${{ env.BUILD_CONFIG }}
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -46,7 +82,11 @@ jobs:
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleRelease bundleRelease --no-daemon
+          if [ "${{ env.TARGET_ENV }}" = "production" ]; then
+            ./gradlew clean assembleRelease bundleRelease --no-daemon --rerun-tasks
+          else
+            ./gradlew clean assembleRelease --no-daemon --rerun-tasks
+          fi
 
       - name: Prepare Keystore File
         env:
@@ -62,7 +102,7 @@ jobs:
             exit 1
           fi
 
-      - name: Sign Android App Bundle (.aab) & APK (.apk)
+      - name: Sign Android APK and AAB
         env:
           KEYSTORE_PATH: pintu-release.keystore
           KEY_ALIAS: ${{ secrets.KEY_ALIAS || 'pintu-alias' }}
@@ -72,26 +112,13 @@ jobs:
           BUILD_TOOLS_DIR=$(ls -d $ANDROID_HOME/build-tools/* | sort -V | tail -n 1)
           echo "Using Android Build Tools from: $BUILD_TOOLS_DIR"
 
-          AAB_FILE="android/app/build/outputs/bundle/release/app-release.aab"
           UNSIGNED_APK="android/app/build/outputs/apk/release/app-release-unsigned.apk"
-          ALIGNED_APK="android/app/build/outputs/apk/release/app-release-aligned.apk"
-          SIGNED_APK="android/app/build/outputs/apk/release/app-release-signed.apk"
+          FINAL_UNSIGNED_APK="android/app/build/outputs/apk/release/pintu-${{ env.TARGET_ENV }}-unsigned.apk"
+          ALIGNED_APK="android/app/build/outputs/apk/release/pintu-${{ env.TARGET_ENV }}-aligned.apk"
+          SIGNED_APK="android/app/build/outputs/apk/release/pintu-customer-${{ env.TARGET_ENV }}-signed.apk"
 
-          echo "🔐 Signing .aab bundle with jarsigner..."
-          if [ -n "$KEYSTORE_PASSWORD" ]; then
-            jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
-              -keystore "$KEYSTORE_PATH" \
-              -storepass "$KEYSTORE_PASSWORD" \
-              -keypass "$KEY_PASSWORD" \
-              "$AAB_FILE" "$KEY_ALIAS"
-          else
-            jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
-              -keystore "$KEYSTORE_PATH" \
-              "$AAB_FILE" "$KEY_ALIAS"
-          fi
-
-          echo "📦 Aligning and Signing .apk with apksigner..."
           if [ -f "$UNSIGNED_APK" ]; then
+            cp "$UNSIGNED_APK" "$FINAL_UNSIGNED_APK"
             $BUILD_TOOLS_DIR/zipalign -v -p 4 "$UNSIGNED_APK" "$ALIGNED_APK" || cp "$UNSIGNED_APK" "$ALIGNED_APK"
             
             if [ -n "$KEYSTORE_PASSWORD" ]; then
@@ -110,22 +137,51 @@ jobs:
                 "$ALIGNED_APK"
             fi
 
-            echo "✅ Verifying signed APK..."
+            echo "✅ Verifying signed APK signature..."
             $BUILD_TOOLS_DIR/apksigner verify "$SIGNED_APK"
           else
             echo "⚠️ Unsigned APK not found at $UNSIGNED_APK"
           fi
 
-      - name: Upload Signed .AAB Artifact
+          AAB_FILE="android/app/build/outputs/bundle/release/app-release.aab"
+          SIGNED_AAB="android/app/build/outputs/bundle/release/pintu-customer-${{ env.TARGET_ENV }}-signed.aab"
+          if [ -f "$AAB_FILE" ]; then
+            echo "🔐 Signing .aab bundle with jarsigner..."
+            if [ -n "$KEYSTORE_PASSWORD" ]; then
+              jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
+                -keystore "$KEYSTORE_PATH" \
+                -storepass "$KEYSTORE_PASSWORD" \
+                -keypass "$KEY_PASSWORD" \
+                "$AAB_FILE" "$KEY_ALIAS"
+            else
+              jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
+                -keystore "$KEYSTORE_PATH" \
+                "$AAB_FILE" "$KEY_ALIAS"
+            fi
+            cp "$AAB_FILE" "$SIGNED_AAB"
+          fi
+
+      - name: Verify Compiled APK Manifest Permissions
+        run: |
+          BUILD_TOOLS_DIR=$(ls -d $ANDROID_HOME/build-tools/* | sort -V | tail -n 1)
+          SIGNED_APK="android/app/build/outputs/apk/release/pintu-customer-${{ env.TARGET_ENV }}-signed.apk"
+
+          if [ -f "$SIGNED_APK" ]; then
+            $BUILD_TOOLS_DIR/aapt dump permissions "$SIGNED_APK" || echo "aapt dump permissions finished"
+            $BUILD_TOOLS_DIR/aapt dump badging "$SIGNED_APK" | grep -E "package|uses-permission" || true
+          fi
+
+      - name: Upload Signed APK
         uses: actions/upload-artifact@v4
         with:
-          name: pintu-release-signed-aab
-          path: android/app/build/outputs/bundle/release/*.aab
+          name: pintu-customer-${{ env.TARGET_ENV }}-signed-apk
+          path: android/app/build/outputs/apk/release/pintu-customer-${{ env.TARGET_ENV }}-signed.apk
           retention-days: 14
 
-      - name: Upload Signed .APK Artifact
+      - name: Upload Signed AAB (Production only)
+        if: env.TARGET_ENV == 'production'
         uses: actions/upload-artifact@v4
         with:
-          name: pintu-release-signed-apk
-          path: android/app/build/outputs/apk/release/*signed.apk
+          name: pintu-customer-prod-signed-aab
+          path: android/app/build/outputs/bundle/release/pintu-customer-production-signed.aab
           retention-days: 14

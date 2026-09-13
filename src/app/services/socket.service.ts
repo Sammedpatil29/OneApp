@@ -9,7 +9,7 @@ export class SocketService {
   private socket: Socket;
 
   constructor() {
-    this.socket = io(`${environment.apiUrl}`); // Your backend URL
+    this.socket = io(environment.socketUrl || environment.apiUrl);
 
     this.socket.on('connect', () => {
       console.log('🟢 Connected to Socket.IO server');

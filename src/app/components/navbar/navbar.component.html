@@ -1,29 +1,76 @@
-<ion-tabs>
-  <ion-tab-bar slot="bottom" class="custom-tab-bar">
-    
-    <ion-tab-button tab="support">
-      <ion-icon name="help-circle" class="icon-active"></ion-icon>
-      <ion-icon name="help-circle-outline" class="icon-inactive"></ion-icon>
-      <ion-label>Support</ion-label>
-    </ion-tab-button>
+<nav class="customer-bottom-bar">
+  <button
+    type="button"
+    class="nav-tab"
+    [class.active]="isTabActive('/layout/home')"
+    (click)="goToTab('home')"
+    aria-label="Home">
+    <div class="tab-icon-wrapper">
+      <ion-icon [name]="isTabActive('/layout/home') ? 'compass' : 'compass-outline'"></ion-icon>
+    </div>
+    <span>Home</span>
+    @if (isTabActive('/layout/home')) {
+      <span class="active-dot"></span>
+    }
+  </button>
 
-    <ion-tab-button tab="home" (click)="goToHome()">
-      <ion-icon name="home" class="icon-active"></ion-icon>
-      <ion-icon name="home-outline" class="icon-inactive"></ion-icon>
-      <ion-label>Home</ion-label>
-    </ion-tab-button>
+  <button
+    type="button"
+    class="nav-tab"
+    [class.active]="isTabActive('/layout/history')"
+    (click)="goToTab('history')"
+    aria-label="Orders History">
+    <div class="tab-icon-wrapper">
+      <ion-icon [name]="isTabActive('/layout/history') ? 'receipt' : 'receipt-outline'"></ion-icon>
+    </div>
+    <span>Orders</span>
+    @if (isTabActive('/layout/history')) {
+      <span class="active-dot"></span>
+    }
+  </button>
 
-    <ion-tab-button tab="history">
-      <ion-icon name="time" class="icon-active"></ion-icon>
-      <ion-icon name="time-outline" class="icon-inactive"></ion-icon>
-      <ion-label>History</ion-label>
-    </ion-tab-button>
+  <button
+    type="button"
+    class="nav-tab"
+    [class.active]="isTabActive('/layout/referral')"
+    (click)="goToTab('referral')"
+    aria-label="Refer and Earn">
+    <div class="tab-icon-wrapper">
+      <ion-icon [name]="isTabActive('/layout/referral') ? 'gift' : 'gift-outline'"></ion-icon>
+    </div>
+    <span>Refer</span>
+    @if (isTabActive('/layout/referral')) {
+      <span class="active-dot"></span>
+    }
+  </button>
 
-    <ion-tab-button tab="referral">
-      <ion-icon name="share-social-sharp" class="icon-active"></ion-icon>
-      <ion-icon name="share-social-outline" class="icon-inactive"></ion-icon>
-      <ion-label>Referral</ion-label>
-    </ion-tab-button>
+  <button
+    type="button"
+    class="nav-tab"
+    [class.active]="isTabActive('/layout/support')"
+    (click)="goToTab('support')"
+    aria-label="Help & Support">
+    <div class="tab-icon-wrapper">
+      <ion-icon [name]="isTabActive('/layout/support') ? 'chatbubble-ellipses' : 'chatbubble-ellipses-outline'"></ion-icon>
+    </div>
+    <span>Support</span>
+    @if (isTabActive('/layout/support')) {
+      <span class="active-dot"></span>
+    }
+  </button>
 
-  </ion-tab-bar>
-</ion-tabs>
+  <button
+    type="button"
+    class="nav-tab"
+    [class.active]="isTabActive('/layout/profile')"
+    (click)="goToTab('profile')"
+    aria-label="Account Profile">
+    <div class="tab-icon-wrapper">
+      <ion-icon [name]="isTabActive('/layout/profile') ? 'person' : 'person-outline'"></ion-icon>
+    </div>
+    <span>Account</span>
+    @if (isTabActive('/layout/profile')) {
+      <span class="active-dot"></span>
+    }
+  </button>
+</nav>

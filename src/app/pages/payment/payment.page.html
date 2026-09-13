@@ -1,6 +1,11 @@
-<ion-header [translucent]="true">
+<ion-header class="ion-no-border bg-white pt-2">
   <ion-toolbar>
-    <ion-title>payment</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back-outline" color="dark"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="fw-bold text-dark">Payment</ion-title>
   </ion-toolbar>
 </ion-header>
 

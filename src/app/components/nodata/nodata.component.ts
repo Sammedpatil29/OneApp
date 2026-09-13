@@ -1,14 +1,29 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { IonIcon } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { fileTrayOutline, searchOutline, alertCircleOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-nodata',
   templateUrl: './nodata.component.html',
   styleUrls: ['./nodata.component.scss'],
+  standalone: true,
+  imports: [CommonModule, IonIcon]
 })
-export class NodataComponent  implements OnInit {
+export class NodataComponent {
+  @Input() icon: string = 'file-tray-outline';
+  @Input() title: string = 'No Data Found';
+  @Input() description: string = 'There is nothing to display here yet.';
+  @Input() actionText: string = '';
 
-  constructor() { }
+  @Output() action = new EventEmitter<void>();
 
-  ngOnInit() {}
+  constructor() {
+    addIcons({ fileTrayOutline, searchOutline, alertCircleOutline });
+  }
 
+  onAction() {
+    this.action.emit();
+  }
 }

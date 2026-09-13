@@ -9,7 +9,8 @@ import {
   ticketOutline, walletOutline, cameraOutline, receiptOutline, cloudUploadOutline, closeCircleOutline,
   trashOutline,
   close,
-  cardOutline
+  cardOutline,
+  arrowBackOutline
 } from 'ionicons/icons';
 import { DineoutService } from 'src/app/services/dineout.service';
 import { AuthService } from 'src/app/services/auth.service';
@@ -49,7 +50,7 @@ export class DineoutTrackPage implements OnInit {
     addIcons({ 
       checkmarkCircle, calendarOutline, timeOutline, 
       peopleOutline, locationOutline, callOutline, homeOutline,
-      ticketOutline, walletOutline, cameraOutline, receiptOutline, cloudUploadOutline,cardOutline, closeCircleOutline, trashOutline, close
+      ticketOutline, walletOutline, cameraOutline, receiptOutline, cloudUploadOutline,cardOutline, closeCircleOutline, trashOutline, close, arrowBackOutline
     });
   }
 
@@ -275,7 +276,7 @@ export class DineoutTrackPage implements OnInit {
     if(this.routeSource === 'history') {
       this.navCtrl.back();
     } else {
-      this.navCtrl.navigateRoot('/layout/example/home');
+      this.navCtrl.navigateRoot('/layout/home');
     }
   }
 }

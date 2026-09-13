@@ -85,30 +85,52 @@ estimatedDistance: any = '';
     // Optionally send a message to the server
     this.socketService.sendMessage('Hello from Ionic client 👋');
 
-    this.socketService.rideUpdate((msg) => {
-      console.log('cancelled', this.rideUpdate)
-      this.rideUpdate = msg
-      if(this.rideUpdate.status == 'cancelled'){
-        console.log('cancelled', this.rideUpdate)
-        this.searching = false
+    this.socketService.rideUpdate((msg: any) => {
+      console.log('📡 [Customer] rideUpdate received:', msg);
+      this.rideUpdate = msg;
+      if (!this.activeRide && msg) {
+        this.activeRide = msg;
+      }
+
+      const st = this.rideUpdate.status || this.rideUpdate.alias_status;
+
+      if (st == 'cancelled') {
+        this.searching = false;
         this.isToastOpen = true;
-          this.toastMessage = this.rideUpdate.message;
-          setTimeout(() => {
-            this.isToastOpen = false;
-          }, 3000);
-        // this.loadMap()
-      } else if(this.rideUpdate.status == 'assigned'){
-        this.searching = true
-        this.activeRide.raider_details = this.rideUpdate.raider_details
+        this.toastMessage = this.rideUpdate.message || 'Ride was cancelled';
+        setTimeout(() => {
+          this.isToastOpen = false;
+        }, 3000);
+      } else if (st == 'assigned' || st == 'accepted') {
+        this.searching = false;
+        if (!this.activeRide) this.activeRide = {};
+        this.activeRide.raider_details = this.rideUpdate.raider_details;
         this.activeRide.status = 'assigned';
+        if (this.rideUpdate.otp) this.activeRide.otp = this.rideUpdate.otp;
         
         // Calculate estimated distance and time for the rider to reach the origin
-        const origin = { lat: this.activeRide.raider_details.current_location.lat, lng: this.activeRide.raider_details.current_location.lng };
-        const destination = { lat: this.tripData['origin'].coords.lat, lng: this.tripData['origin'].coords.lng };
-        this.getRiderDistanceandTime(origin, destination);
+        if (this.activeRide.raider_details?.current_location && this.tripData?.['origin']?.coords) {
+          const origin = { lat: this.activeRide.raider_details.current_location.lat, lng: this.activeRide.raider_details.current_location.lng };
+          const destination = { lat: this.tripData['origin'].coords.lat, lng: this.tripData['origin'].coords.lng };
+          this.getRiderDistanceandTime(origin, destination);
+        }
         
         // Reload the map to show the rider's location
         this.loadMap();
+      } else if (st == 'arrived') {
+        if (!this.activeRide) this.activeRide = {};
+        this.activeRide.status = 'arrived';
+      } else if (st == 'in_progress' || st == 'started') {
+        if (!this.activeRide) this.activeRide = {};
+        this.activeRide.status = 'started';
+      } else if (st == 'completed') {
+        if (!this.activeRide) this.activeRide = {};
+        this.activeRide.status = 'completed';
+        this.isToastOpen = true;
+        this.toastMessage = 'Trip completed! Thank you for riding with Pintu.';
+        setTimeout(() => {
+          this.isToastOpen = false;
+        }, 4000);
       }
     });
 

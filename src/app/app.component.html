@@ -3,6 +3,9 @@
     <ion-router-outlet></ion-router-outlet>
     
     
+    @if (showSplash) {
+      <app-custom-splash></app-custom-splash>
+    }
   } @else {
     <ion-content>
       <div class="no-internet h-100 d-flex flex-column justify-content-center align-items-center">
@@ -47,6 +50,7 @@
         <p class="p-0"><strong>ಸ್ವಲ್ಪ ನೆಟ್ವರ್ಕ್ ಚೆಕ್ ಮಾಡ್ಕೋರಿ ಬರ್ತತಿ!</strong></p>
         <button (click)="onRefreshClick()" class="btn btn-dark btn-sm">Refresh</button>
     </div>
+    
     </ion-content>
   }
 </ion-app>

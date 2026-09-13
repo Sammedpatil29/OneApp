@@ -45,13 +45,17 @@ async getAppVersion(): Promise<string | null> {
     }
   }
 
-deleteProfilePermanently(params:any, id:any){
-  return this.http.post(`${this.profileUrl}delete-user/`, params)
-}
+  deleteProfilePermanently(params:any, id:any){
+    return this.http.post(`${this.profileUrl}delete-user/`, params)
+  }
 
-postSuggestion(params:any){
-  return this.http.post(`${this.suggestion}`, params)
-}
+  postSuggestion(params: any, token?: string) {
+    let headers: HttpHeaders | undefined;
+    if (token) {
+      headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+    }
+    return this.http.post(`${this.url}/api/suggestions`, params, headers ? { headers } : {});
+  }
 
 updateUser(params: any, token: any) {
   const headers = new HttpHeaders({

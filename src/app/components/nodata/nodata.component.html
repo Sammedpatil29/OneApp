@@ -1,3 +1,12 @@
-<div class="noData">
-  <img style="height: 150px;" src="../../../assets/icons/no_data.png" alt="">
+<div class="no-data-card">
+  <div class="icon-wrap">
+    <ion-icon [name]="icon"></ion-icon>
+  </div>
+  <h4 class="title">{{ title }}</h4>
+  <p class="desc">{{ description }}</p>
+  @if (actionText) {
+    <button class="btn-action" (click)="onAction()">
+      {{ actionText }}
+    </button>
+  }
 </div>

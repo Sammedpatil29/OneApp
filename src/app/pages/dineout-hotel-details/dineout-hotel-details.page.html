@@ -1,16 +1,11 @@
-<ion-header class="ion-no-border">
+<ion-header class="ion-no-border bg-white pt-2">
   <ion-toolbar>
-    <ion-buttons slot="start" (click)="goBack()">
-      <ion-back-button icon="arrow-back"></ion-back-button>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back-outline" color="dark"></ion-icon>
+      </ion-button>
     </ion-buttons>
-    <!-- <ion-buttons slot="end">
-      <ion-button>
-        <ion-icon name="heart-outline"></ion-icon>
-      </ion-button>
-      <ion-button>
-        <ion-icon name="share-social-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons> -->
+    <ion-title class="fw-bold text-dark">{{ restaurant?.name || 'Restaurant Details' }}</ion-title>
   </ion-toolbar>
 </ion-header>
 

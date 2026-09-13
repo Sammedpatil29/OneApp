@@ -1,4 +1,155 @@
+<ion-header class="ion-no-border bg-white pt-2">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back-outline" color="dark"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="fw-bold text-dark">Activity &amp; Orders</ion-title>
+  </ion-toolbar>
+</ion-header>
 
-<ion-content [fullscreen]="true">
-  <app-history></app-history>
+<ion-content [fullscreen]="true" class="history-content-page">
+  <!-- Pull to Refresh -->
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)" class="custom-refresher">
+    <ion-refresher-content pullingIcon="arrow-down-outline" refreshingSpinner="crescent"></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Category Filter Segment Pills -->
+  <div class="filter-pills-row">
+      <button
+        type="button"
+        class="filter-pill"
+        [class.active]="selectedCategory === 'all'"
+        (click)="setCategory('all')">
+        <span>All Activity</span>
+      </button>
+
+      <button
+        type="button"
+        class="filter-pill"
+        [class.active]="selectedCategory === 'grocery'"
+        (click)="setCategory('grocery')">
+        <span class="pill-emoji">🥦</span>
+        <span>Groceries</span>
+      </button>
+
+      <button
+        type="button"
+        class="filter-pill"
+        [class.active]="selectedCategory === 'ride'"
+        (click)="setCategory('ride')">
+        <span class="pill-emoji">🛵</span>
+        <span>Rides</span>
+      </button>
+    </div>
+
+  <main class="history-body-container">
+    <!-- Loading Skeletons -->
+    @if (isLoading) {
+      <div class="skeletons-list">
+        @for (i of [1, 2, 3]; track i) {
+          <div class="history-skeleton-card">
+            <div class="sk-header">
+              <ion-skeleton-text animated style="width: 35%; height: 16px; border-radius: 6px;"></ion-skeleton-text>
+              <ion-skeleton-text animated style="width: 25%; height: 20px; border-radius: 99px;"></ion-skeleton-text>
+            </div>
+            <div class="sk-body my-3">
+              <ion-skeleton-text animated style="width: 70%; height: 20px; border-radius: 6px; margin-bottom: 8px;"></ion-skeleton-text>
+              <ion-skeleton-text animated style="width: 45%; height: 14px; border-radius: 4px;"></ion-skeleton-text>
+            </div>
+            <div class="sk-footer">
+              <ion-skeleton-text animated style="width: 30%; height: 18px; border-radius: 4px;"></ion-skeleton-text>
+              <ion-skeleton-text animated style="width: 25%; height: 32px; border-radius: 10px;"></ion-skeleton-text>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Orders List -->
+    @else if (filteredHistory && filteredHistory.length > 0) {
+      <div class="orders-cards-list">
+        @for (item of filteredHistory; track item.id || $index) {
+          <article class="modern-order-card" (click)="openDetails(item)" role="button" tabindex="0">
+            <!-- Card Header: Service Pill, Date & Status -->
+            <div class="card-top-bar">
+              <div class="service-tag" [class.ride-tag]="isRideType(item.type)" [class.grocery-tag]="!isRideType(item.type)">
+                <span class="tag-icon">{{ isRideType(item.type) ? '🛵' : '🥦' }}</span>
+                <span class="tag-label">{{ isRideType(item.type) ? 'Ride' : 'Grocery' }}</span>
+              </div>
+
+              <div class="status-chip" [ngClass]="getStatusClass(item.status)">
+                <ion-icon [name]="getStatusIcon(item.status)"></ion-icon>
+                <span>{{ formatStatus(item.status) }}</span>
+              </div>
+            </div>
+
+            <!-- Card Body -->
+            <div class="card-main-content">
+              <h3 class="order-title">{{ item.title || (isRideType(item.type) ? 'Daily Commute Ride' : 'Grocery Delivery') }}</h3>
+              
+              <!-- Date & Timestamp -->
+              <p class="order-timestamp">
+                <ion-icon name="time-outline"></ion-icon>
+                <span>{{ item.created_at | date:'dd MMM yyyy, hh:mm a' }}</span>
+              </p>
+
+              <!-- Ride Route Preview -->
+              @if (isRideType(item.type) && (item.pickup_address || item.destination_address)) {
+                <div class="ride-route-strip">
+                  <div class="route-dots-col">
+                    <span class="dot-pickup"></span>
+                    <span class="dot-line"></span>
+                    <span class="dot-drop"></span>
+                  </div>
+                  <div class="route-texts-col">
+                    <span class="addr-text text-truncate">{{ item.pickup_address || 'Pickup Location' }}</span>
+                    <span class="addr-text text-truncate">{{ item.destination_address || 'Drop Location' }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <!-- Card Footer: Cost & Action -->
+            <div class="card-bottom-footer">
+              <div class="cost-box">
+                <span class="cost-label">Total Paid</span>
+                <span class="cost-amount">₹{{ item.finalCost || item.amount || 0 }}</span>
+              </div>
+
+              <div class="card-action-btn">
+                <span>View Details</span>
+                <ion-icon name="chevron-forward"></ion-icon>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    }
+
+    <!-- Empty State -->
+    @else {
+      <div class="empty-state-wrapper animate__animated animate__fadeIn">
+        <div class="empty-icon-halo">
+          <ion-icon name="receipt-outline"></ion-icon>
+        </div>
+        <h3 class="empty-title">No Orders Found</h3>
+        <p class="empty-subtitle">
+          @if (selectedCategory !== 'all') {
+            No {{ selectedCategory }} orders yet. Start exploring our fast local services!
+          } @else {
+            You haven't placed any orders yet. Groceries delivered in 10-15 mins & rides in 2 mins!
+          }
+        </p>
+        <button type="button" class="btn-start-shopping" (click)="goToHome()">
+          <ion-icon name="flash-outline" class="me-1"></ion-icon>
+          <span>Explore Services</span>
+        </button>
+      </div>
+    }
+
+    <!-- Bottom Nav Spacer -->
+    <div class="bottom-nav-spacer"></div>
+  </main>
 </ion-content>

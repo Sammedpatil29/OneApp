@@ -26,13 +26,23 @@ const BUNDLES_DIR = path.join(OTA_PUBLIC_DIR, 'bundles');
 const MANIFEST_DIR = path.join(OTA_PUBLIC_DIR, 'manifests', APP_ID, CHANNEL, RUNTIME);
 const MANIFEST_FILE = path.join(MANIFEST_DIR, 'manifest.json');
 
-// Base CDN / API URL for bundles
-const PROD_CDN_URL = process.env.OTA_CDN_URL || 'https://pintu-api.democompany.in.net/ota';
+const OTA_SECRET_KEY = process.env.OTA_SECRET_KEY || 'pintu-ota-secret-key-2026';
 
 async function main() {
   const args = process.argv.slice(2);
   const skipBuild = args.includes('--skip-build');
   const forceImmediate = args.includes('--immediate');
+  const skipUpload = args.includes('--no-upload') || args.includes('--local-only');
+
+  // Determine target environment: testing vs prod
+  const envArg = args.find(arg => arg.startsWith('--env='));
+  const envVal = envArg ? envArg.split('=')[1].toLowerCase() : '';
+  const isTesting = args.includes('--testing') || envVal === 'testing' || process.env.APP_ENV === 'testing';
+
+  const TARGET_ENV = isTesting ? 'testing' : 'prod';
+  const BUILD_CONFIG = isTesting ? 'testing' : 'production';
+  const CDN_URL = process.env.OTA_CDN_URL || (isTesting ? 'https://oneapp-express-singapore.onrender.com/ota' : 'https://pintu-api.democompany.in.net/ota');
+  const REMOTE_API_URL = process.env.OTA_REMOTE_URL || (isTesting ? 'https://oneapp-express-singapore.onrender.com' : 'https://pintu-api.democompany.in.net');
 
   // Read current package.json
   const pkg = JSON.parse(fs.readFileSync(PACKAGE_JSON_PATH, 'utf-8'));
@@ -47,7 +57,11 @@ async function main() {
   }
 
   console.log(`\n========================================`);
-  console.log(`🚀 Publishing Self-Hosted OTA Bundle for OneApp v${version}`);
+  console.log(`🚀 Publishing OTA Bundle for OneApp v${version}`);
+  console.log(`🎯 Target Environment: ${TARGET_ENV.toUpperCase()}`);
+  console.log(`📡 Remote Server:     ${REMOTE_API_URL}`);
+  console.log(`🌐 CDN URL:           ${CDN_URL}`);
+  console.log(`⚙️  Build Config:      ${BUILD_CONFIG}`);
   console.log(`========================================\n`);
 
   // Ensure directories exist
@@ -56,15 +70,15 @@ async function main() {
 
   // 1. Build Angular/Ionic Web Assets
   if (!skipBuild) {
-    console.log('📦 Step 1/4: Building Ionic production bundle...');
+    console.log(`📦 Step 1/5: Building Ionic bundle (--configuration=${BUILD_CONFIG})...`);
     const npmCmd = process.platform === 'win32' ? 'npm.cmd' : 'npm';
-    execSync(`${npmCmd} run build -- --configuration=production`, {
+    execSync(`${npmCmd} run build -- --configuration=${BUILD_CONFIG}`, {
       cwd: APP_DIR,
       stdio: 'inherit',
       shell: true
     });
   } else {
-    console.log('⏩ Step 1/4: Skipping build (--skip-build requested)');
+    console.log('⏩ Step 1/5: Skipping build (--skip-build requested)');
   }
 
   // Verify www output
@@ -76,7 +90,7 @@ async function main() {
   // 2. Package www/ into zip
   const bundleFileName = `oneapp-bundle-${version}.zip`;
   const bundlePath = path.join(BUNDLES_DIR, bundleFileName);
-  console.log(`\n🗜️  Step 2/4: Compressing bundle into: ${bundleFileName}...`);
+  console.log(`\n🗜️  Step 2/5: Compressing bundle into: ${bundleFileName}...`);
 
   await new Promise((resolve, reject) => {
     const output = fs.createWriteStream(bundlePath);
@@ -91,7 +105,7 @@ async function main() {
   });
 
   // 3. Compute SHA-256 and size
-  console.log('🔒 Step 3/4: Calculating SHA-256 integrity hash...');
+  console.log('🔒 Step 3/5: Calculating SHA-256 integrity hash...');
   const fileBuffer = fs.readFileSync(bundlePath);
   const sha256 = crypto.createHash('sha256').update(fileBuffer).digest('hex');
   const size = fileBuffer.length;
@@ -103,8 +117,8 @@ async function main() {
   console.log(`   Release: ${releaseId}`);
 
   // 4. Update manifest.json
-  console.log('\n📝 Step 4/4: Updating backend manifest.json...');
-  const bundleDownloadUrl = `${PROD_CDN_URL}/bundles/${bundleFileName}`;
+  console.log('\n📝 Step 4/5: Updating backend manifest.json...');
+  const bundleDownloadUrl = `${CDN_URL}/bundles/${bundleFileName}`;
   const manifest = {
     version: version,
     url: bundleDownloadUrl,
@@ -121,18 +135,67 @@ async function main() {
   pkg.version = version;
   fs.writeFileSync(PACKAGE_JSON_PATH, JSON.stringify(pkg, null, 2) + '\n', 'utf-8');
 
-  console.log(`\n✅ OneApp OTA Update Published Successfully!`);
+  console.log(`\n✅ OneApp OTA Update Packaged Successfully!`);
   console.log(`----------------------------------------`);
+  console.log(`• Environment:  ${TARGET_ENV}`);
   console.log(`• Version:      ${manifest.version}`);
   console.log(`• Manifest:     ${MANIFEST_FILE}`);
   console.log(`• Bundle:       ${bundlePath}`);
   console.log(`• Download URL: ${manifest.url}`);
   console.log(`• Policy:       ${forceImmediate ? 'Immediate Reload' : 'Apply on Next App Launch'}`);
   console.log(`----------------------------------------\n`);
+
+  // 5. Direct Upload to Remote Server
+  if (!skipUpload) {
+    console.log(`📡 Step 5/5: Uploading bundle & manifest directly to server: ${REMOTE_API_URL}...`);
+    try {
+      const formData = new FormData();
+      const fileBuffer = fs.readFileSync(bundlePath);
+      const blob = new Blob([fileBuffer], { type: 'application/zip' });
+
+      formData.append('file', blob, bundleFileName);
+      formData.append('manifest', JSON.stringify(manifest));
+      formData.append('appId', APP_ID);
+      formData.append('channel', CHANNEL);
+      formData.append('runtime', RUNTIME);
+      formData.append('version', version);
+      formData.append('forceImmediate', String(forceImmediate));
+
+      const uploadUrl = `${REMOTE_API_URL}/api/ota/upload-bundle`;
+      const res = await fetch(uploadUrl, {
+        method: 'POST',
+        headers: {
+          'x-ota-secret': OTA_SECRET_KEY,
+          'x-forwarded-proto': 'https'
+        },
+        body: formData
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.warn(`⚠️  Remote server upload returned status ${res.status}: ${errorText}`);
+        console.log(`ℹ️  Local copy remains saved in ${bundlePath}`);
+      } else {
+        const resData = await res.json();
+        console.log(`\n🎉 REMOTE SERVER UPLOAD COMPLETED!`);
+        console.log(`----------------------------------------`);
+        console.log(`• Remote Target:   ${TARGET_ENV}`);
+        console.log(`• Remote Status:   ${resData.message}`);
+        console.log(`• Remote Bundle:   ${resData.bundleUrl}`);
+        console.log(`• Remote Manifest: ${resData.manifestUrl}`);
+        console.log(`• Ready for Apps:  INSTANTLY LIVE (No git commit or deploy needed!)`);
+        console.log(`----------------------------------------\n`);
+      }
+    } catch (uploadErr) {
+      console.warn(`\n⚠️  Could not connect to remote server for direct upload: ${uploadErr.message}`);
+      console.log(`ℹ️  Local bundle and manifest were saved successfully to ${OTA_PUBLIC_DIR}.`);
+    }
+  } else {
+    console.log(`⏩ Step 5/5: Skipped remote upload (--no-upload requested)`);
+  }
 }
 
 main().catch(err => {
   console.error('\n❌ Publish failed:', err.message);
   process.exit(1);
 });
-

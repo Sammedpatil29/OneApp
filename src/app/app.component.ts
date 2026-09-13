@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IonApp, IonRouterOutlet, IonButton, IonHeader, IonTitle, IonContent, IonIcon } from '@ionic/angular/standalone';
+import { IonApp, IonRouterOutlet, IonContent } from '@ionic/angular/standalone';
 import { ScreenOrientation } from '@capacitor/screen-orientation';
 import { Network } from '@capacitor/network';
 import { Platform } from '@ionic/angular';
@@ -8,20 +8,25 @@ import { NavController } from '@ionic/angular';
 import { PushNotifications, Token, PushNotification } from '@capacitor/push-notifications';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { Optional, ViewChild } from '@angular/core';
-import { IonToast } from '@ionic/angular/standalone';
 import { App } from '@capacitor/app';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { OtaService } from './services/ota.service';
+import { AuthService } from './services/auth.service';
+import { AppDialogService } from './services/app-dialog.service';
+import { PlayStoreUpdateService } from './services/play-store-update.service';
+import { AdmobService } from './services/admob.service';
+import { CustomSplashComponent } from './pages/custom-splash/custom-splash.component';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
-  imports: [IonIcon, IonContent, IonTitle, IonHeader, IonApp, IonRouterOutlet, IonToast, IonButton, IonApp, IonRouterOutlet],
+  imports: [IonApp, IonRouterOutlet, IonContent, CustomSplashComponent],
 })
 export class AppComponent implements OnInit {
 
   isOnline: boolean = true;
+  showSplash: boolean = true;
 
   // ✅ ADDED: your remote UI
   remoteUrl: string = 'https://pintu-teal.vercel.app/';
@@ -33,9 +38,39 @@ export class AppComponent implements OnInit {
     private navCtrl: NavController,
     private location: Location,
     private router: Router,
-    private otaService: OtaService
+    private otaService: OtaService,
+    private authService: AuthService,
+    private dialogService: AppDialogService,
+    private playStoreUpdateService: PlayStoreUpdateService,
+    private admobService: AdmobService
   ) {
-    
+    const startTime = Date.now();
+    this.routeBasedOnAuth(startTime);
+
+    // Fallback safety: ensure splash is never stuck longer than 3.5s
+    setTimeout(() => {
+      if (this.showSplash) {
+        this.showSplash = false;
+      }
+    }, 3500);
+  }
+
+  private dismissSplash(startTime: number) {
+    const elapsed = Date.now() - startTime;
+    const minDisplay = 600; // minimum 600ms so loader smoothly displays without flickering
+    const delay = Math.max(0, minDisplay - elapsed);
+    setTimeout(() => {
+      this.showSplash = false;
+    }, delay);
+  }
+
+  private routeBasedOnAuth(startTime: number) {
+    const targetUrl = this.authService.hasToken() ? '/layout/home' : '/login';
+    this.router.navigateByUrl(targetUrl).then(() => {
+      this.dismissSplash(startTime);
+    }).catch(() => {
+      this.dismissSplash(startTime);
+    });
   }
 
   ngOnInit() {
@@ -48,9 +83,15 @@ export class AppComponent implements OnInit {
   async initializeApp() {
     await this.platform.ready();
     await SplashScreen.hide();
+    try {
+      await SplashScreen.hide();
+    } catch (e) {}
 
     // 🚀 Initialize OTA Live Update Checks
     this.otaService.initialize();
+
+    // 🚀 Initialize Play Store In-App Updates Check (Strict update requirement)
+    this.playStoreUpdateService.initialize();
 
     // ✅ MODIFIED
     // await this.checkNetworkStatus();
@@ -114,23 +155,48 @@ export class AppComponent implements OnInit {
   }
 
   initializeBackButtonCustomHandler() {
-    this.platform.backButton.subscribeWithPriority(10, (processNextHandler) => {
+    this.platform.backButton.subscribeWithPriority(10, async (processNextHandler) => {
 
       const currentUrl = this.router.url;
       console.log('📍 Back Pressed. Current URL:', currentUrl);
 
-      const isRootPage =
-        currentUrl.includes('/home') ||
-        currentUrl.includes('/login') ||
-        currentUrl.includes('/offline'); // ✅ added offline
+      // 1. If an alert dialog is currently open, dismiss it on back press
+      if (this.dialogService.isAlertOpen) {
+        this.dialogService.handleCancel();
+        return;
+      }
 
-      if (isRootPage) {
+      // 2. On home page, show confirmation dialog before exiting
+      if (currentUrl.includes('/home')) {
+        const confirmed = await this.dialogService.showConfirm({
+          title: 'Exit Pintu?',
+          message: 'Are you sure you want to exit the app?',
+          confirmText: 'Exit App',
+          cancelText: 'Stay'
+        });
+        if (confirmed) {
+          App.exitApp();
+        }
+        return;
+      }
+
+      // 3. Other root pages (login, offline) exit directly
+      const isDirectExitPage =
+        currentUrl.includes('/login') ||
+        currentUrl.includes('/offline');
+
+      if (isDirectExitPage) {
         App.exitApp();
       }
       else if (this.routerOutlet && this.routerOutlet.canGoBack()) {
         this.navCtrl.back({ animated: false });
-      } else if (currentUrl == '/layout/example/history' || currentUrl == '/layout/example/support') {
-        this.navCtrl.navigateBack('/layout/example/home');
+      } else if (
+        currentUrl.includes('/layout/history') ||
+        currentUrl.includes('/layout/support') ||
+        currentUrl.includes('/layout/profile') ||
+        currentUrl.includes('/layout/refer')
+      ) {
+        this.navCtrl.navigateRoot('/layout/home');
       }
       else {
         processNextHandler();

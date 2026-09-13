@@ -1,59 +1,492 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-searchbar placeholder="Search for 'Tata Tiago'" [(ngModel)]="searchText"></ion-searchbar>
+<!-- Fixed Top Header with Live Location and Safe Area -->
+<ion-header class="property-header ion-no-border">
+  <ion-toolbar class="property-toolbar">
+    <div class="header-content-wrap">
+      <!-- Back Button -->
+      <button type="button" class="btn-header-back" (click)="goBack()" aria-label="Go Back">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </button>
+
+      <!-- Live Location Address Pill Button -->
+      <div class="location-pill-wrap" (click)="openLocation()" role="button" tabindex="0">
+        <div class="loc-pin-badge">
+          <ion-icon name="location"></ion-icon>
+        </div>
+        <div class="loc-text-col">
+          <div class="loc-title-row">
+            <span class="loc-city-name">{{ locationTitle }}</span>
+            <ion-icon name="chevron-down" class="chevron-mini"></ion-icon>
+          </div>
+          <span class="loc-address-line text-truncate">{{ locationSubtitle }}</span>
+        </div>
+      </div>
+
+      <!-- Refresh Data Button (in front of address) -->
+      <button
+        type="button"
+        class="btn-header-refresh"
+        [class.spinning]="isRefreshing"
+        (click)="refreshData()"
+        title="Refresh Properties"
+        aria-label="Refresh">
+        <ion-icon name="refresh-outline"></ion-icon>
+      </button>
+    </div>
   </ion-toolbar>
+
+  <!-- Category Apple-Style Segmented Tabs (100% width, with icons) -->
+  <div class="property-tabs-container">
+    <div class="property-tabs-strip">
+      @for (tab of categoryTabs; track tab.id) {
+        <button
+          type="button"
+          class="tab-pill"
+          [class.active]="activeCategory === tab.id"
+          (click)="setCategory(tab.id)">
+          <ion-icon [name]="tab.icon" class="tab-pill-icon"></ion-icon>
+          <span class="tab-pill-text">{{ tab.label }}</span>
+        </button>
+      }
+    </div>
+  </div>
 </ion-header>
 
-<ion-content>
+<ion-content [fullscreen]="true" class="property-page-content">
 
-  <!-- Filters -->
-  <div class="filters">
-    <ion-chip color="primary">Filters</ion-chip>
-    <ion-chip color="primary">Sort by</ion-chip>
-    <ion-chip color="primary">Fuel</ion-chip>
-    <ion-chip color="primary">Seller</ion-chip>
+  <!-- Search & Action Row: Inline Search, Sort & Filter Icon Buttons -->
+  <div class="search-filter-section">
+    <div class="search-inline-row">
+      <!-- Search Input Box (flex: 1) -->
+      <div class="search-input-box">
+        <ion-icon name="search-outline" class="search-lens"></ion-icon>
+        <input
+          type="text"
+          class="search-text-field"
+          placeholder="Search locality, project, landmark..."
+          [(ngModel)]="searchQuery"
+          (ngModelChange)="onSearchChanged($event)" />
+        @if (searchQuery.trim()) {
+          <button type="button" class="btn-clear-search" (click)="clearSearch()" aria-label="Clear Search">
+            <ion-icon name="close-circle-outline"></ion-icon>
+          </button>
+        }
+      </div>
+
+      <!-- Inline Sort Icon Button -->
+      <button
+        type="button"
+        class="icon-action-btn"
+        [class.active]="sortBy !== 'featured'"
+        (click)="openSortModal()"
+        title="Sort Properties"
+        aria-label="Sort">
+        <ion-icon name="swap-vertical-outline"></ion-icon>
+      </button>
+
+      <!-- Inline Filter Icon Button -->
+      <button
+        type="button"
+        class="icon-action-btn"
+        [class.active]="activeFiltersCount > 0"
+        (click)="openFilterModal()"
+        title="Filter Properties"
+        aria-label="Filter">
+        <ion-icon name="options-outline"></ion-icon>
+        @if (activeFiltersCount > 0) {
+          <span class="mini-count-dot">{{ activeFiltersCount }}</span>
+        }
+      </button>
+    </div>
   </div>
 
-  <!-- Result count -->
-  <div class="result-text">
-    {{cars.length}} Used CNG cars in Bangalore
-  </div>
+  <!-- Listings Section -->
+  <main class="property-listings-container">
+    <!-- Results Header -->
+    <div class="results-header-row">
+      <span class="results-count-text">
+        @if (isLoading) {
+          <span>Loading properties from server...</span>
+        } @else {
+          Showing <b>{{ filteredProperties.length }}</b> properties in and near {{ locationTitle }}
+        }
+      </span>
+      @if (activeFiltersCount > 0) {
+        <button type="button" class="btn-clear-chips" (click)="clearAllFilters()">
+          Clear filters ({{ activeFiltersCount }})
+        </button>
+      }
+    </div>
 
-  <!-- Car Cards -->
-  <ion-card *ngFor="let car of cars">
+    <!-- Property Cards List -->
+    @if (filteredProperties.length > 0) {
+      <div class="cards-stack">
+        @for (prop of filteredProperties; track prop.id) {
+          <article class="property-card" (click)="viewDetails(prop)">
+            <!-- Top Hero Image Container -->
+            <div class="card-image-wrap">
+              <img [src]="prop.images[0]" [alt]="prop.title" class="card-hero-img" loading="lazy" />
+              <div class="card-gradient-scrim"></div>
 
-    <img [src]="car.image"/>
+              <!-- Top Floating Badges -->
+              <div class="floating-tags-row">
+                <span class="property-type-tag">{{ prop.propertyType }}</span>
+                @if (prop.status === 'sold') {
+                  <span class="sold-tag">
+                    {{ prop.category === 'rent_house' ? 'Rented' : 'Sold' }}
+                  </span>
+                } @else if (prop.status === 'closed') {
+                  <span class="sold-tag">
+                    Closed
+                  </span>
+                } @else if (prop.tags.includes('Verified') || prop.is_verified) {
+                  <span class="verified-tag">
+                    <ion-icon name="checkmark-circle"></ion-icon>
+                    Verified
+                  </span>
+                }
+              </div>
 
-    <ion-card-content>
+              <!-- Favorite Heart Button -->
+              <button
+                type="button"
+                class="btn-favorite"
+                [class.active]="prop.isFavorite"
+                (click)="toggleFavorite(prop, $event)"
+                aria-label="Save Property">
+                <ion-icon [name]="prop.isFavorite ? 'heart' : 'heart-outline'"></ion-icon>
+              </button>
 
-      <div class="car-title">
-        {{car.year}} {{car.brand}} {{car.model}}
+              <!-- Bottom Price Tag on Image -->
+              <div class="image-price-banner">
+                <div class="price-val-row">
+                  <span class="price-main">{{ prop.priceDisplay }}</span>
+                  @if (prop.priceUnit) {
+                    <span class="price-unit">{{ prop.priceUnit }}</span>
+                  }
+                </div>
+                @if (prop.pricePerSqFt) {
+                  <span class="price-sub-calc">{{ prop.pricePerSqFt }}</span>
+                }
+              </div>
+            </div>
+
+            <!-- Card Body Info -->
+            <div class="card-body">
+              <!-- Title & Locality -->
+              <h3 class="property-title">{{ prop.title }}</h3>
+              <p class="property-locality">
+                <ion-icon name="location" class="loc-mini-icon"></ion-icon>
+                <span>{{ prop.locality }}</span>
+              </p>
+
+              <!-- Key Specs Chips Row -->
+              <div class="specs-chips-row">
+                @if (prop.bedrooms) {
+                  <div class="spec-pill">
+                    <ion-icon name="bed-outline"></ion-icon>
+                    <span>{{ prop.bedrooms }} Beds</span>
+                  </div>
+                }
+                @if (prop.bathrooms) {
+                  <div class="spec-pill">
+                    <ion-icon name="water-outline"></ion-icon>
+                    <span>{{ prop.bathrooms }} Baths</span>
+                  </div>
+                }
+                <div class="spec-pill">
+                  <ion-icon name="expand-outline"></ion-icon>
+                  <span>{{ prop.superBuiltUpAreaSqFt | number }} sq.ft</span>
+                </div>
+                <div class="spec-pill">
+                  <ion-icon name="compass-outline"></ion-icon>
+                  <span>{{ prop.facing }}</span>
+                </div>
+              </div>
+
+              <!-- Card Divider -->
+              <div class="card-divider"></div>
+
+              <!-- Card Footer Actions -->
+              <div class="card-footer-row">
+                <div class="seller-brief">
+                  <span class="seller-role">{{ prop.seller.type }}</span>
+                  <span class="seller-name">{{ prop.seller.name }}</span>
+                </div>
+
+                <div class="action-buttons-group">
+                  @if (prop.status === 'sold') {
+                    <button type="button" class="btn-contact-sold" disabled (click)="$event.stopPropagation()" aria-label="Property is Sold">
+                      <ion-icon name="lock-closed-outline"></ion-icon>
+                      <span>{{ prop.category === 'rent_house' ? 'Rented Out' : 'Sold Out' }}</span>
+                    </button>
+                  } @else {
+                    <button type="button" class="btn-contact-call" (click)="callSeller(prop, $event)" aria-label="Call Seller">
+                      <ion-icon name="call-outline"></ion-icon>
+                      <span>Call</span>
+                    </button>
+
+                    <button type="button" class="btn-contact-whatsapp" (click)="whatsappSeller(prop, $event)" aria-label="WhatsApp Seller">
+                      <ion-icon name="logo-whatsapp"></ion-icon>
+                      <span>WhatsApp</span>
+                    </button>
+                  }
+                </div>
+              </div>
+            </div>
+          </article>
+        }
       </div>
 
-      <div class="car-subtitle">
-        {{car.variant}}
+      <!-- End of Properties List Divider & Message -->
+      <div class="properties-end-container">
+        <div class="footer-divider-line"></div>
+        <div class="end-message-box">
+          <span class="end-icon">✨</span>
+          <span class="end-text-primary">That's it!</span>
+          <span class="end-text-sub">Adding more verified properties soon</span>
+        </div>
       </div>
-
-      <div class="car-details">
-        {{car.km}} km | {{car.fuel}} | {{car.transmission}} | {{car.location}}
+    } @else {
+      <!-- Empty Filter State -->
+      <div class="empty-state-card">
+        <div class="empty-icon-halo">
+          <ion-icon name="home-outline"></ion-icon>
+        </div>
+        <h3 class="empty-title">No Properties Match Your Filters</h3>
+        <p class="empty-desc">Try clearing your filters or changing the category to explore more verified homes and plots in Jamkhandi.</p>
+        <button type="button" class="btn-reset-filters" (click)="clearAllFilters()">
+          <ion-icon name="refresh-outline" class="me-1"></ion-icon>
+          <span>Reset All Filters</span>
+        </button>
       </div>
+    }
 
-      <div class="price">
-        ₹{{car.price}} lakh
+    <!-- Bottom Nav Spacer -->
+    <div class="bottom-safe-spacer"></div>
+
+    <!-- Floating Register / Post Property Button -->
+    <button
+      type="button"
+      class="fab-register-property"
+      (click)="goToRegisterProperty()"
+      title="Post Property"
+      aria-label="Post Property">
+      <ion-icon name="add-outline"></ion-icon>
+      <span>Post Property</span>
+    </button>
+  </main>
+
+  <!-- ================= SORT BOTTOM SHEET ================= -->
+  <ion-modal
+    [isOpen]="isSortModalOpen"
+    [initialBreakpoint]="0.5"
+    [breakpoints]="[0, 0.5]"
+    [handle]="true"
+    (didDismiss)="closeSortModal()">
+    <ng-template>
+      <div class="sheet-container">
+        <header class="sheet-header">
+          <h3 class="sheet-title">Sort Properties</h3>
+          <button type="button" class="btn-sheet-close" (click)="closeSortModal()" aria-label="Close">
+            <ion-icon name="close-outline"></ion-icon>
+          </button>
+        </header>
+
+        <div class="sheet-body">
+          <div
+            class="sort-option-item"
+            [class.selected]="sortBy === 'featured'"
+            (click)="selectSort('featured')">
+            <div class="sort-option-text">
+              <span class="sort-title">Featured &amp; Recommended</span>
+              <span class="sort-desc">Handpicked verified properties</span>
+            </div>
+            @if (sortBy === 'featured') {
+              <ion-icon name="checkmark" class="check-icon"></ion-icon>
+            }
+          </div>
+
+          <div
+            class="sort-option-item"
+            [class.selected]="sortBy === 'price_low'"
+            (click)="selectSort('price_low')">
+            <div class="sort-option-text">
+              <span class="sort-title">Price: Low to High</span>
+              <span class="sort-desc">Affordable options first</span>
+            </div>
+            @if (sortBy === 'price_low') {
+              <ion-icon name="checkmark" class="check-icon"></ion-icon>
+            }
+          </div>
+
+          <div
+            class="sort-option-item"
+            [class.selected]="sortBy === 'price_high'"
+            (click)="selectSort('price_high')">
+            <div class="sort-option-text">
+              <span class="sort-title">Price: High to Low</span>
+              <span class="sort-desc">Premium luxury options first</span>
+            </div>
+            @if (sortBy === 'price_high') {
+              <ion-icon name="checkmark" class="check-icon"></ion-icon>
+            }
+          </div>
+
+          <div
+            class="sort-option-item"
+            [class.selected]="sortBy === 'area_high'"
+            (click)="selectSort('area_high')">
+            <div class="sort-option-text">
+              <span class="sort-title">Area: Largest First</span>
+              <span class="sort-desc">Maximum super built-up space</span>
+            </div>
+            @if (sortBy === 'area_high') {
+              <ion-icon name="checkmark" class="check-icon"></ion-icon>
+            }
+          </div>
+
+          <div
+            class="sort-option-item"
+            [class.selected]="sortBy === 'newest'"
+            (click)="selectSort('newest')">
+            <div class="sort-option-text">
+              <span class="sort-title">Newest Added</span>
+              <span class="sort-desc">Latest posted properties</span>
+            </div>
+            @if (sortBy === 'newest') {
+              <ion-icon name="checkmark" class="check-icon"></ion-icon>
+            }
+          </div>
+        </div>
       </div>
+    </ng-template>
+  </ion-modal>
 
-      <div class="tags">
-        <ion-badge color="success">30 days return</ion-badge>
-        <ion-badge color="medium">300+ quality checks</ion-badge>
+  <!-- ================= FILTER BOTTOM SHEET ================= -->
+  <ion-modal
+    [isOpen]="isFilterModalOpen"
+    [initialBreakpoint]="0.78"
+    [breakpoints]="[0, 0.78, 0.95]"
+    [handle]="true"
+    (didDismiss)="closeFilterModal()">
+    <ng-template>
+      <div class="sheet-container filter-sheet-container">
+        <header class="sheet-header">
+          <div class="sheet-header-left">
+            <h3 class="sheet-title">Filter Properties</h3>
+            @if (activeFiltersCount > 0) {
+              <span class="sheet-count-tag">{{ activeFiltersCount }} active</span>
+            }
+          </div>
+
+          <div class="sheet-header-right">
+            <button type="button" class="btn-sheet-reset" (click)="clearAllFilters()">
+              Reset
+            </button>
+            <button type="button" class="btn-sheet-close" (click)="closeFilterModal()" aria-label="Close">
+              <ion-icon name="close-outline"></ion-icon>
+            </button>
+          </div>
+        </header>
+
+        <div class="sheet-scroll-body">
+          <!-- 1. Verified Properties Toggle -->
+          <div class="filter-section-block">
+            <div class="verified-toggle-card" [class.active]="verifiedOnly" (click)="toggleVerifiedOnly()">
+              <div class="toggle-info-col">
+                <div class="toggle-title-row">
+                  <ion-icon name="checkmark-circle" class="verified-icon"></ion-icon>
+                  <span class="toggle-title">Pintu Verified Only</span>
+                </div>
+                <span class="toggle-desc">Show only properties verified with legal &amp; physical checks</span>
+              </div>
+              <div class="custom-switch" [class.on]="verifiedOnly">
+                <div class="switch-handle"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. BHK Choice (Houses / Rent) -->
+          @if (activeCategory === 'buy_house' || activeCategory === 'rent_house') {
+            <div class="filter-section-block">
+              <h4 class="filter-block-title">BHK Choice</h4>
+              <div class="chips-selector-row">
+                <button type="button" class="choice-chip" [class.active]="selectedBhk === 'all'" (click)="selectedBhk = 'all'">Any</button>
+                <button type="button" class="choice-chip" [class.active]="selectedBhk === '1'" (click)="setBhkFilter('1')">1 BHK</button>
+                <button type="button" class="choice-chip" [class.active]="selectedBhk === '2'" (click)="setBhkFilter('2')">2 BHK</button>
+                <button type="button" class="choice-chip" [class.active]="selectedBhk === '3'" (click)="setBhkFilter('3')">3 BHK</button>
+                <button type="button" class="choice-chip" [class.active]="selectedBhk === '4+'" (click)="setBhkFilter('4+')">4+ BHK</button>
+              </div>
+            </div>
+          }
+
+          <!-- 3. Budget / Price Range -->
+          <div class="filter-section-block">
+            <h4 class="filter-block-title">Budget Range</h4>
+            <div class="chips-selector-row">
+              <button type="button" class="choice-chip" [class.active]="selectedBudget === 'all'" (click)="selectedBudget = 'all'">Any</button>
+              @if (activeCategory !== 'rent_house') {
+                <button type="button" class="choice-chip" [class.active]="selectedBudget === 'under_30l'" (click)="setBudgetFilter('under_30l')">Under ₹30L</button>
+                <button type="button" class="choice-chip" [class.active]="selectedBudget === '30l_60l'" (click)="setBudgetFilter('30l_60l')">₹30L - ₹60L</button>
+                <button type="button" class="choice-chip" [class.active]="selectedBudget === '60l_1cr'" (click)="setBudgetFilter('60l_1cr')">₹60L - ₹1Cr</button>
+                <button type="button" class="choice-chip" [class.active]="selectedBudget === 'above_1cr'" (click)="setBudgetFilter('above_1cr')">₹1Cr+</button>
+              } @else {
+                <button type="button" class="choice-chip" [class.active]="selectedBudget === 'under_10k'" (click)="setBudgetFilter('under_10k')">Under ₹10k</button>
+                <button type="button" class="choice-chip" [class.active]="selectedBudget === '10k_20k'" (click)="setBudgetFilter('10k_20k')">₹10k - ₹20k</button>
+                <button type="button" class="choice-chip" [class.active]="selectedBudget === 'above_20k'" (click)="setBudgetFilter('above_20k')">₹20k+</button>
+              }
+            </div>
+          </div>
+
+          <!-- 4. Furnishing -->
+          @if (activeCategory === 'buy_house' || activeCategory === 'rent_house') {
+            <div class="filter-section-block">
+              <h4 class="filter-block-title">Furnishing Status</h4>
+              <div class="chips-selector-row">
+                <button type="button" class="choice-chip" [class.active]="selectedFurnishing === 'all'" (click)="selectedFurnishing = 'all'">Any</button>
+                <button type="button" class="choice-chip" [class.active]="selectedFurnishing === 'Fully Furnished'" (click)="setFurnishingFilter('Fully Furnished')">Fully Furnished</button>
+                <button type="button" class="choice-chip" [class.active]="selectedFurnishing === 'Semi-Furnished'" (click)="setFurnishingFilter('Semi-Furnished')">Semi-Furnished</button>
+                <button type="button" class="choice-chip" [class.active]="selectedFurnishing === 'Unfurnished'" (click)="setFurnishingFilter('Unfurnished')">Unfurnished</button>
+              </div>
+            </div>
+          }
+
+          <!-- 5. Facing Direction -->
+          <div class="filter-section-block">
+            <h4 class="filter-block-title">Facing Direction</h4>
+            <div class="chips-selector-row">
+              <button type="button" class="choice-chip" [class.active]="selectedFacing === 'all'" (click)="selectedFacing = 'all'">Any</button>
+              <button type="button" class="choice-chip" [class.active]="selectedFacing === 'East'" (click)="setFacingFilter('East')">East</button>
+              <button type="button" class="choice-chip" [class.active]="selectedFacing === 'North'" (click)="setFacingFilter('North')">North</button>
+              <button type="button" class="choice-chip" [class.active]="selectedFacing === 'North-East'" (click)="setFacingFilter('North-East')">North-East</button>
+              <button type="button" class="choice-chip" [class.active]="selectedFacing === 'West'" (click)="setFacingFilter('West')">West</button>
+              <button type="button" class="choice-chip" [class.active]="selectedFacing === 'South'" (click)="setFacingFilter('South')">South</button>
+            </div>
+          </div>
+
+          <!-- 6. Parking -->
+          @if (activeCategory === 'buy_house' || activeCategory === 'rent_house') {
+            <div class="filter-section-block">
+              <h4 class="filter-block-title">Parking Availability</h4>
+              <div class="chips-selector-row">
+                <button type="button" class="choice-chip" [class.active]="selectedParking === 'all'" (click)="selectedParking = 'all'">Any</button>
+                <button type="button" class="choice-chip" [class.active]="selectedParking === 'Covered'" (click)="setParkingFilter('Covered')">Covered Parking</button>
+                <button type="button" class="choice-chip" [class.active]="selectedParking === 'Available'" (click)="setParkingFilter('Available')">Any Parking</button>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Bottom Sticky Footer in Sheet -->
+        <footer class="sheet-footer">
+          <button type="button" class="btn-sheet-clear" (click)="clearAllFilters()">
+            Clear All
+          </button>
+          <button type="button" class="btn-sheet-apply" (click)="applyFilters()">
+            Show {{ filteredProperties.length }} Properties
+          </button>
+        </footer>
       </div>
-
-      <!-- <div class="buttons">
-        <ion-button size="small" fill="outline">Free Test Drive</ion-button>
-        <ion-button size="small">View Details</ion-button>
-      </div> -->
-
-    </ion-card-content>
-
-  </ion-card>
-
+    </ng-template>
+  </ion-modal>
 </ion-content>

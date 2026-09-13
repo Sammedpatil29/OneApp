@@ -8,7 +8,7 @@ import html2canvas from 'html2canvas';
 import { Share } from '@capacitor/share';
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import { addIcons } from 'ionicons';
-import { arrowBack, shareSocialOutline, downloadOutline, mapOutline, timeOutline, calendarOutline, locationOutline, checkmarkCircle, alertCircleOutline, closeCircle } from 'ionicons/icons';
+import { arrowBack, arrowBackOutline, shareSocialOutline, downloadOutline, mapOutline, timeOutline, calendarOutline, locationOutline, checkmarkCircle, alertCircleOutline, closeCircle } from 'ionicons/icons';
 import { AdmobService } from 'src/app/services/admob.service';
 import { EventsService } from 'src/app/services/events.service';
 import { AuthService } from 'src/app/services/auth.service';
@@ -47,7 +47,7 @@ export class TrackOrderPage implements OnInit {
     private actionSheetCtrl: ActionSheetController,
     private authService: AuthService
   ) { 
-    addIcons({arrowBack,closeCircle,checkmarkCircle,calendarOutline,timeOutline,locationOutline,alertCircleOutline,downloadOutline,shareSocialOutline,mapOutline});
+    addIcons({arrowBack, arrowBackOutline, closeCircle,checkmarkCircle,calendarOutline,timeOutline,locationOutline,alertCircleOutline,downloadOutline,shareSocialOutline,mapOutline});
   }
 
   async ngOnInit() {
@@ -79,20 +79,12 @@ export class TrackOrderPage implements OnInit {
       this.isLoading = false; // Stop loading so we show "Not Found" UI
     }
 
-    // 3. Init Ads Safely (Delayed)
-    this.initAdMobSafe();
+    // 3. Init Ads Safely (Delayed) - Disabled for now
+    // this.initAdMobSafe();
   }
 
   initAdMobSafe() {
-    setTimeout(() => {
-      try {
-        // Ensure the array exists before service tries to push
-        window.adsbygoogle = window.adsbygoogle || [];
-        this.admobService.displayBannerAd('ca-app-pub-3940256099942544/6300978111');
-      } catch (e) {
-        console.warn("AdMob initialization skipped:", e);
-      }
-    }, 2000); // Wait 2 seconds for DOM to settle
+    // Disabled for now - implement later
   }
 
   fetchOrderDetails(id: string) {

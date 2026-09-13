@@ -1,23 +1,62 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar,IonSkeletonText, IonButton, IonButtons, IonIcon, IonFooter, IonText, IonItem, IonSelectOption, IonSelect, IonTextarea, IonList, IonInput, IonCard, IonLabel, IonNote, IonSpinner, IonToast, IonAvatar, IonAlert } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonSkeletonText, IonButton, IonButtons, IonIcon, IonText, IonItem, IonList, IonInput, IonLabel, IonNote, IonSpinner, IonToast, IonAvatar, IonAlert } from '@ionic/angular/standalone';
 import { Router, RouterLink } from '@angular/router';
 import { NavController } from '@ionic/angular';
-import { arrowBack, chevronForward } from 'ionicons/icons';
+import { 
+  arrowBack, 
+  arrowBackOutline, 
+  chevronForward,
+  checkmarkCircle,
+  checkmark,
+  sunnyOutline,
+  moonOutline,
+  phonePortraitOutline,
+  bulbOutline,
+  cartOutline,
+  bicycleOutline,
+  sparklesOutline,
+  heartOutline,
+  informationCircleOutline,
+  settingsOutline,
+  languageOutline,
+  colorPaletteOutline,
+  sendOutline,
+  shieldCheckmarkOutline,
+  shieldOutline,
+  documentTextOutline,
+  lockClosedOutline,
+  walletOutline,
+  locationOutline,
+  notificationsOutline,
+  mailOutline,
+  helpCircleOutline,
+  checkmarkDoneCircleOutline,
+  flashOutline,
+  storefrontOutline,
+  peopleOutline,
+  timeOutline,
+  ribbonOutline,
+  callOutline,
+  trashOutline,
+  readerOutline,
+  businessOutline
+} from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { FooterComponent } from "../../components/footer/footer.component";
 import { NodataComponent } from "../../components/nodata/nodata.component";
 import { AuthService } from 'src/app/services/auth.service';
 import { LocationService } from 'src/app/services/location.service';
 import { ProfileService } from 'src/app/services/profile.service';
+import { AppDialogService } from 'src/app/services/app-dialog.service';
 
 @Component({
   selector: 'app-about',
   templateUrl: './about.page.html',
   styleUrls: ['./about.page.scss'],
   standalone: true,
-  imports: [IonAlert, IonAvatar,IonButton, IonToast, IonSkeletonText, IonSpinner, IonNote, IonLabel, IonInput, IonList, IonTextarea, IonItem, IonText, IonFooter, IonIcon, IonButtons, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, FooterComponent, NodataComponent, IonSelect]
+  imports: [IonAlert, IonAvatar, IonButton, IonToast, IonSkeletonText, IonSpinner, IonNote, IonLabel, IonInput, IonList, IonItem, IonText, IonIcon, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, NodataComponent]
 })
 export class AboutPage implements OnInit {
 
@@ -26,6 +65,27 @@ export class AboutPage implements OnInit {
   subject = ''
   subjectBody = ''
   token:any
+
+  suggestionCategory: string = 'Product';
+  suggestionCategories: string[] = [
+    'Product',
+    'Service'
+  ];
+
+  selectedLanguage: string = 'en';
+  selectedTheme: string = 'system';
+
+  languages = [
+    { code: 'en', name: 'English', nativeName: 'English', subtitle: 'Standard language' },
+    { code: 'hi', name: 'Jawari Kannada', nativeName: 'ಜವಾರಿ ಕನ್ನಡ', subtitle: 'Regional language' }
+  ];
+
+  themes = [
+    { id: 'light', name: 'Light Mode', subtitle: 'Crisp and bright display', icon: 'sunny-outline' },
+    { id: 'dark', name: 'Dark Mode', subtitle: 'Gentle & power efficient', icon: 'moon-outline' },
+    { id: 'system', name: 'System Default', subtitle: 'Matches device appearance', icon: 'phone-portrait-outline' }
+  ];
+
   addresses: any = [
     {
         "lat": "",
@@ -68,32 +128,88 @@ export class AboutPage implements OnInit {
     phone: ""
   }
 
-  constructor(private router: Router, private navCtrl: NavController, private authService: AuthService, private locationService: LocationService, private profileService: ProfileService ) {
-    addIcons({arrowBack,chevronForward});
+  policyTab: 'terms' | 'privacy' = 'terms';
+
+  constructor(
+    private router: Router,
+    private navCtrl: NavController,
+    private authService: AuthService,
+    private locationService: LocationService,
+    private profileService: ProfileService,
+    private dialogService: AppDialogService
+  ) {
+    addIcons({
+      arrowBack, 
+      arrowBackOutline, 
+      chevronForward,
+      checkmarkCircle,
+      checkmark,
+      sunnyOutline,
+      moonOutline,
+      phonePortraitOutline,
+      bulbOutline,
+      cartOutline,
+      bicycleOutline,
+      sparklesOutline,
+      heartOutline,
+      informationCircleOutline,
+      settingsOutline,
+      languageOutline,
+      colorPaletteOutline,
+      sendOutline,
+      shieldCheckmarkOutline,
+      shieldOutline,
+      documentTextOutline,
+      lockClosedOutline,
+      walletOutline,
+      locationOutline,
+      notificationsOutline,
+      mailOutline,
+      helpCircleOutline,
+      checkmarkDoneCircleOutline,
+      flashOutline,
+      storefrontOutline,
+      peopleOutline,
+      timeOutline,
+      ribbonOutline,
+      callOutline,
+      trashOutline,
+      readerOutline,
+      businessOutline
+    });
   }
 
   async ngOnInit() {
-    this.data = this.router.getCurrentNavigation()?.extras.state?.['data'];
+    this.data = this.router.getCurrentNavigation()?.extras.state?.['data'] || history.state?.data;
     console.log('Passed Data:', this.data);
-    this.Addressid = this.locationService.location$.subscribe((res:any)=>{
-      this.Addressid = res
-      console.log('address set as', this.Addressid)
-
-    })
-      console.log('new saved address',this.Addressid)
-    this.getYear()
-    this.token = await this.authService.getToken()
-    if(this.data == 'Personal Details'){
-      this.getProfileData()
+    if (this.data === 'settings' || this.data === 'language' || this.data === 'Languages' || this.data === 'Preferences') {
+      this.data = 'App Settings';
     }
-    if(this.data == 'About Pintu'){
-      const version = await this.profileService.getAppVersion()
-      this.appVersion = version
+
+    if (this.data === 'privacy' || this.data === 'Privacy Policy') {
+      this.policyTab = 'privacy';
+    } else {
+      this.policyTab = 'terms';
+    }
+
+    this.initSettings();
+
+    this.Addressid = this.locationService.location$.subscribe((res:any)=>{
+      this.Addressid = res;
+      console.log('address set as', this.Addressid);
+    });
+    this.getYear();
+    this.token = await this.authService.getToken();
+    if(this.data == 'Personal Details'){
+      this.getProfileData();
+    }
+    if(this.data == 'About Pintu' || this.data == 'App Settings' || this.isPolicyPage()){
+      const version = await this.profileService.getAppVersion();
+      this.appVersion = version;
     }
     if(this.data == 'Saved Addresses'){
-      this.getAddressList()
+      this.getAddressList();
     }
-    // this.getAddressList()
   }
   
 selectedAddress:any
@@ -192,59 +308,128 @@ this.isSpinnerLoading = true
     })
   }
 
-  deleteAddress(id:any){
-    
-    this.isSpinnerLoading = true
-    this.locationService.deleteAddress(this.token, id).subscribe(res => {
-      // alert("deleted successfully")
-      this.isSpinnerLoading = false
-      setTimeout(()=>{
-        this.getAddressList()
-      })
-      this.isToastOpen = true
-      this.toastMessage = "deleted successfully";
-      setTimeout(()=>{
-        this.isToastOpen = false
-      },3000)
-      
-      this.addresses = [...this.addresses]
-      console.log(this.addresses)
-    })
+  async deleteAddress(id: any) {
+    const confirmed = await this.dialogService.showDangerConfirm({
+      title: 'Delete Address?',
+      message: 'Are you sure you want to delete this address?\nThis action cannot be undone.',
+      confirmText: 'Yes, Delete',
+      cancelText: 'Cancel'
+    });
+
+    if (!confirmed) return;
+
+    this.isSpinnerLoading = true;
+    this.locationService.deleteAddress(this.token, id).subscribe({
+      next: () => {
+        this.isSpinnerLoading = false;
+        this.getAddressList();
+        this.dialogService.showToast('Address deleted successfully', 'success');
+      },
+      error: () => {
+        this.isSpinnerLoading = false;
+        this.dialogService.showToast('Failed to delete address', 'danger');
+      }
+    });
   }
 
-  postSuggestion(){
-    let params = {
-      "token": this.token,
-      "subject": this.subject,
-      "suggesion": this.subjectBody
+  setPolicyTab(tab: 'terms' | 'privacy') {
+    this.policyTab = tab;
+  }
+
+  isPolicyPage(): boolean {
+    return (
+      this.data === 'Terms & Privacy' ||
+      this.data === 'terms' ||
+      this.data === 'Terms & Conditions' ||
+      this.data === 'privacy' ||
+      this.data === 'Privacy Policy'
+    );
+  }
+
+  getPageTitle(): string {
+    if (this.data === 'suggestion') return 'Suggest a Product or Service';
+    if (this.data === 'App Settings') return 'App Settings';
+    if (this.isPolicyPage()) {
+      return this.policyTab === 'terms' ? 'Terms of Service' : 'Privacy Policy';
+    }
+    if (this.data === 'About Pintu') return 'About Pintu';
+    return this.data || 'About Pintu';
+  }
+
+  selectCategory(category: string) {
+    this.suggestionCategory = category;
+  }
+
+  initSettings() {
+    this.selectedLanguage = localStorage.getItem('pintu_language') || 'en';
+    this.selectedTheme = localStorage.getItem('pintu_theme') || 'system';
+  }
+
+  setLanguage(code: string) {
+    this.selectedLanguage = code;
+    localStorage.setItem('pintu_language', code);
+    const lang = this.languages.find(l => l.code === code);
+    this.dialogService.showToast(`Language set to ${lang?.name || code}`, 'success');
+  }
+
+  setTheme(themeId: string) {
+    this.selectedTheme = themeId;
+    localStorage.setItem('pintu_theme', themeId);
+    this.applyTheme(themeId);
+    const themeObj = this.themes.find(t => t.id === themeId);
+    this.dialogService.showToast(`Theme updated: ${themeObj?.name}`, 'success');
+  }
+
+  applyTheme(themeId: string) {
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (themeId === 'dark' || (themeId === 'system' && prefersDark)) {
+      document.body.classList.add('dark');
+    } else {
+      document.body.classList.remove('dark');
+    }
+  }
+
+  async postSuggestion() {
+    if (!this.subject.trim()) {
+      this.dialogService.showToast('Please enter a short subject / title', 'warning');
+      return;
+    }
+    if (!this.subjectBody.trim()) {
+      this.dialogService.showToast('Please describe your suggestion', 'warning');
+      return;
     }
 
-    if(this.subject.length > 4 && this.subjectBody.length > 5){
-      this.isLoading = true
-      this.profileService.postSuggestion(params).subscribe(res => {
-      this.isToastOpen = true
-      this.toastMessage = 'Thanks for the suggestion, we will consider it very siriously!❤️'
-      setTimeout(()=> {
-        this.isToastOpen = false
-      }, 3000)
-      this.isLoading = false
-      this.subject = ''
-      this.subjectBody = ''
-    }, error => {
-            this.isToastOpen = true
-      this.toastMessage = 'error while posting suggestion'
-      setTimeout(()=> {
-        this.isToastOpen = false
-      }, 3000)
-      this.isLoading = false
-    })
-    } else {
-      this.isToastOpen = true
-      this.toastMessage = 'Atleat 4 charactrs needed in each field'
-      setTimeout(()=> {
-        this.isToastOpen = false
-      }, 3000)
-    }
+    this.isLoading = true;
+    const params = {
+      token: this.token,
+      type: this.suggestionCategory,
+      category: this.suggestionCategory,
+      title: this.subject.trim(),
+      subject: this.subject.trim(),
+      details: this.subjectBody.trim(),
+      suggestion: this.subjectBody.trim(),
+      orderService: `Suggestion: ${this.suggestionCategory}`
+    };
+
+    this.profileService.postSuggestion(params, this.token).subscribe({
+      next: async (res: any) => {
+        this.isLoading = false;
+        this.subject = '';
+        this.subjectBody = '';
+        await this.dialogService.showAlert(
+          'Suggestion Submitted! 🎉',
+          'Thank you for your valuable feedback! Our team reviews every idea to bring the best experience to Pintu.',
+          'success',
+          'Done'
+        );
+        this.goBack();
+      },
+      error: (error: any) => {
+        this.isLoading = false;
+        console.error('Post suggestion error:', error);
+        this.dialogService.showToast(error?.error?.message || 'Error while submitting suggestion', 'danger');
+      }
+    });
   }
 
   openLocation(){

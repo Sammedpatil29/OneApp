@@ -1,3 +1,19 @@
+<ion-header class="ion-no-border bg-white pt-2">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back-outline" color="dark"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="fw-bold text-dark">Local Events</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openHelp()">
+        <ion-icon name="help-circle-outline" slot="icon-only" color="medium"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
 <ion-content [fullscreen]="true" class="bg-gray-50">
   
   <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
@@ -5,7 +21,7 @@
   </ion-refresher>
 
   @if (isLoading) {
-    <div class="p-2 pt-14">
+    <div class="p-2 pt-4">
       <div class="flex gap-4 overflow-hidden mb-6">
         <ion-skeleton-text animated style="width: 85%; height: 200px; border-radius: 20px; flex-shrink: 0;"></ion-skeleton-text>
         <ion-skeleton-text animated style="width: 15%; height: 200px; border-radius: 20px 0 0 20px; flex-shrink: 0;"></ion-skeleton-text>
@@ -23,21 +39,6 @@
 
   @else {
     <div class="sticky-header-section">
-      <ion-header>
-  <ion-toolbar class="pt-4">
-    <ion-buttons slot="start">
-      <ion-button (click)="back()">
-        <ion-icon name="arrow-back"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-title>Local Events</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="openHelp()">
-        <ion-icon name="help-circle-outline" slot="icon-only" color="medium"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
       <div class="px-4 mb-2">
         <ion-searchbar 
           mode="ios" 
