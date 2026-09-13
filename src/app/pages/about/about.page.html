@@ -16,62 +16,498 @@
   ></ion-toast>
 
 @if (data == 'About Pintu') {
-  <ion-content [fullscreen]="true">
-    
-  <section class="about">
-    <h2>Welcome to Pintu 🌟</h2>
-    <p>
-      <strong>Pintu</strong> is a comprehensive service platform developed and managed by <strong>demoCompany LLP</strong> 🚀. Designed to work at the city level, Pintu brings all your essential services right to your fingertips. From 🍔 food deliveries and 🛒 groceries to 🏠 real estate, 🔧 repair services, and even 🏛️ government services—Pintu is your go-to solution for managing daily needs.
-    </p>
+  <ion-content [fullscreen]="true" class="about-page-content">
+    <div class="about-page-container">
 
-    <h3>Our Mission 🎯</h3>
-    <p>
-      Our mission at demoCompany LLP is to revolutionize urban living by providing an all-in-one platform that connects you with a wide range of services in your city 🏙️. We believe in simplifying your life by bringing everything you need, from essentials to emergencies, into a single, easy-to-use app 📲.
-    </p>
+      <!-- Hero Brand Card -->
+      <section class="brand-hero-card">
+        <div class="hero-glow-circle"></div>
+        <div class="hero-content">
+          <div class="brand-badge-row">
+            <span class="brand-pill">demoCompany LLP</span>
+            <span class="version-pill">v{{ appVersion || '0.0.22' }}</span>
+          </div>
+          <h1 class="brand-title">Pintu</h1>
+          <p class="brand-tagline">Minutes App • Hyperlocal Quick-Commerce &amp; Urban Services</p>
+          <div class="brand-promise-banner">
+            <ion-icon name="flash-outline" class="promise-icon"></ion-icon>
+            <span>Delivering City Essentials to Your Doorstep in 10–15 Minutes</span>
+          </div>
+        </div>
+      </section>
 
-    <h3>What Pintu Offers 🛍️</h3>
-    <p>
-      Whether you're a busy professional, a family managing daily routines, or someone looking for quick solutions, Pintu has something for everyone 👨‍👩‍👧‍👦. Our platform works with local vendors, service providers, and government agencies to provide seamless, fast, and reliable services.
-    </p>
+      <!-- Mission & Vision Card -->
+      <div class="clean-card mission-card">
+        <div class="card-header-with-icon">
+          <div class="icon-circle icon-purple">
+            <ion-icon name="bulb-outline"></ion-icon>
+          </div>
+          <div>
+            <h3 class="card-title">Our Mission &amp; Purpose</h3>
+            <span class="card-subtitle">Empowering daily city living through technology</span>
+          </div>
+        </div>
+        <p class="card-desc-text">
+          Pintu is built with a singular vision: to simplify urban life by interconnecting local neighborhood merchants, skilled professionals, and everyday customers into one super-app. From groceries and hot meals to reliable home services, we eliminate wait times and empower local economies.
+        </p>
+      </div>
 
-    <ul>
-      <li><strong>🍔 Food Delivery:</strong> Order from your favorite local restaurants and have your meals delivered right to your door.</li>
-      <li><strong>🛒 Grocery & Daily Needs:</strong> Shop for groceries, daily essentials, and have them delivered in no time.</li>
-      <li><strong>🏠 Real Estate:</strong> Browse property listings, find rental options, or even book real estate services—all within Pintu.</li>
-      <li><strong>🔧 Repair Services:</strong> Need a plumber, electrician, or handyman? Pintu connects you to verified professionals.</li>
-      <li><strong>🏛️ Government Services:</strong> Access important city and government services directly through the app, from bill payments to permits.</li>
-      <li><strong>🔜 And More:</strong> We continue to expand our offerings, ensuring that we meet all your city-level service needs!</li>
-    </ul>
+      <!-- Section Title: What We Deliver -->
+      <div class="section-heading-bar">
+        <div class="heading-accent"></div>
+        <h3 class="section-heading">What Pintu Delivers</h3>
+      </div>
 
-    <h3>Why Choose Pintu? 🤔</h3>
-    <p>
-      Pintu is not just another service app—it's a complete lifestyle platform designed to save you time ⏰ and effort 💪. Here’s why you should choose us:
-    </p>
-    <ul>
-      <li><strong>🏙️ City-Centric:</strong> We focus on providing services specifically tailored to your city's needs.</li>
-      <li><strong>🛠️ All-in-One Convenience:</strong> Forget switching between different apps—Pintu has it all.</li>
-      <li><strong>⚡ Fast and Reliable:</strong> Our services are quick, efficient, and available whenever you need them.</li>
-      <li><strong>🔒 Secure & Trusted:</strong> We work with trusted service providers and ensure all transactions are secure.</li>
-    </ul>
+      <!-- 4 Offerings Cards Grid -->
+      <div class="offerings-grid">
 
-    <h3 class="text-center">Thank you for being a part of this Journey🚀</h3>
-    
-    <app-footer></app-footer>
+        <!-- Card 1: 10-15 Min Grocery -->
+        <div class="service-offering-card">
+          <div class="offering-header">
+            <div class="icon-circle icon-emerald">
+              <ion-icon name="cart-outline"></ion-icon>
+            </div>
+            <span class="card-chip chip-emerald">10-15 Mins</span>
+          </div>
+          <h4 class="offering-title">Express Groceries &amp; Daily Staples</h4>
+          <p class="offering-desc">Farm-fresh produce, dairy, fruits, bakery goods, snacks, beverages and household essentials straight from local dark stores.</p>
+        </div>
 
-    <!-- <ion-button expand="full" color="primary" href="https://www.oneapp.com/download">
-      Download Now 📲
-    </ion-button> -->
-  </section>
- <p class="text-center"> Version | {{appVersion}}</p>
-  
-</ion-content>
-<ion-footer>
-  <ion-toolbar>
-    <ion-text class="ion-text-center">
-      <p>&copy; {{year}} demoCompany LLP. All rights reserved.</p>
-    </ion-text>
-  </ion-toolbar>
-</ion-footer>
+        <!-- Card 2: Food & Dining -->
+        <div class="service-offering-card">
+          <div class="offering-header">
+            <div class="icon-circle icon-amber">
+              <ion-icon name="storefront-outline"></ion-icon>
+            </div>
+            <span class="card-chip chip-amber">Food &amp; Dine</span>
+          </div>
+          <h4 class="offering-title">Local Restaurant Food &amp; Dining</h4>
+          <p class="offering-desc">Craving biryani, street food, or café specials? Order hot from curated local kitchens or reserve tables with dineout savings.</p>
+        </div>
+
+        <!-- Card 3: Home Services -->
+        <div class="service-offering-card">
+          <div class="offering-header">
+            <div class="icon-circle icon-blue">
+              <ion-icon name="bicycle-outline"></ion-icon>
+            </div>
+            <span class="card-chip chip-blue">On-Demand</span>
+          </div>
+          <h4 class="offering-title">Trusted Home &amp; Repair Services</h4>
+          <p class="offering-desc">Verified electricians, plumbers, appliance technicians, carpenters, and handymen booked on-demand at transparent rates.</p>
+        </div>
+
+        <!-- Card 4: Civic & Utility Needs -->
+        <div class="service-offering-card">
+          <div class="offering-header">
+            <div class="icon-circle icon-purple">
+              <ion-icon name="business-outline"></ion-icon>
+            </div>
+            <span class="card-chip chip-purple">Hyperlocal</span>
+          </div>
+          <h4 class="offering-title">Civic Utilities &amp; City Solutions</h4>
+          <p class="offering-desc">Access daily city resources, bill payments, and hyperlocal errands designed specifically for your neighborhood.</p>
+        </div>
+
+      </div>
+
+      <!-- Section Title: The Pintu Pillars -->
+      <div class="section-heading-bar mt-4">
+        <div class="heading-accent"></div>
+        <h3 class="section-heading">Why Choose Pintu?</h3>
+      </div>
+
+      <!-- Trust Pillars Cards -->
+      <div class="trust-pillars-stack">
+
+        <div class="trust-pillar-card">
+          <div class="pillar-icon-box icon-purple">
+            <ion-icon name="flash-outline"></ion-icon>
+          </div>
+          <div class="pillar-content">
+            <h4 class="pillar-title">Unmatched Hyperlocal Speed</h4>
+            <p class="pillar-desc">Strategically positioned neighborhood hubs ensure your order is packed and dispatched within 2 minutes of placement.</p>
+          </div>
+        </div>
+
+        <div class="trust-pillar-card">
+          <div class="pillar-icon-box icon-emerald">
+            <ion-icon name="shield-checkmark-outline"></ion-icon>
+          </div>
+          <div class="pillar-content">
+            <h4 class="pillar-title">Quality Assured &amp; Verified Partners</h4>
+            <p class="pillar-desc">Every fresh batch is quality checked daily, and every service technician undergoes background verification and credential checks.</p>
+          </div>
+        </div>
+
+        <div class="trust-pillar-card">
+          <div class="pillar-icon-box icon-blue">
+            <ion-icon name="wallet-outline"></ion-icon>
+          </div>
+          <div class="pillar-content">
+            <h4 class="pillar-title">100% Safe Payments &amp; Instant Refunds</h4>
+            <p class="pillar-desc">Secure end-to-end UPI, Card, and Cashfree/Razorpay payments with instant automated refunds directly back to your source account.</p>
+          </div>
+        </div>
+
+        <div class="trust-pillar-card">
+          <div class="pillar-icon-box icon-amber">
+            <ion-icon name="people-outline"></ion-icon>
+          </div>
+          <div class="pillar-content">
+            <h4 class="pillar-title">Community &amp; Local First</h4>
+            <p class="pillar-desc">We champion local storekeepers and riders by ensuring fair commission structures, fast settlements, and dignified earnings.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Corporate Information Card -->
+      <div class="clean-card corporate-card mt-4">
+        <div class="corp-header">
+          <ion-icon name="information-circle-outline" class="corp-icon"></ion-icon>
+          <h4 class="corp-title">Company &amp; Legal Disclosures</h4>
+        </div>
+        <div class="corp-grid">
+          <div class="corp-item">
+            <span class="corp-label">Legal Entity</span>
+            <span class="corp-value">demoCompany LLP</span>
+          </div>
+          <div class="corp-item">
+            <span class="corp-label">Registered State</span>
+            <span class="corp-value">Karnataka, India</span>
+          </div>
+          <div class="corp-item">
+            <span class="corp-label">Customer Support</span>
+            <span class="corp-value">support&#64;democompany.in.net</span>
+          </div>
+          <div class="corp-item">
+            <span class="corp-label">App Release</span>
+            <span class="corp-value">{{ appVersion || '0.0.22 (Production)' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Branding -->
+      <div class="about-page-footer">
+        <p class="footer-heart-text">Made with ❤️ for modern Indian cities</p>
+        <p class="footer-copy-text">&copy; {{ year }} demoCompany LLP. All rights reserved.</p>
+      </div>
+
+    </div>
+  </ion-content>
+} @else if (isPolicyPage()) {
+  <ion-content [fullscreen]="true" class="policy-page-content">
+    <div class="policy-page-container">
+
+      <!-- Segment Switcher Header -->
+      <div class="policy-segmented-bar">
+        <button 
+          type="button" 
+          class="segment-pill" 
+          [class.active]="policyTab === 'terms'" 
+          (click)="setPolicyTab('terms')">
+          <ion-icon name="document-text-outline"></ion-icon>
+          <span>Terms of Service</span>
+        </button>
+        <button 
+          type="button" 
+          class="segment-pill" 
+          [class.active]="policyTab === 'privacy'" 
+          (click)="setPolicyTab('privacy')">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+          <span>Privacy Policy</span>
+        </button>
+      </div>
+
+      <!-- Trust Badges Strip -->
+      <div class="policy-trust-badges-strip">
+        <div class="trust-badge-item">
+          <ion-icon name="checkmark-done-circle-outline" class="badge-icon green"></ion-icon>
+          <span>RBI Compliant</span>
+        </div>
+        <div class="trust-badge-item">
+          <ion-icon name="lock-closed-outline" class="badge-icon purple"></ion-icon>
+          <span>Zero Data Resale</span>
+        </div>
+        <div class="trust-badge-item">
+          <ion-icon name="shield-outline" class="badge-icon blue"></ion-icon>
+          <span>PCI-DSS Encryption</span>
+        </div>
+        <div class="trust-badge-item">
+          <ion-icon name="time-outline" class="badge-icon amber"></ion-icon>
+          <span>Fast Dispute Resolution</span>
+        </div>
+      </div>
+
+      <!-- ================= TERMS OF SERVICE TAB ================= -->
+      @if (policyTab === 'terms') {
+        <div class="policy-tab-body animate__animated animate__fadeIn">
+
+          <!-- Notice Header Card -->
+          <div class="policy-notice-card terms-notice">
+            <div class="notice-header">
+              <ion-icon name="reader-outline" class="notice-icon"></ion-icon>
+              <div>
+                <h4 class="notice-title">Pintu User Agreement &amp; Terms of Service</h4>
+                <span class="notice-date">Last Updated: September 2026 • Effective Immediately</span>
+              </div>
+            </div>
+            <p class="notice-text">
+              Welcome to Pintu! By accessing or using the Pintu mobile application or services operated by <strong>demoCompany LLP</strong>, you acknowledge that you have read, understood, and agreed to be legally bound by these Terms of Service.
+            </p>
+          </div>
+
+          <!-- Term Card 1 -->
+          <div class="policy-card">
+            <div class="policy-card-header">
+              <span class="policy-num-badge">01</span>
+              <div>
+                <h4 class="policy-section-title">Acceptance &amp; User Eligibility</h4>
+                <span class="policy-section-sub">Scope of platform service</span>
+              </div>
+            </div>
+            <div class="policy-card-body">
+              <p>To register for an account and use Pintu, you must be at least 18 years of age or possess legal parental/guardian consent. By placing orders, you represent that all information provided is accurate and truthful.</p>
+              <ul class="policy-bullet-list">
+                <li>Pintu acts as a digital marketplace facilitating transactions between you, neighborhood merchants, and delivery partners.</li>
+                <li>demoCompany LLP reserves the right to modify or update these terms at any time with notification via app updates.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Term Card 2 -->
+          <div class="policy-card">
+            <div class="policy-card-header">
+              <span class="policy-num-badge">02</span>
+              <div>
+                <h4 class="policy-section-title">Account Security &amp; Registration</h4>
+                <span class="policy-section-sub">Your personal credentials</span>
+              </div>
+            </div>
+            <div class="policy-card-body">
+              <p>Your account is authenticated via your registered mobile number and One-Time Password (OTP). You are solely responsible for maintaining confidentiality of your device and login sessions.</p>
+              <ul class="policy-bullet-list">
+                <li>Never share your login OTP with anyone, including individuals claiming to represent Pintu.</li>
+                <li>Notify our support team immediately if you suspect any unauthorized access to your account.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Term Card 3 -->
+          <div class="policy-card">
+            <div class="policy-card-header">
+              <span class="policy-num-badge">03</span>
+              <div>
+                <h4 class="policy-section-title">Orders, Pricing &amp; Estimated Delivery</h4>
+                <span class="policy-section-sub">10–15 Minute commitment</span>
+              </div>
+            </div>
+            <div class="policy-card-body">
+              <p>All items displayed in the app are subject to store inventory. Prices reflect current merchant listings including applicable statutory taxes.</p>
+              <ul class="policy-bullet-list">
+                <li><strong>Delivery Timelines:</strong> Our 10–15 minute delivery window is our commitment under normal operating conditions. Delays due to extreme weather, road blockages, or traffic surges will be communicated proactively via live tracking.</li>
+                <li><strong>Order Confirmation:</strong> An order is confirmed once the store accepts it. Once packing has commenced, items cannot be edited.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Term Card 4 -->
+          <div class="policy-card">
+            <div class="policy-card-header">
+              <span class="policy-num-badge">04</span>
+              <div>
+                <h4 class="policy-section-title">Payments, Cancellations &amp; Refund Policy</h4>
+                <span class="policy-section-sub">Safe transactions and quick returns</span>
+              </div>
+            </div>
+            <div class="policy-card-body">
+              <p>We provide transparent billing with no hidden fees. Payments are processed securely through licensed payment gateways (Razorpay, Cashfree, UPI).</p>
+              <ul class="policy-bullet-list">
+                <li><strong>Order Cancellation:</strong> You can cancel an order without penalty before the merchant accepts and begins preparing your items.</li>
+                <li><strong>Damaged / Incorrect Items:</strong> If any item is missing, damaged, or spoiled upon delivery, raise a ticket via the Help &amp; Support tab with a photo within 2 hours for an instant replacement or refund.</li>
+                <li><strong>Refund Timeline:</strong> Approved refunds are credited directly back to the original payment source (UPI/Bank/Card) within 2 to 4 business days.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Term Card 5 -->
+          <div class="policy-card">
+            <div class="policy-card-header">
+              <span class="policy-num-badge">05</span>
+              <div>
+                <h4 class="policy-section-title">Customer Code of Conduct &amp; Fair Use</h4>
+                <span class="policy-section-sub">Respecting our delivery and merchant partners</span>
+              </div>
+            </div>
+            <div class="policy-card-body">
+              <p>We treat our delivery riders, customer support agents, and partner store workers with dignity and respect, and require our customers to do the same.</p>
+              <ul class="policy-bullet-list">
+                <li>Abuse, harassment, or verbal mistreatment of delivery partners will result in immediate permanent account termination.</li>
+                <li>Fraudulent activity, including false refund claims, automated scraping, or coupon exploiting, will be reported to appropriate legal authorities.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Term Card 6 -->
+          <div class="policy-card">
+            <div class="policy-card-header">
+              <span class="policy-num-badge">06</span>
+              <div>
+                <h4 class="policy-section-title">Limitation of Liability &amp; Governing Law</h4>
+                <span class="policy-section-sub">Legal jurisdiction</span>
+              </div>
+            </div>
+            <div class="policy-card-body">
+              <p>demoCompany LLP operates as a technology facilitator and does not directly manufacture products. These Terms shall be governed by and construed in accordance with the laws of India, with exclusive jurisdiction resting in the competent courts of Karnataka, India.</p>
+            </div>
+          </div>
+
+        </div>
+      }
+
+      <!-- ================= PRIVACY POLICY TAB ================= -->
+      @if (policyTab === 'privacy') {
+        <div class="policy-tab-body animate__animated animate__fadeIn">
+
+          <!-- Notice Header Card -->
+          <div class="policy-notice-card privacy-notice">
+            <div class="notice-header">
+              <ion-icon name="shield-checkmark-outline" class="notice-icon text-emerald"></ion-icon>
+              <div>
+                <h4 class="notice-title">Pintu Privacy &amp; Data Protection Policy</h4>
+                <span class="notice-date">Compliance with Digital Personal Data Protection (DPDP) Act</span>
+              </div>
+            </div>
+            <p class="notice-text">
+              At <strong>Pintu (demoCompany LLP)</strong>, protecting your privacy is our highest commitment. We do <strong>NOT</strong> sell, rent, or monetize your personal information to third parties. We collect only what is strictly necessary to fulfill your orders.
+            </p>
+          </div>
+
+          <!-- Privacy Card 1 -->
+          <div class="policy-card">
+            <div class="policy-card-header">
+              <span class="policy-num-badge badge-emerald">01</span>
+              <div>
+                <h4 class="policy-section-title">Location Permissions &amp; GPS Usage</h4>
+                <span class="policy-section-sub">Delivering accurately to your doorstep</span>
+              </div>
+            </div>
+            <div class="policy-card-body">
+              <p>We request precise GPS location access to provide our signature 10–15 minute delivery service.</p>
+              <ul class="policy-bullet-list">
+                <li><strong>Nearest Store Matching:</strong> Coordinates identify your active neighborhood dark store and confirm delivery availability.</li>
+                <li><strong>Rider Navigation:</strong> Your confirmed delivery pin guides the delivery fleet directly to your house or apartment gate.</li>
+                <li><strong>Live Order Tracking:</strong> While your order is active, location services provide real-time updates of rider proximity. We do not track your location when the app is closed.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Privacy Card 2 -->
+          <div class="policy-card">
+            <div class="policy-card-header">
+              <span class="policy-num-badge badge-emerald">02</span>
+              <div>
+                <h4 class="policy-section-title">Personal Information We Collect</h4>
+                <span class="policy-section-sub">Transparent data inventory</span>
+              </div>
+            </div>
+            <div class="policy-card-body">
+              <p>We collect only the following essential identifiers provided during your use:</p>
+              <ul class="policy-bullet-list">
+                <li><strong>Contact Identifiers:</strong> Mobile phone number (for OTP login and delivery coordination) and full name.</li>
+                <li><strong>Saved Addresses:</strong> House/flat numbers, apartment names, and landmarks to save you time on repeat orders.</li>
+                <li><strong>Order History:</strong> Past items and digital receipts to enable re-ordering and warranty/issue support.</li>
+                <li><strong>Device Metadata:</strong> App version, OS version, and network type to troubleshoot technical glitches and deliver OTA updates.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Privacy Card 3 -->
+          <div class="policy-card">
+            <div class="policy-card-header">
+              <span class="policy-num-badge badge-emerald">03</span>
+              <div>
+                <h4 class="policy-section-title">Payment Data Security Guarantee</h4>
+                <span class="policy-section-sub">RBI and PCI-DSS compliance</span>
+              </div>
+            </div>
+            <div class="policy-card-body">
+              <p>Your financial security is paramount. Pintu <strong>NEVER stores</strong> credit/debit card numbers, CVV codes, or UPI PINs on our servers.</p>
+              <ul class="policy-bullet-list">
+                <li>All payment processing occurs directly through RBI-authorized, PCI-DSS Level 1 compliant payment gateways (Razorpay, Cashfree).</li>
+                <li>All network communications between the app and servers use industry-grade SSL/TLS 256-bit encryption.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Privacy Card 4 -->
+          <div class="policy-card">
+            <div class="policy-card-header">
+              <span class="policy-num-badge badge-emerald">04</span>
+              <div>
+                <h4 class="policy-section-title">Communication &amp; Notifications</h4>
+                <span class="policy-section-sub">Essential updates vs promotional</span>
+              </div>
+            </div>
+            <div class="policy-card-body">
+              <p>We respect your attention and minimize unnecessary alerts:</p>
+              <ul class="policy-bullet-list">
+                <li><strong>Transactional Alerts:</strong> Essential SMS/Push notifications for OTP verification, order accepted, dispatched, and delivered status.</li>
+                <li><strong>Promotional Alerts:</strong> Occasional discounts and coupons. You can mute promotional notifications anytime in device settings.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Privacy Card 5 -->
+          <div class="policy-card">
+            <div class="policy-card-header">
+              <span class="policy-num-badge badge-emerald">05</span>
+              <div>
+                <h4 class="policy-section-title">Your Data Rights &amp; Permanent Account Deletion</h4>
+                <span class="policy-section-sub">Complete control over your data</span>
+              </div>
+            </div>
+            <div class="policy-card-body">
+              <p>Under the Digital Personal Data Protection Act, you have absolute autonomy over your information:</p>
+              <ul class="policy-bullet-list">
+                <li><strong>Right to Rectification:</strong> Edit your name, phone number, and delivery addresses anytime in your Profile.</li>
+                <li><strong>Right to Erasure (Delete Account):</strong> You can permanently delete your Pintu account and all associated personal data directly from <em>Profile &gt; Personal Details &gt; Delete Account</em>. Once deleted, your addresses and profile records are erased from our database permanently.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Privacy Card 6 -->
+          <div class="policy-card">
+            <div class="policy-card-header">
+              <span class="policy-num-badge badge-emerald">06</span>
+              <div>
+                <h4 class="policy-section-title">Grievance Officer &amp; Contact</h4>
+                <span class="policy-section-sub">Official statutory channel</span>
+              </div>
+            </div>
+            <div class="policy-card-body">
+              <p>If you have any questions, concerns, or complaints regarding your privacy or data handling, please contact our dedicated Grievance Officer:</p>
+              <div class="grievance-box">
+                <p class="mb-1"><strong>Grievance Officer:</strong> Legal &amp; Compliance Cell</p>
+                <p class="mb-1"><strong>Entity:</strong> demoCompany LLP</p>
+                <p class="mb-1"><strong>Email:</strong> <a href="mailto:support&#64;democompany.in.net">support&#64;democompany.in.net</a></p>
+                <p class="mb-0"><strong>Jurisdiction:</strong> Karnataka, India (Response within 48 business hours)</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      }
+
+      <!-- Policy Footer -->
+      <div class="policy-page-footer">
+        <p>&copy; {{ year }} demoCompany LLP. All rights reserved.</p>
+        <p class="small text-muted">Operated under the laws of India</p>
+      </div>
+
+    </div>
+  </ion-content>
 } @else if (data == 'Favourites') {
   <ion-content [fullscreen]="true">
     <section>

@@ -10,6 +10,7 @@ export const environment = {
   razorpayKeyId: 'rzp_test_TaT9JyM7hmv5t1',
   version: '0.0.3 (Development)',
   admob: {
+    enabled: false, // Set to true when ready to enable Google AdMob in the app
     // Official Google AdMob Test Ad Unit IDs (Android)
     bannerAdUnitId: 'ca-app-pub-3940256099942544/6300978111',
     interstitialAdUnitId: 'ca-app-pub-3940256099942544/1033173712',

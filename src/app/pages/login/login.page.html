@@ -97,7 +97,7 @@
 
             <p class="terms-text text-center small mb-0">
               By continuing, you agree to Pintu's
-              <span class="text-dark fw-semibold">Terms</span> &amp; <span class="text-dark fw-semibold">Privacy Policy</span>.
+              <span class="text-dark fw-semibold text-decoration-underline" (click)="openTerms()" role="button" tabindex="0">Terms</span> &amp; <span class="text-dark fw-semibold text-decoration-underline" (click)="openPrivacy()" role="button" tabindex="0">Privacy Policy</span>.
             </p>
           </div>
         }
@@ -134,7 +134,7 @@
               type="button"
               class="btn-primary-action w-100 mb-2"
               [disabled]="isVerifyingOtp || enteredOtp.length !== 6"
-              (click)="verifyOTP()">
+              (click)="verifyOtp()">
               @if (isVerifyingOtp) {
                 <ion-spinner name="crescent" class="spinner-small me-2"></ion-spinner>
                 <span>{{ otpVerificationMessage || 'Verifying...' }}</span>
@@ -164,7 +164,7 @@
                 [(ngModel)]="fullName" />
             </div>
 
-            <div class="input-container-modern mb-3">
+            <div class="input-container-modern mb-2">
               <span class="phone-prefix">+91</span>
               <input
                 type="tel"
@@ -177,9 +177,41 @@
                 (keyup.enter)="register()" />
             </div>
 
+            <div class="input-container-modern mb-2"
+                 [class.border-valid]="referralStatus === 'valid'"
+                 [class.border-invalid]="referralStatus === 'invalid'">
+              <ion-icon name="gift-outline" class="input-icon-left text-primary"></ion-icon>
+              <input
+                type="text"
+                class="custom-input flex-grow-1 text-uppercase"
+                placeholder="Referral Code (Optional)"
+                [(ngModel)]="referralCode"
+                (ngModelChange)="onReferralCodeChange($event)"
+                maxlength="20" />
+              @if (referralStatus === 'checking') {
+                <ion-spinner name="crescent" class="spinner-tiny me-1"></ion-spinner>
+              } @else if (referralStatus === 'valid') {
+                <ion-icon name="checkmark-circle" class="referral-status-icon text-success me-1"></ion-icon>
+              } @else if (referralStatus === 'invalid') {
+                <ion-icon name="alert-circle-outline" class="referral-status-icon text-warning me-1"></ion-icon>
+              }
+            </div>
+
+            @if (referralStatus === 'valid' && referralMessage) {
+              <div class="referral-feedback valid animate__animated animate__fadeIn mb-3">
+                <ion-icon name="gift"></ion-icon>
+                <span>{{ referralMessage }}</span>
+              </div>
+            } @else if (referralStatus === 'invalid' && referralMessage) {
+              <div class="referral-feedback invalid animate__animated animate__fadeIn mb-3">
+                <ion-icon name="alert-circle-outline"></ion-icon>
+                <span>{{ referralMessage }}</span>
+              </div>
+            }
+
             <button
               type="button"
-              class="btn-primary-action w-100 mb-2"
+              class="btn-primary-action w-100 mb-2 mt-1"
               [disabled]="isLoading || !fullName.trim() || phoneNumber.length < 10"
               (click)="register()">
               @if (isLoading) {

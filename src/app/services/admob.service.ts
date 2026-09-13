@@ -13,6 +13,7 @@ import { BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 export interface AdmobConfig {
+  enabled?: boolean;
   bannerAdUnitId: string;
   interstitialAdUnitId: string;
   rewardedAdUnitId: string;
@@ -35,10 +36,23 @@ export class AdmobService {
   public isBannerLoaded$ = this.isBannerLoadedSubject.asObservable();
 
   constructor() {
-    // Proactively initialize on native platform
     if (Capacitor.isNativePlatform()) {
-      this.initialize();
+      // Proactively remove any banner view that may be lingering from previous sessions
+      this.removeBanner().catch(() => {});
+
+      if (this.isAdsEnabled()) {
+        this.initialize();
+      } else {
+        console.log('🛑 [AdMob] Ads are disabled via configuration (admob.enabled = false).');
+      }
     }
+  }
+
+  /**
+   * Check if ads are enabled in the environment configuration
+   */
+  public isAdsEnabled(): boolean {
+    return (environment as any)?.admob?.enabled === true;
   }
 
   /**
@@ -54,6 +68,11 @@ export class AdmobService {
   public async initialize(): Promise<void> {
     if (!this.isNative()) {
       console.log('ℹ️ [AdMob] Web platform detected - Native ads are disabled in browser mode.');
+      return;
+    }
+
+    if (!this.isAdsEnabled()) {
+      console.log('🛑 [AdMob] Ads disabled in environment. Skipping initialization.');
       return;
     }
 
@@ -113,7 +132,10 @@ export class AdmobService {
     margin?: number;
     adSize?: BannerAdSize;
   }): Promise<void> {
-    if (!this.isNative()) {
+    if (!this.isNative() || !this.isAdsEnabled()) {
+      if (this.isNative()) {
+        this.removeBanner().catch(() => {});
+      }
       return;
     }
 
@@ -164,7 +186,7 @@ export class AdmobService {
    * Resume displaying a previously hidden banner ad
    */
   public async resumeBanner(): Promise<void> {
-    if (!this.isNative()) {
+    if (!this.isNative() || !this.isAdsEnabled()) {
       return;
     }
 
@@ -199,7 +221,7 @@ export class AdmobService {
    * Show Interstitial Ad (for future full-screen ad opportunities)
    */
   public async showInterstitial(): Promise<void> {
-    if (!this.isNative()) {
+    if (!this.isNative() || !this.isAdsEnabled()) {
       return;
     }
 
@@ -227,7 +249,7 @@ export class AdmobService {
    * Show Rewarded Video Ad (e.g. for bonus wallet points / discounts)
    */
   public async showRewardVideo(): Promise<boolean> {
-    if (!this.isNative()) {
+    if (!this.isNative() || !this.isAdsEnabled()) {
       return false;
     }
 
@@ -257,14 +279,18 @@ export class AdmobService {
    * Compatibility methods for legacy banner ad requests (e.g. track-order page)
    */
   public displayBannerAd(adUnitId?: string): void {
-    if (this.isNative()) {
+    if (this.isNative() && this.isAdsEnabled()) {
       this.showBanner();
+    } else if (this.isNative()) {
+      this.removeBanner().catch(() => {});
     }
   }
 
   public initBannerAd(adUnitId?: string): void {
-    if (this.isNative()) {
+    if (this.isNative() && this.isAdsEnabled()) {
       this.showBanner();
+    } else if (this.isNative()) {
+      this.removeBanner().catch(() => {});
     }
   }
 }
