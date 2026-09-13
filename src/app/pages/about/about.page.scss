@@ -185,6 +185,19 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+
+  &.two-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+
+    .cat-chip-pill {
+      justify-content: center;
+      padding: 12px 16px;
+      font-size: 14px;
+      border-radius: 14px;
+    }
+  }
 }
 
 .cat-chip-pill {

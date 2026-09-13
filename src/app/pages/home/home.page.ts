@@ -14,7 +14,8 @@ import {
   IonRefresher,
   IonRefresherContent,
   IonSkeletonText,
-  IonIcon
+  IonIcon,
+  ToastController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -38,12 +39,16 @@ import {
   refresh,
   locationOutline,
   locate,
-  locateOutline
+  locateOutline,
+  playCircle,
+  volumeMuteOutline,
+  volumeHighOutline
 } from 'ionicons/icons';
 import { AuthService } from 'src/app/services/auth.service';
 import { LocationService } from 'src/app/services/location.service';
 import { ProfileService } from 'src/app/services/profile.service';
 import { CommonService } from 'src/app/services/common.service';
+import { AdmobService } from 'src/app/services/admob.service';
 import { FooterComponent } from 'src/app/components/footer/footer.component';
 import { environment } from 'src/environments/environment';
 
@@ -73,6 +78,19 @@ export interface ServiceItem {
   category?: string;
   status?: string;
   hasImgError?: boolean;
+}
+
+export interface DynamicAdBanner {
+  id: string;
+  advertiser: string;
+  headline: string;
+  description: string;
+  bannerImg?: string;
+  logoImg?: string;
+  ctaText: string;
+  ctaUrl: string;
+  ctaBg?: string;
+  rating?: string;
 }
 
 @Component({
@@ -188,13 +206,57 @@ export class HomePage implements OnInit, OnDestroy {
 
   allServices: ServiceItem[] = [];
 
+  // Dynamic Advertiser Ad Banners (Shows authentic advertiser uploaded banner like Zomato/Swiggy)
+  dynamicAds: DynamicAdBanner[] = [
+    {
+      id: 'ad-zomato',
+      advertiser: 'Zomato',
+      headline: 'Craving Biryani or Pizza? Flat 50% OFF',
+      description: 'Order from top rated restaurants on Zomato with free fast delivery. Use code TASTY50.',
+      bannerImg: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=900&q=80',
+      logoImg: 'https://upload.wikimedia.org/wikipedia/commons/7/75/Zomato_logo.png',
+      ctaText: 'ORDER NOW',
+      ctaUrl: 'https://www.zomato.com',
+      ctaBg: '#e23744',
+      rating: '4.8 ★'
+    },
+    {
+      id: 'ad-swiggy',
+      advertiser: 'Swiggy',
+      headline: 'Get 60% OFF on your favorite meals',
+      description: 'Superfast delivery from 10,000+ verified restaurants with zero delivery fee on first order.',
+      bannerImg: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=80',
+      logoImg: 'https://upload.wikimedia.org/wikipedia/en/1/12/Swiggy_logo.svg',
+      ctaText: 'ORDER NOW',
+      ctaUrl: 'https://www.swiggy.com',
+      ctaBg: '#fc8019',
+      rating: '4.9 ★'
+    },
+    {
+      id: 'ad-dominos',
+      advertiser: 'Domino’s Pizza',
+      headline: 'Buy 1 Get 1 Free on Cheesy Pan Pizzas',
+      description: 'Hot & fresh oven-baked pizzas delivered to your door in 20 minutes.',
+      bannerImg: 'https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?auto=format&fit=crop&w=900&q=80',
+      logoImg: 'https://upload.wikimedia.org/wikipedia/commons/3/3e/Domino%27s_pizza_logo.svg',
+      ctaText: 'GRAB OFFER',
+      ctaUrl: 'https://www.dominos.co.in',
+      ctaBg: '#006491',
+      rating: '4.7 ★'
+    }
+  ];
+
+  activeAdBanner: DynamicAdBanner = this.dynamicAds[0];
+
   constructor(
     private router: Router,
     private navCtrl: NavController,
     private authService: AuthService,
     private locationService: LocationService,
     private profileService: ProfileService,
-    private commonService: CommonService
+    private commonService: CommonService,
+    private admobService: AdmobService,
+    private toastCtrl: ToastController
   ) {
     addIcons({
       location,
@@ -217,7 +279,10 @@ export class HomePage implements OnInit, OnDestroy {
       moonOutline,
       navigateCircleOutline,
       mapOutline,
-      locationOutline
+      locationOutline,
+      playCircle,
+      volumeMuteOutline,
+      volumeHighOutline
     });
   }
 
@@ -272,6 +337,7 @@ export class HomePage implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.stopContinuousLocationMonitoring();
+    this.admobService.removeBanner();
   }
 
   /**
@@ -285,6 +351,110 @@ export class HomePage implements OnInit, OnDestroy {
         const parsed = JSON.parse(savedLoc);
         this.applyLocationDetails(parsed);
       } catch (e) {}
+    }
+  }
+
+  /**
+   * When user enters Home page, display Google AdMob testing banner at bottom above navigation bar
+   */
+  ionViewDidEnter() {
+    this.admobService.showBanner({ margin: 56 });
+  }
+
+  /**
+   * When user navigates away from Home page, hide banner to prevent view obstruction
+   */
+  ionViewWillLeave() {
+    this.admobService.hideBanner();
+  }
+
+  /**
+   * Helper to display informative toast messages
+   */
+  async presentToast(message: string, color: string = 'dark') {
+    try {
+      const toast = await this.toastCtrl.create({
+        message,
+        duration: 2000,
+        position: 'bottom',
+        color
+      });
+      await toast.present();
+    } catch (e) {
+      console.log('Toast:', message);
+    }
+  }
+
+  /**
+   * Open advertiser link when user taps dynamic ad banner (e.g. Zomato, Swiggy)
+   */
+  openAdvertiserAd(ad: DynamicAdBanner) {
+    if (!ad) return;
+    console.log(`🎯 [AdMob] Opening advertiser ad: ${ad.advertiser} -> ${ad.ctaUrl}`);
+    if (ad.ctaUrl) {
+      window.open(ad.ctaUrl, '_blank');
+    }
+  }
+
+  onAdCreativeError() {
+    if (this.activeAdBanner) {
+      this.activeAdBanner.bannerImg = '';
+    }
+  }
+
+  /**
+   * Handler for in-feed native sponsored banner interaction
+   */
+  onAdClicked() {
+    if (this.activeAdBanner) {
+      this.openAdvertiserAd(this.activeAdBanner);
+    } else {
+      console.log('🎯 [AdMob] Native sponsored card tapped');
+      this.presentToast('AdMob Integration Active: Google Mobile Ads ready for Android device testing.', 'success');
+    }
+  }
+
+  showAdInfo(event: Event) {
+    event.stopPropagation();
+    this.presentToast(`Sponsored Ad Placement • ${this.activeAdBanner?.advertiser || 'Google AdMob'} Partner`, 'primary');
+  }
+
+  // ─── Video Ad Controls ───
+  isVideoMuted: boolean = true;
+  isVideoPlaying: boolean = true;
+
+  toggleVideoSound(event: Event, videoEl: HTMLVideoElement) {
+    event.stopPropagation();
+    this.isVideoMuted = !this.isVideoMuted;
+    if (videoEl) {
+      videoEl.muted = this.isVideoMuted;
+    }
+  }
+
+  toggleVideoPlay(event: Event, videoEl: HTMLVideoElement) {
+    event.stopPropagation();
+    if (videoEl) {
+      if (videoEl.paused) {
+        videoEl.play();
+        this.isVideoPlaying = true;
+      } else {
+        videoEl.pause();
+        this.isVideoPlaying = false;
+      }
+    }
+  }
+
+  async watchFullVideoAd() {
+    console.log('🎬 [AdMob] Video Ad CTA clicked');
+    if (this.admobService.isNative()) {
+      this.presentToast('Loading AdMob Rewarded Video Ad...', 'primary');
+      const rewarded = await this.admobService.showRewardVideo();
+      if (rewarded) {
+        this.presentToast('🎉 Thank you for watching! Reward claimed.', 'success');
+      }
+    } else {
+      this.presentToast('Redirecting to partner offer on Zomato...', 'success');
+      window.open('https://www.zomato.com', '_blank');
     }
   }
 
