@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  watermark: 'DEVELOPMENT',
   apiUrl: 'http://localhost:3000',
   socketUrl: 'http://localhost:3000',
   googleMapsApiKey: 'AIzaSyA85HFedGjgP12MG_dvR-MVgooWTcJNIb0',

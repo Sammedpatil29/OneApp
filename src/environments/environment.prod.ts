@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
+  watermark: '',
   apiUrl: 'https://pintu-api.democompany.in.net',
   socketUrl: 'https://pintu-api.democompany.in.net',
   googleMapsApiKey: 'AIzaSyA85HFedGjgP12MG_dvR-MVgooWTcJNIb0',
