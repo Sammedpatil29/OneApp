@@ -47,12 +47,10 @@ export class AboutPage implements OnInit {
   subjectBody = ''
   token:any
 
-  suggestionCategory: string = 'Grocery Product';
+  suggestionCategory: string = 'Product';
   suggestionCategories: string[] = [
-    'Grocery Product',
-    'Delivery Service',
-    'App Feature',
-    'Other Idea'
+    'Product',
+    'Service'
   ];
 
   selectedLanguage: string = 'en';
@@ -61,7 +59,7 @@ export class AboutPage implements OnInit {
   languages = [
     { code: 'en', name: 'English', nativeName: 'English', subtitle: 'Standard language' },
     { code: 'kn', name: 'Kannada', nativeName: 'ಕನ್ನಡ', subtitle: 'Regional language' },
-    { code: 'hi', name: 'Hindi', nativeName: 'हिन्दी', subtitle: 'National language' }
+    { code: 'hi', name: 'Jawari Kannada', nativeName: 'ಜವಾರಿ', subtitle: 'National language' }
   ];
 
   themes = [
@@ -343,6 +341,7 @@ this.isSpinnerLoading = true
     this.isLoading = true;
     const params = {
       token: this.token,
+      type: this.suggestionCategory,
       category: this.suggestionCategory,
       title: this.subject.trim(),
       subject: this.subject.trim(),

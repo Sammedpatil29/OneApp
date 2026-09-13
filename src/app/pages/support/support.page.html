@@ -43,21 +43,15 @@
 
     <!-- TAB 1: CONTACT CHANNELS & FAQS -->
     @if (activeTab === 'channels') {
-      <!-- Instant Channels Grid -->
+      <!-- Instant Channels Grid (Side by Side) -->
       <section class="channels-grid animate__animated animate__fadeIn">
         <!-- WhatsApp Card -->
         <div class="channel-card whatsapp-channel" (click)="openWhatsAppSupport()" role="button" tabindex="0">
           <div class="channel-icon-circle bg-whatsapp">
             <ion-icon name="logo-whatsapp"></ion-icon>
           </div>
-          <div class="channel-info-col">
-            <div class="d-flex align-items-center justify-content-between">
-              <span class="channel-name">WhatsApp Chat</span>
-              <span class="speed-pill">⚡ 2 MINS</span>
-            </div>
-            <p class="channel-desc">Chat live with our dedicated customer team</p>
-          </div>
-          <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
+          <span class="channel-name">WhatsApp</span>
+          <span class="speed-pill">⚡Fast</span>
         </div>
 
         <!-- Phone Call Card -->
@@ -65,11 +59,8 @@
           <div class="channel-icon-circle bg-call">
             <ion-icon name="call-outline"></ion-icon>
           </div>
-          <div class="channel-info-col">
-            <span class="channel-name">Priority Hotline</span>
-            <p class="channel-desc">Toll-free customer assistance line</p>
-          </div>
-          <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
+          <span class="channel-name">Call Us</span>
+          <span class="channel-subtext">Toll-free</span>
         </a>
 
         <!-- Email Card -->
@@ -77,11 +68,8 @@
           <div class="channel-icon-circle bg-email">
             <ion-icon name="mail-outline"></ion-icon>
           </div>
-          <div class="channel-info-col">
-            <span class="channel-name">Email Support</span>
-            <p class="channel-desc">support&#64;pintu.com</p>
-          </div>
-          <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
+          <span class="channel-name">Email</span>
+          <span class="channel-subtext">Write to us</span>
         </a>
       </section>
 

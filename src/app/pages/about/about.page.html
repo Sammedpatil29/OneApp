@@ -143,7 +143,7 @@
                 </div>
                 <div class="selection-info">
                   <span class="primary-text">{{ theme.name }}</span>
-                  <span class="secondary-text">{{ theme.subtitle }}</span>
+                  <!-- <span class="secondary-text">{{ theme.subtitle }}</span> -->
                 </div>
               </div>
 
@@ -174,7 +174,7 @@
           </div>
           <div class="d-flex justify-content-between align-items-center py-2">
             <span class="info-label">Platform</span>
-            <span class="info-value">Pintu Hyperlocal</span>
+            <span class="info-value">Pintu - Minutes App</span>
           </div>
         </div>
       </div>
@@ -199,7 +199,7 @@
       <!-- Category Pills -->
       <div class="form-section-card mb-3">
         <label class="section-label">WHAT WOULD YOU LIKE TO SUGGEST?</label>
-        <div class="category-chips-grid">
+        <div class="category-chips-grid two-options">
           @for (cat of suggestionCategories; track cat) {
             <button 
               type="button"
@@ -207,14 +207,10 @@
               [class.active]="suggestionCategory === cat"
               (click)="selectCategory(cat)"
             >
-              @if (cat === 'Grocery Product') {
+              @if (cat === 'Product') {
                 <ion-icon name="cart-outline"></ion-icon>
-              } @else if (cat === 'Delivery Service') {
-                <ion-icon name="bicycle-outline"></ion-icon>
-              } @else if (cat === 'App Feature') {
-                <ion-icon name="sparkles-outline"></ion-icon>
               } @else {
-                <ion-icon name="bulb-outline"></ion-icon>
+                <ion-icon name="bicycle-outline"></ion-icon>
               }
               <span>{{ cat }}</span>
             </button>
@@ -230,7 +226,7 @@
             <input 
               type="text" 
               class="styled-input" 
-              placeholder="e.g. Add Aashirvaad Multigrain Atta (5kg)" 
+              [placeholder]="suggestionCategory === 'Product' ? 'e.g. Add Aashirvaad Multigrain Atta (5kg)' : 'e.g. Add Fast Bike Courier / Parcel Delivery'" 
               [(ngModel)]="subject" 
               maxlength="80" 
             />
@@ -246,7 +242,7 @@
             <textarea 
               rows="4" 
               class="styled-textarea" 
-              placeholder="Describe the product or feature, brand name, pack size, or why it would be helpful to your neighborhood..." 
+              [placeholder]="suggestionCategory === 'Product' ? 'Describe the product, brand name, pack size, or grocery item you would love to buy on Pintu...' : 'Describe the service, delivery route, or city service you would like Pintu to offer...'" 
               [(ngModel)]="subjectBody" 
               maxlength="500"
             ></textarea>
