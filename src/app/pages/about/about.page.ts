@@ -50,13 +50,15 @@ import { AuthService } from 'src/app/services/auth.service';
 import { LocationService } from 'src/app/services/location.service';
 import { ProfileService } from 'src/app/services/profile.service';
 import { AppDialogService } from 'src/app/services/app-dialog.service';
+import { LanguageService } from 'src/app/services/language.service';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 
 @Component({
   selector: 'app-about',
   templateUrl: './about.page.html',
   styleUrls: ['./about.page.scss'],
   standalone: true,
-  imports: [IonAlert, IonAvatar, IonButton, IonToast, IonSkeletonText, IonSpinner, IonNote, IonLabel, IonInput, IonList, IonItem, IonText, IonIcon, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, NodataComponent]
+  imports: [IonAlert, IonAvatar, IonButton, IonToast, IonSkeletonText, IonSpinner, IonNote, IonLabel, IonInput, IonList, IonItem, IonText, IonIcon, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, NodataComponent, TranslatePipe]
 })
 export class AboutPage implements OnInit {
 
@@ -76,8 +78,8 @@ export class AboutPage implements OnInit {
   selectedTheme: string = 'system';
 
   languages = [
-    { code: 'en', name: 'English', nativeName: 'English', subtitle: 'Standard language' },
-    { code: 'hi', name: 'Jawari Kannada', nativeName: 'ಜವಾರಿ ಕನ್ನಡ', subtitle: 'Regional language' }
+    { code: 'en', name: 'English', nativeName: 'EN', subtitle: 'Standard language' },
+    { code: 'jw', name: 'Jawari Kannada', nativeName: 'Jawari', subtitle: 'Regional language' }
   ];
 
   themes = [
@@ -136,7 +138,8 @@ export class AboutPage implements OnInit {
     private authService: AuthService,
     private locationService: LocationService,
     private profileService: ProfileService,
-    private dialogService: AppDialogService
+    private dialogService: AppDialogService,
+    private languageService: LanguageService
   ) {
     addIcons({
       arrowBack, 
@@ -361,15 +364,17 @@ this.isSpinnerLoading = true
   }
 
   initSettings() {
-    this.selectedLanguage = localStorage.getItem('pintu_language') || 'en';
+    this.selectedLanguage = this.languageService.getCurrentLanguage();
+    this.languages = this.languageService.getLanguages();
     this.selectedTheme = localStorage.getItem('pintu_theme') || 'system';
   }
 
   setLanguage(code: string) {
     this.selectedLanguage = code;
-    localStorage.setItem('pintu_language', code);
+    this.languageService.setLanguage(code);
     const lang = this.languages.find(l => l.code === code);
-    this.dialogService.showToast(`Language set to ${lang?.name || code}`, 'success');
+    const msg = code === 'jw' ? 'Bhashe badalaayislagide: Jawari Kannada' : `Language set to ${lang?.name || code}`;
+    this.dialogService.showToast(msg, 'success');
   }
 
   setTheme(themeId: string) {

@@ -523,8 +523,8 @@
         <div class="settings-card-header">
           <ion-icon name="language-outline" class="settings-header-icon"></ion-icon>
           <div class="settings-header-text">
-            <div class="settings-card-title">App Language</div>
-            <div class="settings-card-subtitle">Choose your preferred display language</div>
+            <div class="settings-card-title">{{ 'app_language' | translate }}</div>
+            <div class="settings-card-subtitle">{{ 'choose_preferred_language' | translate }}</div>
           </div>
         </div>
 
@@ -559,8 +559,8 @@
         <div class="settings-card-header">
           <ion-icon name="color-palette-outline" class="settings-header-icon"></ion-icon>
           <div class="settings-header-text">
-            <div class="settings-card-title">Appearance &amp; Theme</div>
-            <div class="settings-card-subtitle">Select your light or dark viewing mode</div>
+            <div class="settings-card-title">{{ 'appearance_theme' | translate }}</div>
+            <div class="settings-card-subtitle">{{ 'select_theme_mode' | translate }}</div>
           </div>
         </div>
 
@@ -600,16 +600,16 @@
         <div class="settings-card-header border-0 pb-0">
           <ion-icon name="information-circle-outline" class="settings-header-icon"></ion-icon>
           <div class="settings-header-text">
-            <div class="settings-card-title">About Application</div>
+            <div class="settings-card-title">{{ 'about_application' | translate }}</div>
           </div>
         </div>
         <div class="settings-card-body pt-2">
           <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-            <span class="info-label">App Version</span>
+            <span class="info-label">{{ 'app_version' | translate }}</span>
             <span class="info-value">v{{ appVersion || '0.0.16' }}</span>
           </div>
           <div class="d-flex justify-content-between align-items-center py-2">
-            <span class="info-label">Platform</span>
+            <span class="info-label">{{ 'platform' | translate }}</span>
             <span class="info-value">Pintu - Minutes App</span>
           </div>
         </div>

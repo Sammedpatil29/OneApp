@@ -30,6 +30,7 @@ import { AlertModalComponent } from 'src/app/components/alert-modal/alert-modal.
 import { AppDialogService } from 'src/app/services/app-dialog.service';
 import { OtaService } from 'src/app/services/ota.service';
 import { PlayStoreUpdateService } from 'src/app/services/play-store-update.service';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 
 @Component({
   selector: 'app-layout',
@@ -43,7 +44,8 @@ import { PlayStoreUpdateService } from 'src/app/services/play-store-update.servi
     FormsModule,
     RouterModule,
     AlertModalComponent,
-    AsyncPipe
+    AsyncPipe,
+    TranslatePipe
   ]
 })
 export class LayoutPage implements OnInit {

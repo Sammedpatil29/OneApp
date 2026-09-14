@@ -42,6 +42,7 @@ import { ProfileService } from 'src/app/services/profile.service';
 import { AppDialogService } from 'src/app/services/app-dialog.service';
 import { OtaService } from 'src/app/services/ota.service';
 import { FooterComponent } from 'src/app/components/footer/footer.component';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 
 @Component({
   selector: 'app-profile',
@@ -59,7 +60,8 @@ import { FooterComponent } from 'src/app/components/footer/footer.component';
     IonContent,
     IonSkeletonText,
     IonIcon,
-    FooterComponent
+    FooterComponent,
+    TranslatePipe
   ]
 })
 export class ProfilePage implements OnInit {

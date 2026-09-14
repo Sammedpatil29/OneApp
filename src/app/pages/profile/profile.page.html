@@ -6,7 +6,7 @@
       </ion-button>
     </ion-buttons>
 
-    <ion-title class="fw-bold text-dark">Profile</ion-title>
+    <ion-title class="fw-bold text-dark">{{ 'profile' | translate }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -57,21 +57,21 @@
         <div class="shortcut-icon-circle bg-purple-light">
           <ion-icon name="receipt-outline"></ion-icon>
         </div>
-        <span class="shortcut-label">Orders</span>
+        <span class="shortcut-label">{{ 'orders' | translate }}</span>
       </div>
 
       <div class="shortcut-box" (click)="openDetails('Saved Addresses')" role="button" tabindex="0">
         <div class="shortcut-icon-circle bg-emerald-light">
           <ion-icon name="location-outline"></ion-icon>
         </div>
-        <span class="shortcut-label">Addresses</span>
+        <span class="shortcut-label">{{ 'saved_addresses' | translate }}</span>
       </div>
 
       <div class="shortcut-box" (click)="goToSupport()" role="button" tabindex="0">
         <div class="shortcut-icon-circle bg-amber-light">
           <ion-icon name="headset-outline"></ion-icon>
         </div>
-        <span class="shortcut-label">Support</span>
+        <span class="shortcut-label">{{ 'help_support' | translate }}</span>
       </div>
     </section>
 
@@ -84,7 +84,7 @@
           <ion-icon name="person-outline"></ion-icon>
         </div>
         <div class="menu-text-col">
-          <span class="menu-title">Personal Details</span>
+          <span class="menu-title">{{ 'personal_details' | translate }}</span>
           <span class="menu-subtitle">Name, email &amp; mobile number</span>
         </div>
         <ion-icon name="chevron-forward" class="menu-chevron"></ion-icon>
@@ -97,7 +97,7 @@
           <ion-icon name="map-outline"></ion-icon>
         </div>
         <div class="menu-text-col">
-          <span class="menu-title">Saved Delivery Addresses</span>
+          <span class="menu-title">{{ 'saved_addresses' | translate }}</span>
           <span class="menu-subtitle">Home, work &amp; other locations</span>
         </div>
         <ion-icon name="chevron-forward" class="menu-chevron"></ion-icon>
@@ -111,7 +111,7 @@
         </div>
         <div class="menu-text-col">
           <div class="d-flex align-items-center gap-2">
-            <span class="menu-title">Refer Friends &amp; Earn</span>
+            <span class="menu-title">{{ 'refer' | translate }}</span>
             <span class="reward-tag">₹50 OFF</span>
           </div>
           <span class="menu-subtitle">Share Pintu with family &amp; neighbours</span>
@@ -129,7 +129,7 @@
           <ion-icon name="settings-outline"></ion-icon>
         </div>
         <div class="menu-text-col">
-          <span class="menu-title">App Settings</span>
+          <span class="menu-title">{{ 'settings' | translate }}</span>
           <span class="menu-subtitle">Language, theme &amp; display</span>
         </div>
         <ion-icon name="chevron-forward" class="menu-chevron"></ion-icon>
@@ -142,7 +142,7 @@
           <ion-icon name="bulb-outline"></ion-icon>
         </div>
         <div class="menu-text-col">
-          <span class="menu-title">Suggest a Product or Service</span>
+          <span class="menu-title">{{ 'suggest_product_or_service' | translate }}</span>
           <span class="menu-subtitle">Tell us what you'd love on Pintu</span>
         </div>
         <ion-icon name="chevron-forward" class="menu-chevron"></ion-icon>
@@ -159,18 +159,18 @@
           <ion-icon name="cloud-download-outline"></ion-icon>
         </div>
         <div class="menu-text-col">
-          <span class="menu-title">Check for OTA Updates</span>
+          <span class="menu-title">{{ 'check_for_updates' | translate }}</span>
           <div class="menu-subtitle ota-version-row">
             <span class="version-num">v{{ currentAppVersion }}</span>
             @if (isOtaUpToDate) {
               <span class="ota-status-inline up-to-date" title="App is up to date">
                 <ion-icon name="checkmark-circle"></ion-icon>
-                <span>Up to date</span>
+                <span>{{ 'up_to_date' | translate }}</span>
               </span>
             } @else if (hasOtaUpdateAvailable) {
               <span class="ota-status-inline update-ready" title="New update available">
                 <ion-icon name="arrow-up-circle"></ion-icon>
-                <span>v{{ latestOtaVersion }} Ready</span>
+                <span>v{{ latestOtaVersion }} {{ 'update_ready' | translate }}</span>
               </span>
             }
           </div>
@@ -194,7 +194,7 @@
           <ion-icon name="information-circle-outline"></ion-icon>
         </div>
         <div class="menu-text-col">
-          <span class="menu-title">About Pintu Technologies</span>
+          <span class="menu-title">{{ 'about_pintu' | translate }}</span>
           <span class="menu-subtitle">Our mission, services &amp; vision</span>
         </div>
         <ion-icon name="chevron-forward" class="menu-chevron"></ion-icon>
@@ -207,7 +207,7 @@
           <ion-icon name="shield-outline"></ion-icon>
         </div>
         <div class="menu-text-col">
-          <span class="menu-title">Terms of Service &amp; Privacy</span>
+          <span class="menu-title">{{ 'terms_of_service_privacy' | translate }}</span>
           <span class="menu-subtitle">Customer protection &amp; policies</span>
         </div>
         <ion-icon name="chevron-forward" class="menu-chevron"></ion-icon>
@@ -219,7 +219,7 @@
       <div class="logout-icon-box">
         <ion-icon name="log-out-outline"></ion-icon>
       </div>
-      <span class="logout-text">Log Out of Account</span>
+      <span class="logout-text">{{ 'log_out_account' | translate }}</span>
     </div>
 
     <!-- Rich Brand Footer -->

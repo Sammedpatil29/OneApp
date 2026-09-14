@@ -23,7 +23,7 @@
         <div class="tab-icon-wrapper">
           <ion-icon [name]="isTabActive('/layout/home') ? 'compass' : 'compass-outline'"></ion-icon>
         </div>
-        <span>Home</span>
+        <span>{{ 'home' | translate }}</span>
         @if (isTabActive('/layout/home')) {
           <span class="active-dot"></span>
         }
@@ -39,7 +39,7 @@
         <div class="tab-icon-wrapper">
           <ion-icon [name]="isTabActive('/layout/history') ? 'receipt' : 'receipt-outline'"></ion-icon>
         </div>
-        <span>Orders</span>
+        <span>{{ 'orders' | translate }}</span>
         @if (isTabActive('/layout/history')) {
           <span class="active-dot"></span>
         }
@@ -55,7 +55,7 @@
         <div class="tab-icon-wrapper">
           <ion-icon [name]="isTabActive('/layout/referral') ? 'gift' : 'gift-outline'"></ion-icon>
         </div>
-        <span>Refer</span>
+        <span>{{ 'refer' | translate }}</span>
         @if (isTabActive('/layout/referral')) {
           <span class="active-dot"></span>
         }
@@ -71,7 +71,7 @@
         <div class="tab-icon-wrapper">
           <ion-icon [name]="isTabActive('/layout/support') ? 'chatbubble-ellipses' : 'chatbubble-ellipses-outline'"></ion-icon>
         </div>
-        <span>Support</span>
+        <span>{{ 'support' | translate }}</span>
         @if (isTabActive('/layout/support')) {
           <span class="active-dot"></span>
         }
@@ -87,7 +87,7 @@
         <div class="tab-icon-wrapper">
           <ion-icon [name]="isTabActive('/layout/profile') ? 'person' : 'person-outline'"></ion-icon>
         </div>
-        <span>Account</span>
+        <span>{{ 'account' | translate }}</span>
         @if (isTabActive('/layout/profile')) {
           <span class="active-dot"></span>
         }
