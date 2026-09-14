@@ -25,7 +25,7 @@ const config: CapacitorConfig = {
       appId: 'io.ionic.oneapp',
       cdnUrl: 'https://pintu-api.democompany.in.net/ota',
       allowInsecureUrls: true,
-      resetWhenUpdate: true,
+      appReadyTimeout: 30000,
       autoDeleteFailedBundles: true
     },
     Cordova: {}
