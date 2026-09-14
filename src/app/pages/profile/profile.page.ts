@@ -148,14 +148,14 @@ export class ProfilePage implements OnInit {
         if (res.isUpToDate) {
           await this.dialogService.showAlert(
             'Everything is Up to Date',
-            `You are running the latest version (v${this.currentAppVersion}).\nNo new updates found on the server. 🎉`,
+            `You are running the latest version (v${this.currentAppVersion}). \n\nRequest URL: ${res.maskedUrl}`,
             'info',
             'OK'
           );
         } else if (res.updateAvailable) {
           const proceed = await this.dialogService.showConfirm({
             title: 'New OTA Update Available',
-            message: `Version v${res.latestVersion} is ready to download (current: v${this.currentAppVersion}).\n\nWould you like to apply the update now?`,
+            message: `Version v${res.latestVersion} is ready to download (current: v${this.currentAppVersion}).\n\nRequest URL: ${res.maskedUrl}`,
             confirmText: 'Update Now',
             cancelText: 'Later'
           });
@@ -166,7 +166,7 @@ export class ProfilePage implements OnInit {
             if (!applyRes.success) {
               await this.dialogService.showAlert(
                 'Update Failed',
-                applyRes.message || 'Could not apply update bundle.',
+                `${applyRes.message || 'Could not apply update bundle.'}\n\nRequest URL: ${res.maskedUrl}`,
                 'warning',
                 'Close'
               );
@@ -182,7 +182,7 @@ export class ProfilePage implements OnInit {
           `Error: ${res.error || 'Server error'}`,
           res.httpStatus ? `HTTP Status: ${res.httpStatus}` : '',
           res.errorDetails ? `Server Response: ${res.errorDetails}` : '',
-          `Manifest URL:\n${res.manifestUrl}`
+          `Request URL: ${res.maskedUrl || res.manifestUrl}`
         ].filter(Boolean).join('\n\n');
 
         await this.dialogService.showAlert(
