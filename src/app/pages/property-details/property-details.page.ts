@@ -44,6 +44,7 @@ import {
 } from 'ionicons/icons';
 import { PropertyItem, PropertyDocumentCheck, DUMMY_PROPERTIES } from 'src/app/models/property.model';
 import { PropertyService } from 'src/app/services/property.service';
+import { PropertyFooterComponent } from 'src/app/components/property-footer/property-footer.component';
 
 @Component({
   selector: 'app-property-details',
@@ -54,7 +55,8 @@ import { PropertyService } from 'src/app/services/property.service';
     IonContent,
     IonIcon,
     CommonModule,
-    FormsModule
+    FormsModule,
+    PropertyFooterComponent
   ]
 })
 export class PropertyDetailsPage implements OnInit {

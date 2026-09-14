@@ -1,0 +1,29 @@
+<footer class="property-brand-footer">
+  <!-- Subtle Gradient Divider Line (Matching Main Footer) -->
+  <div class="footer-divider-line"></div>
+
+  <div class="footer-content-wrapper">
+    <!-- Top label: Powered by -->
+    <div class="powered-by-label">Powered by</div>
+
+    <!-- Partner Card: Left Logo, Right Name & GST -->
+    <div class="partner-card">
+      <div class="brand-logo-wrap">
+        <!-- Logo from assets: Update path or pass [logoUrl] -->
+        <img
+          [src]="logoUrl"
+          [alt]="companyName"
+          class="brand-logo-img"
+          (error)="onImageError($event)"
+        />
+      </div>
+
+      <div class="brand-text-col">
+        <h4 class="brand-name">{{ companyName }}</h4>
+        <span class="brand-gst">opp. Durgalakshmi theatre, Miraj Road, Athani - 591304.</span>
+        <span class="brand-gst">{{ gstNumber }}</span>
+      </div>
+    </div>
+  </div>
+</footer>
+

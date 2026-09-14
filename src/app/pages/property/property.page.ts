@@ -48,6 +48,7 @@ import { LocationService } from 'src/app/services/location.service';
 import { PropertyService, PropertyFilters } from 'src/app/services/property.service';
 import { Subscription, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { PropertyFooterComponent } from 'src/app/components/property-footer/property-footer.component';
 
 @Component({
   selector: 'app-property',
@@ -61,7 +62,8 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
     IonIcon,
     IonModal,
     CommonModule,
-    FormsModule
+    FormsModule,
+    PropertyFooterComponent
   ]
 })
 export class PropertyPage implements OnInit, OnDestroy {

@@ -1,0 +1,109 @@
+.property-brand-footer {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-top: 16px;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .footer-divider-line {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(226, 232, 240, 0.9) 25%,
+      rgba(203, 213, 225, 0.9) 50%,
+      rgba(226, 232, 240, 0.9) 75%,
+      transparent 100%
+    );
+    margin-bottom: 14px;
+  }
+
+  .footer-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+    width: 100%;
+    padding: 0 16px;
+    box-sizing: border-box;
+  }
+
+  /* Powered by header text */
+  .powered-by-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #94a3b8;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+  }
+
+  /* Partner Card - Left Logo, Right Details */
+  .partner-card {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: transparent;
+    padding: 0px 18px 10px;
+    border-radius: 14px;
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    max-width: 100%;
+    box-sizing: border-box;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    .brand-logo-wrap {
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      border-radius: 10px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+
+      .brand-logo-img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+      }
+    }
+
+    .brand-text-col {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+      gap: 2px;
+
+      .brand-name {
+        margin: 0;
+        font-size: 11px;
+        font-weight: 800;
+        color: #1e293b;
+        letter-spacing: -0.2px;
+        line-height: 1.25;
+      }
+
+      .brand-gst {
+        font-size: 10px;
+        font-weight: 600;
+        color: #64748b;
+        letter-spacing: 0.3px;
+        line-height: 1.2;
+      }
+    }
+  }
+}
+
