@@ -17,6 +17,7 @@ import { AppDialogService } from './services/app-dialog.service';
 import { PlayStoreUpdateService } from './services/play-store-update.service';
 import { AdmobService } from './services/admob.service';
 import { CustomSplashComponent } from './pages/custom-splash/custom-splash.component';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -25,6 +26,7 @@ import { CustomSplashComponent } from './pages/custom-splash/custom-splash.compo
 })
 export class AppComponent implements OnInit {
 
+  environment = environment;
   isOnline: boolean = true;
   showSplash: boolean = true;
 

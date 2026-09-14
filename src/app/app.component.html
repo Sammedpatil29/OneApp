@@ -53,4 +53,7 @@
     
     </ion-content>
   }
+  @if(!environment.production){
+    <div class="position-fixed p-1" style="top: 30px; left: 10px; border-radius:10px; background-color: rgba(0, 128, 0, 0.342)">{{environment.watermark}}</div>
+  }
 </ion-app>

@@ -1,5 +1,6 @@
 export const environment = {
   production: false,
+  watermark: 'DEVELOPMENT & TESTING',
   apiUrl: 'https://oneapp-express-singapore.onrender.com',
   socketUrl: 'https://oneapp-express-singapore.onrender.com',
   googleMapsApiKey: 'AIzaSyA85HFedGjgP12MG_dvR-MVgooWTcJNIb0',
