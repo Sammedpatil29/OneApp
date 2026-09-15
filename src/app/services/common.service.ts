@@ -41,4 +41,12 @@ getActiveOrders(token:any){
   })
   return this.http.get(`${this.url}/api/grocery-order/active`, {headers: headers})
 }
+
+getActiveBanners(placement?: string, city?: string) {
+  const params: string[] = [];
+  if (placement) params.push(`placement=${encodeURIComponent(placement)}`);
+  if (city) params.push(`city=${encodeURIComponent(city)}`);
+  const query = params.length > 0 ? `?${params.join('&')}` : '';
+  return this.http.get(`${this.url}/api/banners/active${query}`);
+}
 }

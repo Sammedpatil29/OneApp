@@ -135,61 +135,10 @@ export class HomePage implements OnInit, OnDestroy {
     return Boolean(this.isAreaClosed || this.isOutOfServiceArea);
   }
 
-  banners: BannerItem[] = [
-    {
-      id: 1,
-      badge: '⚡ 10-15 MINS',
-      badgeBg: 'rgba(250, 204, 21, 0.25)',
-      badgeColor: '#fef08a',
-      title: 'Instant Grocery Delivery',
-      subtitle: 'Daily essentials delivered in 10-15 mins with flat ₹100 off.',
-      bgGradient: 'linear-gradient(135deg, #2e0854 0%, #1e1b4b 50%, #4a044e 100%)',
-      route: '/layout/grocery-layout'
-    },
-    {
-      id: 2,
-      badge: '🛵 ZERO SURGE',
-      badgeBg: 'rgba(56, 189, 248, 0.25)',
-      badgeColor: '#7dd3fc',
-      title: 'Daily Commute & Cabs',
-      subtitle: 'Fast bike taxis, autos & cabs at transparent daily flat rates.',
-      bgGradient: 'linear-gradient(135deg, #091e3a 0%, #082f49 50%, #1e1b4b 100%)',
-      route: '/layout/rides'
-    },
-    {
-      id: 3,
-      badge: '🥦 100% FARM FRESH',
-      badgeBg: 'rgba(52, 211, 153, 0.25)',
-      badgeColor: '#a7f3d0',
-      title: 'Fresh Farm Harvest',
-      subtitle: 'Handpicked daily fruits & vegetables with zero compromise.',
-      bgGradient: 'linear-gradient(135deg, #064e3b 0%, #065f46 50%, #134e4a 100%)',
-      route: '/layout/grocery-layout'
-    }
-  ];
-
-  bottomBanners: BannerItem[] = [
-    {
-      id: 'bottom-1',
-      badge: '🎁 REFER & EARN',
-      badgeBg: 'rgba(250, 204, 21, 0.25)',
-      badgeColor: '#fef08a',
-      title: 'Earn ₹50 Instant Cash',
-      subtitle: 'Invite friends to Pintu. Both get ₹50 on their 1st delivery!',
-      bgGradient: 'linear-gradient(135deg, #2e0854 0%, #1e1b4b 60%, #4a044e 100%)',
-      route: '/layout/referral'
-    },
-    {
-      id: 'bottom-2',
-      badge: '🥦 FRESH HARVEST',
-      badgeBg: 'rgba(52, 211, 153, 0.25)',
-      badgeColor: '#a7f3d0',
-      title: 'Farm Fresh Produce Daily',
-      subtitle: 'Handpicked daily fruits & vegetables with 10-15 min delivery',
-      bgGradient: 'linear-gradient(135deg, #064e3b 0%, #065f46 60%, #0f766e 100%)',
-      route: '/layout/grocery-layout'
-    }
-  ];
+  // Dynamic Customer Banners (Fetched from API)
+  banners: any[] = [];
+  bottomBanners: any[] = [];
+  currentCity: string = '';
 
   allServices: ServiceItem[] = [];
 
@@ -264,8 +213,16 @@ export class HomePage implements OnInit, OnDestroy {
     });
 
     this.locationService.city$.subscribe((city: string) => {
-      if (city && city.trim() && (this.displayLocationName === 'Select Location' || !this.displayLocationName)) {
-        this.displayLocationName = city;
+      if (city && city.trim()) {
+        const trimmedCity = city.trim();
+        const cityChanged = this.currentCity !== trimmedCity;
+        this.currentCity = trimmedCity;
+        if (this.displayLocationName === 'Select Location' || !this.displayLocationName) {
+          this.displayLocationName = trimmedCity;
+        }
+        if (cityChanged) {
+          this.loadBanners();
+        }
       }
     });
 
@@ -422,6 +379,14 @@ export class HomePage implements OnInit, OnDestroy {
       this.displayFullAddress = addr.address.trim();
     } else {
       this.displayFullAddress = this.displayLocationName;
+    }
+
+    if (addr.city && addr.city.trim()) {
+      const cityChanged = this.currentCity !== addr.city.trim();
+      this.currentCity = addr.city.trim();
+      if (cityChanged) {
+        this.loadBanners();
+      }
     }
 
     // 4. Coordinates
@@ -693,21 +658,45 @@ export class HomePage implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Loads customer promotional banners based on placement tag and user city.
+   * 'hometop' -> top sliding banners
+   * 'homedown' -> below the services banners
+   */
+  loadBanners() {
+    const city = this.currentCity || this.nearestServiceArea?.cityName || '';
+
+    // Fetch top hero slider banners (hometop)
+    this.commonService.getActiveBanners('hometop', city).subscribe({
+      next: (res: any) => {
+        const items = res?.data || res || [];
+        this.banners = Array.isArray(items) ? items : [];
+      },
+      error: (err: any) => {
+        console.warn('Could not load hometop banners:', err?.message || err);
+        this.banners = [];
+      }
+    });
+
+    // Fetch below-service banners (homedown)
+    this.commonService.getActiveBanners('homedown', city).subscribe({
+      next: (res: any) => {
+        const items = res?.data || res || [];
+        this.bottomBanners = Array.isArray(items) ? items : [];
+      },
+      error: (err: any) => {
+        console.warn('Could not load homedown banners:', err?.message || err);
+        this.bottomBanners = [];
+      }
+    });
+  }
+
   loadHomeData() {
     this.isLoadingServices = true;
+    this.loadBanners();
     this.commonService.getHomeData(this.token).subscribe({
       next: (res: any) => {
         const data = res?.data || res || {};
-        const backendBanners = data?.banners || [];
-        if (Array.isArray(backendBanners) && backendBanners.length > 0) {
-          const activeBanners = backendBanners.filter((b: any) => b.is_active !== false);
-          if (activeBanners.length > 0) {
-            this.banners = activeBanners;
-            if (activeBanners.length > 2) {
-              this.bottomBanners = activeBanners.slice(1, 3);
-            }
-          }
-        }
         const services = data?.services || (Array.isArray(data) ? data : []);
         if (Array.isArray(services) && services.length > 0) {
           const active = services.filter((s: any) => s.status === 'active' || !s.status);
@@ -1009,7 +998,7 @@ export class HomePage implements OnInit, OnDestroy {
     }
   }
 
-  getBannerImgUrl(banner: BannerItem): string {
+  getBannerImgUrl(banner: any): string {
     if (!banner?.img) return '';
     const img = String(banner.img).trim();
     if (img.startsWith('http://') || img.startsWith('https://') || img.startsWith('assets/')) {
@@ -1021,13 +1010,19 @@ export class HomePage implements OnInit, OnDestroy {
     return `${environment.apiUrl}/${img}`;
   }
 
-  isBannerImageValid(banner: BannerItem): boolean {
-    if (!banner?.img) return false;
+  isBannerImageValid(banner: any): boolean {
+    if (!banner?.img || banner.hasImgError) return false;
     const img = String(banner.img).trim();
     if (!img || img.includes('example.com') || img === 'null' || img === 'undefined') {
       return false;
     }
     return true;
+  }
+
+  onBannerImgError(banner: any) {
+    if (banner) {
+      banner.hasImgError = true;
+    }
   }
 
   openLocation() {

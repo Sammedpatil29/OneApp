@@ -161,7 +161,7 @@
     <ion-refresher-content mode="md" pullingIcon="arrow-down-outline" refreshingSpinner="crescent"></ion-refresher-content>
   </ion-refresher>
 
-  <!-- Top Hero Banner Slider (Full-Bleed: 0 margin, 0 padding, 0 border-radius) -->
+  <!-- Top Hero Banner Slider (hometop placement tag) -->
   @if (!isOfflineOrOutOfServiceArea && banners && banners.length > 0) {
     <section class="home-top-hero-slider">
       <swiper-container
@@ -172,45 +172,21 @@
         loop="true"
         class="hero-swiper">
         @for (banner of banners; track banner.id || $index) {
-          <swiper-slide>
-            <div
-              class="hero-banner-card"
-              [style.background]="banner.bgGradient || 'linear-gradient(135deg, #2e0854 0%, #1e1b4b 50%, #3b0764 100%)'"
-              (click)="navigateToBanner(banner)"
-              role="button"
-              tabindex="0">
-
-              <!-- Real Image Banner -->
-              @if (isBannerImageValid(banner)) {
+          @if (isBannerImageValid(banner)) {
+            <swiper-slide>
+              <div
+                class="hero-banner-card"
+                (click)="navigateToBanner(banner)"
+                role="button"
+                tabindex="0">
                 <img
                   [src]="getBannerImgUrl(banner)"
-                  alt="Promotional Banner"
+                  [alt]="banner.title || 'Promotional Banner'"
                   class="hero-banner-img"
-                  (error)="banner.img = ''" />
-              } @else {
-                <!-- Gradient Graphic Card Fallback -->
-                <div class="hero-banner-content-box">
-                  @if (banner.badge) {
-                    <span
-                      class="banner-badge-pill"
-                      [style.background]="banner.badgeBg || 'rgba(255, 255, 255, 0.2)'"
-                      [style.color]="banner.badgeColor || '#ffffff'">
-                      {{ banner.badge }}
-                    </span>
-                  }
-                  <h3 class="banner-title">{{ banner.title || 'Special Delivery Offer' }}</h3>
-                  <p class="banner-subtitle">{{ banner.subtitle || 'Discover premium fast delivery with Pintu' }}</p>
-
-                  <div class="banner-cta-row">
-                    <span class="banner-cta-text">Explore Now</span>
-                    <div class="banner-cta-arrow">
-                      <ion-icon name="arrow-forward"></ion-icon>
-                    </div>
-                  </div>
-                </div>
-              }
-            </div>
-          </swiper-slide>
+                  (error)="onBannerImgError(banner)" />
+              </div>
+            </swiper-slide>
+          }
         }
       </swiper-container>
     </section>
@@ -506,55 +482,26 @@
         }
       </section>
 
-      <!-- 2 Promotional Banners (Below Services) -->
-      <section class="home-bottom-banners-section">
-        @for (banner of bottomBanners; track banner.id || $index) {
-          <div
-            class="bottom-promo-card"
-            [style.background]="banner.bgGradient || 'linear-gradient(135deg, #2e0854 0%, #1e1b4b 60%, #3b0764 100%)'"
-            (click)="navigateToBanner(banner)"
-            role="button"
-            tabindex="0">
-
+      <!-- Promotional Banners (Below Services - homedown placement tag) -->
+      @if (bottomBanners && bottomBanners.length > 0) {
+        <section class="home-bottom-banners-section">
+          @for (banner of bottomBanners; track banner.id || $index) {
             @if (isBannerImageValid(banner)) {
-              <img
-                [src]="getBannerImgUrl(banner)"
-                alt="Promotional Banner"
-                class="banner-full-img"
-                (error)="banner.img = ''" />
-            } @else {
-              <div class="bottom-promo-content">
-                <div class="promo-text-col">
-                  @if (banner.badge) {
-                    <span
-                      class="promo-badge-pill"
-                      [style.background]="banner.badgeBg || 'rgba(255, 255, 255, 0.2)'"
-                      [style.color]="banner.badgeColor || '#ffffff'">
-                      {{ banner.badge }}
-                    </span>
-                  }
-                  <h4 class="promo-title">{{ banner.title || 'Special Promotion' }}</h4>
-                  <p class="promo-subtitle">{{ banner.subtitle || 'Discover premium offers and savings with Pintu' }}</p>
-
-                  <div class="promo-cta-row">
-                    <span class="promo-cta-text">{{ $index === 0 ? 'Invite Friends' : 'Shop Now' }}</span>
-                    <div class="promo-cta-arrow">
-                      <ion-icon name="arrow-forward"></ion-icon>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="promo-art-col">
-                  <div class="promo-orb-glow"></div>
-                  <span class="promo-art-emoji">
-                    {{ $index === 0 ? '🎁' : '🥦' }}
-                  </span>
-                </div>
+              <div
+                class="bottom-promo-card"
+                (click)="navigateToBanner(banner)"
+                role="button"
+                tabindex="0">
+                <img
+                  [src]="getBannerImgUrl(banner)"
+                  [alt]="banner.title || 'Promotional Banner'"
+                  class="banner-full-img"
+                  (error)="onBannerImgError(banner)" />
               </div>
             }
-          </div>
-        }
-      </section>
+          }
+        </section>
+      }
 
 
     }
