@@ -64,6 +64,16 @@
         background: rgba(255, 255, 255, 0.95);
         border-color: #ef4444;
       }
+
+      &.btn-video {
+        background: rgba(220, 38, 38, 0.85);
+        border-color: rgba(255, 255, 255, 0.4);
+        color: #ffffff;
+
+        &:active {
+          background: rgba(220, 38, 38, 1);
+        }
+      }
     }
   }
 
@@ -132,26 +142,58 @@
       }
     }
 
-    .photo-counter-badge {
+    .hero-bottom-badges {
       position: absolute;
       bottom: 18px;
       right: 14px;
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(8px);
-      color: #ffffff;
-      font-size: 11.5px;
-      font-weight: 750;
-      padding: 6px 12px;
-      border-radius: 999px;
-      display: inline-flex;
+      display: flex;
       align-items: center;
-      gap: 6px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      gap: 8px;
       z-index: 5;
 
-      ion-icon {
-        font-size: 14px;
-        color: #f1f5f9;
+      .video-tour-badge {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);
+        color: #ffffff;
+        font-size: 11.5px;
+        font-weight: 750;
+        padding: 6px 13px;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        cursor: pointer;
+        transition: transform 0.15s ease, filter 0.15s ease;
+
+        ion-icon {
+          font-size: 15px;
+          color: #ffffff;
+        }
+
+        &:active {
+          transform: scale(0.93);
+        }
+      }
+
+      .photo-counter-badge {
+        background: rgba(15, 23, 42, 0.75);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        color: #ffffff;
+        font-size: 11.5px;
+        font-weight: 750;
+        padding: 6px 12px;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+
+        ion-icon {
+          font-size: 14px;
+          color: #f1f5f9;
+        }
       }
     }
   }
@@ -1011,6 +1053,106 @@
         border: none;
         color: #ffffff;
         box-shadow: 0 3px 10px rgba(37, 211, 102, 0.28);
+      }
+    }
+  }
+}
+
+/* =======================================================
+   PROPERTY VIDEO TOUR MODAL
+   ======================================================= */
+.property-video-modal {
+  --width: 92%;
+  --max-width: 540px;
+  --height: auto;
+  --border-radius: 20px;
+  --background: #0f172a;
+  --box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+
+  &::part(content) {
+    border-radius: 20px;
+    overflow: hidden;
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .video-modal-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background: #0f172a;
+    color: #ffffff;
+
+    .video-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+      .video-title-wrap {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .title-icon {
+          font-size: 20px;
+          color: #ef4444;
+        }
+
+        h4 {
+          margin: 0;
+          font-size: 16px;
+          font-weight: 700;
+          color: #f8fafc;
+        }
+      }
+
+      .modal-close-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        cursor: pointer;
+        transition: background 0.15s ease;
+
+        &:active {
+          background: rgba(255, 255, 255, 0.2);
+        }
+      }
+    }
+
+    .video-frame-box {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%; /* 16:9 Aspect Ratio */
+      background: #000000;
+
+      .video-iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+      }
+
+      .no-video-box {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        text-align: center;
+        color: #94a3b8;
+        font-size: 14px;
       }
     }
   }

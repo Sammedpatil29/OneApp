@@ -557,5 +557,7 @@ ion-toolbar {
 
 /* Bottom Nav Clearance */
 .bottom-nav-spacer {
-  min-height: 84px;
+  min-height: calc(80px + env(safe-area-inset-bottom, 0px));
+  height: calc(80px + env(safe-area-inset-bottom, 0px));
+  width: 100%;
 }

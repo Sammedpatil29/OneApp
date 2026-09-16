@@ -9,7 +9,7 @@
 }
 
 /* =======================================================
-   STICKY HEADER & FILTER PILLS
+   STICKY HEADER & TOP TABS / FILTER (SAME ROW)
    ======================================================= */
 ion-header {
   --background: #ffffff;
@@ -21,43 +21,163 @@ ion-toolbar {
   --background: #ffffff;
 }
 
-.filter-pills-row {
-  padding: 12px 16px 4px;
+.orders-top-row {
+  position: sticky;
+  top: 0;
+  z-index: 20;
   background: #ffffff;
   border-bottom: 1px solid #f1f5f9;
+  padding: 10px 16px;
   display: flex;
   align-items: center;
-  gap: 8px;
-  overflow-x: auto;
-  scrollbar-width: none;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
 
-  &::-webkit-scrollbar {
-    display: none;
+  .orders-tabs-wrapper {
+    display: flex;
+    align-items: center;
+    background: #f1f5f9;
+    border-radius: 14px;
+    padding: 3px;
+    gap: 2px;
+    flex: 1;
+    max-width: 270px;
+
+    .order-tab-btn {
+      flex: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 11px;
+      border: none;
+      background: transparent;
+      color: #64748b;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      white-space: nowrap;
+
+      &:active {
+        transform: scale(0.97);
+      }
+
+      &.active {
+        background: #ffffff;
+        color: #0f172a;
+        font-weight: 800;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+      }
+
+      .active-tab-badge {
+        background: #10b981;
+        color: #ffffff;
+        font-size: 10.5px;
+        font-weight: 800;
+        padding: 1px 6px;
+        border-radius: 99px;
+        line-height: 1.3;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .completed-tab-count {
+        font-size: 11.5px;
+        font-weight: 600;
+        color: #94a3b8;
+      }
+    }
   }
 
-  .filter-pill {
+  .btn-order-filter {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
-    padding: 7px 14px;
-    border-radius: 99px;
-    background: #f1f5f9;
-    border: 1px solid transparent;
-    color: #64748b;
+    height: 38px;
+    padding: 0 14px;
+    border-radius: 12px;
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    color: #334155;
     font-size: 12.5px;
-    font-weight: 700;
+    font-weight: 750;
     cursor: pointer;
-    white-space: nowrap;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+    position: relative;
+
+    ion-icon {
+      font-size: 16px;
+      color: #64748b;
+    }
 
     &:active {
       transform: scale(0.96);
     }
 
     &.active {
-      background: linear-gradient(135deg, #a000e2 0%, #7e00b3 100%);
+      background: #fdf4ff;
+      border-color: #a000e2;
+      color: #a000e2;
+
+      ion-icon {
+        color: #a000e2;
+      }
+    }
+
+    .filter-count-badge {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #a000e2;
       color: #ffffff;
-      box-shadow: 0 4px 14px rgba(160, 0, 226, 0.25);
+      font-size: 10px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 2px;
+    }
+  }
+}
+
+.active-filter-chips-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: #faf5ff;
+  border-bottom: 1px solid #f3e8ff;
+
+  .filter-results-text {
+    font-size: 12px;
+    color: #6b21a8;
+
+    strong {
+      font-weight: 800;
+      color: #a000e2;
+    }
+  }
+
+  .btn-clear-filters-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border: none;
+    background: transparent;
+    color: #a000e2;
+    font-size: 11.5px;
+    font-weight: 750;
+    cursor: pointer;
+    padding: 0;
+
+    ion-icon {
+      font-size: 14px;
     }
   }
 }
@@ -358,7 +478,182 @@ ion-toolbar {
 }
 
 .bottom-nav-spacer {
-  height: 84px;
+  min-height: calc(80px + env(safe-area-inset-bottom, 0px));
+  height: calc(80px + env(safe-area-inset-bottom, 0px));
   width: 100%;
+}
+
+/* =======================================================
+   ORDERS FILTER BOTTOM SHEET MODAL (Matching Properties)
+   ======================================================= */
+ion-modal {
+  --border-radius: 24px 24px 0 0;
+  --background: #ffffff;
+}
+
+.sheet-container {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  height: 100%;
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 16px);
+
+  .sheet-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid #f1f5f9;
+
+    .sheet-title {
+      font-size: 16px;
+      font-weight: 850;
+      color: #0f172a;
+      margin: 0;
+    }
+
+    .sheet-header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .sheet-count-tag {
+        background: #fdf4ff;
+        color: #a000e2;
+        border: 1px solid #f5d0fe;
+        font-size: 11px;
+        font-weight: 750;
+        padding: 2px 8px;
+        border-radius: 6px;
+      }
+    }
+
+    .sheet-header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .btn-sheet-reset {
+        background: transparent;
+        border: none;
+        color: #ef4444;
+        font-size: 13px;
+        font-weight: 750;
+        cursor: pointer;
+        padding: 0;
+      }
+
+      .btn-sheet-close {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #f1f5f9;
+        border: none;
+        color: #64748b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        cursor: pointer;
+      }
+    }
+  }
+
+  /* Filter Scroll Body */
+  .sheet-scroll-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+
+    .filter-section-block {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      .filter-block-title {
+        font-size: 12.5px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
+
+      /* Choice Chips Row */
+      .chips-selector-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+
+        .choice-chip {
+          border: 1.5px solid #e2e8f0;
+          background: #f8fafc;
+          color: #475569;
+          font-size: 12px;
+          font-weight: 700;
+          padding: 8px 14px;
+          border-radius: 12px;
+          cursor: pointer;
+          transition: all 0.15s ease;
+
+          &.active {
+            background: #fdf4ff;
+            border-color: #a000e2;
+            color: #a000e2;
+            font-weight: 800;
+            box-shadow: 0 2px 6px rgba(160, 0, 226, 0.12);
+          }
+
+          &:active {
+            transform: scale(0.96);
+          }
+        }
+      }
+    }
+  }
+
+  /* Sheet Footer */
+  .sheet-footer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 18px 4px;
+    border-top: 1px solid #f1f5f9;
+    background: #ffffff;
+
+    .btn-sheet-clear {
+      height: 46px;
+      padding: 0 16px;
+      border-radius: 12px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      color: #64748b;
+      font-size: 13px;
+      font-weight: 750;
+      cursor: pointer;
+    }
+
+    .btn-sheet-apply {
+      flex: 1;
+      height: 46px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #a000e2 0%, #7e00b3 100%);
+      border: none;
+      color: #ffffff;
+      font-size: 13.5px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(160, 0, 226, 0.28);
+      transition: transform 0.15s ease;
+
+      &:active {
+        transform: scale(0.98);
+      }
+    }
+  }
 }
 

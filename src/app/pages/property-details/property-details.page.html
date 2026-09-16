@@ -11,6 +11,11 @@
           </button>
 
           <div class="header-right-actions">
+            @if (property.videoUrl) {
+              <button type="button" class="btn-circle-nav btn-video" (click)="openVideoModal()" aria-label="Watch Video Tour" title="Watch Video Tour">
+                <ion-icon name="videocam-outline"></ion-icon>
+              </button>
+            }
             <button type="button" class="btn-circle-nav" (click)="shareProperty()" aria-label="Share">
               <ion-icon name="share-social-outline"></ion-icon>
             </button>
@@ -38,10 +43,18 @@
             </button>
           }
 
-          <!-- Bottom Photo Counter -->
-          <div class="photo-counter-badge">
-            <ion-icon name="camera-outline"></ion-icon>
-            <span>{{ activeImageIndex + 1 }} / {{ property.images.length }} Photos</span>
+          <!-- Bottom Badges (Video Tour & Photo Counter) -->
+          <div class="hero-bottom-badges">
+            @if (property.videoUrl) {
+              <button type="button" class="video-tour-badge" (click)="openVideoModal()" aria-label="Watch Video Tour">
+                <ion-icon name="play-circle"></ion-icon>
+                <span>Video Tour</span>
+              </button>
+            }
+            <div class="photo-counter-badge">
+              <ion-icon name="camera-outline"></ion-icon>
+              <span>{{ activeImageIndex + 1 }} / {{ property.images.length }} Photos</span>
+            </div>
           </div>
         </div>
       </section>
@@ -398,5 +411,38 @@
         </div>
       }
     </footer>
+
+    <!-- Property Video Tour Popup Modal -->
+    <ion-modal [isOpen]="isVideoModalOpen" (didDismiss)="closeVideoModal()" class="property-video-modal">
+      <ng-template>
+        <div class="video-modal-container">
+          <div class="video-modal-header">
+            <div class="video-title-wrap">
+              <ion-icon name="videocam-outline" class="title-icon"></ion-icon>
+              <h4>Video Tour</h4>
+            </div>
+            <button type="button" class="modal-close-btn" (click)="closeVideoModal()" aria-label="Close modal">
+              <ion-icon name="close-outline"></ion-icon>
+            </button>
+          </div>
+          <div class="video-frame-box">
+            @if (embedVideoUrl) {
+              <iframe
+                [src]="embedVideoUrl"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen
+                class="video-iframe"
+              ></iframe>
+            } @else {
+              <div class="no-video-box">
+                <p>Video link is unavailable or could not be loaded.</p>
+              </div>
+            }
+          </div>
+        </div>
+      </ng-template>
+    </ion-modal>
   }
 </ion-content>

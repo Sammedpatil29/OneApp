@@ -105,20 +105,67 @@
     <div class="results-header-row">
       <span class="results-count-text">
         @if (isLoading) {
-          <span>Loading properties from server...</span>
+          <span class="loading-label-wrap">
+            <span class="spinner-dot"></span>
+            <span>Loading properties from server...</span>
+          </span>
         } @else {
           Showing <b>{{ filteredProperties.length }}</b> properties in and near {{ locationTitle }}
         }
       </span>
-      @if (activeFiltersCount > 0) {
+      @if (!isLoading && activeFiltersCount > 0) {
         <button type="button" class="btn-clear-chips" (click)="clearAllFilters()">
           Clear filters ({{ activeFiltersCount }})
         </button>
       }
     </div>
 
-    <!-- Property Cards List -->
-    @if (filteredProperties.length > 0) {
+    <!-- Property Listings / Skeleton Loading / Empty State -->
+    @if (isLoading) {
+      <!-- Shimmer Skeleton Loading State (Never show 'no data' while loading) -->
+      <div class="cards-stack skeleton-stack" aria-busy="true" aria-label="Loading properties">
+        @for (i of [1, 2, 3]; track i) {
+          <div class="property-card skeleton-card">
+            <!-- Hero Image Skeleton -->
+            <div class="card-image-wrap skeleton-img-box">
+              <div class="skeleton-shimmer"></div>
+              <div class="skeleton-top-badges">
+                <div class="skeleton-badge-pill"></div>
+                <div class="skeleton-badge-pill sm"></div>
+              </div>
+              <div class="skeleton-price-badge"></div>
+            </div>
+
+            <!-- Card Body Skeleton -->
+            <div class="card-body">
+              <div class="skeleton-line title"></div>
+              <div class="skeleton-line locality"></div>
+
+              <div class="specs-chips-row skeleton-specs">
+                <div class="skeleton-chip"></div>
+                <div class="skeleton-chip"></div>
+                <div class="skeleton-chip"></div>
+                <div class="skeleton-chip"></div>
+              </div>
+
+              <div class="card-divider"></div>
+
+              <div class="card-footer-row skeleton-footer">
+                <div class="skeleton-seller">
+                  <div class="skeleton-line role"></div>
+                  <div class="skeleton-line name"></div>
+                </div>
+
+                <div class="action-buttons-group">
+                  <div class="skeleton-btn"></div>
+                  <div class="skeleton-btn whatsapp"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    } @else if (filteredProperties.length > 0) {
       <div class="cards-stack">
         @for (prop of filteredProperties; track prop.id) {
           <article class="property-card" (click)="viewDetails(prop)">
@@ -240,13 +287,13 @@
       <!-- Common Property Dedicated Footer -->
       <app-property-footer></app-property-footer>
     } @else {
-      <!-- Empty Filter State -->
+      <!-- Empty Filter State (Only shown when done loading and 0 items found) -->
       <div class="empty-state-card">
         <div class="empty-icon-halo">
           <ion-icon name="home-outline"></ion-icon>
         </div>
         <h3 class="empty-title">No Properties Match Your Filters</h3>
-        <p class="empty-desc">Try clearing your filters or changing the category to explore more verified homes and plots in Jamkhandi.</p>
+        <p class="empty-desc">Try clearing your filters or changing the category to explore more verified homes and plots in {{ locationTitle }}.</p>
         <button type="button" class="btn-reset-filters" (click)="clearAllFilters()">
           <ion-icon name="refresh-outline" class="me-1"></ion-icon>
           <span>Reset All Filters</span>

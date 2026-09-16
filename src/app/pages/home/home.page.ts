@@ -15,6 +15,7 @@ import {
   IonRefresherContent,
   IonSkeletonText,
   IonIcon,
+  IonModal,
   ToastController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -42,7 +43,13 @@ import {
   locateOutline,
   playCircle,
   volumeMuteOutline,
-  volumeHighOutline
+  volumeHighOutline,
+  closeOutline,
+  bagHandleOutline,
+  carOutline,
+  restaurantOutline,
+  timeOutline,
+  receiptOutline
 } from 'ionicons/icons';
 import { AuthService } from 'src/app/services/auth.service';
 import { LocationService } from 'src/app/services/location.service';
@@ -96,6 +103,7 @@ export interface ServiceItem {
     IonRefresherContent,
     IonSkeletonText,
     IonIcon,
+    IonModal,
     FooterComponent
   ]
 })
@@ -112,6 +120,7 @@ export class HomePage implements OnInit, OnDestroy {
   profileAvatar: string = '';
   userInitials: string = 'P';
   orders: any[] = [];
+  isMultiOrderModalOpen: boolean = false;
   token: string = '';
   isLoadingServices: boolean = true;
 
@@ -177,7 +186,13 @@ export class HomePage implements OnInit, OnDestroy {
       locationOutline,
       playCircle,
       volumeMuteOutline,
-      volumeHighOutline
+      volumeHighOutline,
+      closeOutline,
+      bagHandleOutline,
+      carOutline,
+      restaurantOutline,
+      timeOutline,
+      receiptOutline
     });
   }
 
@@ -1035,9 +1050,76 @@ export class HomePage implements OnInit, OnDestroy {
     this.router.navigate(['/layout/profile']);
   }
 
-  goToOrderDetails(orderId: any) {
-    if (orderId) {
-      this.router.navigate([`/layout/grocery-layout/grocery-order-details/${orderId}`]);
+  handleActiveOrderBannerClick() {
+    if (!this.orders || this.orders.length === 0) return;
+    if (this.orders.length === 1) {
+      this.goToOrderDetails(this.orders[0]);
+    } else {
+      this.isMultiOrderModalOpen = true;
+    }
+  }
+
+  closeMultiOrderModal() {
+    this.isMultiOrderModalOpen = false;
+  }
+
+  selectActiveOrder(order: any) {
+    this.closeMultiOrderModal();
+    this.goToOrderDetails(order);
+  }
+
+  getActiveOrderHeadline(order: any): string {
+    if (!order) return 'Your order is active';
+    const status = String(order.status || order.orderStatus || '').toLowerCase();
+    if (status.includes('deliver') && (status.includes('out') || status.includes('way'))) {
+      return 'Out for delivery • Arriving soon';
+    }
+    if (status.includes('prep') || status.includes('pack')) {
+      return 'Order is being packed';
+    }
+    if (status.includes('accept') || status.includes('confirm')) {
+      return 'Order confirmed • In progress';
+    }
+    if (status.includes('pickup') || status.includes('picked')) {
+      return 'Picked up • On the way';
+    }
+    return 'Your delivery is arriving soon';
+  }
+
+  getOrderIcon(order: any): string {
+    const serviceType = String(order?.serviceType || order?.service || order?.category || '').toLowerCase();
+    if (serviceType.includes('ride') || serviceType.includes('cab')) return 'car-outline';
+    if (serviceType.includes('food') || serviceType.includes('dine')) return 'restaurant-outline';
+    return 'bag-handle-outline';
+  }
+
+  formatOrderTime(order: any): string {
+    const dt = order?.createdAt || order?.orderDate || order?.date;
+    if (!dt) return 'Just now';
+    try {
+      const date = new Date(dt);
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } catch {
+      return 'Today';
+    }
+  }
+
+  goToOrderDetails(orderOrId: any) {
+    if (!orderOrId) {
+      this.router.navigate(['/layout/history']);
+      return;
+    }
+
+    const order = typeof orderOrId === 'object' ? orderOrId : { id: orderOrId, orderId: orderOrId };
+    const id = order.id || order.orderId;
+
+    const serviceType = String(order.serviceType || order.service || order.category || '').toLowerCase();
+    if (serviceType.includes('ride') || serviceType.includes('cab')) {
+      this.router.navigate(['/layout/rides/tracking'], { queryParams: { orderId: id } });
+    } else if (serviceType.includes('food') || serviceType.includes('dine')) {
+      this.router.navigate([`/layout/dineout-layout/dineout-track/${id}`]);
+    } else if (id) {
+      this.router.navigate([`/layout/grocery-layout/grocery-order-details/${id}`]);
     } else {
       this.router.navigate(['/layout/history']);
     }

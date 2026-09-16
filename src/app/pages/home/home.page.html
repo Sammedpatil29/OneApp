@@ -197,21 +197,6 @@
 
 
 
-    <!-- Active Order Live Tracker Pill (Shown when customer has ongoing orders) -->
-    @if (orders && orders.length > 0) {
-      <section class="active-order-floating-strip animate__animated animate__fadeInDown" (click)="goToOrderDetails(orders[0]?.orderId || orders[0]?.id)">
-        <div class="live-pulse-dot"></div>
-        <div class="order-info-col">
-          <span class="order-badge">ACTIVE ORDER</span>
-          <span class="order-headline">Your delivery is arriving soon</span>
-        </div>
-        <button type="button" class="btn-track-pill">
-          <span>Track</span>
-          <ion-icon name="arrow-forward" class="ms-1"></ion-icon>
-        </button>
-      </section>
-    }
-
     <!-- 1. Location Permission Required Alert Banner -->
     @if (isLocationPermissionDenied) {
       <section class="service-alert-banner permission-banner animate__animated animate__fadeIn">
@@ -512,7 +497,93 @@
     }
 
     <!-- Bottom Nav Spacer -->
-    <div class="bottom-nav-spacer"></div>
+    <div class="bottom-nav-spacer" [class.has-active-orders]="orders && orders.length > 0"></div>
 
   </main>
+
+  <!-- Docked Active Orders Banner (Attached directly above the bottom navbar) -->
+  @if (orders && orders.length > 0) {
+    <aside slot="fixed" class="docked-active-orders-banner" (click)="handleActiveOrderBannerClick()" role="button" tabindex="0">
+      <div class="banner-inner-card">
+        <div class="banner-left">
+          <div class="live-pulse-dot"></div>
+          <div class="order-text-col">
+            <div class="order-badge-row">
+              <span class="badge-text">
+                {{ orders.length > 1 ? (orders.length + ' ACTIVE ORDERS') : 'ACTIVE ORDER' }}
+              </span>
+              @if (orders.length === 1 && (orders[0]?.orderId || orders[0]?.id)) {
+                <span class="order-id-chip">#{{ orders[0]?.orderId || orders[0]?.id }}</span>
+              }
+            </div>
+            <span class="order-title-line">
+              {{ orders.length > 1 ? 'Multiple deliveries in progress' : getActiveOrderHeadline(orders[0]) }}
+            </span>
+          </div>
+        </div>
+
+        <button type="button" class="btn-docked-track" aria-label="Track Active Orders">
+          <span>{{ orders.length > 1 ? 'View All' : 'Track' }}</span>
+          <ion-icon name="arrow-forward"></ion-icon>
+        </button>
+      </div>
+    </aside>
+  }
+
+  <!-- Multi Active Orders Selection Bottom Sheet Modal -->
+  <ion-modal
+    [isOpen]="isMultiOrderModalOpen"
+    (didDismiss)="closeMultiOrderModal()"
+    [initialBreakpoint]="0.55"
+    [breakpoints]="[0, 0.55, 0.85]"
+    class="active-orders-sheet-modal">
+    <ng-template>
+      <div class="sheet-container">
+        <div class="sheet-header">
+          <div class="sheet-handle-bar"></div>
+          <div class="sheet-title-row">
+            <div class="sheet-title-col">
+              <h3 class="sheet-title">Active Orders</h3>
+              <p class="sheet-sub">Select an ongoing order to track live status</p>
+            </div>
+            <button type="button" class="sheet-close-btn" (click)="closeMultiOrderModal()" aria-label="Close">
+              <ion-icon name="close-outline"></ion-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="orders-list-content">
+          @for (order of orders; track (order?.orderId || order?.id || $index)) {
+            <div class="active-order-item-card" (click)="selectActiveOrder(order)" role="button" tabindex="0">
+              <div class="item-card-left">
+                <div class="order-icon-box">
+                  <ion-icon [name]="getOrderIcon(order)"></ion-icon>
+                </div>
+                <div class="order-details-col">
+                  <div class="order-meta-line">
+                    <span class="order-number">Order #{{ order.orderId || order.id }}</span>
+                    <span class="order-time">{{ formatOrderTime(order) }}</span>
+                  </div>
+                  <div class="order-status-badge">
+                    <span class="mini-pulse-dot"></span>
+                    <span>{{ getActiveOrderHeadline(order) }}</span>
+                  </div>
+                  @if (order.totalAmount || order.grandTotal || order.total) {
+                    <span class="order-amount">₹{{ order.totalAmount || order.grandTotal || order.total }}</span>
+                  }
+                </div>
+              </div>
+
+              <div class="item-card-right">
+                <button type="button" class="btn-track-item">
+                  <span>Track</span>
+                  <ion-icon name="chevron-forward"></ion-icon>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </ng-template>
+  </ion-modal>
 </ion-content>

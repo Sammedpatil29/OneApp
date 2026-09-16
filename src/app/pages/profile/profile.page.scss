@@ -432,7 +432,9 @@ ion-toolbar {
   }
 }
 
-/* Bottom Nav Spacer */
+/* Bottom Nav Spacer - ensures full clearance above bottom navbar */
 .bottom-nav-spacer {
-  min-height: 16px;
+  min-height: calc(80px + env(safe-area-inset-bottom, 0px));
+  height: calc(80px + env(safe-area-inset-bottom, 0px));
+  width: 100%;
 }

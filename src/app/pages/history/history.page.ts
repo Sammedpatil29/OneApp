@@ -13,7 +13,8 @@ import {
   IonRefresher,
   IonRefresherContent,
   IonSkeletonText,
-  IonIcon
+  IonIcon,
+  IonModal
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -26,7 +27,12 @@ import {
   closeCircleOutline,
   bicycleOutline,
   alertCircleOutline,
-  arrowBackOutline
+  arrowBackOutline,
+  optionsOutline,
+  closeOutline,
+  refreshOutline,
+  checkmark,
+  closeCircle
 } from 'ionicons/icons';
 import { AuthService } from 'src/app/services/auth.service';
 import { HistoryService } from 'src/app/components/history/history.service';
@@ -50,15 +56,49 @@ import { timeout, catchError } from 'rxjs/operators';
     IonRefresher,
     IonRefresherContent,
     IonSkeletonText,
-    IonIcon
+    IonIcon,
+    IonModal
   ]
 })
 export class HistoryPage implements OnInit {
   history: any[] = [];
   filteredHistory: any[] = [];
-  selectedCategory: 'all' | 'grocery' | 'ride' = 'all';
   isLoading: boolean = false;
   token: string = '';
+
+  // Top Tabs: 'active' | 'completed'
+  activeTab: 'active' | 'completed' = 'active';
+
+  // Filter Modal & Filter Options
+  isFilterModalOpen: boolean = false;
+  filterCategory: string = 'all';     // 'all' | 'grocery' | 'ride' | 'dineout' | 'event'
+  filterStatus: string = 'all';       // 'all' | 'in_progress' | 'on_the_way' | 'delivered' | 'cancelled'
+  filterTimeframe: string = 'all';    // 'all' | 'today' | '7days' | '30days'
+  filterSort: string = 'newest';      // 'newest' | 'oldest' | 'price_high' | 'price_low'
+  filterPriceRange: string = 'all';   // 'all' | 'under_200' | '200_500' | '500_1000' | 'above_1000'
+
+  // Backwards compatibility getter
+  get selectedCategory(): string {
+    return this.filterCategory;
+  }
+
+  get activeOrdersCount(): number {
+    return this.history.filter(item => this.isActiveOrder(item)).length;
+  }
+
+  get completedOrdersCount(): number {
+    return this.history.filter(item => this.isCompletedOrder(item)).length;
+  }
+
+  get activeFiltersCount(): number {
+    let count = 0;
+    if (this.filterCategory !== 'all') count++;
+    if (this.filterStatus !== 'all') count++;
+    if (this.filterTimeframe !== 'all') count++;
+    if (this.filterSort !== 'newest') count++;
+    if (this.filterPriceRange !== 'all') count++;
+    return count;
+  }
 
   goBack() {
     this.navCtrl.back();
@@ -80,7 +120,12 @@ export class HistoryPage implements OnInit {
       closeCircleOutline,
       bicycleOutline,
       alertCircleOutline,
-      arrowBackOutline
+      arrowBackOutline,
+      optionsOutline,
+      closeOutline,
+      refreshOutline,
+      checkmark,
+      closeCircle
     });
   }
 
@@ -102,6 +147,12 @@ export class HistoryPage implements OnInit {
     ).subscribe({
       next: (res: any) => {
         this.history = res?.data || [];
+        // Intelligently default to active tab if user has active orders; else default to completed
+        if (this.activeOrdersCount > 0) {
+          this.activeTab = 'active';
+        } else {
+          this.activeTab = 'completed';
+        }
         this.applyFilter();
         this.isLoading = false;
       },
@@ -124,19 +175,150 @@ export class HistoryPage implements OnInit {
     });
   }
 
-  setCategory(cat: 'all' | 'grocery' | 'ride') {
-    this.selectedCategory = cat;
+  setActiveTab(tab: 'active' | 'completed') {
+    this.activeTab = tab;
+    // Reset specific status filter if it doesn't match the new tab
+    if (this.filterStatus !== 'all') {
+      this.filterStatus = 'all';
+    }
     this.applyFilter();
   }
 
+  setCategory(cat: string) {
+    this.filterCategory = cat;
+    this.applyFilter();
+  }
+
+  // Filter Modal Controls
+  openFilterModal() {
+    this.isFilterModalOpen = true;
+  }
+
+  closeFilterModal() {
+    this.isFilterModalOpen = false;
+  }
+
+  applyFilters() {
+    this.applyFilter();
+    this.closeFilterModal();
+  }
+
+  clearAllFilters() {
+    this.filterCategory = 'all';
+    this.filterStatus = 'all';
+    this.filterTimeframe = 'all';
+    this.filterSort = 'newest';
+    this.filterPriceRange = 'all';
+    this.applyFilter();
+  }
+
+  isActiveOrder(item: any): boolean {
+    if (!item || !item.status) return false;
+    const s = (item.status || '').toLowerCase().trim();
+    const terminatedStatuses = [
+      'completed',
+      'delivered',
+      'done',
+      'resolved',
+      'cancelled',
+      'failed',
+      'rejected'
+    ];
+    return !terminatedStatuses.includes(s);
+  }
+
+  isCompletedOrder(item: any): boolean {
+    return !this.isActiveOrder(item);
+  }
+
   applyFilter() {
-    if (this.selectedCategory === 'all') {
-      this.filteredHistory = this.history;
-    } else if (this.selectedCategory === 'grocery') {
-      this.filteredHistory = this.history.filter(item => !this.isRideType(item.type));
-    } else if (this.selectedCategory === 'ride') {
-      this.filteredHistory = this.history.filter(item => this.isRideType(item.type));
+    let list = [...this.history];
+
+    // 1. Tab filter: Active vs Completed
+    if (this.activeTab === 'active') {
+      list = list.filter(item => this.isActiveOrder(item));
+    } else if (this.activeTab === 'completed') {
+      list = list.filter(item => this.isCompletedOrder(item));
     }
+
+    // 2. Category / Service Type
+    if (this.filterCategory !== 'all') {
+      if (this.filterCategory === 'ride') {
+        list = list.filter(item => this.isRideType(item.type));
+      } else if (this.filterCategory === 'grocery') {
+        list = list.filter(item => (item.type || '').toLowerCase() === 'grocery');
+      } else if (this.filterCategory === 'dineout') {
+        list = list.filter(item => (item.type || '').toLowerCase() === 'dineout');
+      } else if (this.filterCategory === 'event') {
+        list = list.filter(item => (item.type || '').toLowerCase() === 'event');
+      }
+    }
+
+    // 3. Status filter
+    if (this.filterStatus !== 'all') {
+      const s = this.filterStatus.toLowerCase();
+      if (s === 'delivered') {
+        list = list.filter(item =>
+          ['completed', 'delivered', 'done', 'resolved'].includes((item.status || '').toLowerCase())
+        );
+      } else if (s === 'cancelled') {
+        list = list.filter(item =>
+          ['cancelled', 'failed', 'rejected'].includes((item.status || '').toLowerCase())
+        );
+      } else if (s === 'on_the_way') {
+        list = list.filter(item =>
+          (item.status || '').toLowerCase().includes('way') || (item.status || '').toLowerCase() === 'dispatched'
+        );
+      } else if (s === 'in_progress') {
+        list = list.filter(item =>
+          ['pending', 'paid', 'processing', 'preparing', 'placed', 'accepted'].includes((item.status || '').toLowerCase())
+        );
+      }
+    }
+
+    // 4. Timeframe filter
+    if (this.filterTimeframe !== 'all') {
+      const now = new Date().getTime();
+      list = list.filter(item => {
+        if (!item.created_at) return true;
+        const itemTime = new Date(item.created_at).getTime();
+        const diffHours = (now - itemTime) / (1000 * 60 * 60);
+
+        if (this.filterTimeframe === 'today') {
+          return diffHours <= 24;
+        } else if (this.filterTimeframe === '7days') {
+          return diffHours <= 24 * 7;
+        } else if (this.filterTimeframe === '30days') {
+          return diffHours <= 24 * 30;
+        }
+        return true;
+      });
+    }
+
+    // 5. Price range filter
+    if (this.filterPriceRange !== 'all') {
+      list = list.filter(item => {
+        const cost = Number(item.finalCost) || 0;
+        if (this.filterPriceRange === 'under_200') return cost < 200;
+        if (this.filterPriceRange === '200_500') return cost >= 200 && cost <= 500;
+        if (this.filterPriceRange === '500_1000') return cost > 500 && cost <= 1000;
+        if (this.filterPriceRange === 'above_1000') return cost > 1000;
+        return true;
+      });
+    }
+
+    // 6. Sort
+    if (this.filterSort === 'newest') {
+      list.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    } else if (this.filterSort === 'oldest') {
+      list.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+    } else if (this.filterSort === 'price_high') {
+      list.sort((a, b) => (Number(b.finalCost) || 0) - (Number(a.finalCost) || 0));
+    } else if (this.filterSort === 'price_low') {
+      list.sort((a, b) => (Number(a.finalCost) || 0) - (Number(b.finalCost) || 0));
+    }
+
+    this.filteredHistory = list;
   }
 
   isRideType(type: string): boolean {

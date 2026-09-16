@@ -58,7 +58,7 @@ import { TranslatePipe } from 'src/app/pipes/translate.pipe';
   templateUrl: './about.page.html',
   styleUrls: ['./about.page.scss'],
   standalone: true,
-  imports: [IonAlert, IonAvatar, IonButton, IonToast, IonSkeletonText, IonSpinner, IonNote, IonLabel, IonInput, IonList, IonItem, IonText, IonIcon, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, NodataComponent, TranslatePipe]
+  imports: [IonAlert, IonAvatar, IonButton, IonToast, IonSkeletonText, IonSpinner, IonNote, IonLabel, IonInput, IonList, IonItem, IonText, IonIcon, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, NodataComponent, TranslatePipe, FooterComponent]
 })
 export class AboutPage implements OnInit {
 

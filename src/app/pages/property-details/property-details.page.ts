@@ -3,9 +3,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NavController, ToastController } from '@ionic/angular';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import {
   IonContent,
-  IonIcon
+  IonIcon,
+  IonModal
 } from '@ionic/angular/standalone';
 import { Share } from '@capacitor/share';
 import { addIcons } from 'ionicons';
@@ -40,7 +42,10 @@ import {
   chevronDownOutline,
   chevronUpOutline,
   leafOutline,
-  lockClosedOutline
+  lockClosedOutline,
+  videocamOutline,
+  playCircle,
+  closeOutline
 } from 'ionicons/icons';
 import { PropertyItem, PropertyDocumentCheck, DUMMY_PROPERTIES } from 'src/app/models/property.model';
 import { PropertyService } from 'src/app/services/property.service';
@@ -54,6 +59,7 @@ import { PropertyFooterComponent } from 'src/app/components/property-footer/prop
   imports: [
     IonContent,
     IonIcon,
+    IonModal,
     CommonModule,
     FormsModule,
     PropertyFooterComponent
@@ -64,6 +70,8 @@ export class PropertyDetailsPage implements OnInit {
   activeImageIndex: number = 0;
   isFavorite: boolean = false;
   isDocsExpanded: boolean = false;
+  isVideoModalOpen: boolean = false;
+  embedVideoUrl: SafeResourceUrl | null = null;
 
   // Swipe gesture tracking
   private touchStartX: number = 0;
@@ -76,9 +84,10 @@ export class PropertyDetailsPage implements OnInit {
     private router: Router,
     private navCtrl: NavController,
     private propertyService: PropertyService,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private sanitizer: DomSanitizer
   ) {
-    addIcons({arrowBackOutline,shareSocialOutline,chevronBackOutline,chevronForwardOutline,cameraOutline,checkmarkCircle,location,openOutline,leafOutline,bedOutline,waterOutline,expandOutline,compassOutline,businessOutline,carOutline,calendarOutline,shieldCheckmarkOutline,alertCircleOutline,callOutline,logoWhatsapp,heartOutline,heart,sparkles,navigateOutline,shieldOutline,chatbubbleEllipsesOutline,documentTextOutline,timeOutline,chevronDownOutline,chevronUpOutline,lockClosedOutline});
+    addIcons({arrowBackOutline,shareSocialOutline,chevronBackOutline,chevronForwardOutline,cameraOutline,checkmarkCircle,location,openOutline,leafOutline,bedOutline,waterOutline,expandOutline,compassOutline,businessOutline,carOutline,calendarOutline,shieldCheckmarkOutline,alertCircleOutline,callOutline,logoWhatsapp,heartOutline,heart,sparkles,navigateOutline,shieldOutline,chatbubbleEllipsesOutline,documentTextOutline,timeOutline,chevronDownOutline,chevronUpOutline,lockClosedOutline,videocamOutline,playCircle,closeOutline});
   }
 
   ngOnInit() {
@@ -202,6 +211,39 @@ export class PropertyDetailsPage implements OnInit {
       : encodeURIComponent(`${this.property.title}, ${this.property.locality}, ${this.property.city}`);
     const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${query}`;
     window.open(mapsUrl, '_system');
+  }
+
+  openVideoModal() {
+    if (!this.property?.videoUrl) return;
+    const videoId = this.extractYouTubeId(this.property.videoUrl);
+    if (videoId) {
+      const embed = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
+      this.embedVideoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(embed);
+    } else {
+      this.embedVideoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.property.videoUrl);
+    }
+    this.isVideoModalOpen = true;
+  }
+
+  closeVideoModal() {
+    this.isVideoModalOpen = false;
+    this.embedVideoUrl = null;
+  }
+
+  private extractYouTubeId(url: string): string | null {
+    if (!url) return null;
+    const cleanUrl = url.trim();
+    // Regular expression matching standard, embed, short, and shorts YouTube links
+    const regExp = /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([\w-]{11})/;
+    const match = cleanUrl.match(regExp);
+    if (match && match[1]) {
+      return match[1];
+    }
+    // If user entered only 11 characters ID directly
+    if (/^[a-zA-Z0-9_-]{11}$/.test(cleanUrl)) {
+      return cleanUrl;
+    }
+    return null;
   }
 
   get propertyLegalChecks(): PropertyDocumentCheck[] {

@@ -561,6 +561,7 @@ ion-toolbar {
 }
 
 .bottom-nav-spacer {
-  height: 84px;
+  min-height: calc(80px + env(safe-area-inset-bottom, 0px));
+  height: calc(80px + env(safe-area-inset-bottom, 0px));
   width: 100%;
 }

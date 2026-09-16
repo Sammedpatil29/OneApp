@@ -72,7 +72,7 @@ export class PropertyPage implements OnInit, OnDestroy {
   locationSubtitle: string = 'Select your preferred location';
   private locationSub: Subscription | null = null;
   isRefreshing: boolean = false;
-  isLoading: boolean = false;
+  isLoading: boolean = true;
 
   // Category Tabs
   activeCategory: PropertyCategory = 'buy_house';
@@ -290,16 +290,6 @@ export class PropertyPage implements OnInit, OnDestroy {
 
     // 2. Fetch fresh property listings from API based on current active filters
     this.fetchPropertiesFromApi();
-
-    try {
-      const toast = await this.toastCtrl.create({
-        message: 'Properties updated from server',
-        duration: 1800,
-        position: 'top',
-        color: 'dark'
-      });
-      await toast.present();
-    } catch {}
   }
 
   fetchPropertiesFromApi() {
