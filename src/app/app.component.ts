@@ -57,9 +57,13 @@ export class AppComponent implements OnInit {
     }, 3500);
   }
 
+  onSplashDismiss() {
+    this.showSplash = false;
+  }
+
   private dismissSplash(startTime: number) {
     const elapsed = Date.now() - startTime;
-    const minDisplay = 600; // minimum 600ms so loader smoothly displays without flickering
+    const minDisplay = 2000; // Allow ~2s so user can view promotional offer banner and loader progress smoothly
     const delay = Math.max(0, minDisplay - elapsed);
     setTimeout(() => {
       this.showSplash = false;
@@ -196,7 +200,12 @@ export class AppComponent implements OnInit {
         currentUrl.includes('/layout/history') ||
         currentUrl.includes('/layout/support') ||
         currentUrl.includes('/layout/profile') ||
-        currentUrl.includes('/layout/refer')
+        currentUrl.includes('/layout/refer') ||
+        currentUrl.includes('/layout/pharmacy') ||
+        currentUrl.includes('/layout/property') ||
+        currentUrl.includes('/layout/dineout') ||
+        currentUrl.includes('/layout/events') ||
+        currentUrl.includes('/layout/ride')
       ) {
         this.navCtrl.navigateRoot('/layout/home');
       }

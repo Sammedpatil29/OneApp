@@ -13,6 +13,12 @@ export interface MedicineItem {
   inStock: boolean;
   description: string;
   uses?: string[];
+  composition?: string;
+  manufacturer?: string;
+  benefits?: string[];
+  sideEffects?: string[];
+  directionsForUse?: string;
+  safetyAdvice?: { topic: string; detail: string; warning?: boolean }[];
 }
 
 export interface LabTestPackage {
@@ -30,6 +36,9 @@ export interface LabTestPackage {
   parameters: string[];
   description: string;
   recommendedFor?: string;
+  overview?: string;
+  preparation?: string[];
+  parameterGroups?: { groupName: string; parameters: string[] }[];
 }
 
 export interface MedicineCategory {

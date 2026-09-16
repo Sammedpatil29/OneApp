@@ -1,12 +1,115 @@
-<div class="splash-screen">
-  <div class="splash-card">
-    <div class="loader-wrap">
-      <div class="spinner-ring">
-        <div class="ring-pulse"></div>
-        <div class="ring-core"></div>
+<div class="splash-screen" (click)="onSkipClick($event)">
+  <!-- Top Animated Progress Loader Line -->
+  <div class="top-progress-track">
+    <div class="top-progress-bar" [style.width.%]="loadingProgress"></div>
+  </div>
+
+  <!-- Top Floating Loader Pill Overlay -->
+  <div class="top-loader-pill" (click)="onSkipClick($event)">
+    <div class="spinner-ring">
+      <div class="ring-pulse"></div>
+      <div class="ring-core"></div>
+    </div>
+    <div class="loader-text-group">
+      <span class="loader-primary-msg">{{ loadingMessages[currentMessageIndex] }}</span>
+    </div>
+    <button type="button" class="skip-btn" (click)="onSkipClick($event)" aria-label="Skip splash">
+      <span>Skip</span>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Full Screen Banner Media Container -->
+  <div class="banner-media-container" [class.has-image]="activeBanner.imageUrl && !hasImageError">
+    @if (activeBanner.imageUrl && !hasImageError) {
+      <img
+        [src]="activeBanner.imageUrl"
+        alt="Promotional Offer Banner"
+        class="banner-bg-img"
+        [class.loaded]="isImageLoaded"
+        (load)="onImageLoaded()"
+        (error)="onImageError()"
+      />
+      <!-- Rich Multi-Stop Scrim for Maximum Text Contrast -->
+      <div class="banner-gradient-overlay"></div>
+    } @else {
+      <!-- Built-in Vibrant Gradient Artwork Canvas with Ambient Orbs -->
+      <div class="banner-artwork-canvas" [attr.data-theme]="activeBanner.gradientTheme || 'violet'">
+        <div class="ambient-orb orb-1"></div>
+        <div class="ambient-orb orb-2"></div>
+        <div class="ambient-orb orb-3"></div>
+        <div class="ambient-grid-pattern"></div>
       </div>
-      <p class="status-msg">Starting Pintu...</p>
+    }
+  </div>
+
+  <!-- Full-Screen Showcase Offer Content Container -->
+  <div class="splash-content-container">
+    <div class="offer-hero-wrapper">
+      <!-- Offer Category / Live Deal Pill -->
+      <div class="offer-tag-pill">
+        <span class="live-pulse-dot"></span>
+        <span class="tag-text">{{ activeBanner.tag }}</span>
+      </div>
+
+      <!-- Discount Super-Badge -->
+      @if (activeBanner.discountBadge) {
+        <div class="discount-super-badge">
+          <span class="sparkle-icon">✨</span>
+          <span>{{ activeBanner.discountBadge }}</span>
+        </div>
+      }
+
+      <!-- Main Headline -->
+      <h1 class="offer-headline">{{ activeBanner.headline }}</h1>
+
+      <!-- Subheadline -->
+      <p class="offer-subheadline">{{ activeBanner.subheadline }}</p>
+
+      <!-- Highlights Perks Strip (3 Cards) -->
+      @if (activeBanner.highlights && activeBanner.highlights.length > 0) {
+        <div class="offer-perks-row">
+          @for (perk of activeBanner.highlights; track perk.title) {
+            <div class="perk-chip">
+              <span class="perk-icon">{{ perk.icon }}</span>
+              <div class="perk-text-wrap">
+                <span class="perk-title">{{ perk.title }}</span>
+                <span class="perk-subtitle">{{ perk.subtitle }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Promo Code Ticket Voucher -->
+      @if (activeBanner.promoCode) {
+        <div class="promo-voucher-box">
+          <div class="voucher-ticket-left">
+            <span class="voucher-label">COUPON CODE</span>
+            <span class="voucher-code">{{ activeBanner.promoCode }}</span>
+          </div>
+          <div class="voucher-divider"></div>
+          <div class="voucher-ticket-right">
+            <span class="voucher-badge">1-TAP AUTO APPLY</span>
+            @if (activeBanner.promoTerms) {
+              <span class="voucher-terms">{{ activeBanner.promoTerms }}</span>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Bottom Super-App Branding Footer -->
+    <div class="splash-footer-wrap">
+      <div class="brand-pill">
+        <span class="brand-bolt">⚡</span>
+        <span class="brand-title">Pintu</span>
+        <span class="brand-sep">•</span>
+        <span class="brand-desc">Fast • Fresh • Super-App</span>
+      </div>
+      <p class="tap-hint">Tap anywhere to proceed</p>
     </div>
   </div>
 </div>
-

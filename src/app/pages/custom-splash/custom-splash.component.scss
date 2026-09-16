@@ -1,77 +1,525 @@
+:host {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+}
+
 .splash-screen {
   position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #0d0620;
+  user-select: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ==========================================================================
+   1. TOP PROGRESS TRACK & BAR
+   ========================================================================== */
+.top-progress-track {
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
-  background: #ffffff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 99999;
-  user-select: none;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  height: 3.5px;
+  z-index: 100002;
+  background: rgba(255, 255, 255, 0.08);
 }
 
-.splash-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 32px 24px;
-  animation: fadeIn 0.3s ease-out;
+.top-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #a000e2 0%, #f43f5e 50%, #fbbf24 100%);
+  box-shadow: 0 0 12px rgba(244, 63, 94, 0.75);
+  transition: width 0.12s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.loader-wrap {
+/* ==========================================================================
+   2. TOP FLOATING LOADER PILL OVERLAY
+   ========================================================================== */
+.top-loader-pill {
+  position: absolute;
+  top: max(16px, calc(env(safe-area-inset-top) + 12px));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100002;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
+  padding: 6px 12px 6px 8px;
+  background: rgba(15, 23, 42, 0.78);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  box-shadow: 0 12px 30px -4px rgba(0, 0, 0, 0.55), 0 0 16px rgba(160, 0, 226, 0.25);
+  animation: pillFadeIn 0.4s ease-out;
+  max-width: calc(100vw - 32px);
 }
 
 .spinner-ring {
   position: relative;
-  width: 42px;
-  height: 42px;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
 
   .ring-pulse {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     border-radius: 50%;
-    border: 3.5px solid rgba(160, 0, 226, 0.18);
+    border: 2px solid rgba(160, 0, 226, 0.3);
+    animation: ringPulse 1.6s ease-out infinite;
   }
 
   .ring-core {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    border: 3.5px solid transparent;
-    border-top-color: #a000e2;
-    border-right-color: #c026d3;
-    animation: spin 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+    border: 2.2px solid transparent;
+    border-top-color: #ec4899;
+    border-right-color: #a000e2;
+    animation: spinCore 0.75s linear infinite;
   }
 }
 
-.status-msg {
-  font-size: 13px;
+.loader-text-group {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.loader-primary-msg {
+  font-size: 12px;
   font-weight: 600;
-  color: #64748b;
+  color: #f8fafc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+  letter-spacing: 0.15px;
+}
+
+.skip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 9px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+
+  &:active {
+    transform: scale(0.92);
+    background: rgba(255, 255, 255, 0.28);
+  }
+}
+
+/* ==========================================================================
+   3. BANNER MEDIA & ARTWORK CONTAINER
+   ========================================================================== */
+.banner-media-container {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  background: #0a0418;
+}
+
+.banner-bg-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  opacity: 0;
+  transform: scale(1.05);
+  transition: opacity 0.5s ease-out, transform 8s cubic-bezier(0.2, 1, 0.3, 1);
+
+  &.loaded {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.banner-gradient-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(10, 4, 24, 0.75) 0%,
+    rgba(10, 4, 24, 0.25) 25%,
+    rgba(10, 4, 24, 0.65) 55%,
+    rgba(10, 4, 24, 0.94) 80%,
+    rgba(10, 4, 24, 1) 100%
+  );
+}
+
+/* Built-in Animated Gradient Artwork Canvas */
+.banner-artwork-canvas {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 15%, #2a084e 0%, #130426 55%, #080212 100%);
+  overflow: hidden;
+
+  &[data-theme='emerald'] {
+    background: radial-gradient(circle at 50% 15%, #064e3b 0%, #06261c 55%, #02120e 100%);
+    .orb-1 { background: radial-gradient(circle, rgba(16, 185, 129, 0.45) 0%, transparent 70%); }
+    .orb-2 { background: radial-gradient(circle, rgba(5, 150, 105, 0.35) 0%, transparent 70%); }
+  }
+
+  &[data-theme='amber'] {
+    background: radial-gradient(circle at 50% 15%, #78350f 0%, #301305 55%, #150601 100%);
+    .orb-1 { background: radial-gradient(circle, rgba(245, 158, 11, 0.45) 0%, transparent 70%); }
+    .orb-2 { background: radial-gradient(circle, rgba(217, 119, 6, 0.35) 0%, transparent 70%); }
+  }
+}
+
+.ambient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(55px);
+  pointer-events: none;
+  opacity: 0.85;
+
+  &.orb-1 {
+    width: 260px;
+    height: 260px;
+    top: 10%;
+    left: -15%;
+    background: radial-gradient(circle, rgba(160, 0, 226, 0.55) 0%, transparent 70%);
+    animation: floatOrb 10s ease-in-out infinite alternate;
+  }
+
+  &.orb-2 {
+    width: 320px;
+    height: 320px;
+    bottom: 25%;
+    right: -20%;
+    background: radial-gradient(circle, rgba(236, 72, 153, 0.45) 0%, transparent 70%);
+    animation: floatOrb 12s ease-in-out infinite alternate-reverse;
+  }
+
+  &.orb-3 {
+    width: 200px;
+    height: 200px;
+    top: 45%;
+    left: 20%;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.35) 0%, transparent 70%);
+    animation: floatOrb 8s ease-in-out infinite alternate;
+  }
+}
+
+.ambient-grid-pattern {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.45;
+}
+
+/* ==========================================================================
+   4. FULL-SCREEN SHOWCASE OFFER CONTENT
+   ========================================================================== */
+.splash-content-container {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+  padding: calc(env(safe-area-inset-top) + 70px) 20px max(20px, env(safe-area-inset-bottom)) 20px;
+  box-sizing: border-box;
+}
+
+.offer-hero-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Offer Tag Pill */
+.offer-tag-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 13px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  .live-pulse-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 8px #10b981;
+    animation: pulseDot 1.4s infinite;
+  }
+
+  .tag-text {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.7px;
+    color: #ffffff;
+    text-transform: uppercase;
+  }
+}
+
+/* Discount Super-Badge */
+.discount-super-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 14px;
+  background: linear-gradient(135deg, #f59e0b 0%, #ec4899 100%);
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 14px rgba(236, 72, 153, 0.45);
+  text-transform: uppercase;
+
+  .sparkle-icon {
+    font-size: 13px;
+  }
+}
+
+/* Headline & Subheadline */
+.offer-headline {
+  margin: 2px 0 0;
+  font-size: 26px;
+  line-height: 1.22;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+}
+
+.offer-subheadline {
   margin: 0;
+  font-size: 13.5px;
+  line-height: 1.4;
+  color: #cbd5e1;
+  font-weight: 500;
+  max-width: 320px;
+}
+
+/* Perks Highlights Strip */
+.offer-perks-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.perk-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 6px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  text-align: center;
+  gap: 3px;
+
+  .perk-icon {
+    font-size: 18px;
+  }
+
+  .perk-text-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .perk-title {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .perk-subtitle {
+    font-size: 9.5px;
+    color: #94a3b8;
+    font-weight: 500;
+    line-height: 1.15;
+    white-space: nowrap;
+  }
+}
+
+/* Promo Voucher Box */
+.promo-voucher-box {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px dashed rgba(255, 255, 255, 0.28);
+  border-radius: 14px;
+  box-sizing: border-box;
+  margin-top: 2px;
+}
+
+.voucher-ticket-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  flex-shrink: 0;
+
+  .voucher-label {
+    font-size: 9px;
+    font-weight: 800;
+    color: #fbbf24;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+  }
+
+  .voucher-code {
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: #ffffff;
+  }
+}
+
+.voucher-divider {
+  width: 1px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 0 12px;
+  flex-shrink: 0;
+}
+
+.voucher-ticket-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  min-width: 0;
+
+  .voucher-badge {
+    font-size: 9.5px;
+    font-weight: 800;
+    color: #34d399;
+    letter-spacing: 0.4px;
+  }
+
+  .voucher-terms {
+    font-size: 10px;
+    color: #cbd5e1;
+    line-height: 1.25;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 190px;
+  }
+}
+
+/* ==========================================================================
+   5. BOTTOM BRANDING & TAP HINT
+   ========================================================================== */
+.splash-footer-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 14px;
+  gap: 5px;
+}
+
+.brand-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 999px;
+  color: #e2e8f0;
+  font-size: 11.5px;
+  font-weight: 600;
+
+  .brand-bolt {
+    color: #fbbf24;
+  }
+
+  .brand-title {
+    font-weight: 800;
+    color: #ffffff;
+  }
+
+  .brand-sep {
+    color: rgba(255, 255, 255, 0.35);
+  }
+
+  .brand-desc {
+    color: #94a3b8;
+    font-size: 11px;
+  }
+}
+
+.tap-hint {
+  margin: 0;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.45);
   letter-spacing: 0.2px;
 }
 
-@keyframes spin {
+/* ==========================================================================
+   6. KEYFRAME ANIMATIONS
+   ========================================================================== */
+@keyframes spinCore {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
+@keyframes ringPulse {
+  0% { transform: scale(0.9); opacity: 0.8; }
+  50% { transform: scale(1.15); opacity: 0.2; }
+  100% { transform: scale(0.9); opacity: 0.8; }
+}
+
+@keyframes pillFadeIn {
+  from { opacity: 0; transform: translate(-50%, -10px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+@keyframes slideUpFade {
+  from { opacity: 0; transform: translateY(22px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.75); }
+}
+
+@keyframes floatOrb {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(25px, -20px) scale(1.1); }
+}

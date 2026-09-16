@@ -32,15 +32,10 @@
         </div>
       </div>
 
-      <!-- Right: Active Cart Button -->
-      <div class="header-right-cart" (click)="goToCart()" role="button" tabindex="0" title="View Cart">
-        <div class="cart-icon-btn">
-          <ion-icon [name]="activeTab === 'medicines' ? 'bag-handle-outline' : 'flask-outline'"></ion-icon>
-          @if (activeTab === 'medicines' && medSummary.itemCount > 0) {
-            <span class="cart-badge-count animate__animated animate__zoomIn">{{ medSummary.itemCount }}</span>
-          } @else if (activeTab === 'lab_tests' && labSummary.itemCount > 0) {
-            <span class="cart-badge-count lab animate__animated animate__zoomIn">{{ labSummary.itemCount }}</span>
-          }
+      <!-- Right: Search Icon Button (Replaces top cart button) -->
+      <div class="header-right-search" (click)="goToSearch()" role="button" tabindex="0" title="Search">
+        <div class="search-icon-btn">
+          <ion-icon name="search-outline"></ion-icon>
         </div>
       </div>
     </div>
@@ -75,24 +70,11 @@
         }
       </button>
     </div>
-
-    <!-- Dynamic Search Bar Trigger -->
-    <div class="search-trigger-row">
-      <div class="search-input-pill" (click)="goToSearch()" role="button" tabindex="0">
-        <ion-icon name="search-outline" class="search-icon"></ion-icon>
-        <span class="search-placeholder">
-          {{ activeTab === 'medicines' ? 'Search medicines, cough, fever, vitamins...' : 'Search blood tests, health packages, CBC...' }}
-        </span>
-        <button type="button" class="btn-search-action">
-          <span>{{ activeTab === 'medicines' ? 'Search' : 'Find Tests' }}</span>
-        </button>
-      </div>
-    </div>
   </ion-toolbar>
 </ion-header>
 
 <!-- Main Scrollable Body Content -->
-<ion-content [fullscreen]="true" class="pharmacy-content">
+<ion-content class="pharmacy-content">
   <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
@@ -144,6 +126,27 @@
         </div>
       </section>
 
+      <!-- Promotional Banner Strip: Medicine Fast Delivery & Discount -->
+      <section class="pharmacy-promo-banner-card medicine animate__animated animate__fadeIn">
+        <div class="banner-decor-glow"></div>
+        <div class="banner-inner">
+          <div class="banner-text-col">
+            <div class="banner-badge-pill">
+              <ion-icon name="flash-outline"></ion-icon>
+              <span>SUPERFAST 15-MIN DELIVERY</span>
+            </div>
+            <h4 class="banner-title">Flat 15% OFF on Medicines</h4>
+            <p class="banner-desc">Use coupon code <strong class="coupon-code">HEALTH15</strong> at checkout. 100% genuine medicines from licensed pharmacies.</p>
+          </div>
+          <div class="banner-art-col">
+            <div class="banner-discount-tag">
+              <span class="pct">15%</span>
+              <span class="off">OFF</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- 2. "You May Need" Section (Daily Fast-Moving Medicines) -->
       <section class="section-block">
         <div class="section-header-row">
@@ -156,7 +159,7 @@
 
         <div class="products-horizontal-scroll">
           @for (med of allMedicines.slice(0, 6); track med.id) {
-            <div class="product-card-pill">
+            <div class="product-card-pill" (click)="openMedicineDetails(med.id)" role="button" tabindex="0">
               <!-- Rx Badge if prescription required -->
               @if (med.prescriptionRequired) {
                 <span class="rx-required-tag">Rx</span>
@@ -242,7 +245,7 @@
         <!-- Filtered Medicines Grid -->
         <div class="medicines-catalog-grid">
           @for (med of displayedMedicines; track med.id) {
-            <div class="med-catalog-card">
+            <div class="med-catalog-card" (click)="openMedicineDetails(med.id)" role="button" tabindex="0">
               @if (med.prescriptionRequired) {
                 <span class="rx-required-tag">Rx</span>
               }
@@ -340,6 +343,27 @@
         </div>
       </section>
 
+      <!-- Promotional Banner Strip: Lab Tests Checkups -->
+      <section class="pharmacy-promo-banner-card lab animate__animated animate__fadeIn">
+        <div class="banner-decor-glow lab"></div>
+        <div class="banner-inner">
+          <div class="banner-text-col">
+            <div class="banner-badge-pill lab">
+              <ion-icon name="shield-checkmark-outline"></ion-icon>
+              <span>NABL &amp; ICMR CERTIFIED LABS</span>
+            </div>
+            <h4 class="banner-title">Full Body Health Checkups</h4>
+            <p class="banner-desc">Up to <strong>50% OFF</strong> on comprehensive health packages with free home sample collection.</p>
+          </div>
+          <div class="banner-art-col">
+            <div class="banner-discount-tag lab">
+              <span class="pct">50%</span>
+              <span class="off">OFF</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- 2. Health Concerns Categories -->
       <section class="section-block">
         <div class="section-header-row">
@@ -382,7 +406,7 @@
 
         <div class="lab-tests-list">
           @for (test of displayedLabTests; track test.id) {
-            <div class="lab-test-card" [class.booked]="isLabTestBooked(test.id)">
+            <div class="lab-test-card" [class.booked]="isLabTestBooked(test.id)" (click)="openLabTestDetails(test.id)" role="button" tabindex="0">
               <div class="test-header-row">
                 <div class="test-title-col">
                   <div class="test-tags-wrap">
@@ -501,54 +525,64 @@
   </main>
 
   <!-- ================================================================= -->
-  <!-- DOCKED BOTTOM CART STRIP (Independent for Active Service)         -->
+  <!-- DOCKED BOTTOM CART BANNER (Strictly independent per service)      -->
   <!-- ================================================================= -->
   @if (activeTab === 'medicines' && medSummary.itemCount > 0) {
-    <aside slot="fixed" class="docked-cart-bar medicine animate__animated animate__fadeInUp" (click)="goToCart('medicine')">
-      <div class="cart-bar-inner">
-        <div class="cart-left-col">
+    <aside slot="fixed" class="docked-cart-banner medicine animate__animated animate__fadeInUp">
+      <div class="cart-banner-card" (click)="goToCart('medicine')" role="button" tabindex="0">
+        <div class="banner-left">
           <div class="cart-icon-circle">
             <ion-icon name="bag-handle-outline"></ion-icon>
           </div>
           <div class="cart-text-col">
-            <span class="cart-qty-line">{{ medSummary.itemCount }} {{ medSummary.itemCount === 1 ? 'Medicine' : 'Medicines' }}</span>
-            <div class="cart-amount-line">
-              <span class="cart-total">₹{{ medSummary.grandTotal }}</span>
+            <div class="cart-badge-row">
+              <span class="badge-text">MEDICINE CART</span>
+              <span class="item-count-chip">{{ medSummary.itemCount }} {{ medSummary.itemCount === 1 ? 'ITEM' : 'ITEMS' }}</span>
+            </div>
+            <div class="cart-price-row">
+              <span class="cart-grand-total">₹{{ medSummary.grandTotal }}</span>
               @if (medSummary.savings > 0) {
-                <span class="cart-save-tag">Saved ₹{{ medSummary.savings }}</span>
+                <span class="cart-savings-chip">Saved ₹{{ medSummary.savings }}</span>
               }
             </div>
           </div>
         </div>
 
-        <button type="button" class="btn-view-cart" aria-label="View Medicine Cart">
-          <span>View Cart</span>
-          <ion-icon name="arrow-forward"></ion-icon>
-        </button>
+        <div class="banner-actions-right">
+          <button type="button" class="btn-view-cart" (click)="goToCart('medicine'); $event.stopPropagation()" aria-label="View Medicine Cart">
+            <span>View Cart</span>
+            <ion-icon name="arrow-forward"></ion-icon>
+          </button>
+        </div>
       </div>
     </aside>
   } @else if (activeTab === 'lab_tests' && labSummary.itemCount > 0) {
-    <aside slot="fixed" class="docked-cart-bar lab animate__animated animate__fadeInUp" (click)="goToCart('lab')">
-      <div class="cart-bar-inner">
-        <div class="cart-left-col">
+    <aside slot="fixed" class="docked-cart-banner lab animate__animated animate__fadeInUp">
+      <div class="cart-banner-card" (click)="goToCart('lab')" role="button" tabindex="0">
+        <div class="banner-left">
           <div class="cart-icon-circle lab">
             <ion-icon name="flask-outline"></ion-icon>
           </div>
           <div class="cart-text-col">
-            <span class="cart-qty-line">{{ labSummary.itemCount }} {{ labSummary.itemCount === 1 ? 'Test Package' : 'Test Packages' }}</span>
-            <div class="cart-amount-line">
-              <span class="cart-total">₹{{ labSummary.grandTotal }}</span>
+            <div class="cart-badge-row">
+              <span class="badge-text lab">LAB TESTS CART</span>
+              <span class="item-count-chip lab">{{ labSummary.itemCount }} {{ labSummary.itemCount === 1 ? 'PACKAGE' : 'PACKAGES' }}</span>
+            </div>
+            <div class="cart-price-row">
+              <span class="cart-grand-total">₹{{ labSummary.grandTotal }}</span>
               @if (labSummary.savings > 0) {
-                <span class="cart-save-tag lab">Saved ₹{{ labSummary.savings }}</span>
+                <span class="cart-savings-chip lab">Saved ₹{{ labSummary.savings }}</span>
               }
             </div>
           </div>
         </div>
 
-        <button type="button" class="btn-view-cart lab" aria-label="View Lab Cart">
-          <span>View Tests</span>
-          <ion-icon name="arrow-forward"></ion-icon>
-        </button>
+        <div class="banner-actions-right">
+          <button type="button" class="btn-view-cart lab" (click)="goToCart('lab'); $event.stopPropagation()" aria-label="View Lab Cart">
+            <span>View Cart</span>
+            <ion-icon name="arrow-forward"></ion-icon>
+          </button>
+        </div>
       </div>
     </aside>
   }

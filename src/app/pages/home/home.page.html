@@ -162,34 +162,42 @@
   </ion-refresher>
 
   <!-- Top Hero Banner Slider (hometop placement tag) -->
-  @if (!isOfflineOrOutOfServiceArea && banners && banners.length > 0) {
-    <section class="home-top-hero-slider">
-      <swiper-container
-        slides-per-view="1"
-        pagination="true"
-        autoplay-delay="3800"
-        autoplay-disable-on-interaction="false"
-        loop="true"
-        class="hero-swiper">
-        @for (banner of banners; track banner.id || $index) {
-          @if (isBannerImageValid(banner)) {
-            <swiper-slide>
-              <div
-                class="hero-banner-card"
-                (click)="navigateToBanner(banner)"
-                role="button"
-                tabindex="0">
-                <img
-                  [src]="getBannerImgUrl(banner)"
-                  [alt]="banner.title || 'Promotional Banner'"
-                  class="hero-banner-img"
-                  (error)="onBannerImgError(banner)" />
-              </div>
-            </swiper-slide>
+  @if (!isOfflineOrOutOfServiceArea) {
+    @if (isLoadingHeroBanners) {
+      <section class="home-top-hero-slider hero-skeleton-section">
+        <div class="hero-banner-skeleton-card">
+          <ion-skeleton-text animated class="hero-banner-skeleton-img"></ion-skeleton-text>
+        </div>
+      </section>
+    } @else if (banners && banners.length > 0) {
+      <section class="home-top-hero-slider">
+        <swiper-container
+          slides-per-view="1"
+          pagination="true"
+          autoplay-delay="3800"
+          autoplay-disable-on-interaction="false"
+          loop="true"
+          class="hero-swiper">
+          @for (banner of banners; track banner.id || $index) {
+            @if (isBannerImageValid(banner)) {
+              <swiper-slide>
+                <div
+                  class="hero-banner-card"
+                  (click)="navigateToBanner(banner)"
+                  role="button"
+                  tabindex="0">
+                  <img
+                    [src]="getBannerImgUrl(banner)"
+                    [alt]="banner.title || 'Promotional Banner'"
+                    class="hero-banner-img"
+                    (error)="onBannerImgError(banner)" />
+                </div>
+              </swiper-slide>
+            }
           }
-        }
-      </swiper-container>
-    </section>
+        </swiper-container>
+      </section>
+    }
   }
 
   <!-- Main Scrollable Home Body -->
@@ -355,6 +363,21 @@
           </div>
         }
 
+        <!-- Error State if Failed to load and empty -->
+        @else if (hasHomeDataError && allServices.length === 0) {
+          <div class="services-error-card">
+            <div class="error-icon-box">
+              <ion-icon name="cloud-offline-outline"></ion-icon>
+            </div>
+            <h4 class="error-title">Unable to Load Services</h4>
+            <p class="error-desc">We couldn't connect to Pintu servers. Please check your connection.</p>
+            <button type="button" class="btn-retry-services" (click)="retryHomeData()">
+              <ion-icon name="refresh-outline"></ion-icon>
+              <span>Tap to Retry</span>
+            </button>
+          </div>
+        }
+
         <!-- Dynamic Mosaic Grid -->
         @else {
           <div
@@ -468,7 +491,13 @@
       </section>
 
       <!-- Promotional Banners (Below Services - homedown placement tag) -->
-      @if (bottomBanners && bottomBanners.length > 0) {
+      @if (isLoadingBottomBanners) {
+        <section class="home-bottom-banners-section bottom-skeleton-section">
+          <div class="bottom-banner-skeleton-card">
+            <ion-skeleton-text animated class="bottom-banner-skeleton-img"></ion-skeleton-text>
+          </div>
+        </section>
+      } @else if (bottomBanners && bottomBanners.length > 0) {
         <section class="home-bottom-banners-section">
           @for (banner of bottomBanners; track banner.id || $index) {
             @if (isBannerImageValid(banner)) {
@@ -487,8 +516,6 @@
           }
         </section>
       }
-
-
     }
 
     <!-- Rich Brand Footer (Only shown when serviceable) -->

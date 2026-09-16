@@ -60,11 +60,13 @@
         <span class="shortcut-label">{{ 'orders' | translate }}</span>
       </div>
 
-      <div class="shortcut-box" (click)="openDetails('Saved Addresses')" role="button" tabindex="0">
+      <!-- 2. Pintu Pocket (Rewards Wallet) -->
+      <div class="shortcut-box" (click)="openPintuPocket()" role="button" tabindex="0">
         <div class="shortcut-icon-circle bg-emerald-light">
-          <ion-icon name="location-outline"></ion-icon>
+          <ion-icon name="wallet-outline"></ion-icon>
         </div>
-        <span class="shortcut-label">{{ 'saved_addresses' | translate }}</span>
+        <span class="shortcut-label">Pintu Pocket</span>
+        <span class="pocket-pill-chip">₹{{ (pocketBalance$ | async) | number:'1.0-0' }}</span>
       </div>
 
       <div class="shortcut-box" (click)="goToSupport()" role="button" tabindex="0">

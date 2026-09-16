@@ -231,9 +231,23 @@ export class PharmacySearchPage implements OnInit, OnDestroy {
     this.cartService.toggleLabTest(test);
   }
 
+  openMedicineDetails(id: string): void {
+    this.navCtrl.navigateForward(`/layout/pharmacy/medicine/${id}`);
+  }
+
+  openLabTestDetails(id: string): void {
+    this.navCtrl.navigateForward(`/layout/pharmacy/test/${id}`);
+  }
+
   goToCart(): void {
     this.router.navigate(['/layout/pharmacy/cart'], {
       queryParams: { type: this.searchType }
+    });
+  }
+
+  proceedToCheckout(): void {
+    this.router.navigate(['/layout/pharmacy/cart'], {
+      queryParams: { type: this.searchType, action: 'pay' }
     });
   }
 }

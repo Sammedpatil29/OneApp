@@ -1,28 +1,48 @@
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
 }
 
 .pharmacy-content {
   --background: #f8fafc;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
 
 /* =======================================================
    FIXED TOP HEADER & LOCATION BAR
    ======================================================= */
 .pharmacy-header {
+  --background: #ffffff;
   background: #ffffff;
   border-bottom: 1px solid #f1f5f9;
   box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
   z-index: 100;
+  padding: 0 !important;
+  margin: 0 !important;
+  --ion-safe-area-top: 0px;
+  flex-shrink: 0;
 
   .main-toolbar {
     --background: #ffffff;
+    background: #ffffff;
     --padding-start: 12px;
     --padding-end: 12px;
-    --padding-top: max(env(safe-area-inset-top, 0px), 8px);
-    --padding-bottom: 10px;
+    --padding-top: env(safe-area-inset-top, 0px);
+    --padding-bottom: 8px;
+    --min-height: 48px;
+    --border-width: 0;
+    padding: 0;
   }
 
   .header-top-row {
@@ -133,12 +153,11 @@
       }
     }
 
-    .header-right-cart {
+    .header-right-search {
       flex-shrink: 0;
       cursor: pointer;
 
-      .cart-icon-btn {
-        position: relative;
+      .search-icon-btn {
         width: 40px;
         height: 40px;
         border-radius: 12px;
@@ -149,28 +168,11 @@
         justify-content: center;
         color: #0f172a;
         font-size: 20px;
+        transition: all 0.15s ease;
 
-        .cart-badge-count {
-          position: absolute;
-          top: -4px;
-          right: -4px;
-          min-width: 18px;
-          height: 18px;
-          padding: 0 4px;
-          border-radius: 999px;
-          background: #059669;
-          color: #ffffff;
-          font-size: 10px;
-          font-weight: 850;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          box-shadow: 0 2px 6px rgba(5, 150, 105, 0.4);
-
-          &.lab {
-            background: #7c3aed;
-            box-shadow: 0 2px 6px rgba(124, 58, 237, 0.4);
-          }
+        &:active {
+          background: #f1f5f9;
+          transform: scale(0.95);
         }
       }
     }
@@ -184,7 +186,7 @@
     background: #f1f5f9;
     padding: 4px;
     border-radius: 14px;
-    margin-bottom: 10px;
+    margin-bottom: 0;
 
     .service-tab-btn {
       flex: 1;
@@ -234,55 +236,6 @@
         &:nth-child(2) .tab-icon-wrap {
           color: #7c3aed;
         }
-      }
-    }
-  }
-
-  // Dynamic Search Input Trigger
-  .search-trigger-row {
-    .search-input-pill {
-      display: flex;
-      align-items: center;
-      background: #f8fafc;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 999px;
-      padding: 4px 6px 4px 14px;
-      cursor: pointer;
-      transition: all 0.15s ease;
-
-      &:active {
-        background: #f1f5f9;
-        border-color: #cbd5e1;
-      }
-
-      .search-icon {
-        font-size: 18px;
-        color: #94a3b8;
-        margin-right: 8px;
-        flex-shrink: 0;
-      }
-
-      .search-placeholder {
-        flex: 1;
-        min-width: 0;
-        font-size: 12.5px;
-        color: #64748b;
-        font-weight: 500;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      .btn-search-action {
-        background: #0f172a;
-        color: #ffffff;
-        border: none;
-        border-radius: 999px;
-        padding: 6px 14px;
-        font-size: 11.5px;
-        font-weight: 750;
-        letter-spacing: 0.2px;
-        flex-shrink: 0;
       }
     }
   }
@@ -434,6 +387,132 @@
 
       &.lab {
         color: #5b21b6;
+      }
+    }
+  }
+}
+
+/* =======================================================
+   PROMOTIONAL BANNER STRIPS (Medicines & Lab Tests)
+   ======================================================= */
+.pharmacy-promo-banner-card {
+  position: relative;
+  border-radius: 18px;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, #064e3b 0%, #065f46 60%, #047857 100%);
+  color: #ffffff;
+  overflow: hidden;
+  box-shadow: 0 4px 18px rgba(6, 78, 59, 0.22);
+
+  &.lab {
+    background: linear-gradient(135deg, #0c4a6e 0%, #0369a1 60%, #0284c7 100%);
+    box-shadow: 0 4px 18px rgba(12, 74, 110, 0.22);
+  }
+
+  .banner-decor-glow {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    top: -40px;
+    right: -20px;
+    filter: blur(24px);
+    pointer-events: none;
+
+    &.lab {
+      background: rgba(56, 189, 248, 0.15);
+    }
+  }
+
+  .banner-inner {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    .banner-text-col {
+      flex: 1;
+      min-width: 0;
+
+      .banner-badge-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 9px;
+        font-weight: 850;
+        letter-spacing: 0.6px;
+        background: rgba(255, 255, 255, 0.18);
+        color: #a7f3d0;
+        padding: 2px 8px;
+        border-radius: 99px;
+        margin-bottom: 4px;
+
+        ion-icon {
+          font-size: 11px;
+        }
+
+        &.lab {
+          color: #bae6fd;
+        }
+      }
+
+      .banner-title {
+        margin: 0 0 3px 0;
+        font-size: 15px;
+        font-weight: 850;
+        color: #ffffff;
+        letter-spacing: -0.2px;
+      }
+
+      .banner-desc {
+        margin: 0;
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.88);
+        line-height: 1.35;
+
+        .coupon-code {
+          color: #fef08a;
+          letter-spacing: 0.4px;
+        }
+      }
+    }
+
+    .banner-art-col {
+      flex-shrink: 0;
+
+      .banner-discount-tag {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.18);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(8px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #ffffff;
+        line-height: 1;
+
+        .pct {
+          font-size: 15px;
+          font-weight: 900;
+        }
+
+        .off {
+          font-size: 9px;
+          font-weight: 800;
+          letter-spacing: 0.5px;
+          margin-top: 2px;
+          opacity: 0.9;
+        }
+
+        &.lab {
+          background: rgba(255, 255, 255, 0.2);
+        }
       }
     }
   }
@@ -1136,122 +1215,201 @@
 }
 
 /* =======================================================
-   DOCKED BOTTOM CART STRIP
+   DOCKED BOTTOM CART BANNER (Home page active order style)
    ======================================================= */
-.docked-cart-bar {
+.docked-cart-banner {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   width: 100%;
-  padding: 8px 14px max(env(safe-area-inset-bottom, 0px), 12px);
-  background: linear-gradient(to top, rgba(255, 255, 255, 1) 75%, rgba(255, 255, 255, 0) 100%);
-  z-index: 95;
-  cursor: pointer;
+  padding: 8px 14px calc(env(safe-area-inset-bottom, 0px) + 14px);
+  background: linear-gradient(to top, rgba(248, 250, 252, 1) 75%, rgba(248, 250, 252, 0.9) 50%, rgba(248, 250, 252, 0) 100%);
+  z-index: 99;
+  pointer-events: auto;
+  box-sizing: border-box;
 
-  .cart-bar-inner {
-    background: #064e3b;
+  .cart-banner-card {
+    background: linear-gradient(135deg, #064e3b 0%, #022c22 100%);
+    border: 1px solid rgba(52, 211, 153, 0.35);
     border-radius: 16px;
-    padding: 10px 16px;
+    padding: 10px 14px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    color: #ffffff;
+    gap: 10px;
     box-shadow: 0 6px 20px rgba(6, 78, 59, 0.35);
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
 
-    .cart-left-col {
+    &:active {
+      transform: scale(0.985);
+      box-shadow: 0 3px 12px rgba(6, 78, 59, 0.25);
+    }
+
+    .banner-left {
       display: flex;
       align-items: center;
       gap: 10px;
+      min-width: 0;
+      flex: 1;
 
       .cart-icon-circle {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.2);
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.15);
+        color: #ffffff;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 18px;
+        flex-shrink: 0;
 
         &.lab {
-          background: rgba(255, 255, 255, 0.25);
+          background: rgba(255, 255, 255, 0.18);
         }
       }
 
       .cart-text-col {
         display: flex;
         flex-direction: column;
+        min-width: 0;
+        gap: 2px;
 
-        .cart-qty-line {
-          font-size: 11px;
-          font-weight: 750;
-          color: #a7f3d0;
-          text-transform: uppercase;
-        }
-
-        .cart-amount-line {
+        .cart-badge-row {
           display: flex;
           align-items: center;
           gap: 6px;
+          flex-wrap: wrap;
 
-          .cart-total {
-            font-size: 15px;
+          .badge-text {
+            font-size: 9.5px;
             font-weight: 850;
-            color: #ffffff;
+            color: #34d399;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+
+            &.lab {
+              color: #38bdf8;
+            }
           }
 
-          .cart-save-tag {
-            font-size: 10px;
+          .item-count-chip {
+            font-size: 9px;
             font-weight: 800;
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.18);
+            color: #ffffff;
             padding: 1px 5px;
             border-radius: 4px;
+
+            &.lab {
+              background: rgba(255, 255, 255, 0.2);
+            }
+          }
+        }
+
+        .cart-price-row {
+          display: flex;
+          align-items: baseline;
+          gap: 6px;
+
+          .cart-grand-total {
+            font-size: 16px;
+            font-weight: 900;
             color: #ffffff;
+            letter-spacing: -0.2px;
+          }
+
+          .cart-savings-chip {
+            font-size: 9.5px;
+            font-weight: 800;
+            background: rgba(16, 185, 129, 0.25);
+            color: #a7f3d0;
+            padding: 1px 5px;
+            border-radius: 4px;
+
+            &.lab {
+              background: rgba(56, 189, 248, 0.25);
+              color: #bae6fd;
+            }
+          }
+
+          .cart-tap-note {
+            font-size: 11px;
+            color: #94a3b8;
+            font-weight: 500;
           }
         }
       }
     }
 
-    .btn-view-cart {
-      background: #ffffff;
-      color: #064e3b;
-      border: none;
-      border-radius: 99px;
-      padding: 7px 16px;
-      font-size: 12.5px;
-      font-weight: 850;
-      display: inline-flex;
+    .banner-actions-right {
+      display: flex;
       align-items: center;
-      gap: 4px;
-      cursor: pointer;
+      flex-shrink: 0;
 
-      ion-icon {
-        font-size: 14px;
-      }
+      .btn-view-cart {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: #ffffff;
+        border: none;
+        border-radius: 99px;
+        padding: 8px 16px;
+        font-size: 12.5px;
+        font-weight: 850;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        box-shadow: 0 3px 12px rgba(16, 185, 129, 0.4);
+        cursor: pointer;
+        transition: all 0.15s ease;
 
-      &.lab {
-        color: #5b21b6;
+        ion-icon {
+          font-size: 14px;
+        }
+
+        &.lab {
+          background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+          box-shadow: 0 3px 12px rgba(2, 132, 199, 0.4);
+        }
+
+        &:active {
+          transform: scale(0.95);
+        }
       }
     }
   }
 
-  &.lab .cart-bar-inner {
-    background: #4c1d95;
-    box-shadow: 0 6px 20px rgba(76, 29, 149, 0.35);
+  &.lab .cart-banner-card {
+    background: linear-gradient(135deg, #0c4a6e 0%, #082f49 100%);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    box-shadow: 0 6px 20px rgba(12, 74, 110, 0.35);
 
-    .cart-text-col .cart-qty-line {
-      color: #e9d5ff;
+    &:active {
+      box-shadow: 0 3px 12px rgba(12, 74, 110, 0.25);
     }
   }
 }
 
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
 .bottom-nav-spacer {
-  height: 20px;
+  height: 24px;
   width: 100%;
+  transition: height 0.2s ease;
 
   &.has-cart {
-    height: 80px;
+    height: 120px;
   }
 }
 

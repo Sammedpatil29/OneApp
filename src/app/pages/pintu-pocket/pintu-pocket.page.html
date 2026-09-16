@@ -1,0 +1,262 @@
+<ion-header class="pocket-header ion-no-border">
+  <ion-toolbar class="pocket-toolbar">
+    <div class="header-content-row">
+      <button type="button" class="btn-back" (click)="goBack()" aria-label="Go Back">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </button>
+
+      <div class="header-title-col">
+        <h3 class="header-title">Pintu Pocket</h3>
+        <span class="header-subtitle">Rewards &amp; Welcome Bonus Wallet</span>
+      </div>
+
+      <div class="pocket-icon-badge" title="Rewards Wallet">
+        <ion-icon name="wallet-outline"></ion-icon>
+      </div>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="pocket-content">
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <main class="pocket-container">
+
+    <!-- ─── 1. HERO POCKET REWARDS CARD ──────────────────────────────────────── -->
+    <section class="pocket-hero-card">
+      <div class="hero-bg-glow glow-1"></div>
+      <div class="hero-bg-glow glow-2"></div>
+
+      <div class="card-top-row">
+        <div class="wallet-tag">
+          <ion-icon name="sparkles-outline"></ion-icon>
+          <span>REWARDS &amp; BONUS POCKET</span>
+        </div>
+        <span class="live-active-tag">100% USABLE</span>
+      </div>
+
+      <div class="card-balance-block">
+        <span class="balance-label">Total Rewards Balance</span>
+        <div class="balance-number-row">
+          <span class="currency-symbol">₹</span>
+          <span class="balance-amount">{{ (balance$ | async) | number:'1.2-2' }}</span>
+        </div>
+      </div>
+
+      <div class="card-perk-footer">
+        <div class="perk-pill">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+          <span>Auto-applied to discount your next orders</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── 2. REWARDS WALLET NOTICE ─────────────────────────────────────────── -->
+    <section class="wallet-info-note">
+      <div class="note-icon-wrap">
+        <ion-icon name="information-circle-outline"></ion-icon>
+      </div>
+      <div class="note-text-col">
+        <h6>Promotional Rewards Wallet</h6>
+        <p>Pintu Pocket cannot be manually loaded. It exclusively accumulates your Welcome Bonus, Order Cashbacks, and Referral Rewards.</p>
+      </div>
+    </section>
+
+    <!-- ─── 3. WAYS TO EARN REWARDS ──────────────────────────────────────────── -->
+    <section class="how-to-earn-section">
+      <div class="section-heading-row">
+        <div class="section-title-col">
+          <h4 class="section-title">Ways to Earn Rewards</h4>
+          <span class="section-subtitle">Boost your Pocket balance across Pintu services</span>
+        </div>
+      </div>
+
+      <div class="earn-cards-list">
+
+        <!-- Welcome Bonus Card -->
+        <div class="earn-card welcome">
+          <div class="earn-icon-circle amber">
+            <ion-icon name="sparkles-outline"></ion-icon>
+          </div>
+          <div class="earn-info-col">
+            <div class="earn-title-row">
+              <h5>Welcome Joining Bonus</h5>
+              <span class="reward-tag amber">₹50 Bonus</span>
+            </div>
+            <p>Instant bonus credited to your Pintu Pocket upon account onboarding &amp; profile verification.</p>
+          </div>
+        </div>
+
+        <!-- Order Cashbacks Card -->
+        <div class="earn-card cashback">
+          <div class="earn-icon-circle green">
+            <ion-icon name="cart-outline"></ion-icon>
+          </div>
+          <div class="earn-info-col">
+            <div class="earn-title-row">
+              <h5>Order Cashbacks</h5>
+              <span class="reward-tag green">Up to 10%</span>
+            </div>
+            <p>Earn instant cashback on Groceries, Rides, Medicines &amp; Dineout bill payments.</p>
+            <button type="button" class="btn-earn-action green" (click)="goToExplore()">
+              <span>Order Now &amp; Earn</span>
+              <ion-icon name="arrow-forward"></ion-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- Referral Rewards Card -->
+        <div class="earn-card referral">
+          <div class="earn-icon-circle purple">
+            <ion-icon name="gift-outline"></ion-icon>
+          </div>
+          <div class="earn-info-col">
+            <div class="earn-title-row">
+              <h5>Refer Friends &amp; Family</h5>
+              <span class="reward-tag purple">₹50 / Friend</span>
+            </div>
+            <p>Share your invite code. You both receive bonus rewards when your friend places their first order.</p>
+            <button type="button" class="btn-earn-action purple" (click)="goToReferral()">
+              <span>Invite Friends</span>
+              <ion-icon name="arrow-forward"></ion-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- Campaign Drops Card -->
+        <div class="earn-card campaigns">
+          <div class="earn-icon-circle rose">
+            <ion-icon name="star-outline"></ion-icon>
+          </div>
+          <div class="earn-info-col">
+            <div class="earn-title-row">
+              <h5>Seasonal Drops &amp; Contests</h5>
+              <span class="reward-tag rose">Surprise Drops</span>
+            </div>
+            <p>Participate in festive scratch cards and promotional sales events for surprise rewards.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ─── 4. POCKET ADVANTAGES ────────────────────────────────────────────── -->
+    <section class="perks-grid">
+      <div class="perk-card">
+        <div class="perk-icon-circle purple">
+          <ion-icon name="flash-outline"></ion-icon>
+        </div>
+        <div class="perk-text">
+          <h5>1-Tap Auto-Apply</h5>
+          <p>Deducts automatically at checkout without entering coupon codes</p>
+        </div>
+      </div>
+
+      <div class="perk-card">
+        <div class="perk-icon-circle green">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+        </div>
+        <div class="perk-text">
+          <h5>Stacks with Coupons</h5>
+          <p>Use your Pocket rewards on top of merchant discounts and offers</p>
+        </div>
+      </div>
+
+      <div class="perk-card">
+        <div class="perk-icon-circle amber">
+          <ion-icon name="refresh-outline"></ion-icon>
+        </div>
+        <div class="perk-text">
+          <h5>Instant Re-credit</h5>
+          <p>Cancelled orders immediately restore your spent Pocket rewards</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── 5. PASSBOOK / TRANSACTION HISTORY ───────────────────────────────── -->
+    <section class="passbook-section">
+      <div class="passbook-header">
+        <div class="passbook-title-col">
+          <h4 class="passbook-title">Pocket Passbook</h4>
+          <span class="passbook-sub">Complete rewards earnings &amp; redemptions</span>
+        </div>
+      </div>
+
+      <!-- Filter Tabs -->
+      <div class="filter-tabs-strip">
+        <button
+          type="button"
+          class="filter-pill"
+          [class.active]="activeFilter === 'all'"
+          (click)="activeFilter = 'all'">
+          All History
+        </button>
+        <button
+          type="button"
+          class="filter-pill"
+          [class.active]="activeFilter === 'earned'"
+          (click)="activeFilter = 'earned'">
+          🎁 Rewards Earned
+        </button>
+        <button
+          type="button"
+          class="filter-pill"
+          [class.active]="activeFilter === 'spent'"
+          (click)="activeFilter = 'spent'">
+          🛒 Redeemed on Orders
+        </button>
+      </div>
+
+      <!-- Transactions List -->
+      <div class="transactions-list">
+        @let filteredTxns = filterTransactions(transactions$ | async);
+
+        @if (filteredTxns.length > 0) {
+          @for (txn of filteredTxns; track txn.id) {
+            <div class="txn-card">
+              <div class="txn-icon-circle" [class.credit]="txn.type === 'credit'" [class.debit]="txn.type === 'debit'">
+                @if (txn.type === 'credit') {
+                  <ion-icon name="gift-outline"></ion-icon>
+                } @else {
+                  <ion-icon name="cart-outline"></ion-icon>
+                }
+              </div>
+
+              <div class="txn-info-col">
+                <span class="txn-title">{{ txn.title }}</span>
+                <span class="txn-subtitle">{{ txn.subtitle }}</span>
+                <div class="txn-meta-row">
+                  <span class="txn-time">{{ formatDate(txn.timestamp) }} • {{ formatTime(txn.timestamp) }}</span>
+                  <span class="txn-ref">#{{ txn.referenceId }}</span>
+                </div>
+              </div>
+
+              <div class="txn-amount-col">
+                <span class="txn-amount" [class.credit]="txn.type === 'credit'" [class.debit]="txn.type === 'debit'">
+                  {{ txn.type === 'credit' ? '+' : '-' }}₹{{ txn.amount }}
+                </span>
+                <span class="txn-category-badge" [class.credit]="txn.type === 'credit'">
+                  {{ txn.type === 'credit' ? 'EARNED' : 'REDEEMED' }}
+                </span>
+              </div>
+            </div>
+          }
+        } @else {
+          <div class="empty-passbook">
+            <div class="empty-icon-circle">
+              <ion-icon name="receipt-outline"></ion-icon>
+            </div>
+            <h5>No Transactions Found</h5>
+            <p>Records for this filter will appear here</p>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Bottom Spacing -->
+    <div class="pocket-bottom-spacer"></div>
+
+  </main>
+</ion-content>

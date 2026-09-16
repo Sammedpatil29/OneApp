@@ -146,6 +146,6 @@ export class EventsPage implements OnInit {
 
   openBookings() { this.navCtrl.navigateForward('/layout/history'); }
   openHelp() { this.navCtrl.navigateForward('/layout/support'); }
-  back() { this.navCtrl.back(); }
-  goBack() { this.navCtrl.back(); }
+  back() { this.navCtrl.navigateRoot('/layout/home'); }
+  goBack() { this.navCtrl.navigateRoot('/layout/home'); }
 }

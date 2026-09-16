@@ -167,10 +167,14 @@ export class DineoutPage implements OnInit {
   }
 
   goHome() {
-    this.navCtrl.navigateBack(['/home']);
+    this.navCtrl.navigateRoot('/layout/home');
   }
 
   gotohome() {
-    this.navCtrl.navigateForward('/layout/example/home');
+    this.navCtrl.navigateRoot('/layout/home');
+  }
+
+  goBack() {
+    this.navCtrl.navigateRoot('/layout/home');
   }
 }

@@ -1,0 +1,242 @@
+<ion-header class="lab-details-header ion-no-border">
+  <ion-toolbar class="lab-details-toolbar">
+    <div class="header-top-row">
+      <button type="button" class="btn-nav-back" (click)="goBack()" aria-label="Go Back">
+        <ion-icon name="arrow-back"></ion-icon>
+      </button>
+
+      <div class="header-center-title">
+        <h4>Package Details</h4>
+      </div>
+
+      <div class="header-actions-right">
+        <button type="button" class="btn-share-nav" (click)="sharePackage()" aria-label="Share">
+          <ion-icon name="share-social-outline"></ion-icon>
+        </button>
+      </div>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="lab-details-content">
+  @if (testPackage) {
+    <main class="lab-details-container">
+
+      <!-- ─── 1. PACKAGE HERO & ACCREDITATION ─────────────────────────────────── -->
+      <section class="package-hero-card">
+        <div class="hero-top-badges">
+          <div class="accreditation-chip">
+            <ion-icon name="shield-checkmark-outline"></ion-icon>
+            <span>NABL &amp; ICMR ACCREDITED LAB</span>
+          </div>
+          @if (testPackage.discountPercent > 0) {
+            <span class="discount-pill">{{ testPackage.discountPercent }}% OFF</span>
+          }
+        </div>
+
+        <h2 class="package-name">{{ testPackage.name }}</h2>
+        <p class="package-description">{{ testPackage.description }}</p>
+
+        @if (testPackage.recommendedFor) {
+          <div class="recommended-row">
+            <span class="rec-label">Recommended for:</span>
+            <span class="rec-val">{{ testPackage.recommendedFor }}</span>
+          </div>
+        }
+
+        <!-- Tags Row -->
+        <div class="tags-pills-row">
+          @for (tag of testPackage.tags; track tag) {
+            <span class="tag-chip">• {{ tag }}</span>
+          }
+        </div>
+      </section>
+
+      <!-- ─── 2. TEST HIGHLIGHTS MATRIX ──────────────────────────────────────── -->
+      <section class="highlights-matrix-card">
+        <div class="highlight-tile">
+          <div class="tile-icon-box blue">
+            <ion-icon name="flask-outline"></ion-icon>
+          </div>
+          <div class="tile-text">
+            <span class="tile-val">{{ testPackage.testCount }} Tests</span>
+            <span class="tile-lbl">Included in Package</span>
+          </div>
+        </div>
+
+        <div class="highlight-tile">
+          <div class="tile-icon-box orange">
+            <ion-icon name="time-outline"></ion-icon>
+          </div>
+          <div class="tile-text">
+            <span class="tile-val">{{ testPackage.fastingRequirement }}</span>
+            <span class="tile-lbl">Preparation</span>
+          </div>
+        </div>
+
+        <div class="highlight-tile">
+          <div class="tile-icon-box purple">
+            <ion-icon name="water-outline"></ion-icon>
+          </div>
+          <div class="tile-text">
+            <span class="tile-val">{{ testPackage.sampleType }}</span>
+            <span class="tile-lbl">Sample Type</span>
+          </div>
+        </div>
+
+        <div class="highlight-tile">
+          <div class="tile-icon-box green">
+            <ion-icon name="receipt-outline"></ion-icon>
+          </div>
+          <div class="tile-text">
+            <span class="tile-val">{{ testPackage.reportTimeHours }} Hours</span>
+            <span class="tile-lbl">Report Turnaround</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── 3. PRICING & BOOKING CTA ───────────────────────────────────────── -->
+      <section class="package-pricing-card">
+        <div class="pricing-main-row">
+          <div class="price-col">
+            <div class="price-line">
+              <span class="selling-price">₹{{ testPackage.price }}</span>
+              @if (testPackage.mrp > testPackage.price) {
+                <span class="mrp-strike">₹{{ testPackage.mrp }}</span>
+                <span class="savings-tag">Save ₹{{ testPackage.mrp - testPackage.price }}</span>
+              }
+            </div>
+            <span class="tax-footnote">Free home sample collection on orders &gt; ₹499</span>
+          </div>
+
+          <button
+            type="button"
+            class="btn-book-action"
+            [class.booked]="isBooked"
+            (click)="toggleBooking()">
+            @if (isBooked) {
+              <ion-icon name="checkmark-circle"></ion-icon>
+              <span>ADDED TO CART</span>
+            } @else {
+              <ion-icon name="add"></ion-icon>
+              <span>BOOK PACKAGE</span>
+            }
+          </button>
+        </div>
+
+        <!-- Sample Pickup Guarantee Strip -->
+        <div class="pickup-guarantee-strip">
+          <div class="pickup-icon-box">
+            <ion-icon name="home-outline"></ion-icon>
+          </div>
+          <div class="pickup-text-col">
+            <span class="pickup-title">🏡 Doorstep Home Sample Pickup</span>
+            <span class="pickup-sub">Strictly hygienic single-use vacutainers &amp; cold-chain preservation</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── 4. PARAMETERS INCLUDED ─────────────────────────────────────────── -->
+      <section class="info-card">
+        <div class="section-title-row">
+          <h4 class="card-section-title">
+            <ion-icon name="document-text-outline" class="title-icon blue"></ion-icon>
+            <span>Included Tests &amp; Parameters ({{ testPackage.parameters.length }})</span>
+          </h4>
+        </div>
+        <p class="section-para">This diagnostic package examines key biomarkers to evaluate your overall systemic health.</p>
+
+        <div class="parameters-list">
+          @for (param of testPackage.parameters; track param; let idx = $index) {
+            <div class="parameter-item">
+              <span class="param-number">{{ idx + 1 }}.</span>
+              <span class="param-title">{{ param }}</span>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- ─── 5. PREPARATION GUIDELINES ──────────────────────────────────────── -->
+      <section class="info-card">
+        <h4 class="card-section-title">
+          <ion-icon name="medkit-outline" class="title-icon green"></ion-icon>
+          <span>Preparation &amp; Instructions</span>
+        </h4>
+
+        <div class="instructions-steps">
+          <div class="instruction-step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <strong>Fasting Guidelines</strong>
+              <p>{{ testPackage.fastingRequirement }}. Plain water is allowed and recommended to keep veins hydrated.</p>
+            </div>
+          </div>
+
+          <div class="instruction-step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <strong>Certified Phlebotomist Visit</strong>
+              <p>A trained, vaccinated health specialist visits your home at your selected date and 30-minute time slot.</p>
+            </div>
+          </div>
+
+          <div class="instruction-step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <strong>Smart Digital Report Delivery</strong>
+              <p>Verified digital reports will be available on the app and WhatsApp within {{ testPackage.reportTimeHours }} hours, reviewed by MD Pathologists.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── 6. QUALITY & TRUST GUARANTEE ───────────────────────────────────── -->
+      <section class="trust-guarantee-card">
+        <div class="shield-circle">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+        </div>
+        <div class="trust-text-col">
+          <h5>Certified &amp; Calibrated Equipment</h5>
+          <p>All blood, serum, and urine samples are tested in NABL, CAP, and ICMR accredited laboratory facilities using automated analyzers with two-tier doctor sign-off.</p>
+        </div>
+      </section>
+
+      <!-- Bottom Spacer for Clean Scrolling Above Docked Cart Bar -->
+      <div class="bottom-nav-spacer" [class.has-cart]="labSummary.itemCount > 0"></div>
+
+    </main>
+
+    <!-- ─── DOCKED BOTTOM CART BANNER (Strictly Independent Lab Cart) ────────── -->
+    @if (labSummary.itemCount > 0) {
+      <aside slot="fixed" class="docked-cart-banner lab animate__animated animate__fadeInUp">
+        <div class="cart-banner-card" (click)="goToCart()" role="button" tabindex="0">
+          <div class="banner-left">
+            <div class="cart-icon-circle lab">
+              <ion-icon name="flask-outline"></ion-icon>
+            </div>
+            <div class="cart-text-col">
+              <div class="cart-badge-row">
+                <span class="badge-text lab">LAB TESTS CART</span>
+                <span class="item-count-chip lab">{{ labSummary.itemCount }} {{ labSummary.itemCount === 1 ? 'PACKAGE' : 'PACKAGES' }}</span>
+              </div>
+              <div class="cart-price-row">
+                <span class="cart-grand-total">₹{{ labSummary.grandTotal }}</span>
+                @if (labSummary.savings > 0) {
+                  <span class="cart-savings-chip lab">Saved ₹{{ labSummary.savings }}</span>
+                }
+              </div>
+            </div>
+          </div>
+
+          <div class="banner-actions-right">
+            <button type="button" class="btn-view-cart lab" (click)="goToCart(); $event.stopPropagation()" aria-label="View Lab Cart">
+              <span>View Cart</span>
+              <ion-icon name="arrow-forward"></ion-icon>
+            </button>
+          </div>
+        </div>
+      </aside>
+    }
+  }
+</ion-content>
+

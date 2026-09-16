@@ -1,0 +1,217 @@
+<ion-header class="med-details-header ion-no-border">
+  <ion-toolbar class="med-details-toolbar">
+    <div class="header-top-row">
+      <button type="button" class="btn-nav-back" (click)="goBack()" aria-label="Go Back">
+        <ion-icon name="arrow-back"></ion-icon>
+      </button>
+
+      <div class="header-center-title">
+        <h4>Product Details</h4>
+      </div>
+
+      <div class="header-actions-right">
+        <button type="button" class="btn-share-nav" (click)="shareProduct()" aria-label="Share">
+          <ion-icon name="share-social-outline"></ion-icon>
+        </button>
+      </div>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="med-details-content">
+  @if (medicine) {
+    <main class="med-details-container">
+
+      <!-- ─── 1. PRODUCT PHOTO & BADGES ──────────────────────────────────────── -->
+      <section class="product-gallery-card">
+        <div class="gallery-image-box">
+          <img [src]="medicine.image" [alt]="medicine.name" />
+          @if (medicine.discountPercent > 0) {
+            <span class="discount-badge-ribbon">{{ medicine.discountPercent }}% OFF</span>
+          }
+          @if (medicine.prescriptionRequired) {
+            <span class="rx-pill-badge">Rx Prescription Required</span>
+          }
+        </div>
+      </section>
+
+      <!-- ─── 2. TITLE, BRAND & PACK INFO ────────────────────────────────────── -->
+      <section class="product-header-card">
+        <span class="product-brand">{{ medicine.brand }}</span>
+        <h2 class="product-title">{{ medicine.name }}</h2>
+
+        <div class="product-specs-row">
+          <span class="spec-pill">{{ medicine.dosageForm }}</span>
+          <span class="spec-pill">{{ medicine.packSize }}</span>
+          @if (medicine.inStock) {
+            <span class="spec-pill in-stock">
+              <ion-icon name="checkmark-circle"></ion-icon>
+              In Stock
+            </span>
+          }
+        </div>
+
+        <!-- Salt / Composition -->
+        <div class="composition-info-row">
+          <span class="comp-label">Composition:</span>
+          <span class="comp-val">{{ medicine.composition || (medicine.name + ' • Standard USP Formulation') }}</span>
+        </div>
+
+        <div class="manufacturer-info-row">
+          <span class="mfg-label">Marketer:</span>
+          <span class="mfg-val">{{ medicine.manufacturer || (medicine.brand + ' Pharmaceuticals Ltd.') }}</span>
+        </div>
+      </section>
+
+      <!-- ─── 3. PRICING & ADD-TO-CART CARD ──────────────────────────────────── -->
+      <section class="product-pricing-card">
+        <div class="pricing-main-row">
+          <div class="price-col">
+            <div class="price-line">
+              <span class="selling-price">₹{{ medicine.price }}</span>
+              @if (medicine.mrp > medicine.price) {
+                <span class="mrp-strike">MRP ₹{{ medicine.mrp }}</span>
+                <span class="savings-tag">Save ₹{{ medicine.mrp - medicine.price }}</span>
+              }
+            </div>
+            <span class="tax-footnote">Inclusive of all applicable taxes</span>
+          </div>
+
+          <!-- Quantity Stepper / Add Button -->
+          <div class="cta-col">
+            @if (medQty === 0) {
+              <button type="button" class="btn-primary-add" (click)="addToCart()">
+                <ion-icon name="add"></ion-icon>
+                <span>ADD TO CART</span>
+              </button>
+            } @else {
+              <div class="qty-stepper">
+                <button type="button" class="btn-stepper" (click)="decrement()" aria-label="Decrease Quantity">
+                  <ion-icon name="remove"></ion-icon>
+                </button>
+                <span class="qty-number">{{ medQty }}</span>
+                <button type="button" class="btn-stepper" (click)="increment()" aria-label="Increase Quantity">
+                  <ion-icon name="add"></ion-icon>
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Fast 15-Min Delivery Badge -->
+        <div class="fast-delivery-strip">
+          <div class="delivery-icon-box">
+            <ion-icon name="flash-outline"></ion-icon>
+          </div>
+          <div class="delivery-text-col">
+            <span class="delivery-title">⚡ Instant 15-Minute Delivery</span>
+            <span class="delivery-sub">Verified &amp; packed by licensed pharmacists</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── 4. USES & BENEFITS ─────────────────────────────────────────────── -->
+      <section class="info-card">
+        <h4 class="card-section-title">
+          <ion-icon name="medkit-outline"></ion-icon>
+          <span>What is it used for?</span>
+        </h4>
+        <p class="section-para">{{ medicine.description }}</p>
+
+        @if (medicine.uses && medicine.uses.length > 0) {
+          <div class="uses-chips-wrap">
+            @for (use of medicine.uses; track use) {
+              <span class="use-chip">• {{ use }}</span>
+            }
+          </div>
+        }
+      </section>
+
+      <!-- ─── 5. DIRECTIONS FOR USE ──────────────────────────────────────────── -->
+      <section class="info-card">
+        <h4 class="card-section-title">
+          <ion-icon name="information-circle-outline"></ion-icon>
+          <span>Directions for Use &amp; Dosage</span>
+        </h4>
+        <p class="section-para">
+          {{ medicine.directionsForUse || 'Take this medicine in the dose and duration as advised by your physician. Swallow it as a whole with water. Do not chew, crush or break the tablet.' }}
+        </p>
+      </section>
+
+      <!-- ─── 6. SAFETY ADVICE ────────────────────────────────────────────────── -->
+      <section class="info-card">
+        <h4 class="card-section-title">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+          <span>Safety Advice &amp; Warnings</span>
+        </h4>
+
+        <div class="safety-advice-grid">
+          <div class="safety-item">
+            <span class="safety-topic">Alcohol</span>
+            <span class="safety-detail">Avoid or consult doctor. May increase risk of stomach upset or drowsiness.</span>
+          </div>
+          <div class="safety-item">
+            <span class="safety-topic">Pregnancy &amp; Breastfeeding</span>
+            <span class="safety-detail">Consult your physician before taking this medication during pregnancy.</span>
+          </div>
+          <div class="safety-item">
+            <span class="safety-topic">Driving</span>
+            <span class="safety-detail">Generally safe, but avoid driving if you experience dizziness or drowsiness.</span>
+          </div>
+          <div class="safety-item">
+            <span class="safety-topic">Kidney &amp; Liver</span>
+            <span class="safety-detail">Dose adjustment may be needed for patients with active kidney or liver conditions.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── 7. TRUST & AUTHENTICITY BADGE ─────────────────────────────────── -->
+      <section class="trust-guarantee-card">
+        <div class="shield-circle">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+        </div>
+        <div class="trust-text-col">
+          <h5>100% Genuine Medicine Guarantee</h5>
+          <p>Sourced directly from authorized pharmaceutical distributors under strict temperature and storage compliance.</p>
+        </div>
+      </section>
+
+      <!-- Bottom Spacer for Clean Scrolling Above Docked Cart Bar -->
+      <div class="bottom-nav-spacer" [class.has-cart]="medSummary.itemCount > 0"></div>
+
+    </main>
+
+    <!-- ─── DOCKED BOTTOM CART BAR (Independent Medicine Cart) ─────────────── -->
+    @if (medSummary.itemCount > 0) {
+      <aside slot="fixed" class="docked-cart-banner medicine animate__animated animate__fadeInUp">
+        <div class="cart-banner-card" (click)="goToCart()" role="button" tabindex="0">
+          <div class="banner-left">
+            <div class="cart-icon-circle">
+              <ion-icon name="bag-handle-outline"></ion-icon>
+            </div>
+            <div class="cart-text-col">
+              <div class="cart-badge-row">
+                <span class="badge-text">MEDICINE CART</span>
+                <span class="item-count-chip">{{ medSummary.itemCount }} {{ medSummary.itemCount === 1 ? 'ITEM' : 'ITEMS' }}</span>
+              </div>
+              <div class="cart-price-row">
+                <span class="cart-grand-total">₹{{ medSummary.grandTotal }}</span>
+                @if (medSummary.savings > 0) {
+                  <span class="cart-savings-chip">Saved ₹{{ medSummary.savings }}</span>
+                }
+              </div>
+            </div>
+          </div>
+
+          <div class="banner-actions-right">
+            <button type="button" class="btn-view-cart" (click)="goToCart(); $event.stopPropagation()" aria-label="View Medicine Cart">
+              <span>View Cart</span>
+              <ion-icon name="arrow-forward"></ion-icon>
+            </button>
+          </div>
+        </div>
+      </aside>
+    }
+  }
+</ion-content>
+

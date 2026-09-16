@@ -46,7 +46,8 @@ import {
   bodyOutline,
   arrowForward,
   arrowForwardOutline,
-  receiptOutline
+  receiptOutline,
+  flashOutline
 } from 'ionicons/icons';
 import { LocationService } from 'src/app/services/location.service';
 import {
@@ -124,41 +125,7 @@ export class PharmacyPage implements OnInit, OnDestroy {
     public cartService: PharmacyCartService,
     private toastCtrl: ToastController
   ) {
-    addIcons({
-      location,
-      locationOutline,
-      chevronDown,
-      arrowBack,
-      searchOutline,
-      cartOutline,
-      bagHandleOutline,
-      documentTextOutline,
-      cameraOutline,
-      cloudUploadOutline,
-      closeOutline,
-      checkmarkCircle,
-      checkmarkCircleOutline,
-      add,
-      remove,
-      timeOutline,
-      flaskOutline,
-      medkitOutline,
-      shieldCheckmarkOutline,
-      sparklesOutline,
-      fitnessOutline,
-      thermometerOutline,
-      nutritionOutline,
-      bandageOutline,
-      waterOutline,
-      heartOutline,
-      happyOutline,
-      pulseOutline,
-      roseOutline,
-      bodyOutline,
-      arrowForward,
-      arrowForwardOutline,
-      receiptOutline
-    });
+    addIcons({arrowBack,location,chevronDown,searchOutline,medkitOutline,flaskOutline,documentTextOutline,checkmarkCircle,shieldCheckmarkOutline,timeOutline,cloudUploadOutline,flashOutline,add,remove,heartOutline,receiptOutline,waterOutline,fitnessOutline,bagHandleOutline,arrowForward,closeOutline,cameraOutline,checkmarkCircleOutline,locationOutline,cartOutline,sparklesOutline,thermometerOutline,nutritionOutline,bandageOutline,happyOutline,pulseOutline,roseOutline,bodyOutline,arrowForwardOutline});
   }
 
   ngOnInit(): void {
@@ -216,7 +183,7 @@ export class PharmacyPage implements OnInit, OnDestroy {
   }
 
   goBack(): void {
-    this.navCtrl.back();
+    this.navCtrl.navigateRoot('/layout/home');
   }
 
   openLocation(): void {
@@ -244,6 +211,21 @@ export class PharmacyPage implements OnInit, OnDestroy {
     this.router.navigate(['/layout/pharmacy/cart'], {
       queryParams: { type }
     });
+  }
+
+  proceedToCheckout(preferredType?: 'medicine' | 'lab'): void {
+    const type = preferredType || (this.activeTab === 'medicines' ? 'medicine' : 'lab');
+    this.router.navigate(['/layout/pharmacy/cart'], {
+      queryParams: { type, action: 'pay' }
+    });
+  }
+
+  openMedicineDetails(id: string): void {
+    this.navCtrl.navigateForward(`/layout/pharmacy/medicine/${id}`);
+  }
+
+  openLabTestDetails(id: string): void {
+    this.navCtrl.navigateForward(`/layout/pharmacy/test/${id}`);
   }
 
   // ─── MEDICINE FILTERING & ACTIONS ──────────────────────────────────────────

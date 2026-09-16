@@ -274,7 +274,7 @@ export class PropertyPage implements OnInit, OnDestroy {
   }
 
   goBack() {
-    this.navCtrl.navigateBack('/layout/home');
+    this.navCtrl.navigateRoot('/layout/home');
   }
 
   openLocation() {

@@ -54,7 +54,7 @@
 </ion-header>
 
 <!-- Search Content -->
-<ion-content [fullscreen]="true" class="search-content">
+<ion-content class="search-content">
   <main class="search-body-container">
 
     <!-- ─── 1. EMPTY QUERY STATE: TRENDING SEARCHES ───────────────────────────── -->
@@ -107,7 +107,7 @@
 
         <div class="medicines-results-grid">
           @for (med of filteredMedicines; track med.id) {
-            <div class="med-search-card">
+            <div class="med-search-card" (click)="openMedicineDetails(med.id)" role="button" tabindex="0">
               @if (med.prescriptionRequired) {
                 <span class="rx-pill">Rx</span>
               }
@@ -187,7 +187,7 @@
 
         <div class="lab-results-list">
           @for (test of filteredLabTests; track test.id) {
-            <div class="lab-search-card" [class.booked]="isLabBooked(test.id)">
+            <div class="lab-search-card" [class.booked]="isLabBooked(test.id)" (click)="openLabTestDetails(test.id)" role="button" tabindex="0">
               <div class="test-top-row">
                 <div class="test-tags">
                   @for (tag of test.tags; track tag) {
@@ -296,10 +296,12 @@
           </div>
         </div>
 
-        <button type="button" class="btn-view-cart-docked">
-          <span>View Cart</span>
-          <ion-icon name="arrow-forward"></ion-icon>
-        </button>
+        <div class="docked-actions">
+          <button type="button" class="btn-view-cart-docked" (click)="goToCart(); $event.stopPropagation()">
+            <span>View Cart</span>
+            <ion-icon name="arrow-forward"></ion-icon>
+          </button>
+        </div>
       </div>
     </aside>
   } @else if (searchType === 'lab' && labSummary.itemCount > 0) {
@@ -310,15 +312,17 @@
             <ion-icon name="flask-outline"></ion-icon>
           </div>
           <div class="text-wrap">
-            <span class="cart-items-count">{{ labSummary.itemCount }} {{ labSummary.itemCount === 1 ? 'test' : 'tests' }} booked</span>
+            <span class="cart-items-count">{{ labSummary.itemCount }} {{ labSummary.itemCount === 1 ? 'test' : 'tests' }} added</span>
             <span class="cart-total-price">₹{{ labSummary.grandTotal }}</span>
           </div>
         </div>
 
-        <button type="button" class="btn-view-cart-docked lab">
-          <span>View Tests</span>
-          <ion-icon name="arrow-forward"></ion-icon>
-        </button>
+        <div class="docked-actions">
+          <button type="button" class="btn-view-cart-docked lab" (click)="goToCart(); $event.stopPropagation()">
+            <span>View Cart</span>
+            <ion-icon name="arrow-forward"></ion-icon>
+          </button>
+        </div>
       </div>
     </aside>
   }

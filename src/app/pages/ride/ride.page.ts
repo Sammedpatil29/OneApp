@@ -296,7 +296,7 @@ export class RidePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goBack(){
-    this.navCtrl.back()
+    this.navCtrl.navigateRoot('/layout/home');
   }
 
   tripData = {

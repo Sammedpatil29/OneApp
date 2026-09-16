@@ -1,5 +1,14 @@
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
   --theme-medicine: #059669;
   --theme-medicine-light: #ecfdf5;
   --theme-lab: #0284c7;
@@ -10,17 +19,28 @@
   --border-light: #e2e8f0;
 }
 
+.search-content {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
 /* ─── Search Toolbar Header ─────────────────────────────────────────────── */
 .search-header {
   background: #ffffff;
   border-bottom: 1px solid var(--border-light);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  padding: 0 !important;
+  margin: 0 !important;
+  --ion-safe-area-top: 0px;
+  flex-shrink: 0;
 }
 
 .search-toolbar {
   --background: #ffffff;
-  --padding-top: calc(env(safe-area-inset-top, 0px) + 8px);
-  --padding-bottom: 10px;
+  --padding-top: env(safe-area-inset-top, 0px);
+  --padding-bottom: 8px;
   --padding-start: 12px;
   --padding-end: 12px;
 }
@@ -285,6 +305,12 @@
   padding: 12px;
   border: 1px solid #e2e8f0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+
+  &:active {
+    transform: scale(0.985);
+  }
 
   .rx-pill {
     position: absolute;
@@ -465,6 +491,7 @@
   padding: 14px;
   border: 1.5px solid #e2e8f0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  cursor: pointer;
   transition: all 0.2s ease;
 
   &.booked {
@@ -744,29 +771,38 @@
     }
   }
 
-  .btn-view-cart-docked {
+  .docked-actions {
     display: flex;
     align-items: center;
     gap: 6px;
-    background: #ffffff;
-    color: #059669;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
+    flex-shrink: 0;
 
-    &.lab {
-      color: #0284c7;
-    }
+    .btn-view-cart-docked {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: #ffffff;
+      color: #059669;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 99px;
+      font-size: 12.5px;
+      font-weight: 850;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+      transition: all 0.15s ease;
 
-    ion-icon {
-      font-size: 16px;
-    }
+      &.lab {
+        color: #0284c7;
+      }
 
-    &:active {
-      transform: scale(0.96);
+      ion-icon {
+        font-size: 14px;
+      }
+
+      &:active {
+        transform: scale(0.95);
+      }
     }
   }
 }

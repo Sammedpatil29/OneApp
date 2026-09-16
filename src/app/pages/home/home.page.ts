@@ -49,8 +49,7 @@ import {
   carOutline,
   restaurantOutline,
   timeOutline,
-  receiptOutline
-} from 'ionicons/icons';
+  receiptOutline, cloudOfflineOutline } from 'ionicons/icons';
 import { AuthService } from 'src/app/services/auth.service';
 import { LocationService } from 'src/app/services/location.service';
 import { ProfileService } from 'src/app/services/profile.service';
@@ -147,6 +146,9 @@ export class HomePage implements OnInit, OnDestroy {
   // Dynamic Customer Banners (Fetched from API)
   banners: any[] = [];
   bottomBanners: any[] = [];
+  isLoadingHeroBanners: boolean = true;
+  isLoadingBottomBanners: boolean = true;
+  hasHomeDataError: boolean = false;
   currentCity: string = '';
 
   allServices: ServiceItem[] = [];
@@ -162,38 +164,7 @@ export class HomePage implements OnInit, OnDestroy {
     private commonService: CommonService,
     private toastCtrl: ToastController
   ) {
-    addIcons({
-      location,
-      locate,
-      locateOutline,
-      alertCircle,
-      alertCircleOutline,
-      refresh,
-      refreshOutline,
-      chevronDown,
-      chevronForward,
-      arrowForward,
-      arrowForwardOutline,
-      flashOutline,
-      shieldCheckmarkOutline,
-      sparklesOutline,
-      chatbubbleEllipsesOutline,
-      arrowDownOutline,
-      headsetOutline,
-      moonOutline,
-      navigateCircleOutline,
-      mapOutline,
-      locationOutline,
-      playCircle,
-      volumeMuteOutline,
-      volumeHighOutline,
-      closeOutline,
-      bagHandleOutline,
-      carOutline,
-      restaurantOutline,
-      timeOutline,
-      receiptOutline
-    });
+    addIcons({location,shieldCheckmarkOutline,alertCircle,locate,refresh,chevronDown,alertCircleOutline,chevronForward,moonOutline,mapOutline,refreshOutline,locationOutline,navigateCircleOutline,cloudOfflineOutline,arrowForward,closeOutline,locateOutline,arrowForwardOutline,flashOutline,sparklesOutline,chatbubbleEllipsesOutline,arrowDownOutline,headsetOutline,playCircle,volumeMuteOutline,volumeHighOutline,bagHandleOutline,carOutline,restaurantOutline,timeOutline,receiptOutline});
   }
 
   goToSupport() {
@@ -680,16 +651,20 @@ export class HomePage implements OnInit, OnDestroy {
    */
   loadBanners() {
     const city = this.currentCity || this.nearestServiceArea?.cityName || '';
+    this.isLoadingHeroBanners = true;
+    this.isLoadingBottomBanners = true;
 
     // Fetch top hero slider banners (hometop)
     this.commonService.getActiveBanners('hometop', city).subscribe({
       next: (res: any) => {
         const items = res?.data || res || [];
         this.banners = Array.isArray(items) ? items : [];
+        this.isLoadingHeroBanners = false;
       },
       error: (err: any) => {
         console.warn('Could not load hometop banners:', err?.message || err);
         this.banners = [];
+        this.isLoadingHeroBanners = false;
       }
     });
 
@@ -698,16 +673,19 @@ export class HomePage implements OnInit, OnDestroy {
       next: (res: any) => {
         const items = res?.data || res || [];
         this.bottomBanners = Array.isArray(items) ? items : [];
+        this.isLoadingBottomBanners = false;
       },
       error: (err: any) => {
         console.warn('Could not load homedown banners:', err?.message || err);
         this.bottomBanners = [];
+        this.isLoadingBottomBanners = false;
       }
     });
   }
 
   loadHomeData() {
     this.isLoadingServices = true;
+    this.hasHomeDataError = false;
     this.loadBanners();
     this.commonService.getHomeData(this.token).subscribe({
       next: (res: any) => {
@@ -717,6 +695,7 @@ export class HomePage implements OnInit, OnDestroy {
           const active = services.filter((s: any) => s.status === 'active' || !s.status);
           if (active.length > 0) {
             this.allServices = active;
+            this.hasHomeDataError = false;
           }
         }
         this.isLoadingServices = false;
@@ -730,9 +709,13 @@ export class HomePage implements OnInit, OnDestroy {
               const active = fallbackData.filter((s: any) => s.status === 'active' || !s.status);
               if (active.length > 0) {
                 this.allServices = active;
+                this.hasHomeDataError = false;
               }
             }
             this.isLoadingServices = false;
+            if (this.allServices.length === 0) {
+              this.hasHomeDataError = true;
+            }
           },
           error: () => {
             this.isLoadingServices = false;
@@ -766,11 +749,17 @@ export class HomePage implements OnInit, OnDestroy {
                   route: '/layout/pharmacy'
                 }
               ];
+              this.hasHomeDataError = true;
             }
           }
         });
       }
     });
+  }
+
+  retryHomeData(): void {
+    this.hasHomeDataError = false;
+    this.loadHomeData();
   }
 
   loadActiveOrders() {
