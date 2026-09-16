@@ -193,25 +193,108 @@ export class AppComponent implements OnInit {
 
       if (isDirectExitPage) {
         App.exitApp();
+        return;
       }
-      else if (this.routerOutlet && this.routerOutlet.canGoBack()) {
-        this.navCtrl.back({ animated: false });
-      } else if (
+
+      // 4. Dedicated service sub-pages: ALWAYS navigate back within service landing page FIRST!
+      if (this.isServiceSubPage(currentUrl)) {
+        const landingUrl = this.getServiceLandingUrl(currentUrl);
+        this.navCtrl.navigateBack(landingUrl);
+        return;
+      }
+
+      // 5. Dedicated service landing pages: return to home (guard will prompt confirmation)
+      if (this.isServicePage(currentUrl)) {
+        this.navCtrl.navigateRoot('/layout/home');
+        return;
+      }
+
+      // 6. Secondary root tabs (history, support, profile, refer)
+      if (
         currentUrl.includes('/layout/history') ||
         currentUrl.includes('/layout/support') ||
         currentUrl.includes('/layout/profile') ||
-        currentUrl.includes('/layout/refer') ||
-        currentUrl.includes('/layout/pharmacy') ||
-        currentUrl.includes('/layout/property') ||
-        currentUrl.includes('/layout/dineout') ||
-        currentUrl.includes('/layout/events') ||
-        currentUrl.includes('/layout/ride')
+        currentUrl.includes('/layout/refer')
       ) {
         this.navCtrl.navigateRoot('/layout/home');
+        return;
       }
-      else {
+
+      // 7. General navigation
+      if (this.routerOutlet && this.routerOutlet.canGoBack()) {
+        this.navCtrl.back({ animated: false });
+      } else {
         processNextHandler();
       }
     });
+  }
+
+  /**
+   * Service landing page definitions.
+   * Key = landing path, Value = array of sub-page URL patterns.
+   */
+  private readonly SERVICE_PAGES: { landing: string; subPagePrefixes: string[] }[] = [
+    {
+      landing: '/layout/pharmacy',
+      subPagePrefixes: [
+        '/layout/pharmacy/cart',
+        '/layout/pharmacy/search',
+        '/layout/pharmacy/medicine/',
+        '/layout/pharmacy/test/',
+        '/layout/medicine-details/',
+        '/layout/lab-test-details/',
+        '/layout/pharmacy-cart',
+        '/layout/pharmacy-search',
+      ]
+    },
+    {
+      landing: '/layout/property',
+      subPagePrefixes: [
+        '/layout/property/details/',
+        '/layout/property/register',
+      ]
+    },
+    {
+      landing: '/layout/dineout-layout/dineout',
+      subPagePrefixes: [
+        '/layout/dineout-layout/dineout-hotel-details/',
+        '/layout/dineout-layout/dineout-select-time/',
+        '/layout/dineout-layout/dineout-track/',
+        '/layout/dineout-layout/dineout-paybill',
+      ]
+    },
+    {
+      landing: '/layout/rides/search',
+      subPagePrefixes: [
+        '/layout/rides/select',
+        '/layout/rides/tracking',
+      ]
+    },
+  ];
+
+  /** Check if user is on a sub-page within a dedicated service (not the landing page) */
+  private isServiceSubPage(url: string): boolean {
+    return this.SERVICE_PAGES.some(s =>
+      s.subPagePrefixes.some(prefix => url.includes(prefix))
+    );
+  }
+
+  /** Get the landing page URL for the service the user is currently in */
+  private getServiceLandingUrl(url: string): string {
+    const service = this.SERVICE_PAGES.find(s =>
+      s.subPagePrefixes.some(prefix => url.includes(prefix))
+    );
+    return service ? service.landing : '/layout/home';
+  }
+
+  /** Check if user is on any dedicated service page (landing or sub-page) */
+  private isServicePage(url: string): boolean {
+    return (
+      url.includes('/layout/pharmacy') ||
+      url.includes('/layout/property') ||
+      url.includes('/layout/dineout') ||
+      url.includes('/layout/events') ||
+      url.includes('/layout/ride')
+    );
   }
 }

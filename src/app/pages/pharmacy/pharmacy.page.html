@@ -290,11 +290,28 @@
                     }
                   </div>
                 </div>
+
+                @if (med.seller) {
+                  <div class="vendor-divider"></div>
+                  <div class="vendor-brief">
+                    <span class="vendor-role">{{ med.seller.type }}</span>
+                    <span class="vendor-name">{{ med.seller.name }}</span>
+                  </div>
+                }
               </div>
             </div>
           }
         </div>
       </section>
+
+      <!-- In-flow Pharmacy Partner Footer at end of medicines list (matching Property Footer) -->
+      <app-pharmacy-footer
+        label="Dispensed &amp; Fulfilled By"
+        companyName="MedPlus Pharmacy &amp; Wellness"
+        subtitle="Licensed Chemist &amp; Druggist • 100% Genuine Medicines"
+        address="Main Road, Near Bus Stand, Athani - 591304"
+        licenseInfo="DL No: KA-BEL-2024-0987 • GSTIN: 29XXXXX0000X1ZX • Call: +91 8884950068">
+      </app-pharmacy-footer>
 
     }
 
@@ -479,6 +496,14 @@
                   }
                 </button>
               </div>
+
+              @if (test.labPartner) {
+                <div class="vendor-divider"></div>
+                <div class="vendor-brief">
+                  <span class="vendor-role">{{ test.labPartner.type }}</span>
+                  <span class="vendor-name">{{ test.labPartner.name }}</span>
+                </div>
+              }
             </div>
           }
         </div>
@@ -513,6 +538,15 @@
           </div>
         </div>
       </section>
+
+      <!-- In-flow Diagnostic Lab Partner Footer at end of lab tests (matching Property Footer) -->
+      <app-pharmacy-footer
+        label="Accredited Diagnostic Partner"
+        companyName="Dr. Lal PathLabs &amp; Metropolis Health"
+        subtitle="NABL &amp; ICMR Certified Diagnostics Network"
+        address="Miraj Road, Opp. Civil Hospital, Athani - 591304"
+        licenseInfo="NABL Reg: MC-5421 • Fast 12-24h Digital Reports • Call: +91 8884950068">
+      </app-pharmacy-footer>
 
     }
 

@@ -117,7 +117,7 @@ export class LabTestDetailsPage implements OnInit, OnDestroy {
   }
 
   goBack(): void {
-    this.navCtrl.back();
+    this.navCtrl.navigateBack('/layout/pharmacy');
   }
 
   goToCart(): void {

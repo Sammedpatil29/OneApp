@@ -247,25 +247,21 @@ export const routes: Routes = [
         path: 'pharmacy/medicine/:id',
         loadComponent: () =>
           import('./pages/medicine-details/medicine-details.page').then((m) => m.MedicineDetailsPage),
-        canDeactivate: [leaveDedicatedLayoutGuard],
       },
       {
         path: 'pharmacy/test/:id',
         loadComponent: () =>
           import('./pages/lab-test-details/lab-test-details.page').then((m) => m.LabTestDetailsPage),
-        canDeactivate: [leaveDedicatedLayoutGuard],
       },
       {
         path: 'medicine-details/:id',
         loadComponent: () =>
           import('./pages/medicine-details/medicine-details.page').then((m) => m.MedicineDetailsPage),
-        canDeactivate: [leaveDedicatedLayoutGuard],
       },
       {
         path: 'lab-test-details/:id',
         loadComponent: () =>
           import('./pages/lab-test-details/lab-test-details.page').then((m) => m.LabTestDetailsPage),
-        canDeactivate: [leaveDedicatedLayoutGuard],
       },
 
       // Pharmacy & Lab Tests Service Container

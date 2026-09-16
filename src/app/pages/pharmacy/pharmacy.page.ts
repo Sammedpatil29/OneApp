@@ -66,6 +66,8 @@ import {
 } from 'src/app/services/pharmacy-cart.service';
 import { Subscription } from 'rxjs';
 
+import { PharmacyFooterComponent } from 'src/app/components/pharmacy-footer/pharmacy-footer.component';
+
 @Component({
   selector: 'app-pharmacy',
   templateUrl: './pharmacy.page.html',
@@ -80,7 +82,8 @@ import { Subscription } from 'rxjs';
     IonIcon,
     IonModal,
     IonRefresher,
-    IonRefresherContent
+    IonRefresherContent,
+    PharmacyFooterComponent
   ]
 })
 export class PharmacyPage implements OnInit, OnDestroy {

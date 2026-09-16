@@ -953,6 +953,32 @@
           }
         }
       }
+
+      .vendor-divider {
+        height: 1px;
+        background: #f1f5f9;
+        margin: 6px 0 4px;
+      }
+
+      .vendor-brief {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.2;
+
+        .vendor-role {
+          font-size: 8.5px;
+          font-weight: 750;
+          color: #94a3b8;
+          text-transform: uppercase;
+          letter-spacing: 0.3px;
+        }
+
+        .vendor-name {
+          font-size: 11px;
+          font-weight: 750;
+          color: #1e293b;
+        }
+      }
     }
   }
 }
@@ -1145,6 +1171,32 @@
         &:active {
           transform: scale(0.96);
         }
+      }
+    }
+
+    .vendor-divider {
+      height: 1px;
+      background: #f1f5f9;
+      margin: 8px 0 6px;
+    }
+
+    .vendor-brief {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+
+      .vendor-role {
+        font-size: 9.5px;
+        font-weight: 750;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
+
+      .vendor-name {
+        font-size: 12px;
+        font-weight: 750;
+        color: #1e293b;
       }
     }
   }

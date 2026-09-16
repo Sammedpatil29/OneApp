@@ -222,7 +222,7 @@ export class PharmacyCartPage implements OnInit, OnDestroy {
   }
 
   goBack(): void {
-    this.navCtrl.back();
+    this.navCtrl.navigateBack('/layout/pharmacy');
   }
 
   switchCartType(type: 'medicine' | 'lab'): void {

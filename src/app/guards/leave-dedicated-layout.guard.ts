@@ -5,6 +5,7 @@ import { AppDialogService } from '../services/app-dialog.service';
 interface DedicatedLayoutConfig {
   name: string;
   urlPrefixes: string[];
+  landingPaths: string[]; // Only show confirmation when leaving FROM these exact paths
 }
 
 const DEDICATED_LAYOUTS: DedicatedLayoutConfig[] = [
@@ -16,32 +17,38 @@ const DEDICATED_LAYOUTS: DedicatedLayoutConfig[] = [
       '/layout/lab-test-details',
       '/layout/pharmacy-search',
       '/layout/pharmacy-cart'
-    ]
+    ],
+    landingPaths: ['/layout/pharmacy']
   },
   {
     name: 'Properties',
-    urlPrefixes: ['/layout/property', '/layout/property-layout']
+    urlPrefixes: ['/layout/property', '/layout/property-layout'],
+    landingPaths: ['/layout/property']
   },
   {
     name: 'Dineout',
-    urlPrefixes: ['/layout/dineout', '/layout/dineout-layout']
+    urlPrefixes: ['/layout/dineout', '/layout/dineout-layout'],
+    landingPaths: ['/layout/dineout-layout/dineout', '/layout/dineout-layout']
   },
   {
     name: 'Local Events',
-    urlPrefixes: ['/layout/events']
+    urlPrefixes: ['/layout/events'],
+    landingPaths: ['/layout/events']
   },
   {
     name: 'Book a Ride',
-    urlPrefixes: ['/layout/rides', '/layout/ride', '/layout/ride-selection-page', '/layout/track-order']
+    urlPrefixes: ['/layout/rides', '/layout/ride', '/layout/ride-selection-page', '/layout/track-order'],
+    landingPaths: ['/layout/rides', '/layout/rides/search']
   }
 ];
 
 let isConfirmingExit = false;
 
 /**
- * Guard that prompts the user with a confirmation dialog whenever they attempt
- * to leave a dedicated service layout (Pharmacy, Properties, Dineout, Local Events, Book a Ride).
- * Navigation within the same dedicated layout (e.g. catalog -> details -> cart) is allowed seamlessly.
+ * Guard that prompts the user with a confirmation dialog when they attempt
+ * to leave a dedicated service layout from its LANDING PAGE only.
+ * Navigation within the service (cart, details, search) is always allowed.
+ * Navigation from sub-pages back to home is also allowed without confirmation.
  */
 export const leaveDedicatedLayoutGuard: CanDeactivateFn<any> = async (
   component,
@@ -72,6 +79,19 @@ export const leaveDedicatedLayoutGuard: CanDeactivateFn<any> = async (
   // Check if destination is still within the same dedicated layout
   const isStaying = layout.urlPrefixes.some((prefix) => nextUrl.startsWith(prefix));
   if (isStaying) {
+    return true;
+  }
+
+  // ONLY show confirmation when leaving FROM the landing page
+  // If user is on a sub-page (cart, details, search), let them leave freely
+  const isOnLandingPage = layout.landingPaths.some((lp) => {
+    // Exact match or match with trailing slash
+    const cleanUrl = currentUrl.split('?')[0].replace(/\/$/, '');
+    const cleanLp = lp.replace(/\/$/, '');
+    return cleanUrl === cleanLp;
+  });
+
+  if (!isOnLandingPage) {
     return true;
   }
 

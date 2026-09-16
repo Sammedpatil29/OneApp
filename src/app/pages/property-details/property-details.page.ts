@@ -125,7 +125,7 @@ export class PropertyDetailsPage implements OnInit {
   }
 
   goBack() {
-    this.navCtrl.back();
+    this.navCtrl.navigateBack('/layout/property');
   }
 
   setImageIndex(idx: number) {

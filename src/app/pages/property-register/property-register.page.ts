@@ -486,7 +486,7 @@ export class PropertyRegisterPage implements OnInit, OnDestroy, ViewWillEnter {
   }
 
   goBack() {
-    this.navCtrl.back();
+    this.navCtrl.navigateBack('/layout/property');
   }
 
   onCategoryChange(cat: PropertyCategory) {

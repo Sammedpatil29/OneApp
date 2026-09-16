@@ -15,6 +15,7 @@ export interface MedicineItem {
   uses?: string[];
   composition?: string;
   manufacturer?: string;
+  seller?: { type: string; name: string };
   benefits?: string[];
   sideEffects?: string[];
   directionsForUse?: string;
@@ -36,6 +37,7 @@ export interface LabTestPackage {
   parameters: string[];
   description: string;
   recommendedFor?: string;
+  labPartner?: { type: string; name: string };
   overview?: string;
   preparation?: string[];
   parameterGroups?: { groupName: string; parameters: string[] }[];
@@ -102,7 +104,8 @@ export const DUMMY_MEDICINES: MedicineItem[] = [
     category: 'fever_cold',
     inStock: true,
     description: 'Relief from body ache, headache, fever, and common cold symptoms.',
-    uses: ['Fever', 'Headache', 'Muscle Pain']
+    uses: ['Fever', 'Headache', 'Muscle Pain'],
+    seller: { type: 'Pharmacy Partner', name: 'MedPlus Pharmacy' }
   },
   {
     id: 'med-02',
@@ -118,7 +121,8 @@ export const DUMMY_MEDICINES: MedicineItem[] = [
     category: 'fever_cold',
     inStock: true,
     description: 'Fast acting paracetamol for fever reduction and mild to moderate pain.',
-    uses: ['Fever', 'Toothache', 'Backache']
+    uses: ['Fever', 'Toothache', 'Backache'],
+    seller: { type: 'Pharmacy Partner', name: 'Apollo Pharmacy' }
   },
   {
     id: 'med-03',
@@ -134,7 +138,8 @@ export const DUMMY_MEDICINES: MedicineItem[] = [
     category: 'digestion',
     inStock: true,
     description: 'Effective relief from acidity, heartburn, and stomach gas discomfort.',
-    uses: ['Acidity', 'Gas', 'Indigestion']
+    uses: ['Acidity', 'Gas', 'Indigestion'],
+    seller: { type: 'Pharmacy Partner', name: 'Netmeds Store' }
   },
   {
     id: 'med-04',
@@ -150,7 +155,8 @@ export const DUMMY_MEDICINES: MedicineItem[] = [
     category: 'pain',
     inStock: true,
     description: 'Instant and long-lasting relief from back pain, joint stiffness and muscle sprains.',
-    uses: ['Joint Pain', 'Sprain', 'Back Pain']
+    uses: ['Joint Pain', 'Sprain', 'Back Pain'],
+    seller: { type: 'Pharmacy Partner', name: 'MedPlus Pharmacy' }
   },
   {
     id: 'med-05',
@@ -166,7 +172,8 @@ export const DUMMY_MEDICINES: MedicineItem[] = [
     category: 'digestion',
     inStock: true,
     description: 'WHO recommended formula for dehydration, diarrhea, and electrolyte replenishment.',
-    uses: ['Dehydration', 'Electrolytes', 'Energy']
+    uses: ['Dehydration', 'Electrolytes', 'Energy'],
+    seller: { type: 'Pharmacy Partner', name: 'PharmEasy Hub' }
   },
   {
     id: 'med-06',
@@ -182,7 +189,8 @@ export const DUMMY_MEDICINES: MedicineItem[] = [
     category: 'vitamins',
     inStock: true,
     description: 'Supports bone strength, calcium absorption, and joint flexibility.',
-    uses: ['Bone Strength', 'Calcium Deficiency', 'Joints']
+    uses: ['Bone Strength', 'Calcium Deficiency', 'Joints'],
+    seller: { type: 'Pharmacy Partner', name: 'Apollo Pharmacy' }
   },
   {
     id: 'med-07',
@@ -198,7 +206,8 @@ export const DUMMY_MEDICINES: MedicineItem[] = [
     category: 'skin',
     inStock: true,
     description: 'Antioxidant boost for glowing skin, healthy hair growth, and cellular health.',
-    uses: ['Skin Health', 'Hair Growth', 'Antioxidant']
+    uses: ['Skin Health', 'Hair Growth', 'Antioxidant'],
+    seller: { type: 'Pharmacy Partner', name: 'MedPlus Pharmacy' }
   },
   {
     id: 'med-08',
@@ -214,7 +223,8 @@ export const DUMMY_MEDICINES: MedicineItem[] = [
     category: 'vitamins',
     inStock: true,
     description: 'Ginseng, vitamins and 9 minerals to fight daily fatigue and boost stamina.',
-    uses: ['Stamina', 'Immunity', 'Energy']
+    uses: ['Stamina', 'Immunity', 'Energy'],
+    seller: { type: 'Pharmacy Partner', name: 'Netmeds Store' }
   },
   {
     id: 'med-09',
@@ -230,7 +240,8 @@ export const DUMMY_MEDICINES: MedicineItem[] = [
     category: 'fever_cold',
     inStock: true,
     description: '6-in-1 multi-symptom relief from cold, blocked nose, cough, and body aches.',
-    uses: ['Nasal Congestion', 'Cold', 'Cough']
+    uses: ['Nasal Congestion', 'Cold', 'Cough'],
+    seller: { type: 'Pharmacy Partner', name: 'PharmEasy Hub' }
   },
   {
     id: 'med-10',
@@ -246,7 +257,8 @@ export const DUMMY_MEDICINES: MedicineItem[] = [
     category: 'first_aid',
     inStock: true,
     description: 'Povidone Iodine ointment for cuts, minor burns, scrapes, and wound infection prevention.',
-    uses: ['Cuts', 'Burns', 'Wound Disinfection']
+    uses: ['Cuts', 'Burns', 'Wound Disinfection'],
+    seller: { type: 'Pharmacy Partner', name: 'Apollo Pharmacy' }
   },
   {
     id: 'med-11',
@@ -262,7 +274,8 @@ export const DUMMY_MEDICINES: MedicineItem[] = [
     category: 'fever_cold',
     inStock: true,
     description: 'Antibiotic for bacterial respiratory infections, throat, and sinus conditions.',
-    uses: ['Bacterial Infections', 'Throat Infection', 'Bronchitis']
+    uses: ['Bacterial Infections', 'Throat Infection', 'Bronchitis'],
+    seller: { type: 'Pharmacy Partner', name: 'MedPlus Pharmacy' }
   },
   {
     id: 'med-12',
@@ -278,7 +291,8 @@ export const DUMMY_MEDICINES: MedicineItem[] = [
     category: 'diabetes',
     inStock: true,
     description: 'Oral anti-diabetic medicine that helps control high blood sugar levels in type 2 diabetes.',
-    uses: ['Type 2 Diabetes', 'Blood Sugar Control']
+    uses: ['Type 2 Diabetes', 'Blood Sugar Control'],
+    seller: { type: 'Pharmacy Partner', name: 'Apollo Pharmacy' }
   }
 ];
 
@@ -315,7 +329,8 @@ export const DUMMY_LAB_TESTS: LabTestPackage[] = [
       'Urine Routine & Microscopic (21 tests)'
     ],
     description: 'Comprehensive screening for vital organs, immunity, metabolism, diabetes, liver and heart health.',
-    recommendedFor: 'Men & Women above 25 years (Annual Checkup)'
+    recommendedFor: 'Men & Women above 25 years (Annual Checkup)',
+    labPartner: { type: 'Lab Partner', name: 'Dr. Lal PathLabs' }
   },
   {
     id: 'lab-02',
@@ -338,7 +353,8 @@ export const DUMMY_LAB_TESTS: LabTestPackage[] = [
       'Erythrocyte Sedimentation Rate (ESR)'
     ],
     description: 'Detects anemia, infections, platelet levels, dengue, and underlying inflammation.',
-    recommendedFor: 'Fever, fatigue, routine health check'
+    recommendedFor: 'Fever, fatigue, routine health check',
+    labPartner: { type: 'Lab Partner', name: 'SRL Diagnostics' }
   },
   {
     id: 'lab-03',
@@ -358,7 +374,8 @@ export const DUMMY_LAB_TESTS: LabTestPackage[] = [
       'Thyroid Stimulating Hormone (TSH)'
     ],
     description: 'Assesses thyroid gland function, metabolism, unexplained weight gain or loss, and energy levels.',
-    recommendedFor: 'Weight fluctuation, hair loss, fatigue'
+    recommendedFor: 'Weight fluctuation, hair loss, fatigue',
+    labPartner: { type: 'Lab Partner', name: 'Thyrocare Labs' }
   },
   {
     id: 'lab-04',
@@ -381,7 +398,8 @@ export const DUMMY_LAB_TESTS: LabTestPackage[] = [
       'Total / HDL Cholesterol Ratio'
     ],
     description: 'Essential cardiovascular assessment to measure good and bad cholesterol levels in the blood.',
-    recommendedFor: 'Adults above 30, high BP, sedentary lifestyle'
+    recommendedFor: 'Adults above 30, high BP, sedentary lifestyle',
+    labPartner: { type: 'Lab Partner', name: 'Dr. Lal PathLabs' }
   },
   {
     id: 'lab-05',
@@ -402,7 +420,8 @@ export const DUMMY_LAB_TESTS: LabTestPackage[] = [
       'Urine Glucose'
     ],
     description: 'Gold standard test reflecting average blood sugar levels over the last 90 days.',
-    recommendedFor: 'Diabetic patients, family history of diabetes'
+    recommendedFor: 'Diabetic patients, family history of diabetes',
+    labPartner: { type: 'Lab Partner', name: 'Metropolis Healthcare' }
   },
   {
     id: 'lab-06',
@@ -421,7 +440,8 @@ export const DUMMY_LAB_TESTS: LabTestPackage[] = [
       'Vitamin B12 (Cyanocobalamin)'
     ],
     description: 'Detects bone weakness, nerve tingling, body ache, brain fog, and chronic tiredness.',
-    recommendedFor: 'Joint pain, vegetarians, office workers'
+    recommendedFor: 'Joint pain, vegetarians, office workers',
+    labPartner: { type: 'Lab Partner', name: 'Thyrocare Labs' }
   },
   {
     id: 'lab-07',
@@ -443,7 +463,8 @@ export const DUMMY_LAB_TESTS: LabTestPackage[] = [
       'Total Protein & Albumin / Globulin Ratio'
     ],
     description: 'Measures liver enzymes, bilirubin, and proteins to diagnose liver inflammation or fatty liver.',
-    recommendedFor: 'Digestive issues, jaundice symptoms, medication monitor'
+    recommendedFor: 'Digestive issues, jaundice symptoms, medication monitor',
+    labPartner: { type: 'Lab Partner', name: 'SRL Diagnostics' }
   },
   {
     id: 'lab-08',
@@ -466,7 +487,8 @@ export const DUMMY_LAB_TESTS: LabTestPackage[] = [
       'Sodium, Potassium, Chloride Electrolytes'
     ],
     description: 'Evaluates kidney filtration, waste removal, creatinine levels, and body hydration balance.',
-    recommendedFor: 'High BP, swelling in feet, routine screening'
+    recommendedFor: 'High BP, swelling in feet, routine screening',
+    labPartner: { type: 'Lab Partner', name: 'Metropolis Healthcare' }
   }
 ];
 

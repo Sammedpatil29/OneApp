@@ -326,7 +326,7 @@ this.getTripOptions()
     if (this.searching || (this.activeRide && (this.activeRide.status === 'searching' || this.activeRide.status === 'assigned'))) {
       this.cancelRide();
     } else {
-      this.navCtrl.back();
+      this.navCtrl.navigateBack('/layout/rides/search');
     }
   }
 

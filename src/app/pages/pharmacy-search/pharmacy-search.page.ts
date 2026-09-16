@@ -150,7 +150,7 @@ export class PharmacySearchPage implements OnInit, OnDestroy {
   }
 
   goBack(): void {
-    this.navCtrl.back();
+    this.navCtrl.navigateBack('/layout/pharmacy');
   }
 
   setSearchType(type: 'medicine' | 'lab'): void {
