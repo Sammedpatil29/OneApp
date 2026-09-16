@@ -413,19 +413,37 @@
     </footer>
 
     <!-- Property Video Tour Popup Modal -->
-    <ion-modal [isOpen]="isVideoModalOpen" (didDismiss)="closeVideoModal()" class="property-video-modal">
+    <ion-modal
+      [isOpen]="isVideoModalOpen"
+      (didDismiss)="closeVideoModal()"
+      class="property-video-modal"
+      [class.is-reel]="isVideoReel">
       <ng-template>
-        <div class="video-modal-container">
-          <div class="video-modal-header">
-            <div class="video-title-wrap">
-              <ion-icon name="videocam-outline" class="title-icon"></ion-icon>
-              <h4>Video Tour</h4>
+        <div class="video-card-wrapper" [class.is-reel]="isVideoReel">
+          <!-- Floating Close Button Directly On Video -->
+          <button type="button" class="video-overlay-close-btn" (click)="closeVideoModal()" aria-label="Close video" title="Close">
+            <ion-icon name="close-outline"></ion-icon>
+          </button>
+
+          <!-- Resolution & Ratio Selection Button On Video -->
+          <button type="button" class="video-aspect-pill" (click)="toggleVideoAspect()" aria-label="Resolution selection" title="Toggle 9:16 / 16:9 ratio">
+            <span class="res-tag">RES</span>
+            <span class="res-value">{{ isVideoReel ? '9:16' : '16:9' }}</span>
+          </button>
+
+          <div class="video-frame-box" [class.is-reel]="isVideoReel">
+            <!-- Top branding blocker to ensure no YouTube title or channel name appears -->
+            <div class="top-branding-blocker"></div>
+
+            <!-- Touch shield to control play/pause and prevent YouTube controls/branding popups -->
+            <div class="iframe-touch-shield" (click)="togglePlayPause()" aria-label="Play or Pause">
+              @if (showPlayPauseIndicator) {
+                <div class="play-pause-feedback">
+                  <ion-icon [name]="isPlaying ? 'play' : 'pause'"></ion-icon>
+                </div>
+              }
             </div>
-            <button type="button" class="modal-close-btn" (click)="closeVideoModal()" aria-label="Close modal">
-              <ion-icon name="close-outline"></ion-icon>
-            </button>
-          </div>
-          <div class="video-frame-box">
+
             @if (embedVideoUrl) {
               <iframe
                 [src]="embedVideoUrl"

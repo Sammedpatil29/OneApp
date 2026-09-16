@@ -1,0 +1,326 @@
+<!-- Pharmacy Search Header -->
+<ion-header class="search-header ion-no-border">
+  <ion-toolbar class="search-toolbar">
+    <div class="search-top-row">
+      <button type="button" class="btn-back" (click)="goBack()" aria-label="Go Back">
+        <ion-icon name="arrow-back"></ion-icon>
+      </button>
+
+      <!-- Search Input Box -->
+      <div class="search-box-wrap">
+        <ion-icon name="search-outline" class="search-box-icon"></ion-icon>
+        <input
+          type="search"
+          class="search-input"
+          [placeholder]="searchType === 'medicine' ? 'Search medicines, cough, vitamins...' : 'Search blood tests, CBC, health packages...'"
+          [(ngModel)]="searchQuery"
+          (ngModelChange)="onSearchInput()"
+          autofocus />
+        @if (searchQuery) {
+          <button type="button" class="btn-clear" (click)="clearSearch()" aria-label="Clear search">
+            <ion-icon name="close-outline"></ion-icon>
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Toggle Scope Pill: Medicines vs Lab Tests -->
+    <div class="search-scope-tabs">
+      <button
+        type="button"
+        class="scope-tab-btn"
+        [class.active]="searchType === 'medicine'"
+        (click)="setSearchType('medicine')">
+        <ion-icon name="medkit-outline"></ion-icon>
+        <span>Medicines</span>
+        @if (medSummary.itemCount > 0) {
+          <span class="scope-badge">{{ medSummary.itemCount }}</span>
+        }
+      </button>
+
+      <button
+        type="button"
+        class="scope-tab-btn"
+        [class.active]="searchType === 'lab'"
+        (click)="setSearchType('lab')">
+        <ion-icon name="flask-outline"></ion-icon>
+        <span>Lab Tests</span>
+        @if (labSummary.itemCount > 0) {
+          <span class="scope-badge lab">{{ labSummary.itemCount }}</span>
+        }
+      </button>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<!-- Search Content -->
+<ion-content [fullscreen]="true" class="search-content">
+  <main class="search-body-container">
+
+    <!-- ─── 1. EMPTY QUERY STATE: TRENDING SEARCHES ───────────────────────────── -->
+    @if (!searchQuery.trim()) {
+      <section class="trending-section animate__animated animate__fadeIn">
+        <div class="trending-header">
+          <ion-icon name="trending-up-outline"></ion-icon>
+          <h4>Trending in {{ searchType === 'medicine' ? 'Medicines' : 'Lab Tests' }}</h4>
+        </div>
+
+        <div class="trending-chips-wrap">
+          @if (searchType === 'medicine') {
+            @for (tag of medTrendingTags; track tag) {
+              <button type="button" class="trending-chip" (click)="applyTrendingTag(tag)">
+                <ion-icon name="search-outline"></ion-icon>
+                <span>{{ tag }}</span>
+              </button>
+            }
+          } @else {
+            @for (tag of labTrendingTags; track tag) {
+              <button type="button" class="trending-chip lab" (click)="applyTrendingTag(tag)">
+                <ion-icon name="search-outline"></ion-icon>
+                <span>{{ tag }}</span>
+              </button>
+            }
+          }
+        </div>
+
+        <!-- Quick Help Note -->
+        <div class="search-tip-card">
+          <ion-icon name="sparkles-outline"></ion-icon>
+          <div>
+            <h6>Looking for something specific?</h6>
+            <p>
+              {{ searchType === 'medicine' 
+                  ? 'Type brand names like Dolo, Volini or symptoms like Headache, Cough.' 
+                  : 'Search for packages like Full Body Checkup, CBC, or conditions like Diabetes, Thyroid.' }}
+            </p>
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- ─── 2. SEARCH RESULTS: MEDICINES ─────────────────────────────────────── -->
+    @if (searchQuery.trim() && searchType === 'medicine') {
+      @if (filteredMedicines.length > 0) {
+        <div class="results-meta-row">
+          <span>Found {{ filteredMedicines.length }} medicines for "{{ searchQuery }}"</span>
+        </div>
+
+        <div class="medicines-results-grid">
+          @for (med of filteredMedicines; track med.id) {
+            <div class="med-search-card">
+              @if (med.prescriptionRequired) {
+                <span class="rx-pill">Rx</span>
+              }
+
+              <div class="med-thumb-wrap">
+                <img [src]="med.image" [alt]="med.name" loading="lazy" />
+                @if (med.discountPercent > 0) {
+                  <span class="discount-badge">{{ med.discountPercent }}% OFF</span>
+                }
+              </div>
+
+              <div class="med-details-col">
+                <span class="med-brand">{{ med.brand }}</span>
+                <h5 class="med-name">{{ med.name }}</h5>
+                <span class="med-pack">{{ med.dosageForm }} • {{ med.packSize }}</span>
+
+                @if (med.uses && med.uses.length > 0) {
+                  <div class="med-uses-row">
+                    @for (use of med.uses; track use) {
+                      <span class="use-tag">{{ use }}</span>
+                    }
+                  </div>
+                }
+
+                <div class="med-card-footer">
+                  <div class="med-price-col">
+                    <span class="sell-price">₹{{ med.price }}</span>
+                    @if (med.mrp > med.price) {
+                      <span class="mrp-price">₹{{ med.mrp }}</span>
+                    }
+                  </div>
+
+                  <div class="med-action-col">
+                    @if (getMedicineQty(med.id) === 0) {
+                      <button type="button" class="btn-add-action" (click)="addMedicine(med, $event)">
+                        <span>ADD</span>
+                        <ion-icon name="add"></ion-icon>
+                      </button>
+                    } @else {
+                      <div class="stepper-wrap">
+                        <button type="button" class="btn-step" (click)="decrementMedicine(med, $event)">
+                          <ion-icon name="remove"></ion-icon>
+                        </button>
+                        <span class="step-num">{{ getMedicineQty(med.id) }}</span>
+                        <button type="button" class="btn-step" (click)="incrementMedicine(med, $event)">
+                          <ion-icon name="add"></ion-icon>
+                        </button>
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <!-- No Medicine Results Found -->
+        <div class="no-results-state animate__animated animate__fadeIn">
+          <div class="empty-icon-circle">
+            <ion-icon name="medkit-outline"></ion-icon>
+          </div>
+          <h4>No medicines found</h4>
+          <p>We couldn't find any medicine matching "{{ searchQuery }}". Please check the spelling or try a different term.</p>
+          <button type="button" class="btn-reset-search" (click)="clearSearch()">
+            Clear Search
+          </button>
+        </div>
+      }
+    }
+
+    <!-- ─── 3. SEARCH RESULTS: LAB TESTS ─────────────────────────────────────── -->
+    @if (searchQuery.trim() && searchType === 'lab') {
+      @if (filteredLabTests.length > 0) {
+        <div class="results-meta-row lab">
+          <span>Found {{ filteredLabTests.length }} tests &amp; packages for "{{ searchQuery }}"</span>
+        </div>
+
+        <div class="lab-results-list">
+          @for (test of filteredLabTests; track test.id) {
+            <div class="lab-search-card" [class.booked]="isLabBooked(test.id)">
+              <div class="test-top-row">
+                <div class="test-tags">
+                  @for (tag of test.tags; track tag) {
+                    <span class="tag-badge">{{ tag }}</span>
+                  }
+                </div>
+                <h4 class="test-title">{{ test.name }}</h4>
+                <p class="test-desc">{{ test.description }}</p>
+              </div>
+
+              <!-- Meta Pills -->
+              <div class="test-meta-grid">
+                <div class="meta-item">
+                  <ion-icon name="flask-outline"></ion-icon>
+                  <span>{{ test.testCount }} Tests</span>
+                </div>
+                <div class="meta-item">
+                  <ion-icon name="time-outline"></ion-icon>
+                  <span>{{ test.fastingRequirement }}</span>
+                </div>
+                <div class="meta-item">
+                  <ion-icon name="receipt-outline"></ion-icon>
+                  <span>Reports in {{ test.reportTimeHours }} hrs</span>
+                </div>
+                <div class="meta-item">
+                  <ion-icon name="water-outline"></ion-icon>
+                  <span>{{ test.sampleType }}</span>
+                </div>
+              </div>
+
+              <!-- Parameters -->
+              <div class="test-params-row">
+                <span class="params-header">Includes:</span>
+                @for (p of test.parameters.slice(0, 3); track p) {
+                  <span class="param-bullet">{{ p }}</span>
+                }
+                @if (test.parameters.length > 3) {
+                  <span class="param-more">+{{ test.parameters.length - 3 }} more</span>
+                }
+              </div>
+
+              <!-- Price & CTA -->
+              <div class="test-card-footer">
+                <div class="price-stack">
+                  <div class="price-line">
+                    <span class="final-price">₹{{ test.price }}</span>
+                    @if (test.mrp > test.price) {
+                      <span class="strike-price">₹{{ test.mrp }}</span>
+                      <span class="save-chip">{{ test.discountPercent }}% OFF</span>
+                    }
+                  </div>
+                  <span class="sample-note">Free home sample collection available</span>
+                </div>
+
+                <button
+                  type="button"
+                  class="btn-book-action"
+                  [class.booked]="isLabBooked(test.id)"
+                  (click)="toggleLabTest(test, $event)">
+                  @if (isLabBooked(test.id)) {
+                    <ion-icon name="checkmark-circle"></ion-icon>
+                    <span>ADDED</span>
+                  } @else {
+                    <ion-icon name="add"></ion-icon>
+                    <span>BOOK TEST</span>
+                  }
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <!-- No Lab Results Found -->
+        <div class="no-results-state animate__animated animate__fadeIn">
+          <div class="empty-icon-circle lab">
+            <ion-icon name="flask-outline"></ion-icon>
+          </div>
+          <h4>No lab tests found</h4>
+          <p>We couldn't find any test or package matching "{{ searchQuery }}". Try searching for CBC, Thyroid, Full Body, or Fever.</p>
+          <button type="button" class="btn-reset-search lab" (click)="clearSearch()">
+            Clear Search
+          </button>
+        </div>
+      }
+    }
+
+    <!-- Bottom Spacer -->
+    <div
+      class="bottom-spacer"
+      [class.has-cart]="(searchType === 'medicine' && medSummary.itemCount > 0) || (searchType === 'lab' && labSummary.itemCount > 0)">
+    </div>
+
+  </main>
+
+  <!-- ─── FLOATING DOCKED BOTTOM CART BAR ───────────────────────────────────── -->
+  @if (searchType === 'medicine' && medSummary.itemCount > 0) {
+    <aside slot="fixed" class="docked-search-cart medicine animate__animated animate__fadeInUp" (click)="goToCart()">
+      <div class="docked-inner">
+        <div class="docked-left">
+          <div class="icon-wrap">
+            <ion-icon name="bag-handle-outline"></ion-icon>
+          </div>
+          <div class="text-wrap">
+            <span class="cart-items-count">{{ medSummary.itemCount }} {{ medSummary.itemCount === 1 ? 'item' : 'items' }} added</span>
+            <span class="cart-total-price">₹{{ medSummary.grandTotal }}</span>
+          </div>
+        </div>
+
+        <button type="button" class="btn-view-cart-docked">
+          <span>View Cart</span>
+          <ion-icon name="arrow-forward"></ion-icon>
+        </button>
+      </div>
+    </aside>
+  } @else if (searchType === 'lab' && labSummary.itemCount > 0) {
+    <aside slot="fixed" class="docked-search-cart lab animate__animated animate__fadeInUp" (click)="goToCart()">
+      <div class="docked-inner">
+        <div class="docked-left">
+          <div class="icon-wrap lab">
+            <ion-icon name="flask-outline"></ion-icon>
+          </div>
+          <div class="text-wrap">
+            <span class="cart-items-count">{{ labSummary.itemCount }} {{ labSummary.itemCount === 1 ? 'test' : 'tests' }} booked</span>
+            <span class="cart-total-price">₹{{ labSummary.grandTotal }}</span>
+          </div>
+        </div>
+
+        <button type="button" class="btn-view-cart-docked lab">
+          <span>View Tests</span>
+          <ion-icon name="arrow-forward"></ion-icon>
+        </button>
+      </div>
+    </aside>
+  }
+</ion-content>
+

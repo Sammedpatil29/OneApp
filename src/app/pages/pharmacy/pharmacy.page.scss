@@ -1,0 +1,1496 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.pharmacy-content {
+  --background: #f8fafc;
+}
+
+/* =======================================================
+   FIXED TOP HEADER & LOCATION BAR
+   ======================================================= */
+.pharmacy-header {
+  background: #ffffff;
+  border-bottom: 1px solid #f1f5f9;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+  z-index: 100;
+
+  .main-toolbar {
+    --background: #ffffff;
+    --padding-start: 12px;
+    --padding-end: 12px;
+    --padding-top: max(env(safe-area-inset-top, 0px), 8px);
+    --padding-bottom: 10px;
+  }
+
+  .header-top-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 10px;
+
+    .btn-back-nav {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      border: none;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.15s ease;
+
+      &:active {
+        background: #e2e8f0;
+      }
+    }
+
+    // Location Chip matching Home page
+    .location-pill-btn {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 6px 10px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+
+      &:active {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+      }
+
+      .location-icon-box {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        background: #ecfdf5;
+        color: #059669;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+      }
+
+      .location-text-col {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+
+        .location-title-row {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+
+          .location-name {
+            font-size: 13px;
+            font-weight: 800;
+            color: #0f172a;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 120px;
+          }
+
+          .location-status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            flex-shrink: 0;
+
+            &.green { background: #10b981; }
+            &.orange { background: #f59e0b; }
+            &.red { background: #ef4444; }
+          }
+
+          .chevron-icon {
+            font-size: 13px;
+            color: #64748b;
+          }
+        }
+
+        .location-sub-row {
+          .location-full-address {
+            font-size: 10.5px;
+            color: #64748b;
+            font-weight: 500;
+            display: block;
+          }
+        }
+      }
+    }
+
+    .header-right-cart {
+      flex-shrink: 0;
+      cursor: pointer;
+
+      .cart-icon-btn {
+        position: relative;
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #0f172a;
+        font-size: 20px;
+
+        .cart-badge-count {
+          position: absolute;
+          top: -4px;
+          right: -4px;
+          min-width: 18px;
+          height: 18px;
+          padding: 0 4px;
+          border-radius: 999px;
+          background: #059669;
+          color: #ffffff;
+          font-size: 10px;
+          font-weight: 850;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 2px 6px rgba(5, 150, 105, 0.4);
+
+          &.lab {
+            background: #7c3aed;
+            box-shadow: 0 2px 6px rgba(124, 58, 237, 0.4);
+          }
+        }
+      }
+    }
+  }
+
+  // Dual Service Tabs (Medicines vs Lab Tests)
+  .service-segmented-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f1f5f9;
+    padding: 4px;
+    border-radius: 14px;
+    margin-bottom: 10px;
+
+    .service-tab-btn {
+      flex: 1;
+      height: 40px;
+      border: none;
+      border-radius: 10px;
+      background: transparent;
+      color: #64748b;
+      font-size: 13.5px;
+      font-weight: 750;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      .tab-icon-wrap {
+        font-size: 17px;
+        display: flex;
+        align-items: center;
+      }
+
+      .tab-badge {
+        font-size: 10px;
+        font-weight: 800;
+        background: #ecfdf5;
+        color: #059669;
+        padding: 1px 6px;
+        border-radius: 99px;
+
+        &.lab {
+          background: #f3e8ff;
+          color: #7c3aed;
+        }
+      }
+
+      &.active {
+        background: #ffffff;
+        color: #0f172a;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+
+        .tab-icon-wrap {
+          color: #059669;
+        }
+
+        &:nth-child(2) .tab-icon-wrap {
+          color: #7c3aed;
+        }
+      }
+    }
+  }
+
+  // Dynamic Search Input Trigger
+  .search-trigger-row {
+    .search-input-pill {
+      display: flex;
+      align-items: center;
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 999px;
+      padding: 4px 6px 4px 14px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+
+      &:active {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+      }
+
+      .search-icon {
+        font-size: 18px;
+        color: #94a3b8;
+        margin-right: 8px;
+        flex-shrink: 0;
+      }
+
+      .search-placeholder {
+        flex: 1;
+        min-width: 0;
+        font-size: 12.5px;
+        color: #64748b;
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .btn-search-action {
+        background: #0f172a;
+        color: #ffffff;
+        border: none;
+        border-radius: 999px;
+        padding: 6px 14px;
+        font-size: 11.5px;
+        font-weight: 750;
+        letter-spacing: 0.2px;
+        flex-shrink: 0;
+      }
+    }
+  }
+}
+
+/* =======================================================
+   MAIN PHARMACY BODY
+   ======================================================= */
+.pharmacy-body-container {
+  padding: 14px 14px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* =======================================================
+   1. UPLOAD PRESCRIPTION HERO CARD
+   ======================================================= */
+.rx-upload-hero-card {
+  position: relative;
+  border-radius: 20px;
+  padding: 18px 18px 20px;
+  background: linear-gradient(135deg, #064e3b 0%, #065f46 50%, #047857 100%);
+  color: #ffffff;
+  overflow: hidden;
+  box-shadow: 0 10px 25px -5px rgba(5, 150, 105, 0.3);
+
+  &.lab-card {
+    background: linear-gradient(135deg, #311042 0%, #4c1d95 50%, #6d28d9 100%);
+    box-shadow: 0 10px 25px -5px rgba(109, 40, 217, 0.3);
+  }
+
+  .rx-card-decor {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+
+    .decor-circle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+
+      &.c1 {
+        width: 140px;
+        height: 140px;
+        top: -40px;
+        right: -30px;
+      }
+
+      &.c2 {
+        width: 90px;
+        height: 90px;
+        bottom: -20px;
+        left: 20%;
+      }
+    }
+  }
+
+  .rx-card-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+
+    .rx-badge-pill {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      font-weight: 850;
+      letter-spacing: 0.6px;
+      background: rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(8px);
+      padding: 3px 10px;
+      border-radius: 99px;
+      margin-bottom: 8px;
+      color: #a7f3d0;
+
+      &.lab {
+        color: #e9d5ff;
+      }
+    }
+
+    .rx-title {
+      font-size: 18px;
+      font-weight: 850;
+      color: #ffffff;
+      margin: 0 0 6px;
+      line-height: 1.25;
+    }
+
+    .rx-desc {
+      font-size: 12.5px;
+      color: rgba(255, 255, 255, 0.9);
+      margin: 0 0 14px;
+      line-height: 1.45;
+    }
+
+    .rx-features-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 16px;
+
+      .feature-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11px;
+        font-weight: 700;
+        background: rgba(0, 0, 0, 0.2);
+        padding: 4px 10px;
+        border-radius: 8px;
+        color: #ffffff;
+
+        ion-icon {
+          font-size: 12px;
+          color: #34d399;
+        }
+      }
+    }
+
+    .btn-upload-rx {
+      width: 100%;
+      height: 44px;
+      border-radius: 12px;
+      background: #ffffff;
+      color: #065f46;
+      border: none;
+      font-size: 13px;
+      font-weight: 850;
+      letter-spacing: 0.4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: transform 0.15s ease;
+
+      ion-icon {
+        font-size: 17px;
+      }
+
+      &:active {
+        transform: scale(0.98);
+      }
+
+      &.lab {
+        color: #5b21b6;
+      }
+    }
+  }
+}
+
+/* =======================================================
+   SECTION BLOCKS & HEADINGS
+   ======================================================= */
+.section-block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .section-header-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    .section-title-col {
+      .section-title {
+        margin: 0;
+        font-size: 16.5px;
+        font-weight: 850;
+        color: #0f172a;
+        line-height: 1.2;
+      }
+
+      .section-subtitle {
+        font-size: 11.5px;
+        color: #64748b;
+        font-weight: 500;
+      }
+    }
+
+    .section-tag-pill {
+      font-size: 9.5px;
+      font-weight: 850;
+      letter-spacing: 0.5px;
+      color: #059669;
+      background: #ecfdf5;
+      padding: 3px 8px;
+      border-radius: 99px;
+
+      &.lab {
+        color: #7c3aed;
+        background: #f3e8ff;
+      }
+    }
+  }
+}
+
+/* =======================================================
+   "YOU MAY NEED" HORIZONTAL PRODUCT CARDS
+   ======================================================= */
+.products-horizontal-scroll {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  margin: 0 -14px;
+  padding-left: 14px;
+  padding-right: 14px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  .product-card-pill {
+    flex: 0 0 160px;
+    scroll-snap-align: start;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 10px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+
+    .rx-required-tag {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      z-index: 5;
+      font-size: 9px;
+      font-weight: 850;
+      background: #ef4444;
+      color: #ffffff;
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+
+    .product-img-box {
+      position: relative;
+      width: 100%;
+      height: 110px;
+      border-radius: 10px;
+      background: #f8fafc;
+      overflow: hidden;
+      margin-bottom: 8px;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .discount-chip {
+        position: absolute;
+        bottom: 6px;
+        left: 6px;
+        font-size: 9px;
+        font-weight: 850;
+        background: #059669;
+        color: #ffffff;
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+    }
+
+    .product-info-wrap {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+
+      .product-brand {
+        font-size: 9.5px;
+        font-weight: 700;
+        color: #94a3b8;
+        text-transform: uppercase;
+      }
+
+      .product-name {
+        margin: 2px 0 4px;
+        font-size: 12.5px;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1.25;
+        min-height: 32px;
+      }
+
+      .product-pack {
+        font-size: 11px;
+        color: #64748b;
+        margin-bottom: 8px;
+      }
+
+      .product-pricing-row {
+        margin-top: auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .price-col {
+          display: flex;
+          flex-direction: column;
+
+          .current-price {
+            font-size: 13.5px;
+            font-weight: 850;
+            color: #0f172a;
+          }
+
+          .mrp-price {
+            font-size: 10px;
+            color: #94a3b8;
+            text-decoration: line-through;
+          }
+        }
+
+        .btn-add-item {
+          height: 28px;
+          padding: 0 10px;
+          border-radius: 8px;
+          background: #ecfdf5;
+          border: 1px solid #a7f3d0;
+          color: #059669;
+          font-size: 11px;
+          font-weight: 800;
+          display: inline-flex;
+          align-items: center;
+          gap: 2px;
+          cursor: pointer;
+
+          ion-icon {
+            font-size: 13px;
+          }
+
+          &:active {
+            background: #d1fae5;
+          }
+        }
+
+        .stepper-box {
+          display: inline-flex;
+          align-items: center;
+          background: #059669;
+          border-radius: 8px;
+          height: 28px;
+          padding: 0 2px;
+
+          .btn-step {
+            width: 24px;
+            height: 24px;
+            border: none;
+            background: transparent;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            cursor: pointer;
+          }
+
+          .step-count {
+            font-size: 11.5px;
+            font-weight: 800;
+            color: #ffffff;
+            min-width: 16px;
+            text-align: center;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* =======================================================
+   CATEGORY CHIPS SCROLL
+   ======================================================= */
+.category-chips-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin: 0 -14px;
+  padding: 0 14px 4px;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  .cat-chip {
+    flex: 0 0 auto;
+    height: 34px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+    font-size: 12px;
+    font-weight: 750;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    ion-icon {
+      font-size: 15px;
+    }
+
+    &.active {
+      background: #0f172a;
+      color: #ffffff;
+      border-color: #0f172a;
+
+      ion-icon {
+        color: #ffffff !important;
+      }
+    }
+  }
+}
+
+/* =======================================================
+   MEDICINES CATALOG GRID
+   ======================================================= */
+.medicines-catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+
+  .med-catalog-card {
+    position: relative;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
+
+    .rx-required-tag {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      z-index: 5;
+      font-size: 9px;
+      font-weight: 850;
+      background: #ef4444;
+      color: #ffffff;
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+
+    .catalog-img-wrap {
+      position: relative;
+      width: 100%;
+      height: 120px;
+      border-radius: 10px;
+      background: #f8fafc;
+      overflow: hidden;
+      margin-bottom: 8px;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .discount-chip {
+        position: absolute;
+        bottom: 6px;
+        left: 6px;
+        font-size: 9px;
+        font-weight: 850;
+        background: #059669;
+        color: #ffffff;
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+    }
+
+    .catalog-body {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+
+      .catalog-brand {
+        font-size: 9.5px;
+        font-weight: 700;
+        color: #94a3b8;
+        text-transform: uppercase;
+      }
+
+      .catalog-title {
+        margin: 2px 0;
+        font-size: 13px;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1.25;
+      }
+
+      .catalog-dosage {
+        font-size: 11px;
+        color: #64748b;
+        font-weight: 600;
+      }
+
+      .catalog-desc {
+        margin: 4px 0 8px;
+        font-size: 11px;
+        color: #64748b;
+        line-height: 1.35;
+      }
+
+      .catalog-footer {
+        margin-top: auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .price-stack {
+          display: flex;
+          flex-direction: column;
+
+          .main-price {
+            font-size: 14px;
+            font-weight: 850;
+            color: #0f172a;
+          }
+
+          .strike-mrp {
+            font-size: 10px;
+            color: #94a3b8;
+            text-decoration: line-through;
+          }
+        }
+
+        .btn-add-item {
+          height: 30px;
+          padding: 0 12px;
+          border-radius: 8px;
+          background: #ecfdf5;
+          border: 1px solid #a7f3d0;
+          color: #059669;
+          font-size: 11.5px;
+          font-weight: 800;
+          display: inline-flex;
+          align-items: center;
+          gap: 3px;
+          cursor: pointer;
+
+          &:active {
+            background: #d1fae5;
+          }
+        }
+
+        .stepper-box {
+          display: inline-flex;
+          align-items: center;
+          background: #059669;
+          border-radius: 8px;
+          height: 30px;
+          padding: 0 2px;
+
+          .btn-step {
+            width: 26px;
+            height: 26px;
+            border: none;
+            background: transparent;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+          }
+
+          .step-count {
+            font-size: 12px;
+            font-weight: 800;
+            color: #ffffff;
+            min-width: 18px;
+            text-align: center;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* =======================================================
+   LAB TESTS LIST & CARDS
+   ======================================================= */
+.lab-tests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  .lab-test-card {
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
+    transition: all 0.2s ease;
+
+    &.booked {
+      border-color: #7c3aed;
+      background: #fcfaff;
+    }
+
+    .test-header-row {
+      .test-title-col {
+        .test-tags-wrap {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+          margin-bottom: 6px;
+
+          .test-tag {
+            font-size: 9.5px;
+            font-weight: 800;
+            color: #7c3aed;
+            background: #f3e8ff;
+            padding: 2px 7px;
+            border-radius: 6px;
+            text-transform: uppercase;
+          }
+        }
+
+        .test-name {
+          margin: 0 0 4px;
+          font-size: 15px;
+          font-weight: 850;
+          color: #0f172a;
+          line-height: 1.3;
+        }
+
+        .test-desc {
+          margin: 0;
+          font-size: 12px;
+          color: #64748b;
+          line-height: 1.4;
+        }
+      }
+    }
+
+    .test-meta-pills-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+
+      .meta-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11px;
+        font-weight: 650;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        padding: 4px 8px;
+        border-radius: 6px;
+        color: #334155;
+
+        ion-icon {
+          font-size: 13px;
+          color: #7c3aed;
+        }
+      }
+    }
+
+    .test-params-box {
+      background: #f8fafc;
+      border-radius: 10px;
+      padding: 8px 10px;
+
+      .params-label {
+        font-size: 10.5px;
+        font-weight: 750;
+        color: #64748b;
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      .params-chips-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+
+        .param-chip {
+          font-size: 11px;
+          color: #1e293b;
+          font-weight: 500;
+
+          &.more {
+            color: #7c3aed;
+            font-weight: 700;
+          }
+        }
+      }
+    }
+
+    .test-footer-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid #f1f5f9;
+      padding-top: 10px;
+
+      .test-price-col {
+        display: flex;
+        flex-direction: column;
+
+        .test-price-main {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+
+          .test-price {
+            font-size: 17px;
+            font-weight: 850;
+            color: #0f172a;
+          }
+
+          .test-mrp {
+            font-size: 12px;
+            color: #94a3b8;
+            text-decoration: line-through;
+          }
+
+          .test-save-badge {
+            font-size: 9.5px;
+            font-weight: 850;
+            background: #dcfce7;
+            color: #15803d;
+            padding: 1px 5px;
+            border-radius: 4px;
+          }
+        }
+
+        .test-footnote {
+          font-size: 10px;
+          color: #64748b;
+          font-weight: 500;
+        }
+      }
+
+      .btn-book-test {
+        height: 38px;
+        padding: 0 16px;
+        border-radius: 12px;
+        background: #7c3aed;
+        color: #ffffff;
+        border: none;
+        font-size: 12.5px;
+        font-weight: 800;
+        letter-spacing: 0.3px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+
+        ion-icon {
+          font-size: 15px;
+        }
+
+        &.booked {
+          background: #10b981;
+        }
+
+        &:active {
+          transform: scale(0.96);
+        }
+      }
+    }
+  }
+}
+
+/* =======================================================
+   LAB TRUST & SAFETY BADGES
+   ======================================================= */
+.lab-trust-section {
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid #e2e8f0;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .trust-heading {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 800;
+    color: #0f172a;
+  }
+
+  .trust-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+
+    .trust-card {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 10px 8px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .trust-icon-wrap {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #f3e8ff;
+        color: #7c3aed;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        margin-bottom: 6px;
+      }
+
+      h6 {
+        margin: 0 0 2px;
+        font-size: 11px;
+        font-weight: 750;
+        color: #0f172a;
+        line-height: 1.25;
+      }
+
+      p {
+        margin: 0;
+        font-size: 9.5px;
+        color: #64748b;
+        line-height: 1.35;
+      }
+    }
+  }
+}
+
+/* =======================================================
+   DOCKED BOTTOM CART STRIP
+   ======================================================= */
+.docked-cart-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  padding: 8px 14px max(env(safe-area-inset-bottom, 0px), 12px);
+  background: linear-gradient(to top, rgba(255, 255, 255, 1) 75%, rgba(255, 255, 255, 0) 100%);
+  z-index: 95;
+  cursor: pointer;
+
+  .cart-bar-inner {
+    background: #064e3b;
+    border-radius: 16px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #ffffff;
+    box-shadow: 0 6px 20px rgba(6, 78, 59, 0.35);
+
+    .cart-left-col {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      .cart-icon-circle {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+
+        &.lab {
+          background: rgba(255, 255, 255, 0.25);
+        }
+      }
+
+      .cart-text-col {
+        display: flex;
+        flex-direction: column;
+
+        .cart-qty-line {
+          font-size: 11px;
+          font-weight: 750;
+          color: #a7f3d0;
+          text-transform: uppercase;
+        }
+
+        .cart-amount-line {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+
+          .cart-total {
+            font-size: 15px;
+            font-weight: 850;
+            color: #ffffff;
+          }
+
+          .cart-save-tag {
+            font-size: 10px;
+            font-weight: 800;
+            background: rgba(255, 255, 255, 0.25);
+            padding: 1px 5px;
+            border-radius: 4px;
+            color: #ffffff;
+          }
+        }
+      }
+    }
+
+    .btn-view-cart {
+      background: #ffffff;
+      color: #064e3b;
+      border: none;
+      border-radius: 99px;
+      padding: 7px 16px;
+      font-size: 12.5px;
+      font-weight: 850;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+
+      ion-icon {
+        font-size: 14px;
+      }
+
+      &.lab {
+        color: #5b21b6;
+      }
+    }
+  }
+
+  &.lab .cart-bar-inner {
+    background: #4c1d95;
+    box-shadow: 0 6px 20px rgba(76, 29, 149, 0.35);
+
+    .cart-text-col .cart-qty-line {
+      color: #e9d5ff;
+    }
+  }
+}
+
+.bottom-nav-spacer {
+  height: 20px;
+  width: 100%;
+
+  &.has-cart {
+    height: 80px;
+  }
+}
+
+/* =======================================================
+   PRESCRIPTION UPLOAD BOTTOM SHEET MODAL
+   ======================================================= */
+.prescription-upload-modal {
+  --border-radius: 24px 24px 0 0;
+  --background: #ffffff;
+
+  &::part(content) {
+    border-radius: 24px 24px 0 0;
+    background: #ffffff;
+  }
+
+  .rx-modal-container {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 16px);
+
+    .rx-modal-header {
+      padding: 12px 18px;
+      border-bottom: 1px solid #f1f5f9;
+
+      .sheet-handle {
+        width: 38px;
+        height: 4px;
+        border-radius: 99px;
+        background: #cbd5e1;
+        margin: 0 auto 12px;
+      }
+
+      .rx-header-title-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .rx-modal-title-col {
+          h4 {
+            margin: 0;
+            font-size: 16.5px;
+            font-weight: 850;
+            color: #0f172a;
+          }
+
+          p {
+            margin: 2px 0 0;
+            font-size: 12px;
+            color: #64748b;
+          }
+        }
+
+        .btn-modal-close {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          background: #f1f5f9;
+          border: none;
+          color: #475569;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 18px;
+          cursor: pointer;
+        }
+      }
+    }
+
+    .rx-modal-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+
+      .upload-options-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+
+        .upload-opt-card {
+          background: #f8fafc;
+          border: 1.5px dashed #cbd5e1;
+          border-radius: 14px;
+          padding: 14px 8px;
+          text-align: center;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          cursor: pointer;
+          transition: all 0.15s ease;
+
+          &:active {
+            border-color: #059669;
+            background: #ecfdf5;
+          }
+
+          .opt-icon-circle {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #ffffff;
+            color: #059669;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 6px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+          }
+
+          .opt-title {
+            font-size: 12px;
+            font-weight: 800;
+            color: #0f172a;
+          }
+
+          .opt-sub {
+            font-size: 10px;
+            color: #64748b;
+          }
+        }
+      }
+
+      .selected-file-chip {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #ecfdf5;
+        border: 1px solid #a7f3d0;
+        border-radius: 12px;
+        padding: 10px 12px;
+
+        .check-icon {
+          font-size: 20px;
+          color: #059669;
+        }
+
+        .file-info-col {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+
+          .file-name {
+            font-size: 12px;
+            font-weight: 750;
+            color: #065f46;
+          }
+
+          .file-status {
+            font-size: 10px;
+            color: #059669;
+          }
+        }
+
+        .btn-remove-file {
+          border: none;
+          background: transparent;
+          color: #ef4444;
+          font-size: 18px;
+          cursor: pointer;
+        }
+      }
+
+      .notes-field-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+
+        label {
+          font-size: 12px;
+          font-weight: 750;
+          color: #334155;
+        }
+
+        textarea {
+          width: 100%;
+          border-radius: 12px;
+          border: 1px solid #cbd5e1;
+          padding: 10px;
+          font-size: 12.5px;
+          color: #0f172a;
+          background: #ffffff;
+          resize: none;
+
+          &:focus {
+            outline: none;
+            border-color: #059669;
+          }
+        }
+      }
+
+      .rx-safety-note {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 8px 10px;
+
+        ion-icon {
+          font-size: 18px;
+          color: #059669;
+          flex-shrink: 0;
+        }
+
+        p {
+          margin: 0;
+          font-size: 11px;
+          color: #64748b;
+          line-height: 1.35;
+        }
+      }
+
+      .btn-submit-rx {
+        width: 100%;
+        height: 48px;
+        border-radius: 14px;
+        background: #059669;
+        color: #ffffff;
+        border: none;
+        font-size: 13.5px;
+        font-weight: 850;
+        letter-spacing: 0.3px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        cursor: pointer;
+        box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35);
+
+        ion-icon {
+          font-size: 18px;
+        }
+
+        &:disabled {
+          opacity: 0.6;
+        }
+      }
+    }
+  }
+}
+

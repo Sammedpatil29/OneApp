@@ -1,0 +1,601 @@
+<!-- Cart Header -->
+<ion-header class="cart-header ion-no-border">
+  <ion-toolbar class="cart-toolbar">
+    <div class="cart-top-row">
+      <button type="button" class="btn-back" (click)="goBack()" aria-label="Go Back">
+        <ion-icon name="arrow-back"></ion-icon>
+      </button>
+
+      <div class="header-title-col">
+        <h3 class="page-title">My Health Cart</h3>
+        <span class="page-sub">Independent carts for Meds &amp; Tests</span>
+      </div>
+    </div>
+
+    <!-- Segmented Cart Type Switcher (Medicines Cart vs Lab Tests Cart) -->
+    <div class="cart-switcher-bar">
+      <button
+        type="button"
+        class="switch-btn"
+        [class.active]="activeCartType === 'medicine'"
+        (click)="switchCartType('medicine')">
+        <ion-icon name="bag-handle-outline"></ion-icon>
+        <span>Medicines Cart</span>
+        @if (medSummary.itemCount > 0) {
+          <span class="cart-count-chip">{{ medSummary.itemCount }}</span>
+        }
+      </button>
+
+      <button
+        type="button"
+        class="switch-btn"
+        [class.active]="activeCartType === 'lab'"
+        (click)="switchCartType('lab')">
+        <ion-icon name="flask-outline"></ion-icon>
+        <span>Lab Tests Cart</span>
+        @if (labSummary.itemCount > 0) {
+          <span class="cart-count-chip lab">{{ labSummary.itemCount }}</span>
+        }
+      </button>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<!-- Main Cart Scrollable Body -->
+<ion-content [fullscreen]="true" class="cart-content">
+  <main class="cart-container">
+
+    <!-- ─── SHARED: DELIVERY ADDRESS CARD ──────────────────────────────────── -->
+    <section class="delivery-address-card" (click)="openLocation()" role="button" tabindex="0">
+      <div class="address-left">
+        <div class="address-icon-box">
+          <ion-icon name="location-outline"></ion-icon>
+        </div>
+        <div class="address-text-col">
+          <div class="address-tag-row">
+            <span class="tag-title">{{ activeCartType === 'medicine' ? 'Delivering to:' : 'Sample Collection at:' }}</span>
+            <span class="location-name">{{ displayLocationName }}</span>
+          </div>
+          <p class="address-line text-truncate-2">
+            {{ displayFullAddress || 'Select delivery address to proceed' }}
+          </p>
+        </div>
+      </div>
+      <button type="button" class="btn-change-address" aria-label="Change Address">
+        <span>Change</span>
+        <ion-icon name="chevron-forward"></ion-icon>
+      </button>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- 1. MEDICINES CART VIEW                                                -->
+    <!-- ===================================================================== -->
+    @if (activeCartType === 'medicine') {
+
+      @if (medicineItems.length > 0) {
+
+        <!-- Prescription Requirement Banner -->
+        @if (hasPrescriptionRequiredItems) {
+          <section class="rx-status-banner animate__animated animate__fadeIn" [class.rx-attached]="latestPrescription">
+            <div class="rx-banner-left">
+              <div class="rx-icon-box">
+                @if (latestPrescription) {
+                  <ion-icon name="checkmark-circle"></ion-icon>
+                } @else {
+                  <ion-icon name="document-text-outline"></ion-icon>
+                }
+              </div>
+              <div class="rx-text-col">
+                <span class="rx-banner-title">
+                  {{ latestPrescription ? 'Prescription Attached' : 'Prescription Required' }}
+                </span>
+                <p class="rx-banner-desc">
+                  {{ latestPrescription 
+                      ? latestPrescription.fileName 
+                      : 'Some medicines in your cart need doctor verification.' }}
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              class="btn-rx-action"
+              [class.btn-edit]="latestPrescription"
+              (click)="openPrescriptionSheet()">
+              {{ latestPrescription ? 'Change' : 'Upload Rx' }}
+            </button>
+          </section>
+        }
+
+        <!-- Medicines Items List -->
+        <section class="cart-items-card">
+          <div class="card-header-row">
+            <h4 class="card-header-title">Items in Cart ({{ medSummary.itemCount }})</h4>
+          </div>
+
+          <div class="items-list">
+            @for (ci of medicineItems; track ci.item.id) {
+              <div class="cart-item-row">
+                <div class="item-img-wrap">
+                  <img [src]="ci.item.image" [alt]="ci.item.name" loading="lazy" />
+                  @if (ci.item.prescriptionRequired) {
+                    <span class="rx-tag">Rx</span>
+                  }
+                </div>
+
+                <div class="item-info-col">
+                  <div class="item-title-row">
+                    <h5 class="item-name">{{ ci.item.name }}</h5>
+                    <button type="button" class="btn-delete" (click)="removeMedicine(ci.item.id)" title="Remove item">
+                      <ion-icon name="trash-outline"></ion-icon>
+                    </button>
+                  </div>
+
+                  <span class="item-pack">{{ ci.item.packSize }} • {{ ci.item.brand }}</span>
+
+                  <div class="item-pricing-stepper-row">
+                    <div class="price-stack">
+                      <span class="unit-price">₹{{ ci.item.price * ci.quantity }}</span>
+                      @if (ci.item.mrp > ci.item.price) {
+                        <span class="strike-mrp">₹{{ ci.item.mrp * ci.quantity }}</span>
+                      }
+                    </div>
+
+                    <!-- Stepper -->
+                    <div class="stepper-box">
+                      <button type="button" class="btn-step" (click)="updateMedQty(ci.item.id, ci.quantity - 1)">
+                        <ion-icon name="remove"></ion-icon>
+                      </button>
+                      <span class="qty-num">{{ ci.quantity }}</span>
+                      <button type="button" class="btn-step" (click)="updateMedQty(ci.item.id, ci.quantity + 1)">
+                        <ion-icon name="add"></ion-icon>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+
+        <!-- Coupon Card -->
+        <section class="coupon-section-card">
+          <div class="coupon-header">
+            <ion-icon name="pricetag-outline"></ion-icon>
+            <span class="coupon-title">Apply Coupons &amp; Offers</span>
+          </div>
+
+          @if (!appliedCoupon) {
+            <div class="coupon-offer-box">
+              <div class="offer-left">
+                <span class="offer-code">HEALTH15</span>
+                <span class="offer-desc">Flat 15% discount on medicines order</span>
+              </div>
+              <button type="button" class="btn-apply-coupon" (click)="applyCouponCode('HEALTH15')">
+                Apply
+              </button>
+            </div>
+          } @else {
+            <div class="applied-coupon-row animate__animated animate__fadeIn">
+              <div class="applied-left">
+                <ion-icon name="checkmark-circle"></ion-icon>
+                <span>Coupon <strong>'{{ appliedCoupon }}'</strong> applied (Saved ₹{{ couponDiscount }})</span>
+              </div>
+              <button type="button" class="btn-remove-coupon" (click)="removeCoupon()">
+                Remove
+              </button>
+            </div>
+          }
+        </section>
+
+        <!-- Bill Details Card -->
+        <section class="bill-summary-card">
+          <h4 class="bill-title">Bill Summary</h4>
+
+          <div class="bill-row">
+            <span class="bill-label">Item Total (MRP)</span>
+            <span class="bill-val">₹{{ medSummary.totalMrp }}</span>
+          </div>
+
+          @if (medSummary.savings > 0) {
+            <div class="bill-row green">
+              <span class="bill-label">Product Discounts</span>
+              <span class="bill-val">-₹{{ medSummary.savings }}</span>
+            </div>
+          }
+
+          @if (couponDiscount > 0) {
+            <div class="bill-row green">
+              <span class="bill-label">Coupon Discount (HEALTH15)</span>
+              <span class="bill-val">-₹{{ couponDiscount }}</span>
+            </div>
+          }
+
+          <div class="bill-row">
+            <span class="bill-label">Delivery Fee</span>
+            @if (medSummary.subtotal >= 199) {
+              <span class="bill-val free">FREE</span>
+            } @else {
+              <span class="bill-val">₹25</span>
+            }
+          </div>
+
+          <div class="bill-row">
+            <span class="bill-label">Handling &amp; Packaging</span>
+            <span class="bill-val">₹5</span>
+          </div>
+
+          <div class="bill-divider"></div>
+
+          <div class="bill-total-row">
+            <div class="total-label-col">
+              <span class="total-title">To Pay</span>
+              <span class="savings-note">You are saving ₹{{ medSummary.savings + couponDiscount }} on this order</span>
+            </div>
+            <span class="final-total">₹{{ finalMedicineTotal }}</span>
+          </div>
+        </section>
+
+        <!-- Safety Assurance Card -->
+        <div class="trust-notice-card">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+          <p>100% genuine medications sourced directly from licensed wholesale distributors.</p>
+        </div>
+
+      } @else {
+        <!-- Empty Medicine Cart -->
+        <section class="empty-cart-view animate__animated animate__fadeIn">
+          <div class="empty-icon-circle">
+            <ion-icon name="bag-handle-outline"></ion-icon>
+          </div>
+          <h4>Your Medicine Cart is Empty</h4>
+          <p>Browse from our wide catalog of genuine medicines, daily healthcare essentials, and vitamins.</p>
+          <button type="button" class="btn-browse-action" (click)="browsePharmacy()">
+            Explore Medicines
+          </button>
+        </section>
+      }
+
+    }
+
+    <!-- ===================================================================== -->
+    <!-- 2. LAB TESTS CART VIEW                                                -->
+    <!-- ===================================================================== -->
+    @else if (activeCartType === 'lab') {
+
+      @if (labItems.length > 0) {
+
+        <!-- Patient Details Form -->
+        <section class="patient-details-card animate__animated animate__fadeIn">
+          <div class="card-header-row">
+            <ion-icon name="person-outline"></ion-icon>
+            <h4 class="card-header-title">Patient Details</h4>
+          </div>
+
+          <div class="form-grid">
+            <div class="input-group">
+              <label for="ptName">Patient Full Name *</label>
+              <input
+                id="ptName"
+                type="text"
+                class="cart-input"
+                placeholder="e.g. Ramesh Kumar"
+                [(ngModel)]="patientName" />
+            </div>
+
+            <div class="input-row-half">
+              <div class="input-group">
+                <label for="ptAge">Age</label>
+                <input
+                  id="ptAge"
+                  type="number"
+                  class="cart-input"
+                  placeholder="e.g. 32"
+                  [(ngModel)]="patientAge" />
+              </div>
+
+              <div class="input-group">
+                <label>Gender</label>
+                <div class="gender-pill-row">
+                  <button
+                    type="button"
+                    class="btn-gender"
+                    [class.active]="patientGender === 'Male'"
+                    (click)="patientGender = 'Male'">
+                    Male
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-gender"
+                    [class.active]="patientGender === 'Female'"
+                    (click)="patientGender = 'Female'">
+                    Female
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-gender"
+                    [class.active]="patientGender === 'Other'"
+                    (click)="patientGender = 'Other'">
+                    Other
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Sample Collection Slot Picker -->
+        <section class="slot-picker-card">
+          <div class="card-header-row">
+            <ion-icon name="calendar-outline"></ion-icon>
+            <h4 class="card-header-title">Select Home Pickup Slot</h4>
+          </div>
+
+          <!-- Day Selection -->
+          <div class="date-chips-row">
+            <button
+              type="button"
+              class="date-chip"
+              [class.active]="selectedDateOption === 'Today'"
+              (click)="selectDateOption('Today')">
+              <span>Today</span>
+            </button>
+
+            <button
+              type="button"
+              class="date-chip"
+              [class.active]="selectedDateOption === 'Tomorrow'"
+              (click)="selectDateOption('Tomorrow')">
+              <span>Tomorrow (Recommended)</span>
+            </button>
+
+            <button
+              type="button"
+              class="date-chip"
+              [class.active]="selectedDateOption === 'Day After'"
+              (click)="selectDateOption('Day After')">
+              <span>Day After</span>
+            </button>
+          </div>
+
+          <!-- Time Slot Selection -->
+          <div class="time-slots-grid">
+            @for (slot of availableTimeSlots; track slot) {
+              <button
+                type="button"
+                class="time-slot-btn"
+                [class.active]="selectedTimeSlot === slot"
+                (click)="selectTimeSlot(slot)">
+                <ion-icon name="time-outline"></ion-icon>
+                <span>{{ slot }}</span>
+              </button>
+            }
+          </div>
+        </section>
+
+        <!-- Booked Lab Tests List -->
+        <section class="cart-items-card">
+          <div class="card-header-row">
+            <h4 class="card-header-title">Selected Tests &amp; Packages ({{ labSummary.itemCount }})</h4>
+          </div>
+
+          <div class="items-list">
+            @for (ci of labItems; track ci.test.id) {
+              <div class="lab-cart-item-row">
+                <div class="lab-item-header">
+                  <div class="lab-item-title-col">
+                    <h5 class="lab-item-name">{{ ci.test.name }}</h5>
+                    <span class="lab-item-meta">{{ ci.test.testCount }} Tests Included • {{ ci.test.sampleType }}</span>
+                  </div>
+                  <button type="button" class="btn-delete" (click)="removeLabTest(ci.test.id)" title="Remove test">
+                    <ion-icon name="trash-outline"></ion-icon>
+                  </button>
+                </div>
+
+                <div class="lab-item-specs">
+                  <span class="spec-pill">
+                    <ion-icon name="time-outline"></ion-icon>
+                    {{ ci.test.fastingRequirement }}
+                  </span>
+                  <span class="spec-pill">
+                    <ion-icon name="receipt-outline"></ion-icon>
+                    Report in {{ ci.test.reportTimeHours }} hrs
+                  </span>
+                </div>
+
+                <div class="lab-item-pricing-row">
+                  <div class="price-stack">
+                    <span class="unit-price">₹{{ ci.test.price }}</span>
+                    @if (ci.test.mrp > ci.test.price) {
+                      <span class="strike-mrp">₹{{ ci.test.mrp }}</span>
+                      <span class="discount-pill">{{ ci.test.discountPercent }}% OFF</span>
+                    }
+                  </div>
+                  <span class="collection-tag">Home Sample Pickup</span>
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+
+        <!-- Lab Bill Details Card -->
+        <section class="bill-summary-card">
+          <h4 class="bill-title">Lab Test Summary</h4>
+
+          <div class="bill-row">
+            <span class="bill-label">Total Tests MRP</span>
+            <span class="bill-val">₹{{ labSummary.totalMrp }}</span>
+          </div>
+
+          @if (labSummary.savings > 0) {
+            <div class="bill-row green">
+              <span class="bill-label">Package Savings</span>
+              <span class="bill-val">-₹{{ labSummary.savings }}</span>
+            </div>
+          }
+
+          <div class="bill-row">
+            <span class="bill-label">Home Sample Collection</span>
+            @if (labSummary.subtotal >= 499) {
+              <span class="bill-val free">FREE</span>
+            } @else {
+              <span class="bill-val">₹50</span>
+            }
+          </div>
+
+          <div class="bill-divider"></div>
+
+          <div class="bill-total-row">
+            <div class="total-label-col">
+              <span class="total-title">Total Payable</span>
+              <span class="savings-note">You are saving ₹{{ labSummary.savings }} with Pintu Health</span>
+            </div>
+            <span class="final-total">₹{{ labSummary.grandTotal }}</span>
+          </div>
+        </section>
+
+        <!-- Diagnostic Trust Badge -->
+        <div class="trust-notice-card lab">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+          <p>NABL &amp; ICMR accredited partner laboratories with certified phlebotomists.</p>
+        </div>
+
+      } @else {
+        <!-- Empty Lab Cart -->
+        <section class="empty-cart-view animate__animated animate__fadeIn">
+          <div class="empty-icon-circle lab">
+            <ion-icon name="flask-outline"></ion-icon>
+          </div>
+          <h4>No Lab Tests Booked</h4>
+          <p>Book comprehensive health checkups, blood tests, or specialized profiles with free home sample collection.</p>
+          <button type="button" class="btn-browse-action lab" (click)="browsePharmacy()">
+            Browse Health Packages
+          </button>
+        </section>
+      }
+
+    }
+
+    <!-- Spacer for Bottom Floating CTA -->
+    <div
+      class="bottom-spacer"
+      [class.has-cart]="(activeCartType === 'medicine' && medicineItems.length > 0) || (activeCartType === 'lab' && labItems.length > 0)">
+    </div>
+
+  </main>
+
+  <!-- ─── STICKY BOTTOM CHECKOUT ACTION STRIP ───────────────────────────────── -->
+  @if (activeCartType === 'medicine' && medicineItems.length > 0) {
+    <footer slot="fixed" class="cart-sticky-footer medicine animate__animated animate__fadeInUp">
+      <div class="footer-inner">
+        <div class="footer-total-col">
+          <span class="to-pay-label">Total to Pay</span>
+          <span class="to-pay-amount">₹{{ finalMedicineTotal }}</span>
+        </div>
+
+        <button
+          type="button"
+          class="btn-checkout medicine"
+          [disabled]="isProcessingCheckout"
+          (click)="placeMedicineOrder()">
+          @if (isProcessingCheckout) {
+            <span>Placing Order...</span>
+          } @else {
+            <span>Place Medicine Order</span>
+            <ion-icon name="chevron-forward"></ion-icon>
+          }
+        </button>
+      </div>
+    </footer>
+  } @else if (activeCartType === 'lab' && labItems.length > 0) {
+    <footer slot="fixed" class="cart-sticky-footer lab animate__animated animate__fadeInUp">
+      <div class="footer-inner">
+        <div class="footer-total-col">
+          <span class="to-pay-label">Total to Pay</span>
+          <span class="to-pay-amount lab">₹{{ labSummary.grandTotal }}</span>
+        </div>
+
+        <button
+          type="button"
+          class="btn-checkout lab"
+          [disabled]="isProcessingCheckout"
+          (click)="bookLabTests()">
+          @if (isProcessingCheckout) {
+            <span>Scheduling Pickup...</span>
+          } @else {
+            <span>Confirm Lab Booking</span>
+            <ion-icon name="chevron-forward"></ion-icon>
+          }
+        </button>
+      </div>
+    </footer>
+  }
+
+  <!-- ─── PRESCRIPTION UPLOAD MODAL SHEET ───────────────────────────────────── -->
+  <ion-modal
+    [isOpen]="isPrescriptionModalOpen"
+    (didDismiss)="closePrescriptionSheet()"
+    [initialBreakpoint]="0.68"
+    [breakpoints]="[0, 0.68, 0.95]"
+    class="prescription-cart-modal">
+    <ng-template>
+      <div class="rx-sheet-content">
+        <div class="sheet-handle-bar"></div>
+
+        <div class="sheet-header">
+          <div>
+            <h4>Upload Doctor's Prescription</h4>
+            <p>Required for verifying prescription-controlled medications</p>
+          </div>
+          <button type="button" class="btn-sheet-close" (click)="closePrescriptionSheet()">
+            <ion-icon name="close-outline"></ion-icon>
+          </button>
+        </div>
+
+        <div class="sheet-body">
+          <div class="upload-options-grid">
+            <div class="opt-box" (click)="simulateFilePick('camera')" role="button" tabindex="0">
+              <ion-icon name="camera-outline"></ion-icon>
+              <span>Camera</span>
+            </div>
+            <div class="opt-box" (click)="simulateFilePick('gallery')" role="button" tabindex="0">
+              <ion-icon name="cloud-upload-outline"></ion-icon>
+              <span>Gallery</span>
+            </div>
+            <div class="opt-box" (click)="simulateFilePick('doc')" role="button" tabindex="0">
+              <ion-icon name="document-text-outline"></ion-icon>
+              <span>PDF Doc</span>
+            </div>
+          </div>
+
+          @if (prescriptionFileName) {
+            <div class="selected-rx-preview">
+              <ion-icon name="checkmark-circle"></ion-icon>
+              <span>{{ prescriptionFileName }}</span>
+            </div>
+          }
+
+          <div class="rx-note-wrap">
+            <label for="cartRxNotes">Instructions for Pharmacist (Optional):</label>
+            <input
+              id="cartRxNotes"
+              type="text"
+              class="cart-input"
+              [(ngModel)]="prescriptionNotes"
+              placeholder="e.g. Dispense generic equivalents if available" />
+          </div>
+
+          <button
+            type="button"
+            class="btn-confirm-rx"
+            [disabled]="isUploadingPrescription"
+            (click)="submitPrescription()">
+            {{ isUploadingPrescription ? 'Attaching Prescription...' : 'Attach Prescription' }}
+          </button>
+        </div>
+      </div>
+    </ng-template>
+  </ion-modal>
+
+</ion-content>
+

@@ -755,6 +755,15 @@ export class HomePage implements OnInit, OnDestroy {
                   img: '',
                   category: 'rides',
                   route: '/layout/rides'
+                },
+                {
+                  id: 3,
+                  title: 'Medicines & Lab Tests',
+                  subtitle: 'Genuine Meds & Blood Tests',
+                  offers: 'FLAT 15% OFF',
+                  img: '',
+                  category: 'pharmacy',
+                  route: '/layout/pharmacy'
                 }
               ];
             }
@@ -961,6 +970,11 @@ export class HomePage implements OnInit, OnDestroy {
       return;
     }
 
+    if (route === 'pharmacy' || route === 'medicine' || route === 'medicines' || route === 'lab' || route === '/layout/pharmacy' || route === '/pharmacy') {
+      this.router.navigate(['/layout/pharmacy']);
+      return;
+    }
+
     if (route.startsWith('/')) {
       this.router.navigate([route]);
     } else if (route) {
@@ -977,6 +991,8 @@ export class HomePage implements OnInit, OnDestroy {
         this.router.navigate(['/layout/history']);
       } else if (title.includes('property') || title.includes('properties') || title.includes('vehicle')) {
         this.router.navigate(['/layout/property']);
+      } else if (title.includes('medicine') || title.includes('pharmacy') || title.includes('lab') || title.includes('test') || title.includes('health') || title.includes('doctor')) {
+        this.router.navigate(['/layout/pharmacy']);
       }
     }
   }
@@ -988,6 +1004,11 @@ export class HomePage implements OnInit, OnDestroy {
 
     if (route.startsWith('http://') || route.startsWith('https://')) {
       window.open(route, '_system');
+      return;
+    }
+
+    if (route === 'pharmacy' || route === 'medicine' || route === 'medicines' || route === 'lab' || route === '/layout/pharmacy' || route === '/pharmacy') {
+      this.router.navigate(['/layout/pharmacy']);
       return;
     }
 

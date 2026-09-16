@@ -1,0 +1,657 @@
+<!-- Fixed White Top Header: Back Button + Location Chip + Cart Icon -->
+<ion-header class="pharmacy-header ion-no-border">
+  <ion-toolbar class="main-toolbar">
+    <div class="header-top-row">
+      <!-- Back Button -->
+      <button type="button" class="btn-back-nav" (click)="goBack()" aria-label="Go Back">
+        <ion-icon name="arrow-back"></ion-icon>
+      </button>
+
+      <!-- Location Selector Pill (matches Home page) -->
+      <div class="location-pill-btn" (click)="openLocation()" role="button" tabindex="0">
+        <div class="location-icon-box">
+          <ion-icon name="location"></ion-icon>
+        </div>
+        <div class="location-text-col">
+          <div class="location-title-row">
+            <span class="location-name">{{ displayLocationName }}</span>
+            @if (isOutOfServiceArea) {
+              <span class="location-status-dot red" title="Location Not Serviceable"></span>
+            } @else if (isSavedAddress) {
+              <span class="location-status-dot green" title="Saved Address"></span>
+            } @else {
+              <span class="location-status-dot orange" title="Current Location"></span>
+            }
+            <ion-icon name="chevron-down" class="chevron-icon"></ion-icon>
+          </div>
+          @if (displayFullAddress) {
+            <div class="location-sub-row">
+              <span class="location-full-address text-truncate">{{ displayFullAddress }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Right: Active Cart Button -->
+      <div class="header-right-cart" (click)="goToCart()" role="button" tabindex="0" title="View Cart">
+        <div class="cart-icon-btn">
+          <ion-icon [name]="activeTab === 'medicines' ? 'bag-handle-outline' : 'flask-outline'"></ion-icon>
+          @if (activeTab === 'medicines' && medSummary.itemCount > 0) {
+            <span class="cart-badge-count animate__animated animate__zoomIn">{{ medSummary.itemCount }}</span>
+          } @else if (activeTab === 'lab_tests' && labSummary.itemCount > 0) {
+            <span class="cart-badge-count lab animate__animated animate__zoomIn">{{ labSummary.itemCount }}</span>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Dual Service Tabs: Medicines (First) & Lab Tests (Second) -->
+    <div class="service-segmented-bar">
+      <button
+        type="button"
+        class="service-tab-btn"
+        [class.active]="activeTab === 'medicines'"
+        (click)="switchTab('medicines')">
+        <div class="tab-icon-wrap">
+          <ion-icon name="medkit-outline"></ion-icon>
+        </div>
+        <span>Medicines</span>
+        @if (medSummary.itemCount > 0) {
+          <span class="tab-badge">{{ medSummary.itemCount }}</span>
+        }
+      </button>
+
+      <button
+        type="button"
+        class="service-tab-btn"
+        [class.active]="activeTab === 'lab_tests'"
+        (click)="switchTab('lab_tests')">
+        <div class="tab-icon-wrap">
+          <ion-icon name="flask-outline"></ion-icon>
+        </div>
+        <span>Lab Tests</span>
+        @if (labSummary.itemCount > 0) {
+          <span class="tab-badge lab">{{ labSummary.itemCount }}</span>
+        }
+      </button>
+    </div>
+
+    <!-- Dynamic Search Bar Trigger -->
+    <div class="search-trigger-row">
+      <div class="search-input-pill" (click)="goToSearch()" role="button" tabindex="0">
+        <ion-icon name="search-outline" class="search-icon"></ion-icon>
+        <span class="search-placeholder">
+          {{ activeTab === 'medicines' ? 'Search medicines, cough, fever, vitamins...' : 'Search blood tests, health packages, CBC...' }}
+        </span>
+        <button type="button" class="btn-search-action">
+          <span>{{ activeTab === 'medicines' ? 'Search' : 'Find Tests' }}</span>
+        </button>
+      </div>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<!-- Main Scrollable Body Content -->
+<ion-content [fullscreen]="true" class="pharmacy-content">
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <main class="pharmacy-body-container">
+
+    <!-- ================================================================= -->
+    <!-- TAB 1: MEDICINES SECTION                                          -->
+    <!-- ================================================================= -->
+    @if (activeTab === 'medicines') {
+
+      <!-- 1. Upload Prescription Hero Card -->
+      <section class="rx-upload-hero-card animate__animated animate__fadeIn">
+        <div class="rx-card-decor">
+          <div class="decor-circle c1"></div>
+          <div class="decor-circle c2"></div>
+        </div>
+
+        <div class="rx-card-content">
+          <div class="rx-badge-pill">
+            <ion-icon name="document-text-outline"></ion-icon>
+            <span>QUICK PRESCRIPTION ORDER</span>
+          </div>
+
+          <h3 class="rx-title">Order Medicines via Prescription</h3>
+          <p class="rx-desc">
+            Upload your doctor's prescription. Our licensed pharmacist will verify and arrange your complete order.
+          </p>
+
+          <div class="rx-features-row">
+            <div class="feature-chip">
+              <ion-icon name="checkmark-circle"></ion-icon>
+              <span>100% Genuine</span>
+            </div>
+            <div class="feature-chip">
+              <ion-icon name="shield-checkmark-outline"></ion-icon>
+              <span>Free Verification</span>
+            </div>
+            <div class="feature-chip">
+              <ion-icon name="time-outline"></ion-icon>
+              <span>Instant Dispatch</span>
+            </div>
+          </div>
+
+          <button type="button" class="btn-upload-rx" (click)="openPrescriptionModal('medicine')">
+            <ion-icon name="cloud-upload-outline"></ion-icon>
+            <span>UPLOAD PRESCRIPTION</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- 2. "You May Need" Section (Daily Fast-Moving Medicines) -->
+      <section class="section-block">
+        <div class="section-header-row">
+          <div class="section-title-col">
+            <h4 class="section-title">You May Need</h4>
+            <span class="section-subtitle">Everyday medicines &amp; health essentials</span>
+          </div>
+          <span class="section-tag-pill">POPULAR</span>
+        </div>
+
+        <div class="products-horizontal-scroll">
+          @for (med of allMedicines.slice(0, 6); track med.id) {
+            <div class="product-card-pill">
+              <!-- Rx Badge if prescription required -->
+              @if (med.prescriptionRequired) {
+                <span class="rx-required-tag">Rx</span>
+              }
+
+              <!-- Product Image -->
+              <div class="product-img-box">
+                <img [src]="med.image" [alt]="med.name" loading="lazy" />
+                @if (med.discountPercent > 0) {
+                  <span class="discount-chip">{{ med.discountPercent }}% OFF</span>
+                }
+              </div>
+
+              <!-- Info -->
+              <div class="product-info-wrap">
+                <span class="product-brand">{{ med.brand }}</span>
+                <h5 class="product-name text-truncate-2">{{ med.name }}</h5>
+                <span class="product-pack">{{ med.packSize }}</span>
+
+                <div class="product-pricing-row">
+                  <div class="price-col">
+                    <span class="current-price">₹{{ med.price }}</span>
+                    @if (med.mrp > med.price) {
+                      <span class="mrp-price">₹{{ med.mrp }}</span>
+                    }
+                  </div>
+
+                  <!-- Add to Cart / Quantity Stepper -->
+                  <div class="cart-action-col">
+                    @if (getMedicineQty(med.id) === 0) {
+                      <button type="button" class="btn-add-item" (click)="addMedicineToCart(med, $event)">
+                        <span>ADD</span>
+                        <ion-icon name="add"></ion-icon>
+                      </button>
+                    } @else {
+                      <div class="stepper-box">
+                        <button type="button" class="btn-step" (click)="decrementMedicine(med, $event)">
+                          <ion-icon name="remove"></ion-icon>
+                        </button>
+                        <span class="step-count">{{ getMedicineQty(med.id) }}</span>
+                        <button type="button" class="btn-step" (click)="incrementMedicine(med, $event)">
+                          <ion-icon name="add"></ion-icon>
+                        </button>
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- 3. Medicine Categories Filter Chips -->
+      <section class="section-block">
+        <div class="section-header-row">
+          <div class="section-title-col">
+            <h4 class="section-title">Shop by Category</h4>
+            <span class="section-subtitle">Find medicines for specific health needs</span>
+          </div>
+        </div>
+
+        <div class="category-chips-scroll">
+          <button
+            type="button"
+            class="cat-chip"
+            [class.active]="selectedMedCategory === 'all'"
+            (click)="filterMedCategory('all')">
+            <span>All Medicines</span>
+          </button>
+          @for (cat of medicineCategories; track cat.id) {
+            <button
+              type="button"
+              class="cat-chip"
+              [class.active]="selectedMedCategory === cat.id"
+              (click)="filterMedCategory(cat.id)">
+              <ion-icon [name]="cat.icon" [style.color]="cat.color"></ion-icon>
+              <span>{{ cat.name }}</span>
+            </button>
+          }
+        </div>
+
+        <!-- Filtered Medicines Grid -->
+        <div class="medicines-catalog-grid">
+          @for (med of displayedMedicines; track med.id) {
+            <div class="med-catalog-card">
+              @if (med.prescriptionRequired) {
+                <span class="rx-required-tag">Rx</span>
+              }
+
+              <div class="catalog-img-wrap">
+                <img [src]="med.image" [alt]="med.name" loading="lazy" />
+                @if (med.discountPercent > 0) {
+                  <span class="discount-chip">{{ med.discountPercent }}% OFF</span>
+                }
+              </div>
+
+              <div class="catalog-body">
+                <span class="catalog-brand">{{ med.brand }}</span>
+                <h5 class="catalog-title">{{ med.name }}</h5>
+                <span class="catalog-dosage">{{ med.dosageForm }} • {{ med.packSize }}</span>
+                <p class="catalog-desc text-truncate-2">{{ med.description }}</p>
+
+                <div class="catalog-footer">
+                  <div class="price-stack">
+                    <span class="main-price">₹{{ med.price }}</span>
+                    @if (med.mrp > med.price) {
+                      <span class="strike-mrp">₹{{ med.mrp }}</span>
+                    }
+                  </div>
+
+                  <div class="action-wrap">
+                    @if (getMedicineQty(med.id) === 0) {
+                      <button type="button" class="btn-add-item" (click)="addMedicineToCart(med, $event)">
+                        <span>ADD</span>
+                        <ion-icon name="add"></ion-icon>
+                      </button>
+                    } @else {
+                      <div class="stepper-box">
+                        <button type="button" class="btn-step" (click)="decrementMedicine(med, $event)">
+                          <ion-icon name="remove"></ion-icon>
+                        </button>
+                        <span class="step-count">{{ getMedicineQty(med.id) }}</span>
+                        <button type="button" class="btn-step" (click)="incrementMedicine(med, $event)">
+                          <ion-icon name="add"></ion-icon>
+                        </button>
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+
+    }
+
+    <!-- ================================================================= -->
+    <!-- TAB 2: LAB TESTS SECTION                                          -->
+    <!-- ================================================================= -->
+    @else if (activeTab === 'lab_tests') {
+
+      <!-- 1. Upload Lab Prescription Card -->
+      <section class="rx-upload-hero-card lab-card animate__animated animate__fadeIn">
+        <div class="rx-card-decor">
+          <div class="decor-circle c1"></div>
+          <div class="decor-circle c2"></div>
+        </div>
+
+        <div class="rx-card-content">
+          <div class="rx-badge-pill lab">
+            <ion-icon name="flask-outline"></ion-icon>
+            <span>DOCTOR'S LAB ADVICE</span>
+          </div>
+
+          <h3 class="rx-title">Book Tests via Doctor's Note</h3>
+          <p class="rx-desc">
+            Not sure which health package or blood tests to book? Upload your prescription and our medical team will schedule the exact required tests.
+          </p>
+
+          <div class="rx-features-row">
+            <div class="feature-chip">
+              <ion-icon name="shield-checkmark-outline"></ion-icon>
+              <span>NABL Accredited</span>
+            </div>
+            <div class="feature-chip">
+              <ion-icon name="heart-outline"></ion-icon>
+              <span>Home Sample Pickup</span>
+            </div>
+            <div class="feature-chip">
+              <ion-icon name="time-outline"></ion-icon>
+              <span>Digital Reports</span>
+            </div>
+          </div>
+
+          <button type="button" class="btn-upload-rx lab" (click)="openPrescriptionModal('lab')">
+            <ion-icon name="cloud-upload-outline"></ion-icon>
+            <span>UPLOAD &amp; CONSULT LAB</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- 2. Health Concerns Categories -->
+      <section class="section-block">
+        <div class="section-header-row">
+          <div class="section-title-col">
+            <h4 class="section-title">Checkups by Health Concern</h4>
+            <span class="section-subtitle">Targeted diagnostic screenings</span>
+          </div>
+        </div>
+
+        <div class="category-chips-scroll">
+          <button
+            type="button"
+            class="cat-chip"
+            [class.active]="selectedLabCategory === 'all'"
+            (click)="filterLabCategory('all')">
+            <span>All Packages</span>
+          </button>
+          @for (cat of labCategories; track cat.id) {
+            <button
+              type="button"
+              class="cat-chip"
+              [class.active]="selectedLabCategory === cat.id"
+              (click)="filterLabCategory(cat.id)">
+              <ion-icon [name]="cat.icon" [style.color]="cat.color"></ion-icon>
+              <span>{{ cat.name }}</span>
+            </button>
+          }
+        </div>
+      </section>
+
+      <!-- 3. Recommended Health Checkup Packages -->
+      <section class="section-block">
+        <div class="section-header-row">
+          <div class="section-title-col">
+            <h4 class="section-title">Recommended Health Packages</h4>
+            <span class="section-subtitle">Certified labs &amp; free home sample pickup</span>
+          </div>
+          <span class="section-tag-pill lab">TOP RATED</span>
+        </div>
+
+        <div class="lab-tests-list">
+          @for (test of displayedLabTests; track test.id) {
+            <div class="lab-test-card" [class.booked]="isLabTestBooked(test.id)">
+              <div class="test-header-row">
+                <div class="test-title-col">
+                  <div class="test-tags-wrap">
+                    @for (tag of test.tags; track tag) {
+                      <span class="test-tag">{{ tag }}</span>
+                    }
+                  </div>
+                  <h4 class="test-name">{{ test.name }}</h4>
+                  <p class="test-desc">{{ test.description }}</p>
+                </div>
+              </div>
+
+              <!-- Test Meta Highlights (Includes X tests, Fasting, Sample, Report time) -->
+              <div class="test-meta-pills-row">
+                <div class="meta-pill">
+                  <ion-icon name="flask-outline"></ion-icon>
+                  <span>{{ test.testCount }} Tests Included</span>
+                </div>
+                <div class="meta-pill">
+                  <ion-icon name="time-outline"></ion-icon>
+                  <span>{{ test.fastingRequirement }}</span>
+                </div>
+                <div class="meta-pill">
+                  <ion-icon name="receipt-outline"></ion-icon>
+                  <span>Reports in {{ test.reportTimeHours }} hrs</span>
+                </div>
+                <div class="meta-pill">
+                  <ion-icon name="water-outline"></ion-icon>
+                  <span>{{ test.sampleType }}</span>
+                </div>
+              </div>
+
+              <!-- Parameters Preview -->
+              <div class="test-params-box">
+                <span class="params-label">Key Parameters:</span>
+                <div class="params-chips-wrap">
+                  @for (param of test.parameters.slice(0, 4); track param) {
+                    <span class="param-chip">• {{ param }}</span>
+                  }
+                  @if (test.parameters.length > 4) {
+                    <span class="param-chip more">+{{ test.parameters.length - 4 }} more</span>
+                  }
+                </div>
+              </div>
+
+              <!-- Pricing & Booking CTA -->
+              <div class="test-footer-row">
+                <div class="test-price-col">
+                  <div class="test-price-main">
+                    <span class="test-price">₹{{ test.price }}</span>
+                    @if (test.mrp > test.price) {
+                      <span class="test-mrp">₹{{ test.mrp }}</span>
+                      <span class="test-save-badge">{{ test.discountPercent }}% OFF</span>
+                    }
+                  </div>
+                  <span class="test-footnote">Free sample pickup on orders &gt; ₹499</span>
+                </div>
+
+                <button
+                  type="button"
+                  class="btn-book-test"
+                  [class.booked]="isLabTestBooked(test.id)"
+                  (click)="toggleLabTestBooking(test, $event)">
+                  @if (isLabTestBooked(test.id)) {
+                    <ion-icon name="checkmark-circle"></ion-icon>
+                    <span>ADDED</span>
+                  } @else {
+                    <ion-icon name="add"></ion-icon>
+                    <span>BOOK TEST</span>
+                  }
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- 4. Quality & Trust Badges -->
+      <section class="lab-trust-section">
+        <h5 class="trust-heading">Why Book Lab Tests with Pintu?</h5>
+        <div class="trust-cards-grid">
+          <div class="trust-card">
+            <div class="trust-icon-wrap">
+              <ion-icon name="shield-checkmark-outline"></ion-icon>
+            </div>
+            <h6>NABL / ICMR Accredited</h6>
+            <p>100% accurate results from certified diagnostic partner labs.</p>
+          </div>
+
+          <div class="trust-card">
+            <div class="trust-icon-wrap">
+              <ion-icon name="fitness-outline"></ion-icon>
+            </div>
+            <h6>Sterile Home Collection</h6>
+            <p>Trained phlebotomists using single-use vacuum collection tubes.</p>
+          </div>
+
+          <div class="trust-card">
+            <div class="trust-icon-wrap">
+              <ion-icon name="time-outline"></ion-icon>
+            </div>
+            <h6>Smart Digital Reports</h6>
+            <p>Get verified PDF reports delivered directly on App and WhatsApp.</p>
+          </div>
+        </div>
+      </section>
+
+    }
+
+    <!-- Content Spacer for Clean Scrolling Above Docked Cart Bar -->
+    <div
+      class="bottom-nav-spacer"
+      [class.has-cart]="(activeTab === 'medicines' && medSummary.itemCount > 0) || (activeTab === 'lab_tests' && labSummary.itemCount > 0)">
+    </div>
+
+  </main>
+
+  <!-- ================================================================= -->
+  <!-- DOCKED BOTTOM CART STRIP (Independent for Active Service)         -->
+  <!-- ================================================================= -->
+  @if (activeTab === 'medicines' && medSummary.itemCount > 0) {
+    <aside slot="fixed" class="docked-cart-bar medicine animate__animated animate__fadeInUp" (click)="goToCart('medicine')">
+      <div class="cart-bar-inner">
+        <div class="cart-left-col">
+          <div class="cart-icon-circle">
+            <ion-icon name="bag-handle-outline"></ion-icon>
+          </div>
+          <div class="cart-text-col">
+            <span class="cart-qty-line">{{ medSummary.itemCount }} {{ medSummary.itemCount === 1 ? 'Medicine' : 'Medicines' }}</span>
+            <div class="cart-amount-line">
+              <span class="cart-total">₹{{ medSummary.grandTotal }}</span>
+              @if (medSummary.savings > 0) {
+                <span class="cart-save-tag">Saved ₹{{ medSummary.savings }}</span>
+              }
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="btn-view-cart" aria-label="View Medicine Cart">
+          <span>View Cart</span>
+          <ion-icon name="arrow-forward"></ion-icon>
+        </button>
+      </div>
+    </aside>
+  } @else if (activeTab === 'lab_tests' && labSummary.itemCount > 0) {
+    <aside slot="fixed" class="docked-cart-bar lab animate__animated animate__fadeInUp" (click)="goToCart('lab')">
+      <div class="cart-bar-inner">
+        <div class="cart-left-col">
+          <div class="cart-icon-circle lab">
+            <ion-icon name="flask-outline"></ion-icon>
+          </div>
+          <div class="cart-text-col">
+            <span class="cart-qty-line">{{ labSummary.itemCount }} {{ labSummary.itemCount === 1 ? 'Test Package' : 'Test Packages' }}</span>
+            <div class="cart-amount-line">
+              <span class="cart-total">₹{{ labSummary.grandTotal }}</span>
+              @if (labSummary.savings > 0) {
+                <span class="cart-save-tag lab">Saved ₹{{ labSummary.savings }}</span>
+              }
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="btn-view-cart lab" aria-label="View Lab Cart">
+          <span>View Tests</span>
+          <ion-icon name="arrow-forward"></ion-icon>
+        </button>
+      </div>
+    </aside>
+  }
+
+  <!-- ================================================================= -->
+  <!-- PRESCRIPTION UPLOAD MODAL / BOTTOM SHEET                          -->
+  <!-- ================================================================= -->
+  <ion-modal
+    [isOpen]="isPrescriptionModalOpen"
+    (didDismiss)="closePrescriptionModal()"
+    [initialBreakpoint]="0.7"
+    [breakpoints]="[0, 0.7, 0.95]"
+    class="prescription-upload-modal">
+    <ng-template>
+      <div class="rx-modal-container">
+        <div class="rx-modal-header">
+          <div class="sheet-handle"></div>
+          <div class="rx-header-title-row">
+            <div class="rx-modal-title-col">
+              <h4>{{ prescriptionUploadType === 'medicine' ? 'Upload Medicine Prescription' : 'Upload Lab Test Prescription' }}</h4>
+              <p>Our healthcare team will inspect and verify your order</p>
+            </div>
+            <button type="button" class="btn-modal-close" (click)="closePrescriptionModal()">
+              <ion-icon name="close-outline"></ion-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="rx-modal-body">
+          <!-- Upload Options Cards -->
+          <div class="upload-options-grid">
+            <div class="upload-opt-card" (click)="simulateFilePick('camera')" role="button" tabindex="0">
+              <div class="opt-icon-circle">
+                <ion-icon name="camera-outline"></ion-icon>
+              </div>
+              <span class="opt-title">Camera</span>
+              <span class="opt-sub">Take clear photo</span>
+            </div>
+
+            <div class="upload-opt-card" (click)="simulateFilePick('gallery')" role="button" tabindex="0">
+              <div class="opt-icon-circle">
+                <ion-icon name="cloud-upload-outline"></ion-icon>
+              </div>
+              <span class="opt-title">Gallery</span>
+              <span class="opt-sub">Choose image</span>
+            </div>
+
+            <div class="upload-opt-card" (click)="simulateFilePick('doc')" role="button" tabindex="0">
+              <div class="opt-icon-circle">
+                <ion-icon name="document-text-outline"></ion-icon>
+              </div>
+              <span class="opt-title">PDF Document</span>
+              <span class="opt-sub">Attach file</span>
+            </div>
+          </div>
+
+          <!-- Selected File Indicator -->
+          @if (prescriptionFileName) {
+            <div class="selected-file-chip animate__animated animate__fadeIn">
+              <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
+              <div class="file-info-col">
+                <span class="file-name">{{ prescriptionFileName }}</span>
+                <span class="file-status">Ready to attach</span>
+              </div>
+              <button type="button" class="btn-remove-file" (click)="prescriptionFileName = ''">
+                <ion-icon name="close-outline"></ion-icon>
+              </button>
+            </div>
+          }
+
+          <!-- Additional Notes / Instructions -->
+          <div class="notes-field-wrap">
+            <label for="rxNotes">Patient Instructions (Optional):</label>
+            <textarea
+              id="rxNotes"
+              rows="3"
+              [(ngModel)]="prescriptionNotes"
+              placeholder="e.g. Please send 1 month supply, or call before dispatching..."></textarea>
+          </div>
+
+          <!-- Safety Notice -->
+          <div class="rx-safety-note">
+            <ion-icon name="shield-checkmark-outline"></ion-icon>
+            <p>Your medical prescription is stored securely under medical confidentiality guidelines.</p>
+          </div>
+
+          <!-- Submit Button -->
+          <button
+            type="button"
+            class="btn-submit-rx"
+            [disabled]="isUploadingPrescription"
+            (click)="submitPrescription()">
+            @if (isUploadingPrescription) {
+              <span>Verifying &amp; Uploading...</span>
+            } @else {
+              <ion-icon name="checkmark-circle-outline"></ion-icon>
+              <span>SUBMIT PRESCRIPTION</span>
+            }
+          </button>
+        </div>
+      </div>
+    </ng-template>
+  </ion-modal>
+
+</ion-content>
+

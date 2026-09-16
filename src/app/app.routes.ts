@@ -227,7 +227,33 @@ export const routes: Routes = [
           import('./pages/order-details/order-details.page').then((m) => m.OrderDetailsPage),
       },
 
+      // Pharmacy & Lab Tests Service Container
+      {
+        path: 'pharmacy',
+        loadComponent: () =>
+          import('./pages/pharmacy-layout/pharmacy-layout.page').then((m) => m.PharmacyLayoutPage),
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./pages/pharmacy/pharmacy.page').then((m) => m.PharmacyPage),
+          },
+          {
+            path: 'search',
+            loadComponent: () =>
+              import('./pages/pharmacy-search/pharmacy-search.page').then((m) => m.PharmacySearchPage),
+          },
+          {
+            path: 'cart',
+            loadComponent: () =>
+              import('./pages/pharmacy-cart/pharmacy-cart.page').then((m) => m.PharmacyCartPage),
+          }
+        ]
+      },
+
       // Backward Compatibility Redirect Aliases
+      { path: 'pharmacy-search', redirectTo: 'pharmacy/search', pathMatch: 'full' },
+      { path: 'pharmacy-cart', redirectTo: 'pharmacy/cart', pathMatch: 'full' },
       { path: 'example/home', redirectTo: 'home', pathMatch: 'full' },
       { path: 'example/history', redirectTo: 'history', pathMatch: 'full' },
       { path: 'example/support', redirectTo: 'support', pathMatch: 'full' },

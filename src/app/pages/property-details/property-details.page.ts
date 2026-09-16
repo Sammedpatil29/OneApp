@@ -45,7 +45,9 @@ import {
   lockClosedOutline,
   videocamOutline,
   playCircle,
-  closeOutline
+  closeOutline,
+  play,
+  pause
 } from 'ionicons/icons';
 import { PropertyItem, PropertyDocumentCheck, DUMMY_PROPERTIES } from 'src/app/models/property.model';
 import { PropertyService } from 'src/app/services/property.service';
@@ -71,6 +73,10 @@ export class PropertyDetailsPage implements OnInit {
   isFavorite: boolean = false;
   isDocsExpanded: boolean = false;
   isVideoModalOpen: boolean = false;
+  isVideoReel: boolean = false;
+  isPlaying: boolean = true;
+  showPlayPauseIndicator: boolean = false;
+  private playPauseIndicatorTimeout: any = null;
   embedVideoUrl: SafeResourceUrl | null = null;
 
   // Swipe gesture tracking
@@ -87,7 +93,7 @@ export class PropertyDetailsPage implements OnInit {
     private toastController: ToastController,
     private sanitizer: DomSanitizer
   ) {
-    addIcons({arrowBackOutline,shareSocialOutline,chevronBackOutline,chevronForwardOutline,cameraOutline,checkmarkCircle,location,openOutline,leafOutline,bedOutline,waterOutline,expandOutline,compassOutline,businessOutline,carOutline,calendarOutline,shieldCheckmarkOutline,alertCircleOutline,callOutline,logoWhatsapp,heartOutline,heart,sparkles,navigateOutline,shieldOutline,chatbubbleEllipsesOutline,documentTextOutline,timeOutline,chevronDownOutline,chevronUpOutline,lockClosedOutline,videocamOutline,playCircle,closeOutline});
+    addIcons({arrowBackOutline,shareSocialOutline,chevronBackOutline,chevronForwardOutline,cameraOutline,checkmarkCircle,location,openOutline,leafOutline,bedOutline,waterOutline,expandOutline,compassOutline,businessOutline,carOutline,calendarOutline,shieldCheckmarkOutline,alertCircleOutline,callOutline,logoWhatsapp,heartOutline,heart,sparkles,navigateOutline,shieldOutline,chatbubbleEllipsesOutline,documentTextOutline,timeOutline,chevronDownOutline,chevronUpOutline,lockClosedOutline,videocamOutline,playCircle,closeOutline,play,pause});
   }
 
   ngOnInit() {
@@ -215,9 +221,28 @@ export class PropertyDetailsPage implements OnInit {
 
   openVideoModal() {
     if (!this.property?.videoUrl) return;
+
+    this.isPlaying = true;
+    this.showPlayPauseIndicator = false;
+
+    const rawUrl = (this.property.videoUrl || '').toLowerCase();
+    // Detect vertical format if link contains shorts, reel, vertical, or 9:16
+    this.isVideoReel =
+      rawUrl.includes('/shorts/') ||
+      rawUrl.includes('shorts') ||
+      rawUrl.includes('/reel/') ||
+      rawUrl.includes('/reels/') ||
+      rawUrl.includes('tiktok.com') ||
+      rawUrl.includes('vertical') ||
+      rawUrl.includes('9:16') ||
+      rawUrl.includes('9-16');
+
     const videoId = this.extractYouTubeId(this.property.videoUrl);
     if (videoId) {
-      const embed = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
+      // controls=0: removes YouTube bottom controls bar
+      // modestbranding=1, iv_load_policy=3, fs=0, disablekb=1: cleans up overlays
+      // enablejsapi=1: enables screen tap to play/pause
+      const embed = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&controls=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&disablekb=1&fs=0&enablejsapi=1`;
       this.embedVideoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(embed);
     } else {
       this.embedVideoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.property.videoUrl);
@@ -225,9 +250,35 @@ export class PropertyDetailsPage implements OnInit {
     this.isVideoModalOpen = true;
   }
 
+  togglePlayPause() {
+    this.isPlaying = !this.isPlaying;
+    this.showPlayPauseIndicator = true;
+    if (this.playPauseIndicatorTimeout) {
+      clearTimeout(this.playPauseIndicatorTimeout);
+    }
+    this.playPauseIndicatorTimeout = setTimeout(() => {
+      this.showPlayPauseIndicator = false;
+    }, 600);
+
+    const iframe = document.querySelector('.property-video-modal iframe') as HTMLIFrameElement;
+    if (iframe && iframe.contentWindow) {
+      const action = this.isPlaying ? 'playVideo' : 'pauseVideo';
+      iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: action, args: [] }), '*');
+    }
+  }
+
+  toggleVideoAspect() {
+    this.isVideoReel = !this.isVideoReel;
+  }
+
   closeVideoModal() {
     this.isVideoModalOpen = false;
     this.embedVideoUrl = null;
+    this.showPlayPauseIndicator = false;
+    if (this.playPauseIndicatorTimeout) {
+      clearTimeout(this.playPauseIndicatorTimeout);
+      this.playPauseIndicatorTimeout = null;
+    }
   }
 
   private extractYouTubeId(url: string): string | null {
