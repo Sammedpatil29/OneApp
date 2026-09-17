@@ -584,11 +584,10 @@
     (didDismiss)="closeCalendarModal()"
     [initialBreakpoint]="0.75"
     [breakpoints]="[0, 0.75, 0.95]"
+    [handle]="true"
     class="lab-calendar-modal">
     <ng-template>
       <div class="cal-sheet-content">
-        <div class="sheet-handle-bar"></div>
-
         <div class="sheet-header">
           <div>
             <h4>Select Pickup Date</h4>
@@ -627,11 +626,10 @@
     (didDismiss)="closePrescriptionSheet()"
     [initialBreakpoint]="0.68"
     [breakpoints]="[0, 0.68, 0.95]"
+    [handle]="true"
     class="prescription-cart-modal">
     <ng-template>
       <div class="rx-sheet-content">
-        <div class="sheet-handle-bar"></div>
-
         <div class="sheet-header">
           <div>
             <h4>Upload Doctor's Prescription</h4>

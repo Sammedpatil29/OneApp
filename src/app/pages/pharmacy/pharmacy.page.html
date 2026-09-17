@@ -247,8 +247,8 @@
           @if (isLoadingMedicines && displayedMedicines.length === 0) {
             @for (s of [1,2,3,4]; track s) {
               <div class="med-catalog-card">
-                <ion-skeleton-text [animated]="true" style="width: 100%; height: 120px; border-radius: 12px; margin: 0;"></ion-skeleton-text>
-                <div class="catalog-body" style="padding: 10px;">
+                <ion-skeleton-text [animated]="true" style="width: 100%; height: 130px; border-radius: 0; margin: 0;"></ion-skeleton-text>
+                <div class="catalog-body" style="padding: 10px 12px 12px;">
                   <ion-skeleton-text [animated]="true" style="width: 40%; height: 12px; margin-bottom: 6px;"></ion-skeleton-text>
                   <ion-skeleton-text [animated]="true" style="width: 80%; height: 16px; margin-bottom: 6px;"></ion-skeleton-text>
                   <ion-skeleton-text [animated]="true" style="width: 35%; height: 14px;"></ion-skeleton-text>
@@ -273,7 +273,6 @@
                 <span class="catalog-brand">{{ med.brand }}</span>
                 <h5 class="catalog-title">{{ med.name }}</h5>
                 <span class="catalog-dosage">{{ med.dosageForm }} • {{ med.packSize }}</span>
-                <p class="catalog-desc text-truncate-2">{{ med.description }}</p>
 
                 <div class="catalog-footer">
                   <div class="price-stack">
@@ -302,14 +301,6 @@
                     }
                   </div>
                 </div>
-
-                @if (med.seller) {
-                  <div class="vendor-divider"></div>
-                  <div class="vendor-brief">
-                    <span class="vendor-role">{{ med.seller.type }}</span>
-                    <span class="vendor-name">{{ med.seller.name }}</span>
-                  </div>
-                }
               </div>
             </div>
           }
@@ -519,14 +510,6 @@
                   }
                 </button>
               </div>
-
-              @if (test.labPartner) {
-                <div class="vendor-divider"></div>
-                <div class="vendor-brief">
-                  <span class="vendor-role">{{ test.labPartner.type }}</span>
-                  <span class="vendor-name">{{ test.labPartner.name }}</span>
-                </div>
-              }
             </div>
           }
         }
@@ -653,11 +636,11 @@
     (didDismiss)="closePrescriptionModal()"
     [initialBreakpoint]="0.7"
     [breakpoints]="[0, 0.7, 0.95]"
+    [handle]="true"
     class="prescription-upload-modal">
     <ng-template>
       <div class="rx-modal-container">
         <div class="rx-modal-header">
-          <div class="sheet-handle"></div>
           <div class="rx-header-title-row">
             <div class="rx-modal-title-col">
               <h4>{{ prescriptionUploadType === 'medicine' ? 'Upload Medicine Prescription' : 'Upload Lab Test Prescription' }}</h4>
