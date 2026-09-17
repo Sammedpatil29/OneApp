@@ -351,14 +351,59 @@
 
             <button
               type="button"
-              class="date-chip"
+              class="date-chip calendar-chip"
               [class.active]="selectedDateOption === 'Day After'"
               (click)="selectDateOption('Day After')">
-              <span>Day After</span>
+              <ion-icon name="calendar-outline"></ion-icon>
+              <span>{{ selectedDateOption === 'Day After' ? getCustomDateChipLabel() : 'Day After' }}</span>
             </button>
           </div>
 
+          <!-- 1-Week Enabled Dates & Full Calendar Selector (Active when Day After selected) -->
+          @if (selectedDateOption === 'Day After') {
+            <div class="calendar-section-box animate__animated animate__fadeIn">
+              <div class="cal-section-header">
+                <div class="cal-hdr-left">
+                  <span class="cal-hdr-tag">📅 Next 7 Days</span>
+                  <span class="cal-hdr-sub">Or tap 1-Year Calendar to pick any future date</span>
+                </div>
+                <button type="button" class="btn-open-full-cal" (click)="openCalendarModal()">
+                  <ion-icon name="calendar"></ion-icon>
+                  <span>1-Year Calendar</span>
+                </button>
+              </div>
+
+              <!-- 7-Day Enabled Dates Strip (7 Days Grid) -->
+              <div class="week-dates-scroll-row">
+                @for (day of weekDayOptions; track day.dateStr) {
+                  <button
+                    type="button"
+                    class="week-date-pill"
+                    [class.active]="customDate === day.dateStr"
+                    (click)="selectWeekDate(day)">
+                    <span class="pill-day">{{ day.dayName }}</span>
+                    <span class="pill-num">{{ day.dayNum }}</span>
+                    <span class="pill-month">{{ day.month }}</span>
+                  </button>
+                }
+              </div>
+
+              <div class="selected-pickup-banner">
+                <ion-icon name="checkmark-circle"></ion-icon>
+                <div class="banner-text">
+                  <span class="banner-date">Pickup Date: <strong>{{ getFormattedCustomDate() }}</strong></span>
+                  <span class="banner-timing">1-Hour Slots (6:00 AM – 9:00 PM)</span>
+                </div>
+              </div>
+            </div>
+          }
+
           <!-- Time Slot Selection -->
+          <div class="time-slots-header">
+            <span class="slots-lbl">Available Timings (1-Hr Slots):</span>
+            <span class="slots-badge">6:00 AM to 9:00 PM</span>
+          </div>
+
           <div class="time-slots-grid">
             @for (slot of availableTimeSlots; track slot) {
               <button
@@ -366,8 +411,10 @@
                 class="time-slot-btn"
                 [class.active]="selectedTimeSlot === slot"
                 (click)="selectTimeSlot(slot)">
-                <ion-icon name="time-outline"></ion-icon>
-                <span>{{ slot }}</span>
+                <span class="slot-time-text">{{ getSlotMainTime(slot) }}</span>
+                @if (isFastingSlot(slot)) {
+                  <span class="slot-fasting-tag">Fasting</span>
+                }
               </button>
             }
           </div>
@@ -530,6 +577,49 @@
       </div>
     </footer>
   }
+
+  <!-- ─── FULL MONTH / YEAR CALENDAR MODAL ─────────────────────────────────── -->
+  <ion-modal
+    [isOpen]="isCalendarModalOpen"
+    (didDismiss)="closeCalendarModal()"
+    [initialBreakpoint]="0.75"
+    [breakpoints]="[0, 0.75, 0.95]"
+    class="lab-calendar-modal">
+    <ng-template>
+      <div class="cal-sheet-content">
+        <div class="sheet-handle-bar"></div>
+
+        <div class="sheet-header">
+          <div>
+            <h4>Select Pickup Date</h4>
+            <p>Future booking enabled up to 1 year (6:00 AM – 9:00 PM, 1-hr slots)</p>
+          </div>
+          <button type="button" class="btn-sheet-close" (click)="closeCalendarModal()">
+            <ion-icon name="close-outline"></ion-icon>
+          </button>
+        </div>
+
+        <div class="cal-sheet-body">
+          <ion-datetime
+            presentation="date"
+            [min]="minDayAfterDate"
+            [max]="maxDayAfterDate"
+            [isDateEnabled]="isDateEnabled"
+            [value]="customDate"
+            (ionChange)="onDateSelectedFromCalendar($event)"
+            class="custom-lab-datetime">
+          </ion-datetime>
+
+          <button
+            type="button"
+            class="btn-confirm-cal-date"
+            (click)="closeCalendarModal()">
+            Confirm: {{ getFormattedCustomDate() }}
+          </button>
+        </div>
+      </div>
+    </ng-template>
+  </ion-modal>
 
   <!-- ─── PRESCRIPTION UPLOAD MODAL SHEET ───────────────────────────────────── -->
   <ion-modal

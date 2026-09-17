@@ -8,7 +8,8 @@ import {
   IonHeader,
   IonToolbar,
   IonIcon,
-  IonModal
+  IonModal,
+  IonDatetime
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -31,6 +32,7 @@ import {
   closeOutline,
   cameraOutline,
   personOutline,
+  calendar,
   calendarOutline
 } from 'ionicons/icons';
 import { LocationService } from 'src/app/services/location.service';
@@ -45,6 +47,14 @@ import {
 } from 'src/app/models/pharmacy.model';
 import { Subscription } from 'rxjs';
 
+export interface CalendarDayOption {
+  dateStr: string;
+  dayName: string;
+  dayNum: string;
+  month: string;
+  fullDisplay: string;
+}
+
 @Component({
   selector: 'app-pharmacy-cart',
   templateUrl: './pharmacy-cart.page.html',
@@ -57,7 +67,8 @@ import { Subscription } from 'rxjs';
     IonHeader,
     IonToolbar,
     IonIcon,
-    IonModal
+    IonModal,
+    IonDatetime
   ]
 })
 export class PharmacyCartPage implements OnInit, OnDestroy {
@@ -84,13 +95,63 @@ export class PharmacyCartPage implements OnInit, OnDestroy {
   patientAge: string = '';
   patientGender: 'Male' | 'Female' | 'Other' = 'Male';
   selectedDateOption: 'Today' | 'Tomorrow' | 'Day After' = 'Tomorrow';
-  selectedTimeSlot: string = '06:30 AM - 08:30 AM (Fasting)';
+  selectedTimeSlot: string = '06:00 AM - 07:00 AM (Fasting)';
+  customDate: string = '';
+  weekDayOptions: CalendarDayOption[] = [];
+  isCalendarModalOpen: boolean = false;
+
+  defaultTimeSlots: string[] = [
+    '06:00 AM - 07:00 AM (Fasting)',
+    '07:00 AM - 08:00 AM (Fasting)',
+    '08:00 AM - 09:00 AM (Fasting)',
+    '09:00 AM - 10:00 AM',
+    '10:00 AM - 11:00 AM',
+    '11:00 AM - 12:00 PM',
+    '12:00 PM - 01:00 PM',
+    '01:00 PM - 02:00 PM',
+    '02:00 PM - 03:00 PM',
+    '03:00 PM - 04:00 PM',
+    '04:00 PM - 05:00 PM',
+    '05:00 PM - 06:00 PM',
+    '06:00 PM - 07:00 PM',
+    '07:00 PM - 08:00 PM',
+    '08:00 PM - 09:00 PM'
+  ];
+
+  dayAfterTimeSlots: string[] = [
+    '06:00 AM - 07:00 AM (Fasting)',
+    '07:00 AM - 08:00 AM (Fasting)',
+    '08:00 AM - 09:00 AM (Fasting)',
+    '09:00 AM - 10:00 AM',
+    '10:00 AM - 11:00 AM',
+    '11:00 AM - 12:00 PM',
+    '12:00 PM - 01:00 PM',
+    '01:00 PM - 02:00 PM',
+    '02:00 PM - 03:00 PM',
+    '03:00 PM - 04:00 PM',
+    '04:00 PM - 05:00 PM',
+    '05:00 PM - 06:00 PM',
+    '06:00 PM - 07:00 PM',
+    '07:00 PM - 08:00 PM',
+    '08:00 PM - 09:00 PM'
+  ];
 
   availableTimeSlots: string[] = [
-    '06:30 AM - 08:30 AM (Fasting)',
-    '08:30 AM - 10:30 AM',
-    '10:30 AM - 12:30 PM',
-    '04:30 PM - 06:30 PM'
+    '06:00 AM - 07:00 AM (Fasting)',
+    '07:00 AM - 08:00 AM (Fasting)',
+    '08:00 AM - 09:00 AM (Fasting)',
+    '09:00 AM - 10:00 AM',
+    '10:00 AM - 11:00 AM',
+    '11:00 AM - 12:00 PM',
+    '12:00 PM - 01:00 PM',
+    '01:00 PM - 02:00 PM',
+    '02:00 PM - 03:00 PM',
+    '03:00 PM - 04:00 PM',
+    '04:00 PM - 05:00 PM',
+    '05:00 PM - 06:00 PM',
+    '06:00 PM - 07:00 PM',
+    '07:00 PM - 08:00 PM',
+    '08:00 PM - 09:00 PM'
   ];
 
   // Prescription Modal State
@@ -133,6 +194,7 @@ export class PharmacyCartPage implements OnInit, OnDestroy {
       closeOutline,
       cameraOutline,
       personOutline,
+      calendar,
       calendarOutline
     });
   }
@@ -209,10 +271,116 @@ export class PharmacyCartPage implements OnInit, OnDestroy {
         }
       })
     );
+
+    // 6. Initialize default custom date (Day after tomorrow) and generate 1-week enabled dates
+    this.generateWeekDays();
   }
 
   ngOnDestroy(): void {
     this.subs.unsubscribe();
+  }
+
+  generateWeekDays(baseDate?: Date): void {
+    const days: CalendarDayOption[] = [];
+    const start = baseDate ? new Date(baseDate) : new Date();
+    if (!baseDate) {
+      start.setDate(start.getDate() + 2);
+    }
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(start);
+      d.setDate(d.getDate() + i);
+      const dateStr = this.formatDateToYMD(d);
+      const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
+      const dayNum = String(d.getDate()).padStart(2, '0');
+      const month = d.toLocaleDateString('en-US', { month: 'short' });
+      const fullDisplay = d.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+      days.push({ dateStr, dayName, dayNum, month, fullDisplay });
+    }
+    this.weekDayOptions = days;
+    if (days.length > 0 && !this.customDate) {
+      this.customDate = days[0].dateStr;
+    }
+  }
+
+  get minDayAfterDate(): string {
+    const d = new Date();
+    d.setDate(d.getDate() + 2);
+    return this.formatDateToYMD(d);
+  }
+
+  get maxEnabledDate(): string {
+    const d = new Date();
+    d.setDate(d.getDate() + 8); // 1-week enabled window (7 days from Day After Tomorrow)
+    return this.formatDateToYMD(d);
+  }
+
+  get maxDayAfterDate(): string {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() + 1); // 1-year future calendar viewable
+    return this.formatDateToYMD(d);
+  }
+
+  isDateEnabled = (dateIsoString: string): boolean => {
+    const date = dateIsoString.split('T')[0];
+    // Calendar viewable for 1 year, but only 1-week booking window is enabled
+    return date >= this.minDayAfterDate && date <= this.maxEnabledDate;
+  };
+
+  getSlotMainTime(slot: string): string {
+    return slot.replace(/\s*\(Fasting\)/gi, '').trim();
+  }
+
+  isFastingSlot(slot: string): boolean {
+    return slot.toLowerCase().includes('fasting');
+  }
+
+  selectWeekDate(day: CalendarDayOption): void {
+    this.customDate = day.dateStr;
+    this.onCustomDateChange();
+  }
+
+  openCalendarModal(): void {
+    this.isCalendarModalOpen = true;
+  }
+
+  closeCalendarModal(): void {
+    this.isCalendarModalOpen = false;
+  }
+
+  onDateSelectedFromCalendar(event: any): void {
+    const val = event?.detail?.value;
+    if (val) {
+      const selected = typeof val === 'string' ? val.split('T')[0] : this.formatDateToYMD(new Date(val));
+      this.customDate = selected;
+      const [y, m, d] = selected.split('-').map(Number);
+      this.generateWeekDays(new Date(y, m - 1, d));
+      this.onCustomDateChange();
+    }
+  }
+
+  private formatDateToYMD(d: Date): string {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  getFormattedCustomDate(): string {
+    if (!this.customDate) {
+      const d = new Date();
+      d.setDate(d.getDate() + 2);
+      return d.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+    }
+    const [y, m, d] = this.customDate.split('-').map(Number);
+    const dateObj = new Date(y, m - 1, d);
+    return dateObj.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+  }
+
+  getCustomDateChipLabel(): string {
+    if (!this.customDate) return 'Select Date';
+    const [y, m, d] = this.customDate.split('-').map(Number);
+    const dateObj = new Date(y, m - 1, d);
+    return dateObj.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
   }
 
   private applyLocation(loc: any): void {
@@ -268,6 +436,25 @@ export class PharmacyCartPage implements OnInit, OnDestroy {
 
   selectDateOption(date: 'Today' | 'Tomorrow' | 'Day After'): void {
     this.selectedDateOption = date;
+    if (date === 'Day After') {
+      this.availableTimeSlots = [...this.dayAfterTimeSlots];
+      if (!this.dayAfterTimeSlots.includes(this.selectedTimeSlot)) {
+        this.selectedTimeSlot = this.dayAfterTimeSlots[0];
+      }
+    } else {
+      this.availableTimeSlots = [...this.defaultTimeSlots];
+      if (!this.defaultTimeSlots.includes(this.selectedTimeSlot)) {
+        this.selectedTimeSlot = this.defaultTimeSlots[0];
+      }
+    }
+  }
+
+  onCustomDateChange(): void {
+    this.selectedDateOption = 'Day After';
+    this.availableTimeSlots = [...this.dayAfterTimeSlots];
+    if (!this.dayAfterTimeSlots.includes(this.selectedTimeSlot)) {
+      this.selectedTimeSlot = this.dayAfterTimeSlots[0];
+    }
   }
 
   selectTimeSlot(slot: string): void {
@@ -381,10 +568,14 @@ export class PharmacyCartPage implements OnInit, OnDestroy {
       // Clear lab cart
       this.cartService.clearLabCart();
 
+      const dateDisplay = this.selectedDateOption === 'Day After'
+        ? this.getFormattedCustomDate()
+        : this.selectedDateOption;
+
       const alert = await this.alertCtrl.create({
         header: 'Lab Test Booked! 🧪',
         subHeader: `Booking Ref: #${bookingId}`,
-        message: `Home sample pickup scheduled for ${this.patientName} on ${this.selectedDateOption}, ${this.selectedTimeSlot}. Certified phlebotomist will visit ${this.displayLocationName}.`,
+        message: `Home sample pickup scheduled for ${this.patientName} on ${dateDisplay}, ${this.selectedTimeSlot}. Certified phlebotomist will visit ${this.displayLocationName}.`,
         backdropDismiss: false,
         buttons: [
           {
