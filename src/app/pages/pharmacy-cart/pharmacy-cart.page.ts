@@ -45,6 +45,7 @@ import {
   CartLabItem,
   PrescriptionUpload
 } from 'src/app/models/pharmacy.model';
+import { PharmacyService } from 'src/app/services/pharmacy.service';
 import { Subscription } from 'rxjs';
 
 export interface CalendarDayOption {
@@ -171,6 +172,7 @@ export class PharmacyCartPage implements OnInit, OnDestroy {
     private navCtrl: NavController,
     private locationService: LocationService,
     public cartService: PharmacyCartService,
+    private pharmacyService: PharmacyService,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController
   ) {
@@ -525,30 +527,61 @@ export class PharmacyCartPage implements OnInit, OnDestroy {
 
     this.isProcessingCheckout = true;
 
-    setTimeout(async () => {
-      this.isProcessingCheckout = false;
-      const orderId = `MED-${Math.floor(100000 + Math.random() * 900000)}`;
+    const payload = {
+      orderType: 'medicine',
+      items: this.medicineItems.map((i) => ({
+        id: i.item.id,
+        name: i.item.name,
+        quantity: i.quantity,
+        price: i.item.price,
+        seller: i.item.seller
+      })),
+      billSummary: {
+        itemCount: this.medSummary.itemCount,
+        subtotal: this.medSummary.subtotal,
+        savings: this.medSummary.savings + this.couponDiscount,
+        deliveryFee: this.medSummary.fee,
+        grandTotal: this.finalMedicineTotal,
+        appliedCoupon: this.appliedCoupon || null
+      },
+      deliveryAddress: {
+        locationName: this.displayLocationName,
+        fullAddress: this.displayFullAddress
+      },
+      prescriptionUrl: this.latestPrescription ? this.latestPrescription.fileName : null,
+      paymentMethod: 'cash_on_delivery'
+    };
 
-      // Clear cart
-      this.cartService.clearMedicineCart();
-      this.removeCoupon();
+    this.pharmacyService.createOrder(payload).subscribe({
+      next: async (order) => {
+        this.isProcessingCheckout = false;
+        const orderId = order?.id || `MED-${Math.floor(100000 + Math.random() * 900000)}`;
 
-      const alert = await this.alertCtrl.create({
-        header: 'Order Placed Successfully! 🎉',
-        subHeader: `Order ID: #${orderId}`,
-        message: `Your medicines order of ₹${this.finalMedicineTotal} is confirmed and scheduled for delivery to ${this.displayLocationName}.`,
-        backdropDismiss: false,
-        buttons: [
-          {
-            text: 'Back to Pharmacy',
-            handler: () => {
-              this.router.navigate(['/layout/pharmacy']);
+        // Clear cart
+        this.cartService.clearMedicineCart();
+        this.removeCoupon();
+
+        const alert = await this.alertCtrl.create({
+          header: 'Order Placed Successfully! 🎉',
+          subHeader: `Order ID: #${orderId}`,
+          message: `Your medicines order of ₹${this.finalMedicineTotal} is confirmed and scheduled for delivery to ${this.displayLocationName}.`,
+          backdropDismiss: false,
+          buttons: [
+            {
+              text: 'Back to Pharmacy',
+              handler: () => {
+                this.router.navigate(['/layout/pharmacy']);
+              }
             }
-          }
-        ]
-      });
-      await alert.present();
-    }, 1200);
+          ]
+        });
+        await alert.present();
+      },
+      error: async () => {
+        this.isProcessingCheckout = false;
+        this.showToast('Could not submit order to server. Please try again.', 'danger');
+      }
+    });
   }
 
   async bookLabTests(): Promise<void> {
@@ -561,33 +594,67 @@ export class PharmacyCartPage implements OnInit, OnDestroy {
 
     this.isProcessingCheckout = true;
 
-    setTimeout(async () => {
-      this.isProcessingCheckout = false;
-      const bookingId = `LAB-${Math.floor(100000 + Math.random() * 900000)}`;
+    const payload = {
+      orderType: 'lab_test',
+      items: this.labItems.map((l) => ({
+        id: l.test.id,
+        name: l.test.name,
+        price: l.test.price,
+        labPartner: l.test.labPartner
+      })),
+      billSummary: {
+        itemCount: this.labItems.length,
+        subtotal: this.labSummary.subtotal,
+        homeCollectionFee: 0,
+        grandTotal: this.labSummary.subtotal
+      },
+      deliveryAddress: {
+        locationName: this.displayLocationName,
+        fullAddress: this.displayFullAddress
+      },
+      patientDetails: {
+        patientName: this.patientName,
+        age: this.patientAge,
+        gender: this.patientGender,
+        collectionDate: this.selectedDateOption,
+        collectionTime: this.selectedTimeSlot
+      },
+      paymentMethod: 'pay_at_sample_collection'
+    };
 
-      // Clear lab cart
-      this.cartService.clearLabCart();
+    this.pharmacyService.createOrder(payload).subscribe({
+      next: async (booking) => {
+        this.isProcessingCheckout = false;
+        const bookingId = booking?.id || `LAB-${Math.floor(100000 + Math.random() * 900000)}`;
+
+        // Clear lab cart
+        this.cartService.clearLabCart();
 
       const dateDisplay = this.selectedDateOption === 'Day After'
         ? this.getFormattedCustomDate()
         : this.selectedDateOption;
 
-      const alert = await this.alertCtrl.create({
-        header: 'Lab Test Booked! 🧪',
-        subHeader: `Booking Ref: #${bookingId}`,
-        message: `Home sample pickup scheduled for ${this.patientName} on ${dateDisplay}, ${this.selectedTimeSlot}. Certified phlebotomist will visit ${this.displayLocationName}.`,
-        backdropDismiss: false,
-        buttons: [
-          {
-            text: 'Done',
-            handler: () => {
-              this.router.navigate(['/layout/pharmacy']);
+        const alert = await this.alertCtrl.create({
+          header: 'Lab Test Booked! 🧪',
+          subHeader: `Booking Ref: #${bookingId}`,
+          message: `Home sample pickup scheduled for ${this.patientName} on ${dateDisplay}, ${this.selectedTimeSlot}. Certified phlebotomist will visit ${this.displayLocationName}.`,
+          backdropDismiss: false,
+          buttons: [
+            {
+              text: 'Done',
+              handler: () => {
+                this.router.navigate(['/layout/pharmacy']);
+              }
             }
-          }
-        ]
-      });
-      await alert.present();
-    }, 1200);
+          ]
+        });
+        await alert.present();
+      },
+      error: async () => {
+        this.isProcessingCheckout = false;
+        this.showToast('Could not schedule lab test booking. Please try again.', 'danger');
+      }
+    });
   }
 
   browsePharmacy(): void {

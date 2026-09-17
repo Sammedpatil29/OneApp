@@ -220,12 +220,13 @@ export class PropertyDetailsPage implements OnInit {
   }
 
   openVideoModal() {
-    if (!this.property?.videoUrl) return;
+    const targetUrl = this.property?.videoUrl || this.property?.youtubeUrl;
+    if (!targetUrl) return;
 
     this.isPlaying = true;
     this.showPlayPauseIndicator = false;
 
-    const rawUrl = (this.property.videoUrl || '').toLowerCase();
+    const rawUrl = targetUrl.toLowerCase();
     // Detect vertical format if link contains shorts, reel, vertical, or 9:16
     this.isVideoReel =
       rawUrl.includes('/shorts/') ||
@@ -237,7 +238,7 @@ export class PropertyDetailsPage implements OnInit {
       rawUrl.includes('9:16') ||
       rawUrl.includes('9-16');
 
-    const videoId = this.extractYouTubeId(this.property.videoUrl);
+    const videoId = this.extractYouTubeId(targetUrl);
     if (videoId) {
       // controls=0: removes YouTube bottom controls bar
       // modestbranding=1, iv_load_policy=3, fs=0, disablekb=1: cleans up overlays
@@ -245,7 +246,7 @@ export class PropertyDetailsPage implements OnInit {
       const embed = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&controls=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&disablekb=1&fs=0&enablejsapi=1`;
       this.embedVideoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(embed);
     } else {
-      this.embedVideoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.property.videoUrl);
+      this.embedVideoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(targetUrl);
     }
     this.isVideoModalOpen = true;
   }

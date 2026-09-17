@@ -1,54 +1,118 @@
-<ion-content fullscreen>
+<ion-content [scrollY]="false" class="offline-content">
+  <div class="offline-viewport">
+    <!-- Ambient Background Glow Orbs -->
+    <div class="ambient-glow glow-top"></div>
+    <div class="ambient-glow glow-bottom"></div>
 
-  <div class="h-100 d-flex flex-column justify-content-center align-items-center px-4">
+    <!-- Header Status Pill -->
+    <!-- <header class="offline-header">
+      <div class="brand-pill">
+        <span class="brand-dot"></span>
+        <span class="brand-text">Pintu Offline Mode</span>
+      </div>
+    </header> -->
 
-    <!-- Ticket Container -->
-    <div id="ticket-container">
+    <!-- Main Content Center Stack -->
+    <main class="offline-center-stack">
+      <!-- Animated Ripple Waves & Radar Icon -->
+      <div class="radar-visual-wrapper" [class.is-checking]="isChecking" [class.is-connected]="isConnected">
+        <div class="ripple-ring ring-1"></div>
+        <div class="ripple-ring ring-2"></div>
+        <div class="ripple-ring ring-3"></div>
 
-      <!-- Top -->
-      <div class="ticket-main">
-
-        <div class="event-banner offline-banner">
-          <div class="overlay"></div>
-
-          <div class="event-title-overlay">
-            <span class="badge-category">Offline</span>
-            <h1>No Internet Connection</h1>
-          </div>
-        </div>
-
-        <div class="p-3 text-center">
-          <div class="success-icon-bg mx-auto mb-2">
-            <ion-icon name="wifi-off-outline" color="danger" style="font-size:40px"></ion-icon>
-          </div>
-
-          <p class="text-muted mt-2">
-            Looks like you're not connected to the internet.  
-            Please check your connection and try again.
-          </p>
+        <div class="center-icon-badge">
+          @if (isConnected) {
+            <ion-icon name="checkmark-circle" class="status-icon icon-success"></ion-icon>
+          } @else if (isChecking) {
+            <ion-spinner name="crescent" class="status-spinner"></ion-spinner>
+          } @else {
+            <ion-icon name="cloud-offline-outline" class="status-icon icon-offline"></ion-icon>
+          }
         </div>
       </div>
 
-      <!-- Rip -->
-      <div class="ticket-rip">
-        <div class="circle-left"></div>
-        <div class="dashed-line"></div>
-        <div class="circle-right"></div>
-      </div>
+      <!-- Heading & Description -->
+      <div class="message-text-group">
+        <h1 class="headline-title">
+          @if (isConnected) {
+            <span>Connection Restored!</span>
+          } @else {
+            <span>No Internet Connection</span>
+          }
+        </h1>
 
-      <!-- Bottom -->
-      <div class="ticket-stub p-3 text-center">
+        @if (!isConnected) {
+          <div class="regional-pill">
+            <span>ಸ್ವಲ್ಪ ನೆಟ್ವರ್ಕ್ ಚೆಕ್ ಮಾಡ್ಕೋರಿ ಬರ್ತತಿ!</span>
+          </div>
+        }
 
-        <ion-button expand="block" shape="round" color="dark" (click)="retry()">
-          Retry Connection
-        </ion-button>
-
-        <p class="text-muted mt-2" style="font-size:12px">
-          Turn on mobile data or Wi-Fi
+        <p class="sub-description">
+          @if (isConnected) {
+            <span>You're back online. Redirecting to home...</span>
+          } @else {
+            <span>Please check your cellular data or Wi-Fi network and try again.</span>
+          }
         </p>
-
       </div>
-    </div>
-  </div>
 
+      <!-- Transient Error Notification if retry failed -->
+      @if (checkFailed && !isConnected) {
+        <div class="error-notice-pill">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          <span>{{ errorMessage }}</span>
+        </div>
+      }
+
+      <!-- Troubleshooting Quick Check Chips -->
+      @if (!isConnected) {
+        <div class="troubleshoot-chips-row">
+          <div class="tip-chip">
+            <ion-icon name="cellular-outline"></ion-icon>
+            <span>Mobile Data</span>
+          </div>
+          <div class="tip-chip">
+            <ion-icon name="airplane-outline"></ion-icon>
+            <span>Airplane Mode</span>
+          </div>
+          <div class="tip-chip">
+            <ion-icon name="wifi-outline"></ion-icon>
+            <span>Wi-Fi Signal</span>
+          </div>
+        </div>
+      }
+    </main>
+
+    <!-- Action Footer -->
+    <footer class="offline-footer">
+      <button
+        type="button"
+        class="btn-retry-main"
+        [class.loading]="isChecking"
+        [class.success]="isConnected"
+        [disabled]="isChecking || isConnected"
+        (click)="retry()"
+        aria-label="Retry network connection">
+        @if (isConnected) {
+          <ion-icon name="checkmark-circle"></ion-icon>
+          <span>Connected! Redirecting...</span>
+        } @else if (isChecking) {
+          <ion-spinner name="crescent"></ion-spinner>
+          <span>Checking connection...</span>
+        } @else {
+          <ion-icon name="refresh-outline"></ion-icon>
+          <span>Try Again</span>
+        }
+      </button>
+
+      <button
+        type="button"
+        class="btn-exit-subtle"
+        (click)="exitApp()"
+        aria-label="Close or Exit App">
+        <ion-icon name="power-outline"></ion-icon>
+        <span>Exit Application</span>
+      </button>
+    </footer>
+  </div>
 </ion-content>

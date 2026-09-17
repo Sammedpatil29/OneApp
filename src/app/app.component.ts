@@ -17,12 +17,14 @@ import { AppDialogService } from './services/app-dialog.service';
 import { PlayStoreUpdateService } from './services/play-store-update.service';
 import { AdmobService } from './services/admob.service';
 import { CustomSplashComponent } from './pages/custom-splash/custom-splash.component';
+import { OfflinePage } from './offline/offline.page';
 import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
-  imports: [IonApp, IonRouterOutlet, IonContent, CustomSplashComponent],
+  styleUrls: ['app.component.scss'],
+  imports: [IonApp, IonRouterOutlet, CustomSplashComponent, OfflinePage],
 })
 export class AppComponent implements OnInit {
 
@@ -99,36 +101,40 @@ export class AppComponent implements OnInit {
     // 🚀 Initialize Play Store In-App Updates Check (Strict update requirement)
     this.playStoreUpdateService.initialize();
 
-    // ✅ MODIFIED
-    // await this.checkNetworkStatus();
+    await this.checkNetworkStatus();
     this.listenToNetwork();
   }
 
   async checkNetworkStatus() {
-    const status = await Network.getStatus();
-    this.isOnline = status.connected;
-
-    // ✅ ADDED LOGIC
-    // if (this.isOnline) {
-    //   console.log('🌐 Online → loading remote UI');
-    //   // window.location.replace(this.remoteUrl);
-    // } else {
-    //   console.log('📴 Offline → loading local offline page');
-    //   this.navCtrl.navigateRoot('/offline'); // make sure offline route exists
-    // }
+    try {
+      const status = await Network.getStatus();
+      this.isOnline = status.connected;
+      if (!this.isOnline) {
+        console.log('📴 Offline on launch');
+      }
+    } catch (e) {
+      console.warn('Network status check error:', e);
+    }
   }
 
   listenToNetwork() {
-    Network.addListener('networkStatusChange', (status) => {
-      this.isOnline = status.connected;
+    try {
+      Network.addListener('networkStatusChange', (status) => {
+        this.isOnline = status.connected;
+        if (status.connected) {
+          console.log('🌐 Internet connection restored');
+        } else {
+          console.log('📴 Disconnected from network');
+        }
+      });
+    } catch (e) {
+      console.warn('Network listener error:', e);
+    }
+  }
 
-      // ✅ ADDED LOGIC
-      // if (status.connected) {
-      //   console.log('🌐 Internet back → loading remote UI');
-      //   // window.location.replace(this.remoteUrl);
-      //   this.navCtrl.navigateRoot('/login');
-      // }
-    });
+  onOnlineRestored() {
+    this.isOnline = true;
+    this.routeBasedOnAuth(Date.now());
   }
 
   async onRefreshClick() {

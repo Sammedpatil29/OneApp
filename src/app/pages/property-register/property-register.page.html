@@ -663,13 +663,13 @@
       </div>
     </section>
 
-    <!-- ================= SECTION 9: PHOTOS ================= -->
+    <!-- ================= SECTION 9: PHOTOS & VIDEO TOUR ================= -->
     <section class="form-card">
       <div class="card-header-row">
         <div class="card-num">9</div>
         <div class="card-title-col">
-          <h2 class="card-title">Property Photos</h2>
-          <span class="card-subtitle">Listings with high quality photos get 5x more calls</span>
+          <h2 class="card-title">Property Photos &amp; Video Tour</h2>
+          <span class="card-subtitle">Listings with photos and YouTube video tours get 5x more calls</span>
         </div>
       </div>
 
@@ -708,6 +708,57 @@
           <ion-icon name="add-outline"></ion-icon>
           <span>Add</span>
         </button>
+      </div>
+
+      <!-- YouTube Video Tour URL -->
+      <div class="youtube-section-box mt-4">
+        <div class="youtube-header-row">
+          <div class="yt-icon-badge">
+            <ion-icon name="logo-youtube"></ion-icon>
+          </div>
+          <div class="yt-label-col">
+            <label class="field-label mb-0">YouTube Video Tour URL (Optional)</label>
+            <span class="yt-helper-text">Walk-through video or Shorts link</span>
+          </div>
+        </div>
+
+        <div class="youtube-input-wrap mt-2">
+          <input
+            type="url"
+            class="form-text-input yt-input"
+            placeholder="e.g. https://www.youtube.com/watch?v=... or https://youtu.be/..."
+            [(ngModel)]="youtubeUrl"
+            (ngModelChange)="onYoutubeUrlChange()" />
+          @if (youtubeUrl.trim()) {
+            <button
+              type="button"
+              class="btn-clear-yt"
+              (click)="youtubeUrl = ''; onYoutubeUrlChange()"
+              aria-label="Clear YouTube URL">
+              <ion-icon name="close-outline"></ion-icon>
+            </button>
+          }
+        </div>
+
+        @if (youtubeVideoId) {
+          <!-- Live YouTube Preview Card -->
+          <div class="yt-preview-card mt-3">
+            <div class="yt-preview-thumb-wrap">
+              <img
+                [src]="'https://img.youtube.com/vi/' + youtubeVideoId + '/hqdefault.jpg'"
+                alt="YouTube Preview"
+                class="yt-preview-thumb" />
+              <div class="yt-play-pill">
+                <ion-icon name="play-circle"></ion-icon>
+                <span>Video Linked</span>
+              </div>
+            </div>
+            <div class="yt-preview-info">
+              <span class="yt-preview-badge">Ready for in-app tour</span>
+              <span class="yt-preview-id">Video ID: {{ youtubeVideoId }}</span>
+            </div>
+          </div>
+        }
       </div>
     </section>
 

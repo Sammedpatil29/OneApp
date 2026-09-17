@@ -7,6 +7,7 @@ import {
   IonToolbar,
   IonContent,
   IonIcon,
+  IonSkeletonText,
   NavController,
   ToastController
 } from '@ionic/angular/standalone';
@@ -29,8 +30,9 @@ import {
   documentTextOutline,
   medkitOutline
 } from 'ionicons/icons';
-import { LabTestPackage, DUMMY_LAB_TESTS } from '../../models/pharmacy.model';
+import { LabTestPackage } from '../../models/pharmacy.model';
 import { PharmacyCartService, CartBillSummary } from '../../services/pharmacy-cart.service';
+import { PharmacyService } from '../../services/pharmacy.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -44,7 +46,8 @@ import { Subscription } from 'rxjs';
     IonHeader,
     IonToolbar,
     IonContent,
-    IonIcon
+    IonIcon,
+    IonSkeletonText
   ]
 })
 export class LabTestDetailsPage implements OnInit, OnDestroy {
@@ -53,6 +56,7 @@ export class LabTestDetailsPage implements OnInit, OnDestroy {
   private navCtrl = inject(NavController);
   private toastCtrl = inject(ToastController);
   public cartService = inject(PharmacyCartService);
+  private pharmacyService = inject(PharmacyService);
 
   testPackage: LabTestPackage | null = null;
   isBooked: boolean = false;
@@ -67,6 +71,7 @@ export class LabTestDetailsPage implements OnInit, OnDestroy {
 
   private cartSub!: Subscription;
   private summarySub!: Subscription;
+  private testSub!: Subscription;
 
   constructor() {
     addIcons({
@@ -92,12 +97,12 @@ export class LabTestDetailsPage implements OnInit, OnDestroy {
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.testPackage = DUMMY_LAB_TESTS.find(t => t.id === id) || null;
-    }
-
-    if (!this.testPackage) {
-      // Default fallback test
-      this.testPackage = DUMMY_LAB_TESTS[0];
+      this.testSub = this.pharmacyService.getLabTestById(id).subscribe(pkg => {
+        this.testPackage = pkg || null;
+        if (this.testPackage) {
+          this.isBooked = this.cartService.isLabTestInCart(this.testPackage.id);
+        }
+      });
     }
 
     this.cartSub = this.cartService.labCart$.subscribe(() => {
@@ -114,6 +119,7 @@ export class LabTestDetailsPage implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.cartSub?.unsubscribe();
     this.summarySub?.unsubscribe();
+    this.testSub?.unsubscribe();
   }
 
   goBack(): void {

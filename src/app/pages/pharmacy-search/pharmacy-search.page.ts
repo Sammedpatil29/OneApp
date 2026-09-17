@@ -30,14 +30,13 @@ import {
 } from 'ionicons/icons';
 import {
   MedicineItem,
-  LabTestPackage,
-  DUMMY_MEDICINES,
-  DUMMY_LAB_TESTS
+  LabTestPackage
 } from 'src/app/models/pharmacy.model';
 import {
   PharmacyCartService,
   CartBillSummary
 } from 'src/app/services/pharmacy-cart.service';
+import { PharmacyService } from 'src/app/services/pharmacy.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -58,8 +57,8 @@ export class PharmacySearchPage implements OnInit, OnDestroy {
   searchType: 'medicine' | 'lab' = 'medicine';
   searchQuery: string = '';
 
-  allMedicines: MedicineItem[] = DUMMY_MEDICINES;
-  allLabTests: LabTestPackage[] = DUMMY_LAB_TESTS;
+  allMedicines: MedicineItem[] = [];
+  allLabTests: LabTestPackage[] = [];
 
   filteredMedicines: MedicineItem[] = [];
   filteredLabTests: LabTestPackage[] = [];
@@ -95,7 +94,8 @@ export class PharmacySearchPage implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private navCtrl: NavController,
-    public cartService: PharmacyCartService
+    public cartService: PharmacyCartService,
+    private pharmacyService: PharmacyService
   ) {
     addIcons({
       arrowBack,
@@ -118,6 +118,25 @@ export class PharmacySearchPage implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Preload live catalogs
+    this.subs.add(
+      this.pharmacyService.getMedicines().subscribe((meds) => {
+        this.allMedicines = meds;
+        if (this.searchQuery.trim() && this.searchType === 'medicine') {
+          this.onSearchInput();
+        }
+      })
+    );
+
+    this.subs.add(
+      this.pharmacyService.getLabTests().subscribe((tests) => {
+        this.allLabTests = tests;
+        if (this.searchQuery.trim() && this.searchType === 'lab') {
+          this.onSearchInput();
+        }
+      })
+    );
+
     this.subs.add(
       this.route.queryParams.subscribe((params) => {
         if (params['type'] === 'lab' || params['type'] === 'lab_tests') {

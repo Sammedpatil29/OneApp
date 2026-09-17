@@ -42,7 +42,9 @@ import {
   businessOutline,
   navigateOutline,
   pinOutline,
-  lockClosedOutline
+  lockClosedOutline,
+  logoYoutube,
+  playCircle
 } from 'ionicons/icons';
 import {
   PropertyItem,
@@ -240,12 +242,14 @@ export class PropertyRegisterPage implements OnInit, OnDestroy, ViewWillEnter {
   newCustomDocDetails: string = '';
   newCustomDocCategory: string = 'Legal Verification';
 
-  // Step 8: Images
+  // Step 8: Images & Video Tour
   imageUrls: string[] = [
     'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
     'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80'
   ];
   newImageUrl: string = '';
+  youtubeUrl: string = '';
+  youtubeVideoId: string | null = null;
 
   // Step 9: Seller Info
   sellerName: string = '';
@@ -296,7 +300,9 @@ export class PropertyRegisterPage implements OnInit, OnDestroy, ViewWillEnter {
       businessOutline,
       navigateOutline,
       pinOutline,
-      lockClosedOutline
+      lockClosedOutline,
+      logoYoutube,
+      playCircle
     });
   }
 
@@ -635,6 +641,26 @@ export class PropertyRegisterPage implements OnInit, OnDestroy, ViewWillEnter {
     }
   }
 
+  onYoutubeUrlChange() {
+    this.youtubeVideoId = this.extractYouTubeId(this.youtubeUrl);
+  }
+
+  extractYouTubeId(url: string): string | null {
+    if (!url) return null;
+    const cleanUrl = url.trim();
+    // Match standard, embed, youtu.be, and shorts YouTube links
+    const regExp = /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([\w-]{11})/;
+    const match = cleanUrl.match(regExp);
+    if (match && match[1]) {
+      return match[1];
+    }
+    // If user pasted only the 11 character ID directly
+    if (/^[a-zA-Z0-9_-]{11}$/.test(cleanUrl)) {
+      return cleanUrl;
+    }
+    return null;
+  }
+
   async submitProperty() {
     // Form Validation
     if (!this.title.trim()) {
@@ -821,6 +847,8 @@ export class PropertyRegisterPage implements OnInit, OnDestroy, ViewWillEnter {
       images: this.imageUrls.length > 0 ? [...this.imageUrls] : [
         'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80'
       ],
+      videoUrl: this.youtubeUrl.trim() || undefined,
+      youtubeUrl: this.youtubeUrl.trim() || undefined,
       bedrooms: (this.category === 'buy_house' || this.category === 'rent_house') ? this.bedrooms : undefined,
       bathrooms: (this.category === 'buy_house' || this.category === 'rent_house') ? this.bathrooms : undefined,
       carpetAreaSqFt: this.carpetArea || Math.round(calcArea * 0.82),

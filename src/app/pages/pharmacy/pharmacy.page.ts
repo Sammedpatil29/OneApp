@@ -10,7 +10,8 @@ import {
   IonIcon,
   IonModal,
   IonRefresher,
-  IonRefresherContent
+  IonRefresherContent,
+  IonSkeletonText
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -54,16 +55,13 @@ import {
   MedicineItem,
   LabTestPackage,
   MedicineCategory,
-  LabCategory,
-  DUMMY_MEDICINES,
-  DUMMY_LAB_TESTS,
-  DUMMY_MEDICINE_CATEGORIES,
-  DUMMY_LAB_CATEGORIES
+  LabCategory
 } from 'src/app/models/pharmacy.model';
 import {
   PharmacyCartService,
   CartBillSummary
 } from 'src/app/services/pharmacy-cart.service';
+import { PharmacyService } from 'src/app/services/pharmacy.service';
 import { Subscription } from 'rxjs';
 
 import { PharmacyFooterComponent } from 'src/app/components/pharmacy-footer/pharmacy-footer.component';
@@ -83,6 +81,7 @@ import { PharmacyFooterComponent } from 'src/app/components/pharmacy-footer/phar
     IonModal,
     IonRefresher,
     IonRefresherContent,
+    IonSkeletonText,
     PharmacyFooterComponent
   ]
 })
@@ -96,17 +95,19 @@ export class PharmacyPage implements OnInit, OnDestroy {
   isSavedAddress: boolean = false;
   isOutOfServiceArea: boolean = false;
 
-  // Medicines Data
-  allMedicines: MedicineItem[] = DUMMY_MEDICINES;
-  displayedMedicines: MedicineItem[] = DUMMY_MEDICINES;
-  medicineCategories: MedicineCategory[] = DUMMY_MEDICINE_CATEGORIES;
+  // Medicines Data (Loaded from Database via API)
+  allMedicines: MedicineItem[] = [];
+  displayedMedicines: MedicineItem[] = [];
+  medicineCategories: MedicineCategory[] = [];
   selectedMedCategory: string = 'all';
+  isLoadingMedicines: boolean = true;
 
-  // Lab Tests Data
-  allLabTests: LabTestPackage[] = DUMMY_LAB_TESTS;
-  displayedLabTests: LabTestPackage[] = DUMMY_LAB_TESTS;
-  labCategories: LabCategory[] = DUMMY_LAB_CATEGORIES;
+  // Lab Tests Data (Loaded from Database via API)
+  allLabTests: LabTestPackage[] = [];
+  displayedLabTests: LabTestPackage[] = [];
+  labCategories: LabCategory[] = [];
   selectedLabCategory: string = 'all';
+  isLoadingLabTests: boolean = true;
 
   // Carts Summaries
   medSummary: CartBillSummary = { itemCount: 0, subtotal: 0, totalMrp: 0, savings: 0, fee: 0, grandTotal: 0 };
@@ -126,6 +127,7 @@ export class PharmacyPage implements OnInit, OnDestroy {
     private navCtrl: NavController,
     private locationService: LocationService,
     public cartService: PharmacyCartService,
+    private pharmacyService: PharmacyService,
     private toastCtrl: ToastController
   ) {
     addIcons({arrowBack,location,chevronDown,searchOutline,medkitOutline,flaskOutline,documentTextOutline,checkmarkCircle,shieldCheckmarkOutline,timeOutline,cloudUploadOutline,flashOutline,add,remove,heartOutline,receiptOutline,waterOutline,fitnessOutline,bagHandleOutline,arrowForward,closeOutline,cameraOutline,checkmarkCircleOutline,locationOutline,cartOutline,sparklesOutline,thermometerOutline,nutritionOutline,bandageOutline,happyOutline,pulseOutline,roseOutline,bodyOutline,arrowForwardOutline});
@@ -170,6 +172,56 @@ export class PharmacyPage implements OnInit, OnDestroy {
     this.subs.add(
       this.cartService.labSummary$.subscribe((summary) => {
         this.labSummary = summary;
+      })
+    );
+
+    // 3. Load initial catalog data from backend API
+    this.loadPharmacyData();
+  }
+
+  loadPharmacyData(event?: any): void {
+    this.isLoadingMedicines = true;
+    this.isLoadingLabTests = true;
+
+    // Load categories
+    this.subs.add(
+      this.pharmacyService.getCategories().subscribe((cats) => {
+        if (cats.medicineCategories && cats.medicineCategories.length > 0) {
+          this.medicineCategories = cats.medicineCategories;
+        }
+        if (cats.labCategories && cats.labCategories.length > 0) {
+          this.labCategories = cats.labCategories;
+        }
+      })
+    );
+
+    // Load medicines
+    this.subs.add(
+      this.pharmacyService.getMedicines().subscribe({
+        next: (meds) => {
+          this.allMedicines = meds;
+          this.filterMedCategory(this.selectedMedCategory);
+          this.isLoadingMedicines = false;
+          if (event) event.target.complete();
+        },
+        error: () => {
+          this.isLoadingMedicines = false;
+          if (event) event.target.complete();
+        }
+      })
+    );
+
+    // Load lab tests
+    this.subs.add(
+      this.pharmacyService.getLabTests().subscribe({
+        next: (tests) => {
+          this.allLabTests = tests;
+          this.filterLabCategory(this.selectedLabCategory);
+          this.isLoadingLabTests = false;
+        },
+        error: () => {
+          this.isLoadingLabTests = false;
+        }
       })
     );
   }
@@ -336,9 +388,7 @@ export class PharmacyPage implements OnInit, OnDestroy {
   }
 
   handleRefresh(event: any): void {
-    setTimeout(() => {
-      event.target.complete();
-    }, 600);
+    this.loadPharmacyData(event);
   }
 }
 
