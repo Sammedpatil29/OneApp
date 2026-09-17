@@ -11,7 +11,7 @@
           </button>
 
           <div class="header-right-actions">
-            @if (property.videoUrl) {
+            @if (property.videoUrl || property.youtubeUrl) {
               <button type="button" class="btn-circle-nav btn-video" (click)="openVideoModal()" aria-label="Watch Video Tour" title="Watch Video Tour">
                 <ion-icon name="videocam-outline"></ion-icon>
               </button>
@@ -45,7 +45,7 @@
 
           <!-- Bottom Badges (Video Tour & Photo Counter) -->
           <div class="hero-bottom-badges">
-            @if (property.videoUrl) {
+            @if (property.videoUrl || property.youtubeUrl) {
               <button type="button" class="video-tour-badge" (click)="openVideoModal()" aria-label="Watch Video Tour">
                 <ion-icon name="play-circle"></ion-icon>
                 <span>Video Tour</span>

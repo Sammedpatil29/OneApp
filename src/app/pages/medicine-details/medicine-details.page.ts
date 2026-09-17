@@ -7,6 +7,7 @@ import {
   IonToolbar,
   IonContent,
   IonIcon,
+  IonSkeletonText,
   NavController,
   ToastController
 } from '@ionic/angular/standalone';
@@ -29,8 +30,9 @@ import {
   sparklesOutline,
   timeOutline
 } from 'ionicons/icons';
-import { MedicineItem, DUMMY_MEDICINES } from '../../models/pharmacy.model';
+import { MedicineItem } from '../../models/pharmacy.model';
 import { PharmacyCartService, CartBillSummary } from '../../services/pharmacy-cart.service';
+import { PharmacyService } from '../../services/pharmacy.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -44,7 +46,8 @@ import { Subscription } from 'rxjs';
     IonHeader,
     IonToolbar,
     IonContent,
-    IonIcon
+    IonIcon,
+    IonSkeletonText
   ]
 })
 export class MedicineDetailsPage implements OnInit, OnDestroy {
@@ -53,6 +56,7 @@ export class MedicineDetailsPage implements OnInit, OnDestroy {
   private navCtrl = inject(NavController);
   private toastCtrl = inject(ToastController);
   public cartService = inject(PharmacyCartService);
+  private pharmacyService = inject(PharmacyService);
 
   medicine: MedicineItem | null = null;
   medQty: number = 0;
@@ -67,6 +71,7 @@ export class MedicineDetailsPage implements OnInit, OnDestroy {
 
   private cartSub!: Subscription;
   private summarySub!: Subscription;
+  private medSub!: Subscription;
 
   constructor() {
     addIcons({
@@ -92,12 +97,12 @@ export class MedicineDetailsPage implements OnInit, OnDestroy {
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.medicine = DUMMY_MEDICINES.find(m => m.id === id) || null;
-    }
-
-    if (!this.medicine) {
-      // Default fallback medicine
-      this.medicine = DUMMY_MEDICINES[0];
+      this.medSub = this.pharmacyService.getMedicineById(id).subscribe(med => {
+        this.medicine = med || null;
+        if (this.medicine) {
+          this.medQty = this.cartService.getMedicineQuantity(this.medicine.id);
+        }
+      });
     }
 
     this.cartSub = this.cartService.medicineCart$.subscribe(items => {
@@ -115,6 +120,7 @@ export class MedicineDetailsPage implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.cartSub?.unsubscribe();
     this.summarySub?.unsubscribe();
+    this.medSub?.unsubscribe();
   }
 
   goBack(): void {

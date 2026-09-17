@@ -244,7 +244,19 @@
 
         <!-- Filtered Medicines Grid -->
         <div class="medicines-catalog-grid">
-          @for (med of displayedMedicines; track med.id) {
+          @if (isLoadingMedicines && displayedMedicines.length === 0) {
+            @for (s of [1,2,3,4]; track s) {
+              <div class="med-catalog-card">
+                <ion-skeleton-text [animated]="true" style="width: 100%; height: 120px; border-radius: 12px; margin: 0;"></ion-skeleton-text>
+                <div class="catalog-body" style="padding: 10px;">
+                  <ion-skeleton-text [animated]="true" style="width: 40%; height: 12px; margin-bottom: 6px;"></ion-skeleton-text>
+                  <ion-skeleton-text [animated]="true" style="width: 80%; height: 16px; margin-bottom: 6px;"></ion-skeleton-text>
+                  <ion-skeleton-text [animated]="true" style="width: 35%; height: 14px;"></ion-skeleton-text>
+                </div>
+              </div>
+            }
+          } @else {
+            @for (med of displayedMedicines; track med.id) {
             <div class="med-catalog-card" (click)="openMedicineDetails(med.id)" role="button" tabindex="0">
               @if (med.prescriptionRequired) {
                 <span class="rx-required-tag">Rx</span>
@@ -301,12 +313,13 @@
               </div>
             </div>
           }
+        }
         </div>
       </section>
 
       <!-- In-flow Pharmacy Partner Footer at end of medicines list (matching Property Footer) -->
       <app-pharmacy-footer
-        label="Dispensed &amp; Fulfilled By"
+        label="Dispensed By"
         companyName="MedPlus Pharmacy &amp; Wellness"
         subtitle="Licensed Chemist &amp; Druggist • 100% Genuine Medicines"
         address="Main Road, Near Bus Stand, Athani - 591304"
@@ -422,7 +435,17 @@
         </div>
 
         <div class="lab-tests-list">
-          @for (test of displayedLabTests; track test.id) {
+          @if (isLoadingLabTests && displayedLabTests.length === 0) {
+            @for (s of [1,2,3]; track s) {
+              <div class="lab-test-card" style="padding: 16px;">
+                <ion-skeleton-text [animated]="true" style="width: 25%; height: 14px; margin-bottom: 8px;"></ion-skeleton-text>
+                <ion-skeleton-text [animated]="true" style="width: 70%; height: 20px; margin-bottom: 6px;"></ion-skeleton-text>
+                <ion-skeleton-text [animated]="true" style="width: 90%; height: 14px; margin-bottom: 12px;"></ion-skeleton-text>
+                <ion-skeleton-text [animated]="true" style="width: 100%; height: 32px; border-radius: 8px;"></ion-skeleton-text>
+              </div>
+            }
+          } @else {
+            @for (test of displayedLabTests; track test.id) {
             <div class="lab-test-card" [class.booked]="isLabTestBooked(test.id)" (click)="openLabTestDetails(test.id)" role="button" tabindex="0">
               <div class="test-header-row">
                 <div class="test-title-col">
@@ -506,6 +529,7 @@
               }
             </div>
           }
+        }
         </div>
       </section>
 
