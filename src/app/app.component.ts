@@ -257,6 +257,7 @@ export class AppComponent implements OnInit {
       landing: '/layout/property',
       subPagePrefixes: [
         '/layout/property/details/',
+        '/layout/property-details/',
         '/layout/property/register',
       ]
     },
@@ -274,6 +275,9 @@ export class AppComponent implements OnInit {
       subPagePrefixes: [
         '/layout/rides/select',
         '/layout/rides/tracking',
+        '/layout/ride-selection-page',
+        '/layout/track-order',
+        '/layout/ongoing-ride',
       ]
     },
   ];

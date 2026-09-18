@@ -478,6 +478,14 @@ export class PharmacyPage implements OnInit, OnDestroy {
     return true;
   }
 
+  hasValidMedBanners(): boolean {
+    return Array.isArray(this.medBanners) && this.medBanners.some(b => this.isBannerImageValid(b));
+  }
+
+  hasValidLabBanners(): boolean {
+    return Array.isArray(this.labBanners) && this.labBanners.some(b => this.isBannerImageValid(b));
+  }
+
   onBannerImgError(banner: any): void {
     if (banner) {
       banner.hasImgError = true;

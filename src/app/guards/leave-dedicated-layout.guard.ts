@@ -16,28 +16,53 @@ const DEDICATED_LAYOUTS: DedicatedLayoutConfig[] = [
       '/layout/medicine-details',
       '/layout/lab-test-details',
       '/layout/pharmacy-search',
-      '/layout/pharmacy-cart'
+      '/layout/pharmacy-cart',
+      '/layout/address-list',
+      '/layout/map'
     ],
     landingPaths: ['/layout/pharmacy']
   },
   {
     name: 'Properties',
-    urlPrefixes: ['/layout/property', '/layout/property-layout'],
+    urlPrefixes: [
+      '/layout/property',
+      '/layout/property-layout',
+      '/layout/property-details',
+      '/layout/address-list',
+      '/layout/map'
+    ],
     landingPaths: ['/layout/property']
   },
   {
     name: 'Dineout',
-    urlPrefixes: ['/layout/dineout', '/layout/dineout-layout'],
+    urlPrefixes: [
+      '/layout/dineout',
+      '/layout/dineout-layout',
+      '/layout/address-list',
+      '/layout/map'
+    ],
     landingPaths: ['/layout/dineout-layout/dineout', '/layout/dineout-layout']
   },
   {
     name: 'Local Events',
-    urlPrefixes: ['/layout/events'],
+    urlPrefixes: [
+      '/layout/events',
+      '/layout/address-list',
+      '/layout/map'
+    ],
     landingPaths: ['/layout/events']
   },
   {
     name: 'Book a Ride',
-    urlPrefixes: ['/layout/rides', '/layout/ride', '/layout/ride-selection-page', '/layout/track-order'],
+    urlPrefixes: [
+      '/layout/rides',
+      '/layout/ride',
+      '/layout/ride-selection-page',
+      '/layout/track-order',
+      '/layout/ongoing-ride',
+      '/layout/address-list',
+      '/layout/map'
+    ],
     landingPaths: ['/layout/rides', '/layout/rides/search']
   }
 ];
@@ -46,9 +71,9 @@ let isConfirmingExit = false;
 
 /**
  * Guard that prompts the user with a confirmation dialog when they attempt
- * to leave a dedicated service layout from its LANDING PAGE only.
- * Navigation within the service (cart, details, search) is always allowed.
- * Navigation from sub-pages back to home is also allowed without confirmation.
+ * to leave a dedicated service layout from its LANDING PAGE to return to Home.
+ * Navigation within the service (cart, details, search, map, address picker, etc.) is always allowed.
+ * Opening any item, screen, or sub-service inside or outside never triggers exit confirmation.
  */
 export const leaveDedicatedLayoutGuard: CanDeactivateFn<any> = async (
   component,
@@ -65,6 +90,19 @@ export const leaveDedicatedLayoutGuard: CanDeactivateFn<any> = async (
 
   const currentUrl = currentState.url;
   const nextUrl = nextState.url;
+
+  // Check if destination is actually Home
+  // If user is opening anything else (internal service page, sub-page, details, location, map, cart, search, etc.), allow immediately without confirmation!
+  const cleanNextUrl = nextUrl.split('?')[0].split('#')[0].replace(/\/$/, '');
+  const isNavigatingToHome =
+    cleanNextUrl === '/layout/home' ||
+    cleanNextUrl === '/home' ||
+    cleanNextUrl === '/layout' ||
+    cleanNextUrl === '';
+
+  if (!isNavigatingToHome) {
+    return true;
+  }
 
   // Find which dedicated layout we are currently in
   const layout = DEDICATED_LAYOUTS.find((l) =>
