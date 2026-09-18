@@ -126,26 +126,53 @@
         </div>
       </section>
 
-      <!-- Promotional Banner Strip: Medicine Fast Delivery & Discount -->
-      <section class="pharmacy-promo-banner-card medicine animate__animated animate__fadeIn">
-        <div class="banner-decor-glow"></div>
-        <div class="banner-inner">
-          <div class="banner-text-col">
-            <div class="banner-badge-pill">
-              <ion-icon name="flash-outline"></ion-icon>
-              <span>SUPERFAST 15-MIN DELIVERY</span>
-            </div>
-            <h4 class="banner-title">Flat 15% OFF on Medicines</h4>
-            <p class="banner-desc">Use coupon code <strong class="coupon-code">HEALTH15</strong> at checkout. 100% genuine medicines from licensed pharmacies.</p>
+      <!-- Dynamic Promotional Banner(s) (medtop placement tag) -->
+      @if (isLoadingMedBanners) {
+        <section class="pharmacy-banners-section skeleton-section animate__animated animate__fadeIn">
+          <div class="pharmacy-banner-card">
+            <ion-skeleton-text [animated]="true" class="pharmacy-banner-skeleton-img"></ion-skeleton-text>
           </div>
-          <div class="banner-art-col">
-            <div class="banner-discount-tag">
-              <span class="pct">15%</span>
-              <span class="off">OFF</span>
+        </section>
+      } @else if (medBanners && medBanners.length > 0) {
+        <section class="pharmacy-banners-section animate__animated animate__fadeIn">
+          @for (banner of medBanners; track banner.id || $index) {
+            @if (isBannerImageValid(banner)) {
+              <div
+                class="pharmacy-banner-card"
+                (click)="navigateToBanner(banner)"
+                role="button"
+                tabindex="0">
+                <img
+                  [src]="getBannerImgUrl(banner)"
+                  [alt]="banner.title || 'Medicine Offer'"
+                  class="banner-full-img"
+                  (error)="onBannerImgError(banner)" />
+              </div>
+            }
+          }
+        </section>
+      } @else {
+        <!-- Fallback Promotional Banner Strip when no dynamic medtop banners are configured -->
+        <section class="pharmacy-promo-banner-card medicine animate__animated animate__fadeIn">
+          <div class="banner-decor-glow"></div>
+          <div class="banner-inner">
+            <div class="banner-text-col">
+              <div class="banner-badge-pill">
+                <ion-icon name="flash-outline"></ion-icon>
+                <span>SUPERFAST 15-MIN DELIVERY</span>
+              </div>
+              <h4 class="banner-title">Flat 15% OFF on Medicines</h4>
+              <p class="banner-desc">Use coupon code <strong class="coupon-code">HEALTH15</strong> at checkout. 100% genuine medicines from licensed pharmacies.</p>
+            </div>
+            <div class="banner-art-col">
+              <div class="banner-discount-tag">
+                <span class="pct">15%</span>
+                <span class="off">OFF</span>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      }
 
       <!-- 2. "You May Need" Section (Daily Fast-Moving Medicines) -->
       <section class="section-block">
@@ -364,26 +391,53 @@
         </div>
       </section>
 
-      <!-- Promotional Banner Strip: Lab Tests Checkups -->
-      <section class="pharmacy-promo-banner-card lab animate__animated animate__fadeIn">
-        <div class="banner-decor-glow lab"></div>
-        <div class="banner-inner">
-          <div class="banner-text-col">
-            <div class="banner-badge-pill lab">
-              <ion-icon name="shield-checkmark-outline"></ion-icon>
-              <span>NABL &amp; ICMR CERTIFIED LABS</span>
-            </div>
-            <h4 class="banner-title">Full Body Health Checkups</h4>
-            <p class="banner-desc">Up to <strong>50% OFF</strong> on comprehensive health packages with free home sample collection.</p>
+      <!-- Dynamic Promotional Banner(s) (lab top placement tag) -->
+      @if (isLoadingLabBanners) {
+        <section class="pharmacy-banners-section skeleton-section animate__animated animate__fadeIn">
+          <div class="pharmacy-banner-card">
+            <ion-skeleton-text [animated]="true" class="pharmacy-banner-skeleton-img"></ion-skeleton-text>
           </div>
-          <div class="banner-art-col">
-            <div class="banner-discount-tag lab">
-              <span class="pct">50%</span>
-              <span class="off">OFF</span>
+        </section>
+      } @else if (labBanners && labBanners.length > 0) {
+        <section class="pharmacy-banners-section animate__animated animate__fadeIn">
+          @for (banner of labBanners; track banner.id || $index) {
+            @if (isBannerImageValid(banner)) {
+              <div
+                class="pharmacy-banner-card"
+                (click)="navigateToBanner(banner)"
+                role="button"
+                tabindex="0">
+                <img
+                  [src]="getBannerImgUrl(banner)"
+                  [alt]="banner.title || 'Lab Test Offer'"
+                  class="banner-full-img"
+                  (error)="onBannerImgError(banner)" />
+              </div>
+            }
+          }
+        </section>
+      } @else {
+        <!-- Fallback Promotional Banner Strip when no dynamic lab top banners are configured -->
+        <section class="pharmacy-promo-banner-card lab animate__animated animate__fadeIn">
+          <div class="banner-decor-glow lab"></div>
+          <div class="banner-inner">
+            <div class="banner-text-col">
+              <div class="banner-badge-pill lab">
+                <ion-icon name="shield-checkmark-outline"></ion-icon>
+                <span>NABL &amp; ICMR CERTIFIED LABS</span>
+              </div>
+              <h4 class="banner-title">Full Body Health Checkups</h4>
+              <p class="banner-desc">Up to <strong>50% OFF</strong> on comprehensive health packages with free home sample collection.</p>
+            </div>
+            <div class="banner-art-col">
+              <div class="banner-discount-tag lab">
+                <span class="pct">50%</span>
+                <span class="off">OFF</span>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      }
 
       <!-- 2. Health Concerns Categories -->
       <section class="section-block">

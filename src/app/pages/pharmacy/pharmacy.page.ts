@@ -57,11 +57,10 @@ import {
   MedicineCategory,
   LabCategory
 } from 'src/app/models/pharmacy.model';
-import {
-  PharmacyCartService,
-  CartBillSummary
-} from 'src/app/services/pharmacy-cart.service';
+import { PharmacyCartService, CartBillSummary } from 'src/app/services/pharmacy-cart.service';
 import { PharmacyService } from 'src/app/services/pharmacy.service';
+import { CommonService } from 'src/app/services/common.service';
+import { environment } from 'src/environments/environment';
 import { Subscription } from 'rxjs';
 
 import { PharmacyFooterComponent } from 'src/app/components/pharmacy-footer/pharmacy-footer.component';
@@ -120,6 +119,13 @@ export class PharmacyPage implements OnInit, OnDestroy {
   prescriptionNotes: string = '';
   isUploadingPrescription: boolean = false;
 
+  // Dynamic Banners State (medtop for Medicines, lab top for Labs)
+  medBanners: any[] = [];
+  labBanners: any[] = [];
+  isLoadingMedBanners: boolean = false;
+  isLoadingLabBanners: boolean = false;
+  currentCity: string = '';
+
   private subs: Subscription = new Subscription();
 
   constructor(
@@ -128,6 +134,7 @@ export class PharmacyPage implements OnInit, OnDestroy {
     private locationService: LocationService,
     public cartService: PharmacyCartService,
     private pharmacyService: PharmacyService,
+    private commonService: CommonService,
     private toastCtrl: ToastController
   ) {
     addIcons({arrowBack,location,chevronDown,searchOutline,medkitOutline,flaskOutline,documentTextOutline,checkmarkCircle,shieldCheckmarkOutline,timeOutline,cloudUploadOutline,flashOutline,add,remove,heartOutline,receiptOutline,waterOutline,fitnessOutline,bagHandleOutline,arrowForward,closeOutline,cameraOutline,checkmarkCircleOutline,locationOutline,cartOutline,sparklesOutline,thermometerOutline,nutritionOutline,bandageOutline,happyOutline,pulseOutline,roseOutline,bodyOutline,arrowForwardOutline});
@@ -142,6 +149,9 @@ export class PharmacyPage implements OnInit, OnDestroy {
         this.applyLocation(parsed);
       } catch (e) {}
     }
+
+    // Load dynamic promotional banners (medtop & lab top)
+    this.loadPharmacyBanners();
 
     this.subs.add(
       this.locationService.location$.subscribe((loc) => {
@@ -235,6 +245,11 @@ export class PharmacyPage implements OnInit, OnDestroy {
     this.displayLocationName = loc.area || loc.name || loc.city || 'Home';
     this.displayFullAddress = loc.formatted_address || loc.fullAddress || loc.address || '';
     this.isSavedAddress = Boolean(loc.id || loc.is_saved || loc.tag);
+    const newCity = (loc.city || loc.cityName || '').trim();
+    if (newCity && newCity !== this.currentCity) {
+      this.currentCity = newCity;
+      this.loadPharmacyBanners();
+    }
   }
 
   goBack(): void {
@@ -387,7 +402,126 @@ export class PharmacyPage implements OnInit, OnDestroy {
     }, 900);
   }
 
+  // ─── DYNAMIC PROMOTIONAL BANNERS (medtop & lab top) ────────────────────────
+  loadPharmacyBanners(): void {
+    const city = this.currentCity;
+    this.isLoadingMedBanners = true;
+    this.isLoadingLabBanners = true;
+
+    // 1. Fetch medtop banners (Medicines)
+    this.subs.add(
+      this.commonService.getActiveBanners('medtop', city).subscribe({
+        next: (res: any) => {
+          const items = res?.data || (Array.isArray(res) ? res : []);
+          this.medBanners = Array.isArray(items) ? items : [];
+          this.isLoadingMedBanners = false;
+        },
+        error: (err: any) => {
+          console.warn('Could not load medtop banners:', err?.message || err);
+          this.medBanners = [];
+          this.isLoadingMedBanners = false;
+        }
+      })
+    );
+
+    // 2. Fetch lab top banners (Lab Tests, supporting 'lab top' and 'labtop')
+    this.subs.add(
+      this.commonService.getActiveBanners('lab top', city).subscribe({
+        next: (res: any) => {
+          const items = res?.data || (Array.isArray(res) ? res : []);
+          if (Array.isArray(items) && items.length > 0) {
+            this.labBanners = items;
+            this.isLoadingLabBanners = false;
+          } else {
+            // Fallback check without space
+            this.subs.add(
+              this.commonService.getActiveBanners('labtop', city).subscribe({
+                next: (fallbackRes: any) => {
+                  const fallbackItems = fallbackRes?.data || (Array.isArray(fallbackRes) ? fallbackRes : []);
+                  this.labBanners = Array.isArray(fallbackItems) ? fallbackItems : [];
+                  this.isLoadingLabBanners = false;
+                },
+                error: () => {
+                  this.labBanners = [];
+                  this.isLoadingLabBanners = false;
+                }
+              })
+            );
+          }
+        },
+        error: () => {
+          this.labBanners = [];
+          this.isLoadingLabBanners = false;
+        }
+      })
+    );
+  }
+
+  getBannerImgUrl(banner: any): string {
+    if (!banner?.img) return '';
+    const img = String(banner.img).trim();
+    if (img.startsWith('http://') || img.startsWith('https://') || img.startsWith('assets/')) {
+      return img;
+    }
+    if (img.startsWith('/')) {
+      return `${environment.apiUrl}${img}`;
+    }
+    return `${environment.apiUrl}/${img}`;
+  }
+
+  isBannerImageValid(banner: any): boolean {
+    if (!banner?.img || banner.hasImgError) return false;
+    const img = String(banner.img).trim();
+    if (!img || img.includes('example.com') || img === 'null' || img === 'undefined') {
+      return false;
+    }
+    return true;
+  }
+
+  onBannerImgError(banner: any): void {
+    if (banner) {
+      banner.hasImgError = true;
+    }
+  }
+
+  navigateToBanner(banner: any): void {
+    if (!banner) return;
+    const route = (banner.route || '').trim();
+    if (!route) return;
+
+    if (route.startsWith('http://') || route.startsWith('https://')) {
+      window.open(route, '_system');
+      return;
+    }
+
+    if (route === 'pharmacy' || route === 'medicine' || route === 'medicines' || route === 'lab' || route === '/layout/pharmacy' || route === '/pharmacy') {
+      return; // Already on pharmacy page
+    }
+
+    if (route === 'grocery' || route === '/layout/grocery' || route === '/layout/grocery-layout' || route === '/grocery') {
+      this.router.navigate(['/layout/grocery-layout']);
+      return;
+    }
+
+    if (route === 'rides' || route === 'ride' || route === 'cab' || route === '/layout/rides' || route === '/layout/ride') {
+      this.router.navigate(['/layout/rides']);
+      return;
+    }
+
+    if (route === 'food' || route === 'dineout' || route === '/layout/dineout-layout') {
+      this.router.navigate(['/layout/dineout-layout']);
+      return;
+    }
+
+    if (route.startsWith('/')) {
+      this.router.navigate([route]);
+    } else {
+      this.router.navigate([`/layout/${route}`]);
+    }
+  }
+
   handleRefresh(event: any): void {
+    this.loadPharmacyBanners();
     this.loadPharmacyData(event);
   }
 }
