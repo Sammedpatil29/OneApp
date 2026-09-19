@@ -109,6 +109,27 @@ export class MapPage implements OnInit, AfterViewInit, OnDestroy {
     return src === 'property_register' || src === 'property' || src === 'property-register';
   }
 
+  // Ride Booking Flow check
+  get isRideFlow(): boolean {
+    const src = String(
+      (typeof this.routeSource === 'object' ? this.routeSource?.source : this.routeSource) ||
+      this.route.snapshot.queryParams['from'] ||
+      localStorage.getItem('map_picker_source') ||
+      ''
+    ).toLowerCase();
+    return src === 'ride' || src === 'rides';
+  }
+
+  get rideTarget(): 'Pickup' | 'Drop' {
+    const t = (
+      (typeof this.routeSource === 'object' ? this.routeSource?.target : null) ||
+      this.route.snapshot.queryParams['target'] ||
+      localStorage.getItem('ride_picker_target') ||
+      'Pickup'
+    );
+    return t === 'Drop' ? 'Drop' : 'Pickup';
+  }
+
   // Live Location Indicator (Blue Dot)
   userLiveMarker: any = null;
   userLiveAccuracyCircle: any = null;
@@ -647,13 +668,36 @@ export class MapPage implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
+    // If coming from Ride booking flow, save selected pickup/drop location and return back
+    if (this.isRideFlow) {
+      const rideTarget = this.rideTarget;
+      const payload: any = {
+        target: rideTarget,
+        lat: Number(lat),
+        lng: Number(lng),
+        name: areaVal,
+        address: addressVal,
+        city: this.currentServiceAreaName || 'Jamkhandi'
+      };
+      localStorage.setItem('ride_selected_location', JSON.stringify(payload));
+      localStorage.removeItem('map_picker_source');
+      localStorage.removeItem('ride_picker_target');
+      this.showToast(`${rideTarget} location set successfully!`);
+      this.navCtrl.navigateBack('/layout/rides/search', {
+        state: {
+          selectedLocation: payload
+        }
+      });
+      return;
+    }
+
     this.locationService.setAddress(locationData);
     localStorage.setItem('location', JSON.stringify(locationData));
 
     if (this.routeSource === 'grocery') {
       this.router.navigate(['/layout/grocery-layout'], { replaceUrl: true });
-    } else if (this.routeSource === 'rides') {
-      this.router.navigate(['/layout/rides'], { replaceUrl: true });
+    } else if (this.routeSource === 'rides' || this.routeSource === 'ride') {
+      this.router.navigate(['/layout/rides/search'], { replaceUrl: true });
     } else {
       // Direct return to home page
       this.router.navigate(['/layout/home'], { replaceUrl: true });
@@ -666,6 +710,12 @@ export class MapPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goBack() {
+    if (this.isRideFlow) {
+      localStorage.removeItem('map_picker_source');
+      localStorage.removeItem('ride_picker_target');
+      this.navCtrl.navigateBack('/layout/rides/search');
+      return;
+    }
     if (this.isPropertyListingFlow) {
       localStorage.removeItem('map_picker_source');
       this.router.navigate(['/layout/property/register']);

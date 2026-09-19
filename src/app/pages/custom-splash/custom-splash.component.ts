@@ -200,19 +200,27 @@ export class CustomSplashComponent implements OnInit, OnDestroy {
     }
   }
 
+  isDismissing: boolean = false;
+
   private startLoaderAnimation() {
     // Top progress bar fill animation
     this.progressInterval = setInterval(() => {
-      if (this.loadingProgress < 95) {
-        this.loadingProgress += Math.floor(Math.random() * 8) + 4;
-        if (this.loadingProgress > 95) this.loadingProgress = 95;
+      if (this.loadingProgress < 100) {
+        this.loadingProgress += Math.floor(Math.random() * 9) + 6;
+        if (this.loadingProgress >= 100) {
+          this.loadingProgress = 100;
+          if (this.progressInterval) clearInterval(this.progressInterval);
+          setTimeout(() => {
+            this.onSkipClick();
+          }, 220);
+        }
       }
-    }, 110);
+    }, 95);
 
     // Dynamic loader status text cycle
     this.messageInterval = setInterval(() => {
       this.currentMessageIndex = (this.currentMessageIndex + 1) % this.loadingMessages.length;
-    }, 650);
+    }, 550);
   }
 
   onImageLoaded() {
@@ -225,6 +233,10 @@ export class CustomSplashComponent implements OnInit, OnDestroy {
 
   onSkipClick(event?: Event) {
     if (event) event.stopPropagation();
-    this.dismiss.emit();
+    if (this.isDismissing) return;
+    this.isDismissing = true;
+    setTimeout(() => {
+      this.dismiss.emit();
+    }, 240);
   }
 }

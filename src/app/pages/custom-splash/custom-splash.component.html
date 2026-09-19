@@ -1,4 +1,4 @@
-<div class="splash-screen" (click)="onSkipClick($event)">
+<div class="splash-screen" [class.dismissing]="isDismissing" (click)="onSkipClick($event)">
   <!-- Top Animated Progress Loader Line -->
   <div class="top-progress-track">
     <div class="top-progress-bar" [style.width.%]="loadingProgress"></div>
