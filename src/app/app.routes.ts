@@ -59,6 +59,38 @@ export const routes: Routes = [
           import('./pages/map/map.page').then((m) => m.MapPage),
       },
 
+      // Consult Doctor Feature
+      {
+        path: 'consult-doctor',
+        loadComponent: () =>
+          import('./pages/consult-doctor/consult-doctor.page').then((m) => m.ConsultDoctorPage),
+      },
+      {
+        path: 'doctor-specialty/:categoryId',
+        loadComponent: () =>
+          import('./pages/doctor-specialty/doctor-specialty.page').then((m) => m.DoctorSpecialtyPage),
+      },
+      {
+        path: 'doctor-specialty',
+        redirectTo: 'doctor-specialty/gynecologist',
+        pathMatch: 'full',
+      },
+      {
+        path: 'doctor-booking/:doctorId',
+        loadComponent: () =>
+          import('./pages/doctor-booking/doctor-booking.page').then((m) => m.DoctorBookingPage),
+      },
+      {
+        path: 'doctor-booking',
+        redirectTo: 'consult-doctor',
+        pathMatch: 'full',
+      },
+      {
+        path: 'doctor',
+        redirectTo: 'consult-doctor',
+        pathMatch: 'full',
+      },
+
       // Profile Container Sub-routes
       {
         path: 'profile-details',

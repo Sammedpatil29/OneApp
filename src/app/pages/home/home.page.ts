@@ -959,6 +959,11 @@ export class HomePage implements OnInit, OnDestroy {
       return;
     }
 
+    if (route === 'doctor' || route === 'consult-doctor' || route === '/layout/consult-doctor' || route === '/layout/doctor') {
+      this.router.navigate(['/layout/consult-doctor']);
+      return;
+    }
+
     if (route === 'pharmacy' || route === 'medicine' || route === 'medicines' || route === 'lab' || route === '/layout/pharmacy' || route === '/pharmacy') {
       this.router.navigate(['/layout/pharmacy']);
       return;
@@ -970,7 +975,9 @@ export class HomePage implements OnInit, OnDestroy {
       this.router.navigate([`/layout/${route}`]);
     } else {
       const title = (service.title || '').toLowerCase();
-      if (title.includes('grocery') || title.includes('vegitables') || title.includes('milk')) {
+      if (title.includes('doctor') || title.includes('consult')) {
+        this.router.navigate(['/layout/consult-doctor']);
+      } else if (title.includes('grocery') || title.includes('vegitables') || title.includes('milk')) {
         this.router.navigate(['/layout/grocery-layout']);
       } else if (title.includes('ride') || title.includes('cab') || title.includes('auto') || title.includes('commute')) {
         this.router.navigate(['/layout/rides']);
@@ -980,7 +987,7 @@ export class HomePage implements OnInit, OnDestroy {
         this.router.navigate(['/layout/history']);
       } else if (title.includes('property') || title.includes('properties') || title.includes('vehicle')) {
         this.router.navigate(['/layout/property']);
-      } else if (title.includes('medicine') || title.includes('pharmacy') || title.includes('lab') || title.includes('test') || title.includes('health') || title.includes('doctor')) {
+      } else if (title.includes('medicine') || title.includes('pharmacy') || title.includes('lab') || title.includes('test') || title.includes('health')) {
         this.router.navigate(['/layout/pharmacy']);
       }
     }
@@ -993,6 +1000,11 @@ export class HomePage implements OnInit, OnDestroy {
 
     if (route.startsWith('http://') || route.startsWith('https://')) {
       window.open(route, '_system');
+      return;
+    }
+
+    if (route === 'doctor' || route === 'consult-doctor' || route === '/layout/consult-doctor' || route === '/layout/doctor') {
+      this.router.navigate(['/layout/consult-doctor']);
       return;
     }
 

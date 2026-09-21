@@ -1,0 +1,231 @@
+<!-- pages/doctor-specialty/doctor-specialty.page.html -->
+<ion-header class="ion-no-border specialty-header">
+  <ion-toolbar class="main-toolbar">
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()" class="btn-back">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <div class="header-title-wrap">
+      <ion-title class="page-title">{{ currentCategory?.name || 'Doctors' }}</ion-title>
+      <div class="location-chip">
+        <ion-icon name="location-outline"></ion-icon>
+        <span>{{ currentCity }}</span>
+      </div>
+    </div>
+  </ion-toolbar>
+
+  <!-- Search Bar -->
+  <div class="search-bar-container">
+    <div class="search-input-box">
+      <ion-icon name="search-outline" class="search-icon"></ion-icon>
+      <input
+        type="text"
+        class="search-input"
+        [(ngModel)]="searchQuery"
+        (input)="onSearchInput()"
+        placeholder="Search doctor or clinic in {{ currentCategory?.name || 'specialty' }}..." />
+      @if (searchQuery) {
+        <button type="button" class="btn-clear" (click)="clearSearch()">
+          <ion-icon name="close-circle"></ion-icon>
+        </button>
+      }
+    </div>
+  </div>
+</ion-header>
+
+<ion-content class="specialty-content">
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <main class="specialty-body">
+
+    <!-- Category Header Info Card -->
+    <section class="category-meta-card animate__animated animate__fadeIn">
+      <div class="cat-meta-left">
+        <div class="cat-icon-box" [style.color]="currentCategory?.color || '#a000e2'" [style.background]="currentCategory?.bgColor || '#fbf5ff'">
+          <ion-icon [name]="currentCategory?.icon || 'medkit-outline'"></ion-icon>
+        </div>
+        <div class="cat-meta-text">
+          <h2 class="cat-title">{{ currentCategory?.name || 'Specialist Doctors' }}</h2>
+          <p class="cat-subtitle">{{ currentCategory?.description || 'Verified Specialists in ' + currentCity }}</p>
+        </div>
+      </div>
+      <div class="cat-meta-right">
+        <span class="doctors-count-badge">{{ doctors.length }} {{ doctors.length === 1 ? 'Doctor' : 'Doctors' }}</span>
+      </div>
+    </section>
+
+    <!-- Filter Pills -->
+    <section class="filters-section">
+      <div class="filters-pills-row">
+        <button
+          type="button"
+          class="filter-pill"
+          [class.active]="activeFilter === 'all'"
+          (click)="setFilter('all')">
+          <span>All</span>
+        </button>
+        <button
+          type="button"
+          class="filter-pill"
+          [class.active]="activeFilter === 'top'"
+          (click)="setFilter('top')">
+          <ion-icon name="star"></ion-icon>
+          <span>Top Rated</span>
+        </button>
+        <button
+          type="button"
+          class="filter-pill"
+          [class.active]="activeFilter === 'today'"
+          (click)="setFilter('today')">
+          <ion-icon name="time-outline"></ion-icon>
+          <span>Today</span>
+        </button>
+        <button
+          type="button"
+          class="filter-pill"
+          [class.active]="activeFilter === 'clinic'"
+          (click)="setFilter('clinic')">
+          <ion-icon name="medkit-outline"></ion-icon>
+          <span>In-Clinic</span>
+        </button>
+        <button
+          type="button"
+          class="filter-pill"
+          [class.active]="activeFilter === 'video'"
+          (click)="setFilter('video')">
+          <ion-icon name="videocam-outline"></ion-icon>
+          <span>Video</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- VERTICAL SCROLL: DOWN BY DOWN LIST OF DOCTORS -->
+    <section class="doctors-vertical-list">
+      @if (isLoading) {
+        <div class="skeleton-wrapper">
+          @for (i of [1, 2, 3]; track i) {
+            <div class="doc-skeleton-card"></div>
+          }
+        </div>
+      } @else if (doctors.length === 0) {
+        <div class="empty-state-card">
+          <ion-icon name="medkit-outline" class="empty-icon"></ion-icon>
+          <h4 class="empty-title">No doctors found</h4>
+          <p class="empty-desc">No doctors match your current search or filter. Try clearing filters.</p>
+          <button type="button" class="btn-clear-filter" (click)="setFilter('all'); clearSearch()">
+            <span>Reset Filters</span>
+          </button>
+        </div>
+      } @else {
+        <div class="doctors-flow-container">
+          @for (doc of doctors; track doc.id) {
+            <div class="specialty-doctor-card animate__animated animate__fadeIn">
+
+              <!-- Appointed Banner if booked in this session -->
+              @if (appointedDoctorIds[doc.id]) {
+                <div class="appointed-banner">
+                  <div class="appointed-badge-pill">
+                    <ion-icon name="checkmark-circle"></ion-icon>
+                    <span>APPOINTED</span>
+                  </div>
+                  <span class="appointed-text">
+                    Appointed for {{ appointedDoctorIds[doc.id].date }} at {{ appointedDoctorIds[doc.id].time }}
+                  </span>
+                  <span class="appointed-code">#{{ appointedDoctorIds[doc.id].bookingId }}</span>
+                </div>
+              }
+
+              <!-- Doctor Top Profile Row -->
+              <div class="doc-main-row">
+                <div class="doc-avatar-wrap">
+                  <img [src]="doc.image" [alt]="doc.name" class="doc-avatar-img" />
+                  <div class="doc-rating-chip">
+                    <ion-icon name="star"></ion-icon>
+                    <span>{{ doc.rating }}</span>
+                  </div>
+                </div>
+
+                <div class="doc-details-col">
+                  <div class="doc-header-name">
+                    <h3 class="doc-name">{{ doc.name }}</h3>
+                    <ion-icon name="shield-checkmark-outline" class="verified-icon"></ion-icon>
+                  </div>
+
+                  <p class="doc-spec-line">{{ doc.specialization }}</p>
+                  <p class="doc-qual-line">{{ doc.qualification }} • {{ doc.experienceYears }} exp</p>
+
+                  <div class="doc-location-line text-truncate">
+                    <ion-icon name="location-outline"></ion-icon>
+                    <span>{{ doc.hospitalOrClinic }}</span>
+                  </div>
+
+                  <!-- Mode and Availability Badges -->
+                  <div class="doc-tags-row">
+                    @if (doc.consultationModes.includes('In-Clinic')) {
+                      <span class="tag-pill clinic">
+                        <ion-icon name="medkit-outline"></ion-icon>
+                        <span>In-Clinic</span>
+                      </span>
+                    }
+                    @if (doc.consultationModes.includes('Video Call')) {
+                      <span class="tag-pill video">
+                        <ion-icon name="videocam-outline"></ion-icon>
+                        <span>Video</span>
+                      </span>
+                    }
+                    @if (doc.availableToday) {
+                      <span class="tag-pill today">
+                        <ion-icon name="time-outline"></ion-icon>
+                        <span>Available Today</span>
+                      </span>
+                    }
+                  </div>
+                </div>
+              </div>
+
+              <!-- Next Available Slot Notice -->
+              <div class="next-slot-bar">
+                <ion-icon name="calendar-outline" class="slot-icon"></ion-icon>
+                <span class="slot-text">Next Available: <strong>{{ doc.nextAvailableSlot }}</strong></span>
+              </div>
+
+              <!-- Card Bottom Action Row -->
+              <div class="doc-card-bottom">
+                <div class="fee-display">
+                  <div class="price-line">
+                    <span class="discounted-fee">₹{{ doc.discountFee }}</span>
+                    <span class="original-mrp">₹{{ doc.consultationFee }}</span>
+                    <span class="off-tag">20% OFF</span>
+                  </div>
+                  <span class="fee-caption">Consultation Fee</span>
+                </div>
+
+                <button
+                  type="button"
+                  class="btn-book-doctor"
+                  (click)="navigateToBooking(doc)">
+                  <ion-icon name="calendar-outline"></ion-icon>
+                  <span>Book Appointment</span>
+                </button>
+              </div>
+
+            </div>
+          }
+        </div>
+      }
+    </section>
+
+  </main>
+</ion-content>
+
+<ion-toast
+  [isOpen]="isToastOpen"
+  [message]="toastMessage"
+  [duration]="2500"
+  (didDismiss)="isToastOpen = false"
+  position="bottom">
+</ion-toast>
+
