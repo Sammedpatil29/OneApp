@@ -161,80 +161,49 @@
     <ion-refresher-content mode="md" pullingIcon="arrow-down-outline" refreshingSpinner="crescent"></ion-refresher-content>
   </ion-refresher>
 
-  <!-- Top Hero Banner Slider (Full-Bleed: 0 margin, 0 padding, 0 border-radius) -->
-  @if (!isOfflineOrOutOfServiceArea && banners && banners.length > 0) {
-    <section class="home-top-hero-slider">
-      <swiper-container
-        slides-per-view="1"
-        pagination="true"
-        autoplay-delay="3800"
-        autoplay-disable-on-interaction="false"
-        loop="true"
-        class="hero-swiper">
-        @for (banner of banners; track banner.id || $index) {
-          <swiper-slide>
-            <div
-              class="hero-banner-card"
-              [style.background]="banner.bgGradient || 'linear-gradient(135deg, #2e0854 0%, #1e1b4b 50%, #3b0764 100%)'"
-              (click)="navigateToBanner(banner)"
-              role="button"
-              tabindex="0">
-
-              <!-- Real Image Banner -->
-              @if (isBannerImageValid(banner)) {
-                <img
-                  [src]="getBannerImgUrl(banner)"
-                  alt="Promotional Banner"
-                  class="hero-banner-img"
-                  (error)="banner.img = ''" />
-              } @else {
-                <!-- Gradient Graphic Card Fallback -->
-                <div class="hero-banner-content-box">
-                  @if (banner.badge) {
-                    <span
-                      class="banner-badge-pill"
-                      [style.background]="banner.badgeBg || 'rgba(255, 255, 255, 0.2)'"
-                      [style.color]="banner.badgeColor || '#ffffff'">
-                      {{ banner.badge }}
-                    </span>
-                  }
-                  <h3 class="banner-title">{{ banner.title || 'Special Delivery Offer' }}</h3>
-                  <p class="banner-subtitle">{{ banner.subtitle || 'Discover premium fast delivery with Pintu' }}</p>
-
-                  <div class="banner-cta-row">
-                    <span class="banner-cta-text">Explore Now</span>
-                    <div class="banner-cta-arrow">
-                      <ion-icon name="arrow-forward"></ion-icon>
-                    </div>
-                  </div>
+  <!-- Top Hero Banner Slider (hometop placement tag) -->
+  @if (!isOfflineOrOutOfServiceArea) {
+    @if (isLoadingHeroBanners) {
+      <section class="home-top-hero-slider hero-skeleton-section">
+        <div class="hero-banner-skeleton-card">
+          <ion-skeleton-text animated class="hero-banner-skeleton-img"></ion-skeleton-text>
+        </div>
+      </section>
+    } @else if (banners && banners.length > 0) {
+      <section class="home-top-hero-slider">
+        <swiper-container
+          slides-per-view="1"
+          pagination="true"
+          autoplay-delay="3800"
+          autoplay-disable-on-interaction="false"
+          loop="true"
+          class="hero-swiper">
+          @for (banner of banners; track banner.id || $index) {
+            @if (isBannerImageValid(banner)) {
+              <swiper-slide>
+                <div
+                  class="hero-banner-card"
+                  (click)="navigateToBanner(banner)"
+                  role="button"
+                  tabindex="0">
+                  <img
+                    [src]="getBannerImgUrl(banner)"
+                    [alt]="banner.title || 'Promotional Banner'"
+                    class="hero-banner-img"
+                    (error)="onBannerImgError(banner)" />
                 </div>
-              }
-            </div>
-          </swiper-slide>
-        }
-      </swiper-container>
-    </section>
+              </swiper-slide>
+            }
+          }
+        </swiper-container>
+      </section>
+    }
   }
 
   <!-- Main Scrollable Home Body -->
   <main class="home-body-container">
 
 
-
-    <!-- Active Order Live Tracker Pill (Shown when customer has ongoing orders) -->
-    @if (orders && orders.length > 0) {
-      <section class="active-order-floating-strip animate__animated animate__fadeInDown" (click)="goToOrderDetails(orders[0]?.orderId || orders[0]?.id)">
-        <div class="live-pulse-dot"></div>
-        <div class="order-info-col">
-          <span class="order-badge">ACTIVE ORDER</span>
-          <span class="order-headline">Your delivery is arriving soon</span>
-        </div>
-        <button type="button" class="btn-track-pill">
-          <span>Track</span>
-          <ion-icon name="arrow-forward" class="ms-1"></ion-icon>
-        </button>
-      </section>
-    }
 
     <!-- 1. Location Permission Required Alert Banner -->
     @if (isLocationPermissionDenied) {
@@ -394,6 +363,21 @@
           </div>
         }
 
+        <!-- Error State if Failed to load and empty -->
+        @else if (hasHomeDataError && allServices.length === 0) {
+          <div class="services-error-card">
+            <div class="error-icon-box">
+              <ion-icon name="cloud-offline-outline"></ion-icon>
+            </div>
+            <h4 class="error-title">Unable to Load Services</h4>
+            <p class="error-desc">We couldn't connect to Pintu servers. Please check your connection.</p>
+            <button type="button" class="btn-retry-services" (click)="retryHomeData()">
+              <ion-icon name="refresh-outline"></ion-icon>
+              <span>Tap to Retry</span>
+            </button>
+          </div>
+        }
+
         <!-- Dynamic Mosaic Grid -->
         @else {
           <div
@@ -506,57 +490,32 @@
         }
       </section>
 
-      <!-- 2 Promotional Banners (Below Services) -->
-      <section class="home-bottom-banners-section">
-        @for (banner of bottomBanners; track banner.id || $index) {
-          <div
-            class="bottom-promo-card"
-            [style.background]="banner.bgGradient || 'linear-gradient(135deg, #2e0854 0%, #1e1b4b 60%, #3b0764 100%)'"
-            (click)="navigateToBanner(banner)"
-            role="button"
-            tabindex="0">
-
+      <!-- Promotional Banners (Below Services - homedown placement tag) -->
+      @if (isLoadingBottomBanners) {
+        <section class="home-bottom-banners-section bottom-skeleton-section">
+          <div class="bottom-banner-skeleton-card">
+            <ion-skeleton-text animated class="bottom-banner-skeleton-img"></ion-skeleton-text>
+          </div>
+        </section>
+      } @else if (bottomBanners && bottomBanners.length > 0) {
+        <section class="home-bottom-banners-section">
+          @for (banner of bottomBanners; track banner.id || $index) {
             @if (isBannerImageValid(banner)) {
-              <img
-                [src]="getBannerImgUrl(banner)"
-                alt="Promotional Banner"
-                class="banner-full-img"
-                (error)="banner.img = ''" />
-            } @else {
-              <div class="bottom-promo-content">
-                <div class="promo-text-col">
-                  @if (banner.badge) {
-                    <span
-                      class="promo-badge-pill"
-                      [style.background]="banner.badgeBg || 'rgba(255, 255, 255, 0.2)'"
-                      [style.color]="banner.badgeColor || '#ffffff'">
-                      {{ banner.badge }}
-                    </span>
-                  }
-                  <h4 class="promo-title">{{ banner.title || 'Special Promotion' }}</h4>
-                  <p class="promo-subtitle">{{ banner.subtitle || 'Discover premium offers and savings with Pintu' }}</p>
-
-                  <div class="promo-cta-row">
-                    <span class="promo-cta-text">{{ $index === 0 ? 'Invite Friends' : 'Shop Now' }}</span>
-                    <div class="promo-cta-arrow">
-                      <ion-icon name="arrow-forward"></ion-icon>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="promo-art-col">
-                  <div class="promo-orb-glow"></div>
-                  <span class="promo-art-emoji">
-                    {{ $index === 0 ? '🎁' : '🥦' }}
-                  </span>
-                </div>
+              <div
+                class="bottom-promo-card"
+                (click)="navigateToBanner(banner)"
+                role="button"
+                tabindex="0">
+                <img
+                  [src]="getBannerImgUrl(banner)"
+                  [alt]="banner.title || 'Promotional Banner'"
+                  class="banner-full-img"
+                  (error)="onBannerImgError(banner)" />
               </div>
             }
-          </div>
-        }
-      </section>
-
-
+          }
+        </section>
+      }
     }
 
     <!-- Rich Brand Footer (Only shown when serviceable) -->
@@ -565,7 +524,93 @@
     }
 
     <!-- Bottom Nav Spacer -->
-    <div class="bottom-nav-spacer"></div>
+    <div class="bottom-nav-spacer" [class.has-active-orders]="orders && orders.length > 0"></div>
 
   </main>
+
+  <!-- Docked Active Orders Banner (Attached directly above the bottom navbar) -->
+  @if (orders && orders.length > 0) {
+    <aside slot="fixed" class="docked-active-orders-banner" (click)="handleActiveOrderBannerClick()" role="button" tabindex="0">
+      <div class="banner-inner-card">
+        <div class="banner-left">
+          <div class="live-pulse-dot"></div>
+          <div class="order-text-col">
+            <div class="order-badge-row">
+              <span class="badge-text">
+                {{ orders.length > 1 ? (orders.length + ' ACTIVE ORDERS') : 'ACTIVE ORDER' }}
+              </span>
+              @if (orders.length === 1 && (orders[0]?.orderId || orders[0]?.id)) {
+                <span class="order-id-chip">#{{ orders[0]?.orderId || orders[0]?.id }}</span>
+              }
+            </div>
+            <span class="order-title-line">
+              {{ orders.length > 1 ? 'Multiple deliveries in progress' : getActiveOrderHeadline(orders[0]) }}
+            </span>
+          </div>
+        </div>
+
+        <button type="button" class="btn-docked-track" aria-label="Track Active Orders">
+          <span>{{ orders.length > 1 ? 'View All' : 'Track' }}</span>
+          <ion-icon name="arrow-forward"></ion-icon>
+        </button>
+      </div>
+    </aside>
+  }
+
+  <!-- Multi Active Orders Selection Bottom Sheet Modal -->
+  <ion-modal
+    [isOpen]="isMultiOrderModalOpen"
+    (didDismiss)="closeMultiOrderModal()"
+    [initialBreakpoint]="0.55"
+    [breakpoints]="[0, 0.55, 0.85]"
+    class="active-orders-sheet-modal">
+    <ng-template>
+      <div class="sheet-container">
+        <div class="sheet-header">
+          <div class="sheet-handle-bar"></div>
+          <div class="sheet-title-row">
+            <div class="sheet-title-col">
+              <h3 class="sheet-title">Active Orders</h3>
+              <p class="sheet-sub">Select an ongoing order to track live status</p>
+            </div>
+            <button type="button" class="sheet-close-btn" (click)="closeMultiOrderModal()" aria-label="Close">
+              <ion-icon name="close-outline"></ion-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="orders-list-content">
+          @for (order of orders; track (order?.orderId || order?.id || $index)) {
+            <div class="active-order-item-card" (click)="selectActiveOrder(order)" role="button" tabindex="0">
+              <div class="item-card-left">
+                <div class="order-icon-box">
+                  <ion-icon [name]="getOrderIcon(order)"></ion-icon>
+                </div>
+                <div class="order-details-col">
+                  <div class="order-meta-line">
+                    <span class="order-number">Order #{{ order.orderId || order.id }}</span>
+                    <span class="order-time">{{ formatOrderTime(order) }}</span>
+                  </div>
+                  <div class="order-status-badge">
+                    <span class="mini-pulse-dot"></span>
+                    <span>{{ getActiveOrderHeadline(order) }}</span>
+                  </div>
+                  @if (order.totalAmount || order.grandTotal || order.total) {
+                    <span class="order-amount">₹{{ order.totalAmount || order.grandTotal || order.total }}</span>
+                  }
+                </div>
+              </div>
+
+              <div class="item-card-right">
+                <button type="button" class="btn-track-item">
+                  <span>Track</span>
+                  <ion-icon name="chevron-forward"></ion-icon>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </ng-template>
+  </ion-modal>
 </ion-content>

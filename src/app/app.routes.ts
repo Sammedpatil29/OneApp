@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { inject } from '@angular/core';
 import { AuthService } from './services/auth.service';
 import { authGuard, noAuthGuard } from './guards/auth.guard';
+import { leaveDedicatedLayoutGuard } from './guards/leave-dedicated-layout.guard';
 
 export const routes: Routes = [
   // 1. Authentication
@@ -58,6 +59,38 @@ export const routes: Routes = [
           import('./pages/map/map.page').then((m) => m.MapPage),
       },
 
+      // Consult Doctor Feature
+      {
+        path: 'consult-doctor',
+        loadComponent: () =>
+          import('./pages/consult-doctor/consult-doctor.page').then((m) => m.ConsultDoctorPage),
+      },
+      {
+        path: 'doctor-specialty/:categoryId',
+        loadComponent: () =>
+          import('./pages/doctor-specialty/doctor-specialty.page').then((m) => m.DoctorSpecialtyPage),
+      },
+      {
+        path: 'doctor-specialty',
+        redirectTo: 'doctor-specialty/gynecologist',
+        pathMatch: 'full',
+      },
+      {
+        path: 'doctor-booking/:doctorId',
+        loadComponent: () =>
+          import('./pages/doctor-booking/doctor-booking.page').then((m) => m.DoctorBookingPage),
+      },
+      {
+        path: 'doctor-booking',
+        redirectTo: 'consult-doctor',
+        pathMatch: 'full',
+      },
+      {
+        path: 'doctor',
+        redirectTo: 'consult-doctor',
+        pathMatch: 'full',
+      },
+
       // Profile Container Sub-routes
       {
         path: 'profile-details',
@@ -79,10 +112,21 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/referral/referral.page').then((m) => m.ReferralPage),
       },
+      {
+        path: 'pintu-pocket',
+        loadComponent: () =>
+          import('./pages/pintu-pocket/pintu-pocket.page').then((m) => m.PintuPocketPage),
+      },
+      {
+        path: 'wallet',
+        redirectTo: 'pintu-pocket',
+        pathMatch: 'full'
+      },
 
       // Rides Service Container
       {
         path: 'rides',
+        canDeactivate: [leaveDedicatedLayoutGuard],
         children: [
           {
             path: '',
@@ -161,6 +205,7 @@ export const routes: Routes = [
         path: 'dineout-layout',
         loadComponent: () =>
           import('./pages/dineout-layout/dineout-layout.page').then((m) => m.DineoutLayoutPage),
+        canDeactivate: [leaveDedicatedLayoutGuard],
         children: [
           {
             path: 'dineout',
@@ -198,6 +243,7 @@ export const routes: Routes = [
         path: 'property',
         loadComponent: () =>
           import('./pages/property-layout/property-layout.page').then((m) => m.PropertyLayoutPage),
+        canDeactivate: [leaveDedicatedLayoutGuard],
         children: [
           {
             path: '',
@@ -220,6 +266,7 @@ export const routes: Routes = [
         path: 'events',
         loadComponent: () =>
           import('./pages/events/events.page').then((m) => m.EventsPage),
+        canDeactivate: [leaveDedicatedLayoutGuard],
       },
       {
         path: 'order-details',
@@ -227,7 +274,66 @@ export const routes: Routes = [
           import('./pages/order-details/order-details.page').then((m) => m.OrderDetailsPage),
       },
 
+      // Pharmacy Details Views (Directly in main Layout outlet)
+      {
+        path: 'pharmacy/medicine/:id',
+        loadComponent: () =>
+          import('./pages/medicine-details/medicine-details.page').then((m) => m.MedicineDetailsPage),
+      },
+      {
+        path: 'pharmacy/test/:id',
+        loadComponent: () =>
+          import('./pages/lab-test-details/lab-test-details.page').then((m) => m.LabTestDetailsPage),
+      },
+      {
+        path: 'medicine-details/:id',
+        loadComponent: () =>
+          import('./pages/medicine-details/medicine-details.page').then((m) => m.MedicineDetailsPage),
+      },
+      {
+        path: 'lab-test-details/:id',
+        loadComponent: () =>
+          import('./pages/lab-test-details/lab-test-details.page').then((m) => m.LabTestDetailsPage),
+      },
+
+      // Pharmacy & Lab Tests Service Container
+      {
+        path: 'pharmacy',
+        loadComponent: () =>
+          import('./pages/pharmacy-layout/pharmacy-layout.page').then((m) => m.PharmacyLayoutPage),
+        canDeactivate: [leaveDedicatedLayoutGuard],
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./pages/pharmacy/pharmacy.page').then((m) => m.PharmacyPage),
+          },
+          {
+            path: 'search',
+            loadComponent: () =>
+              import('./pages/pharmacy-search/pharmacy-search.page').then((m) => m.PharmacySearchPage),
+          },
+          {
+            path: 'cart',
+            loadComponent: () =>
+              import('./pages/pharmacy-cart/pharmacy-cart.page').then((m) => m.PharmacyCartPage),
+          },
+          {
+            path: 'medicine/:id',
+            loadComponent: () =>
+              import('./pages/medicine-details/medicine-details.page').then((m) => m.MedicineDetailsPage),
+          },
+          {
+            path: 'test/:id',
+            loadComponent: () =>
+              import('./pages/lab-test-details/lab-test-details.page').then((m) => m.LabTestDetailsPage),
+          }
+        ]
+      },
+
       // Backward Compatibility Redirect Aliases
+      { path: 'pharmacy-search', redirectTo: 'pharmacy/search', pathMatch: 'full' },
+      { path: 'pharmacy-cart', redirectTo: 'pharmacy/cart', pathMatch: 'full' },
       { path: 'example/home', redirectTo: 'home', pathMatch: 'full' },
       { path: 'example/history', redirectTo: 'history', pathMatch: 'full' },
       { path: 'example/support', redirectTo: 'support', pathMatch: 'full' },

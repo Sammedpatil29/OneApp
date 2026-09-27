@@ -13,10 +13,31 @@ export interface OtaDiagnosticResult {
   isUpToDate: boolean;
   updateAvailable: boolean;
   manifestUrl: string;
+  maskedUrl: string;
   httpStatus?: number;
   responseBody?: any;
   error?: string;
   errorDetails?: string;
+}
+
+/** Partially masks request url (e.g. https://pintuXXXXX or https://oneappXXXX) for safe debugging */
+export function maskRequestUrl(url: string): string {
+  if (!url) return '';
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname;
+    if (host.includes('pintu')) {
+      return 'https://pintuXXXXX';
+    }
+    if (host.includes('oneapp')) {
+      return 'https://oneappXXXX';
+    }
+    return `${parsed.protocol}//${host.slice(0, 5)}XXXXX`;
+  } catch {
+    if (url.includes('pintu')) return 'https://pintuXXXXX';
+    if (url.includes('oneapp')) return 'https://oneappXXXX';
+    return url;
+  }
 }
 
 /** Key used to flag that an OTA update was just applied (survives reload) */
@@ -256,6 +277,7 @@ export class OtaService {
   async checkUpdateDetails(): Promise<OtaDiagnosticResult> {
     const currentVersion = await this.getCurrentVersion();
     const manifestUrl = `${environment.apiUrl}/ota/manifests/io.ionic.oneapp/__base__/__default__/manifest.json`;
+    const maskedUrl = maskRequestUrl(manifestUrl);
 
     try {
       const controller = new AbortController();
@@ -279,9 +301,10 @@ export class OtaService {
           isUpToDate: false,
           updateAvailable: false,
           manifestUrl,
+          maskedUrl,
           httpStatus: res.status,
           error: `Server HTTP ${res.status} (${res.statusText || 'Error'})`,
-          errorDetails: text || `Server at pintu-api.democompany.in.net returned status ${res.status}.`
+          errorDetails: text || `Server returned status ${res.status}.`
         };
       }
 
@@ -304,6 +327,7 @@ export class OtaService {
         isUpToDate,
         updateAvailable,
         manifestUrl,
+        maskedUrl,
         httpStatus: res.status,
         responseBody: manifest
       };
@@ -315,6 +339,7 @@ export class OtaService {
         isUpToDate: false,
         updateAvailable: false,
         manifestUrl,
+        maskedUrl,
         error: isAbort ? 'Request Timeout (> 9s)' : (err.name || 'Network Error'),
         errorDetails: err.message || String(err)
       };

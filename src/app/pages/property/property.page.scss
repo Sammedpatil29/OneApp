@@ -725,6 +725,202 @@
 }
 
 /* =======================================================
+   SKELETON LOADER (Displayed while property data loads)
+   ======================================================= */
+.loading-label-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.spinner-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--app-theme-color, #a000e2);
+  animation: pulse-dot 1.2s infinite ease-in-out;
+  flex-shrink: 0;
+}
+
+@keyframes pulse-dot {
+  0%, 100% {
+    transform: scale(0.75);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 1;
+  }
+}
+
+.skeleton-stack {
+  pointer-events: none;
+  user-select: none;
+}
+
+.skeleton-card {
+  border-color: #f1f5f9;
+  background: #ffffff;
+  position: relative;
+  overflow: hidden;
+
+  .skeleton-img-box {
+    background: #e2e8f0;
+    position: relative;
+    overflow: hidden;
+
+    .skeleton-top-badges {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      z-index: 2;
+
+      .skeleton-badge-pill {
+        width: 74px;
+        height: 18px;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.45);
+
+        &.sm {
+          width: 52px;
+        }
+      }
+    }
+
+    .skeleton-price-badge {
+      position: absolute;
+      bottom: 10px;
+      left: 12px;
+      width: 100px;
+      height: 26px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.55);
+      z-index: 2;
+    }
+  }
+
+  .skeleton-line {
+    background: #e2e8f0;
+    border-radius: 6px;
+    height: 14px;
+    position: relative;
+    overflow: hidden;
+
+    &.title {
+      width: 78%;
+      height: 18px;
+      border-radius: 8px;
+      margin-bottom: 2px;
+    }
+
+    &.locality {
+      width: 45%;
+      height: 12px;
+      margin-bottom: 4px;
+    }
+
+    &.role {
+      width: 48px;
+      height: 10px;
+      margin-bottom: 4px;
+    }
+
+    &.name {
+      width: 80px;
+      height: 14px;
+    }
+  }
+
+  .skeleton-specs {
+    gap: 8px;
+    margin-top: 2px;
+
+    .skeleton-chip {
+      width: 68px;
+      height: 24px;
+      border-radius: 8px;
+      background: #f1f5f9;
+      position: relative;
+      overflow: hidden;
+    }
+  }
+
+  .skeleton-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 2px;
+
+    .skeleton-seller {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .action-buttons-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .skeleton-btn {
+        width: 66px;
+        height: 32px;
+        border-radius: 12px;
+        background: #fdf4ff;
+        position: relative;
+        overflow: hidden;
+
+        &.whatsapp {
+          background: #dcfce7;
+        }
+      }
+    }
+  }
+
+  /* Shimmer sweep animation across all skeleton elements */
+  .skeleton-shimmer,
+  .skeleton-line::after,
+  .skeleton-chip::after,
+  .skeleton-btn::after,
+  .skeleton-badge-pill::after,
+  .skeleton-price-badge::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.55) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    animation: property-shimmer 1.5s infinite;
+    content: '';
+  }
+
+  .skeleton-shimmer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    content: '';
+  }
+}
+
+@keyframes property-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* =======================================================
    EMPTY STATE
    ======================================================= */
 .empty-state-card {

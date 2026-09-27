@@ -1,0 +1,128 @@
+.pharmacy-brand-footer {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-top: 20px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .footer-divider-line {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(226, 232, 240, 0.9) 25%,
+      rgba(203, 213, 225, 0.9) 50%,
+      rgba(226, 232, 240, 0.9) 75%,
+      transparent 100%
+    );
+    margin-bottom: 14px;
+  }
+
+  .footer-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+    width: 100%;
+    padding: 0 16px;
+    box-sizing: border-box;
+  }
+
+  /* Powered by header text */
+  .powered-by-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #94a3b8;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+  }
+
+  /* Partner Card - Image on Top, Details Below Centered */
+  .partner-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 8px;
+    background: transparent;
+    padding: 0px 0px 10px;
+    max-width: 100%;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    .brand-logo-wrap {
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      border-radius: 12px;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+
+      .brand-logo-img {
+        width: 28px;
+        height: 28px;
+        object-fit: contain;
+        display: block;
+      }
+    }
+
+    .brand-text-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 3px;
+
+      .brand-name {
+        margin: 0;
+        font-size: 13px;
+        font-weight: 800;
+        color: #0f172a;
+        letter-spacing: -0.2px;
+        line-height: 1.25;
+        text-align: center;
+      }
+
+      .brand-sub {
+        font-size: 10.5px;
+        font-weight: 600;
+        color: #059669;
+        letter-spacing: 0.2px;
+        line-height: 1.2;
+        text-align: center;
+      }
+
+      .brand-address {
+        font-size: 10.5px;
+        font-weight: 600;
+        color: #64748b;
+        letter-spacing: 0.2px;
+        line-height: 1.25;
+        text-align: center;
+      }
+
+      .brand-gst {
+        font-size: 10px;
+        font-weight: 600;
+        color: #94a3b8;
+        letter-spacing: 0.3px;
+        line-height: 1.2;
+        text-align: center;
+      }
+    }
+  }
+}
+

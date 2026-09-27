@@ -24,11 +24,17 @@
   align-items: center;
   justify-content: space-around;
   background: #ffffff;
-  height: 68px;
+  min-height: 64px;
+  height: calc(64px + env(safe-area-inset-bottom, 0px));
   border-top: 1px solid #e2e8f0;
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
   z-index: 100;
-  padding: 0 4px env(safe-area-inset-bottom, 0px);
+  flex-shrink: 0;
+  box-sizing: border-box;
+  padding-top: 4px;
+  padding-left: 6px;
+  padding-right: 6px;
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
 
   // OTA Progress Bar layer right on top border (3px)
   .ota-top-progress-bar {
@@ -77,11 +83,14 @@
     background: transparent;
     border: none;
     outline: none;
-    padding: 6px 0 4px;
+    padding: 4px 2px 2px;
+    height: 100%;
+    max-height: 58px;
     cursor: pointer;
     color: #64748b;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
+    box-sizing: border-box;
 
     .tab-icon-wrapper {
       display: flex;
@@ -102,6 +111,7 @@
       font-size: 11px;
       font-weight: 600;
       letter-spacing: -0.15px;
+      line-height: 1.2;
       transition: color 0.2s ease;
     }
 
@@ -119,10 +129,10 @@
 
       .tab-icon-wrapper {
         background: linear-gradient(135deg, rgba(160, 0, 226, 0.16) 0%, rgba(160, 0, 226, 0.04) 100%);
-        transform: translateY(-2px);
+        transform: translateY(-1px);
 
         ion-icon {
-          transform: scale(1.1);
+          transform: scale(1.08);
           color: var(--app-theme-color, #a000e2);
         }
       }

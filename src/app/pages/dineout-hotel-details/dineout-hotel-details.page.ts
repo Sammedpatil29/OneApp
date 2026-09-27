@@ -366,8 +366,8 @@ export class DineoutHotelDetailsPage implements OnInit {
     this.isViewerOpen = false;
   }
 
-  goBack(){
-    this.navCtrl.back()
+  goBack() {
+    this.navCtrl.navigateBack('/layout/dineout-layout/dineout');
   }
 
   loadRestaurantDetails() {

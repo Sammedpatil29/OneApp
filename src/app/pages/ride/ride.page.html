@@ -1,159 +1,241 @@
 @if (!isLoading) {
-  <ion-content [fullscreen]="true">
+  <ion-content [fullscreen]="true" class="ride-search-content">
 
-@if(!isAddressSelected){
+    @if (!isAddressSelected) {
+      <div class="ride-search-page-wrapper">
 
-<section>
+        <!-- STICKY TOP APP BAR -->
+        <header class="topbar">
+          <div class="header-nav-row">
+            <button type="button" class="btn-back" (click)="goBack()" aria-label="Go back">
+              <ion-icon name="arrow-back"></ion-icon>
+            </button>
+            <div class="header-title-group">
+              <h1 class="page-title">Book a Ride</h1>
+              <span class="city-badge">
+                <span class="pulse-dot"></span>
+                <span>{{ currentCity || 'Service Active' }}</span>
+              </span>
+            </div>
+          </div>
 
-<!-- TOP BAR -->
-<div class="topbar bg-white position-sticky pt-4">
+          <!-- INPUTS CARD WRAPPER -->
+          <div class="inputs-card">
+            <!-- Timeline Indicator Visual -->
+            <div class="timeline-col">
+              <div class="point-dot green" [class.active]="selectedInput === 'Pickup'"></div>
+              <div class="connector-line"></div>
+              <div class="point-dot orange" [class.active]="selectedInput === 'Drop'"></div>
+            </div>
 
-  <ion-title class="title-row">
-    <div class="back-row" (click)="goBack()">
-      <svg class="me-2" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px">
-        <path d="M400-240 160-480l240-240 56 58-142 142h486v80H314l142 142-56 58Z"/>
-      </svg>
-      {{selectedInput}}
-    </div>
-  </ion-title>
+            <!-- Text Inputs Column -->
+            <div class="inputs-col">
+              <!-- PICKUP ROW -->
+              <div
+                class="location-input-row"
+                [class.is-focused]="selectedInput === 'Pickup'"
+                (click)="selectedInput = 'Pickup'">
+                <div class="input-text-wrap">
+                  <span class="input-label">PICKUP</span>
+                  <input
+                    class="location-input"
+                    [(ngModel)]="pickup"
+                    (input)="onInputChange('Pickup')"
+                    placeholder="Enter pickup location"
+                    (focus)="selectedInput = 'Pickup'"
+                    type="text"
+                    autocomplete="off" />
+                </div>
 
-  <!-- INPUTS -->
-  <div class="inputs-wrapper">
+                @if (pickup) {
+                  <button type="button" class="btn-clear" (click)="clearInput('Pickup'); $event.stopPropagation()">
+                    <ion-icon name="close-circle"></ion-icon>
+                  </button>
+                }
+              </div>
 
-    <!-- PICKUP -->
-    <div class="input-row">
-      <div class="dot green"></div>
+              <div class="input-divider"></div>
 
-      <input class="location-input"
-        [(ngModel)]="pickup"
-        (input)="onInputChange('Pickup')"
-        placeholder="Pickup"
-        (focus)="selectedInput = 'Pickup'"
-        type="text">
+              <!-- DROP ROW -->
+              <div
+                class="location-input-row"
+                [class.is-focused]="selectedInput === 'Drop'"
+                (click)="selectedInput = 'Drop'">
+                <div class="input-text-wrap">
+                  <span class="input-label">DROP</span>
+                  <input
+                    #dropInput
+                    class="location-input"
+                    [(ngModel)]="drop"
+                    (input)="onInputChange('Drop')"
+                    placeholder="Where to? Enter drop point"
+                    (focus)="selectedInput = 'Drop'"
+                    type="text"
+                    autocomplete="off" />
+                </div>
 
-      @if(pickup != ''){
-        <div class="clear-btn" (click)="pickup = ''">
-          ✕
-        </div>
-      }
-    </div>
+                @if (drop) {
+                  <button type="button" class="btn-clear" (click)="clearInput('Drop'); $event.stopPropagation()">
+                    <ion-icon name="close-circle"></ion-icon>
+                  </button>
+                }
+              </div>
+            </div>
 
-    <div class="line"></div>
+            <!-- Swap Locations Button -->
+            <button type="button" class="btn-swap-locations" (click)="swapLocations()" title="Swap Pickup & Drop" aria-label="Swap pickup and drop">
+              <ion-icon name="swap-vertical-outline"></ion-icon>
+            </button>
+          </div>
 
-    <!-- DROP -->
-    <div class="input-row">
-      <div class="dot orange"></div>
+          <!-- SELECT ON MAP ACTION ROW -->
+          <div class="map-action-bar">
+            <button type="button" class="btn-select-map" (click)="openSelectOnMap()">
+              <div class="btn-map-left">
+                <div class="icon-map-bubble">
+                  <ion-icon name="map-outline"></ion-icon>
+                </div>
+                <div class="btn-map-text">
+                  <span class="map-main-text">Select {{ selectedInput }} on map</span>
+                  <span class="map-sub-text">Pinpoint exact location using Google Maps</span>
+                </div>
+              </div>
+              <ion-icon name="chevron-forward-outline" class="btn-map-chevron"></ion-icon>
+            </button>
+          </div>
 
-      <input class="location-input"
-        #dropInput
-        [(ngModel)]="drop"
-        (input)="onInputChange('Drop')"
-        placeholder="Drop"
-        (focus)="selectedInput = 'Drop'"
-        type="text">
+          <!-- Searching progress indicator -->
+          @if (isSearching) {
+            <div class="search-progress-bar">
+              <div class="progress-indeterminate"></div>
+            </div>
+          }
+        </header>
 
-      @if(drop != ''){
-        <div class="clear-btn" (click)="drop = ''">
-          ✕
-        </div>
-      }
-    </div>
+        <!-- RESULTS SECTION -->
+        <main class="results-container">
+          @if (filteredPredictions.length > 0 || filteredPredictionsOut.length > 0 || filteredHistory.length > 0) {
 
-    <!-- MAP SELECT -->
-    <button class="map-btn">
-      <small>
-        <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px">
-          <path d="M460-420h40v-120h120v-40H500v-120h-40v120H340v40h120v120Z"/>
-        </svg>
-        Select on map
-      </small>
-    </button>
+            <!-- RECENT SEARCHES -->
+            @if (filteredHistory.length > 0) {
+              <div class="results-group">
+                <div class="group-header">
+                  <ion-icon name="time-outline"></ion-icon>
+                  <span>RECENT SEARCHES</span>
+                </div>
 
-  </div>
-</div>
-<!-- TOP BAR END -->
+                @for (item of filteredHistory; track $index) {
+                  <div class="place-result-item" (click)="setPickupDropbyHistory(item)" role="button" tabindex="0">
+                    <div class="place-icon-circle recent">
+                      <ion-icon name="time-outline"></ion-icon>
+                    </div>
+                    <div class="place-info-col">
+                      <h4 class="place-name">{{ item.name }}</h4>
+                      <p class="place-address">{{ item.formatted_address }}</p>
+                    </div>
+                    <ion-icon name="chevron-forward-outline" class="place-chevron"></ion-icon>
+                  </div>
+                }
+              </div>
+            }
 
-<!-- RESULTS -->
-@if (filteredPredictions.length != 0 || filteredPredictionsOut.length != 0 || filteredHistory.length != 0) {
+            <!-- IN-SERVICE LOCAL PLACES -->
+            @if (filteredPredictions.length > 0) {
+              <div class="results-group">
+                <div class="group-header">
+                  <ion-icon name="location-outline"></ion-icon>
+                  <span>PLACES IN SERVICE AREA</span>
+                </div>
 
-@if(filteredHistory.length > 0){
-  <ion-title class="list-title">Recent</ion-title>
-}
+                @for (item of filteredPredictions; track $index) {
+                  <div class="place-result-item" (click)="setPickupDropbyHistory(item)" role="button" tabindex="0">
+                    <div class="place-icon-circle local">
+                      <ion-icon name="navigate-outline"></ion-icon>
+                    </div>
+                    <div class="place-info-col">
+                      <h4 class="place-name">{{ item.name }}</h4>
+                      <p class="place-address">{{ item.formatted_address }}</p>
+                    </div>
+                    <span class="badge-service-area">Local</span>
+                  </div>
+                }
+              </div>
+            }
 
-@for(item of filteredHistory; track $index){
-  <div class="result-card gap-3" (click)="setPickupDropbyHistory(item)">
-    <div class="icon">
-      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M480-100q-147.06 0-255.22-97.04T102-440h61q14.62 121 105.23 200.5Q358.85-160 480-160q134 0 227-93t93-227q0-134-93-227t-227-93q-90.23 0-166.04 46.35-75.81 46.34-116.88 127.11h118.3v60H110.31q30.15-129.23 133.42-211.34Q347-860 480-860q78.85 0 148.2 29.92t120.65 81.21q51.3 51.29 81.22 120.63Q860-558.9 860-480.07q0 78.84-29.93 148.21-29.92 69.37-81.22 120.68T628.2-129.93Q558.85-100 480-100Zm108.92-228.92L450-467.9v-197.48h60v173.23l120.69 121.07-41.77 42.16Z"/></svg>
-    </div>
-    <div class="text">
-      <b>{{item.name}}</b>
-      <small>{{item.formatted_address}}</small>
-    </div>
-  </div>
-}
+            <!-- OUTSTATION / SURROUNDING PLACES -->
+            @if (filteredPredictionsOut.length > 0) {
+              <div class="results-group">
+                <div class="group-header">
+                  <ion-icon name="map-outline"></ion-icon>
+                  <span>OTHER DESTINATIONS</span>
+                </div>
 
-@if(filteredPredictions.length > 0){
-  <ion-title class="list-title">Local</ion-title>
-}
+                @for (item of filteredPredictionsOut; track $index) {
+                  <div class="place-result-item" (click)="setPickupDropbyHistory(item)" role="button" tabindex="0">
+                    <div class="place-icon-circle outstation">
+                      <ion-icon name="location-outline"></ion-icon>
+                    </div>
+                    <div class="place-info-col">
+                      <h4 class="place-name">{{ item.name }}</h4>
+                      <p class="place-address">{{ item.formatted_address }}</p>
+                    </div>
+                    <span class="badge-service-area outstation">Outstation</span>
+                  </div>
+                }
+              </div>
+            }
 
-@for(item of filteredPredictions; track $index){
-  <div class="result-card gap-3" (click)="setPickupDropbyHistory(item)">
-    <div class="icon">
-      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M480-100q-147.06 0-255.22-97.04T102-440h61q14.62 121 105.23 200.5Q358.85-160 480-160q134 0 227-93t93-227q0-134-93-227t-227-93q-90.23 0-166.04 46.35-75.81 46.34-116.88 127.11h118.3v60H110.31q30.15-129.23 133.42-211.34Q347-860 480-860q78.85 0 148.2 29.92t120.65 81.21q51.3 51.29 81.22 120.63Q860-558.9 860-480.07q0 78.84-29.93 148.21-29.92 69.37-81.22 120.68T628.2-129.93Q558.85-100 480-100Zm108.92-228.92L450-467.9v-197.48h60v173.23l120.69 121.07-41.77 42.16Z"/></svg>
-    </div>
-    <div class="text">
-      <b>{{item.name}}</b>
-      <small>{{item.formatted_address}}</small>
-    </div>
-  </div>
-}
+          } @else if (pickup || drop) {
+            <!-- NO RESULTS MATCH EMPTY STATE -->
+            <div class="no-results-state">
+              <div class="empty-icon-bubble">
+                <ion-icon name="location-outline"></ion-icon>
+              </div>
+              <h3 class="no-res-title">No exact places found</h3>
+              <p class="no-res-subtitle">Can't find what you're looking for? Select your exact location directly on the interactive map.</p>
+              <button type="button" class="btn-choose-map-cta" (click)="openSelectOnMap()">
+                <ion-icon name="map-outline"></ion-icon>
+                <span>Pin {{ selectedInput }} on Map</span>
+              </button>
+            </div>
+          } @else {
+            <!-- DEFAULT RECENT & POPULAR PLACES -->
+            <div class="results-group">
+              <div class="group-header">
+                <ion-icon name="time-outline"></ion-icon>
+                <span>SAVED & RECENT PLACES</span>
+              </div>
 
-@if(filteredPredictionsOut.length > 0){
-  <ion-title class="list-title">Out Station</ion-title>
-}
+              @for (item of userHistory; track $index) {
+                <div class="place-result-item" (click)="setPickupDropbyHistory(item)" role="button" tabindex="0">
+                  <div class="place-icon-circle recent">
+                    <ion-icon name="time-outline"></ion-icon>
+                  </div>
+                  <div class="place-info-col">
+                    <h4 class="place-name">{{ item.name }}</h4>
+                    <p class="place-address">{{ item.formatted_address }}</p>
+                  </div>
+                  <ion-icon name="chevron-forward-outline" class="place-chevron"></ion-icon>
+                </div>
+              }
+            </div>
+          }
+        </main>
 
-@for(item of filteredPredictionsOut; track $index){
-  <div class="result-card gap-3" (click)="setPickupDropbyHistory(item)">
-    <div class="icon">
-      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M480-100q-147.06 0-255.22-97.04T102-440h61q14.62 121 105.23 200.5Q358.85-160 480-160q134 0 227-93t93-227q0-134-93-227t-227-93q-90.23 0-166.04 46.35-75.81 46.34-116.88 127.11h118.3v60H110.31q30.15-129.23 133.42-211.34Q347-860 480-860q78.85 0 148.2 29.92t120.65 81.21q51.3 51.29 81.22 120.63Q860-558.9 860-480.07q0 78.84-29.93 148.21-29.92 69.37-81.22 120.68T628.2-129.93Q558.85-100 480-100Zm108.92-228.92L450-467.9v-197.48h60v173.23l120.69 121.07-41.77 42.16Z"/></svg>
-    </div>
-    <div class="text">
-      <b>{{item.name}}</b>
-      <small>{{item.formatted_address}}</small>
-    </div>
-  </div>
-}
+      </div>
+    } @else {
+      <section>
+        <app-ride-selection></app-ride-selection>
+      </section>
+    }
 
-} @else {
-
-@for(item of userHistory; track $index){
-  <div class="result-card gap-3" (click)="setPickupDropbyHistory(item)">
-    <div class="icon">
-      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M480-100q-147.06 0-255.22-97.04T102-440h61q14.62 121 105.23 200.5Q358.85-160 480-160q134 0 227-93t93-227q0-134-93-227t-227-93q-90.23 0-166.04 46.35-75.81 46.34-116.88 127.11h118.3v60H110.31q30.15-129.23 133.42-211.34Q347-860 480-860q78.85 0 148.2 29.92t120.65 81.21q51.3 51.29 81.22 120.63Q860-558.9 860-480.07q0 78.84-29.93 148.21-29.92 69.37-81.22 120.68T628.2-129.93Q558.85-100 480-100Zm108.92-228.92L450-467.9v-197.48h60v173.23l120.69 121.07-41.77 42.16Z"/></svg>
-    </div>
-    <div class="text">
-      <b>{{item.name}}</b>
-      <small>{{item.formatted_address}}</small>
-    </div>
-  </div>
-}
-
-}
-
-</section>
-
-} @else {
-
-<section>
-  <app-ride-selection></app-ride-selection>
-</section>
-
-}
-
-</ion-content>
+  </ion-content>
 } @else {
   <div class="loader-state">
+    <div class="loader-spinner-box">
       <ion-spinner name="crescent"></ion-spinner>
-      <p>Getting Rides Ready...</p>
+      <p class="loader-title">Getting Rides Ready</p>
+      <span class="loader-subtitle">Checking available drivers nearby...</span>
     </div>
+  </div>
 }

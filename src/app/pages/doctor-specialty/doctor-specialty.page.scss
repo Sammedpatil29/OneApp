@@ -1,0 +1,600 @@
+// pages/doctor-specialty/doctor-specialty.page.scss
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.specialty-header {
+  background: #ffffff;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+  border-bottom: 1px solid #f1f5f9;
+
+  .main-toolbar {
+    --background: #ffffff;
+    --min-height: 52px;
+    padding: 4px 8px 0;
+
+    .btn-back {
+      --color: #0f172a;
+      font-size: 20px;
+    }
+
+    .header-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+
+      .page-title {
+        font-size: 17px;
+        font-weight: 700;
+        color: #0f172a;
+        letter-spacing: -0.3px;
+      }
+
+      .location-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: #f1f5f9;
+        padding: 3px 8px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #475569;
+
+        ion-icon {
+          font-size: 12px;
+          color: #a000e2;
+        }
+      }
+    }
+  }
+
+  .search-bar-container {
+    padding: 0 16px 12px;
+
+    .search-input-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 0 12px;
+      height: 44px;
+      transition: all 0.2s ease;
+
+      &:focus-within {
+        border-color: #a000e2;
+        background: #ffffff;
+        box-shadow: 0 0 0 3px rgba(160, 0, 226, 0.08);
+      }
+
+      .search-icon {
+        font-size: 18px;
+        color: #94a3b8;
+        flex-shrink: 0;
+      }
+
+      .search-input {
+        flex: 1;
+        border: none;
+        outline: none;
+        background: transparent;
+        font-size: 13.5px;
+        color: #0f172a;
+        font-weight: 500;
+        min-width: 0;
+
+        &::placeholder {
+          color: #94a3b8;
+          font-weight: 400;
+        }
+      }
+
+      .btn-clear {
+        background: none;
+        border: none;
+        padding: 0;
+        color: #94a3b8;
+        font-size: 18px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+      }
+    }
+  }
+}
+
+.specialty-content {
+  --background: #f8fafc;
+  background: #f8fafc;
+}
+
+.specialty-body {
+  padding: 12px 16px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Category Intro Card */
+.category-meta-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+
+  .cat-meta-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .cat-icon-box {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .cat-meta-text {
+      display: flex;
+      flex-direction: column;
+
+      .cat-title {
+        font-size: 15px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0;
+        letter-spacing: -0.2px;
+      }
+
+      .cat-subtitle {
+        font-size: 11px;
+        color: #64748b;
+        margin: 1px 0 0;
+      }
+    }
+  }
+
+  .cat-meta-right {
+    .doctors-count-badge {
+      font-size: 11px;
+      font-weight: 700;
+      color: #059669;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      padding: 3px 8px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+  }
+}
+
+/* Filters Section */
+.filters-section {
+  .filters-pills-row {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filter-pill {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 999px;
+      padding: 6px 13px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #475569;
+      cursor: pointer;
+      transition: all 0.15s ease;
+
+      ion-icon {
+        font-size: 13px;
+      }
+
+      &.active {
+        background: #0f172a;
+        color: #ffffff;
+        border-color: #0f172a;
+
+        ion-icon {
+          color: #facc15;
+        }
+      }
+    }
+  }
+}
+
+/* Vertical List of Doctors */
+.doctors-vertical-list {
+  .doctors-flow-container {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .specialty-doctor-card {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #edf2f7;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+    padding: 14px;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    &:hover {
+      border-color: #d8b4fe;
+      box-shadow: 0 6px 20px rgba(160, 0, 226, 0.08);
+    }
+
+    /* Appointed Banner */
+    .appointed-banner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      border-radius: 10px;
+      padding: 6px 10px;
+      font-size: 11px;
+      color: #065f46;
+
+      .appointed-badge-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        background: #059669;
+        color: #ffffff;
+        font-size: 9.5px;
+        font-weight: 800;
+        padding: 2px 6px;
+        border-radius: 999px;
+
+        ion-icon {
+          font-size: 11px;
+        }
+      }
+
+      .appointed-text {
+        flex: 1;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .appointed-code {
+        font-family: monospace;
+        font-weight: 700;
+        color: #047857;
+      }
+    }
+
+    .doc-main-row {
+      display: flex;
+      gap: 12px;
+
+      .doc-avatar-wrap {
+        position: relative;
+        width: 76px;
+        height: 76px;
+        flex-shrink: 0;
+
+        .doc-avatar-img {
+          width: 100%;
+          height: 100%;
+          border-radius: 14px;
+          object-fit: cover;
+          border: 1.5px solid #f1f5f9;
+        }
+
+        .doc-rating-chip {
+          position: absolute;
+          bottom: -4px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: rgba(15, 23, 42, 0.88);
+          color: #facc15;
+          font-size: 10px;
+          font-weight: 800;
+          padding: 1px 6px;
+          border-radius: 999px;
+          display: flex;
+          align-items: center;
+          gap: 2px;
+          white-space: nowrap;
+
+          ion-icon {
+            font-size: 9px;
+          }
+        }
+      }
+
+      .doc-details-col {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+
+        .doc-header-name {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+
+          .doc-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+
+          .verified-icon {
+            font-size: 15px;
+            color: #2563eb;
+            flex-shrink: 0;
+          }
+        }
+
+        .doc-spec-line {
+          font-size: 12px;
+          font-weight: 600;
+          color: #a000e2;
+          margin: 0;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .doc-qual-line {
+          font-size: 11px;
+          color: #64748b;
+          margin: 0;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .doc-location-line {
+          display: flex;
+          align-items: center;
+          gap: 3px;
+          font-size: 11px;
+          color: #475569;
+          margin-top: 1px;
+
+          ion-icon {
+            font-size: 12px;
+            color: #94a3b8;
+            flex-shrink: 0;
+          }
+        }
+
+        .doc-tags-row {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 5px;
+          margin-top: 4px;
+
+          .tag-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 6px;
+
+            ion-icon {
+              font-size: 11px;
+            }
+
+            &.clinic {
+              background: #ecfdf5;
+              color: #047857;
+            }
+
+            &.video {
+              background: #eff6ff;
+              color: #1d4ed8;
+            }
+
+            &.today {
+              background: #ffedd5;
+              color: #c2410c;
+            }
+          }
+        }
+      }
+    }
+
+    .next-slot-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #f8fafc;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 11px;
+      color: #475569;
+
+      .slot-icon {
+        font-size: 13px;
+        color: #a000e2;
+      }
+
+      .slot-text {
+        strong {
+          color: #0f172a;
+        }
+      }
+    }
+
+    .doc-card-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 10px;
+      border-top: 1px solid #f1f5f9;
+
+      .fee-display {
+        display: flex;
+        flex-direction: column;
+
+        .price-line {
+          display: flex;
+          align-items: baseline;
+          gap: 5px;
+
+          .discounted-fee {
+            font-size: 16px;
+            font-weight: 800;
+            color: #0f172a;
+          }
+
+          .original-mrp {
+            font-size: 11px;
+            color: #94a3b8;
+            text-decoration: line-through;
+          }
+
+          .off-tag {
+            font-size: 9.5px;
+            font-weight: 700;
+            color: #16a34a;
+            background: #dcfce7;
+            padding: 1px 5px;
+            border-radius: 4px;
+          }
+        }
+
+        .fee-caption {
+          font-size: 9.5px;
+          color: #94a3b8;
+          font-weight: 600;
+          text-transform: uppercase;
+        }
+      }
+
+      .btn-book-doctor {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: #a000e2;
+        color: #ffffff;
+        border: none;
+        border-radius: 12px;
+        padding: 9px 16px;
+        font-size: 12.5px;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(160, 0, 226, 0.22);
+        transition: all 0.15s ease;
+
+        &:active {
+          transform: scale(0.96);
+        }
+
+        &.is-appointed {
+          background: #059669;
+          box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
+        }
+
+        ion-icon {
+          font-size: 14px;
+        }
+      }
+    }
+  }
+}
+
+/* Empty State */
+.empty-state-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 36px 20px;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px dashed #cbd5e1;
+
+  .empty-icon {
+    font-size: 40px;
+    color: #94a3b8;
+    margin-bottom: 8px;
+  }
+
+  .empty-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 4px;
+  }
+
+  .empty-desc {
+    font-size: 12.5px;
+    color: #64748b;
+    margin: 0 0 16px;
+    max-width: 280px;
+  }
+
+  .btn-clear-filter {
+    background: #f1f5f9;
+    color: #0f172a;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 16px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+}
+
+/* Skeletons */
+.skeleton-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .doc-skeleton-card {
+    height: 140px;
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #f1f5f9;
+    animation: pulseSkel 1.5s infinite ease-in-out;
+  }
+}
+
+@keyframes pulseSkel {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+
+

@@ -59,7 +59,7 @@ export class DineoutSelectTimePage implements OnInit {
   }
 
   goBack() {
-    this.navCtrl.back();
+    this.navCtrl.navigateBack('/layout/dineout-layout/dineout');
   }
 
   async ngOnInit() {

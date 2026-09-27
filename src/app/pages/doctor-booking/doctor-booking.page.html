@@ -1,0 +1,294 @@
+<!-- pages/doctor-booking/doctor-booking.page.html -->
+<ion-header class="ion-no-border booking-header">
+  <ion-toolbar class="booking-toolbar">
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()" class="btn-back">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="page-title">Book Appointment</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="booking-content">
+  @if (isLoading) {
+    <div class="loading-wrap">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Loading doctor details...</p>
+    </div>
+  } @else if (doctor) {
+    <main class="booking-body animate__animated animate__fadeIn">
+
+      <!-- 1. Doctor Brief Header Card -->
+      <section class="doctor-profile-card">
+        <img [src]="doctor.image" [alt]="doctor.name" class="doc-avatar" />
+        <div class="doc-info-col">
+          <div class="doc-name-line">
+            <h2 class="doc-name">{{ doctor.name }}</h2>
+            <ion-icon name="shield-checkmark-outline" class="verified-icon"></ion-icon>
+          </div>
+          <p class="doc-specialization">{{ doctor.specialization }}</p>
+          <p class="doc-hospital text-truncate">{{ doctor.hospitalOrClinic }}</p>
+        </div>
+      </section>
+
+      <!-- 2. Consultation Mode Selector -->
+      <section class="form-section">
+        <span class="section-sub-label">CONSULTATION MODE</span>
+        <div class="mode-select-grid">
+          <div
+            class="mode-card"
+            [class.selected]="selectedConsultMode === 'In-Clinic'"
+            (click)="selectedConsultMode = 'In-Clinic'"
+            role="button"
+            tabindex="0">
+            <ion-icon name="medkit-outline"></ion-icon>
+            <div class="mode-text">
+              <strong>In-Clinic Visit</strong>
+              <small>Visit Clinic</small>
+            </div>
+            @if (selectedConsultMode === 'In-Clinic') {
+              <ion-icon name="checkmark-circle" class="check-circle"></ion-icon>
+            }
+          </div>
+
+          <div
+            class="mode-card"
+            [class.selected]="selectedConsultMode === 'Video Call'"
+            (click)="selectedConsultMode = 'Video Call'"
+            role="button"
+            tabindex="0">
+            <ion-icon name="videocam-outline"></ion-icon>
+            <div class="mode-text">
+              <strong>Video Call</strong>
+              <small>Online Consult</small>
+            </div>
+            @if (selectedConsultMode === 'Video Call') {
+              <ion-icon name="checkmark-circle" class="check-circle"></ion-icon>
+            }
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Date Selector Strip -->
+      <section class="form-section">
+        <span class="section-sub-label">SELECT DATE</span>
+        <div class="dates-strip">
+          @for (day of weekDays; track day.date; let idx = $index) {
+            <div
+              class="date-card"
+              [class.selected]="selectedDateIndex === idx"
+              (click)="selectedDateIndex = idx"
+              role="button"
+              tabindex="0">
+              <span class="day-name">{{ day.dayName }}</span>
+              <span class="day-num">{{ day.dayNumber }}</span>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- 4. Available 1-Hour Time Slots -->
+      <section class="form-section">
+        <span class="section-sub-label">AVAILABLE TIME SLOTS</span>
+        <div class="slots-grid">
+          @for (slot of availableTimeSlots; track slot) {
+            <button
+              type="button"
+              class="slot-chip"
+              [class.selected]="selectedTimeSlot === slot"
+              (click)="selectedTimeSlot = slot">
+              <span>{{ slot }}</span>
+            </button>
+          }
+        </div>
+      </section>
+
+      <!-- 5. Patient Details Form -->
+      <section class="form-section patient-details-card">
+        <span class="section-sub-label">PATIENT DETAILS</span>
+
+        <div class="input-field-group">
+          <label class="field-label">Patient Full Name *</label>
+          <input
+            type="text"
+            class="text-input"
+            [(ngModel)]="patientName"
+            placeholder="e.g. Kavya" />
+        </div>
+
+        <div class="input-row-twin">
+          <div class="input-field-group flex-1">
+            <label class="field-label">Mobile Number *</label>
+            <input
+              type="tel"
+              class="text-input"
+              [(ngModel)]="patientPhone"
+              maxlength="10"
+              placeholder="10-digit number" />
+          </div>
+
+          <div class="input-field-group width-90">
+            <label class="field-label">Age *</label>
+            <input
+              type="number"
+              class="text-input"
+              [(ngModel)]="patientAge"
+              min="1"
+              max="110" />
+          </div>
+        </div>
+
+        <div class="input-field-group">
+          <label class="field-label">Gender</label>
+          <div class="gender-pill-row">
+            <button
+              type="button"
+              class="gender-pill"
+              [class.active]="patientGender === 'Female'"
+              (click)="patientGender = 'Female'">
+              <span>Female</span>
+            </button>
+            <button
+              type="button"
+              class="gender-pill"
+              [class.active]="patientGender === 'Male'"
+              (click)="patientGender = 'Male'">
+              <span>Male</span>
+            </button>
+            <button
+              type="button"
+              class="gender-pill"
+              [class.active]="patientGender === 'Other'"
+              (click)="patientGender = 'Other'">
+              <span>Other</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. Price Summary Box -->
+      <section class="price-summary-box">
+        <div class="price-row">
+          <span>Doctor Consultation Fee</span>
+          <span class="text-muted text-decoration-line-through">₹{{ doctor.consultationFee }}</span>
+        </div>
+        <div class="price-row discount">
+          <span>Pintu 20% Health Discount</span>
+          <span class="text-success">-₹{{ doctor.consultationFee - doctor.discountFee }}</span>
+        </div>
+        <div class="price-row total">
+          <strong>Total Payable Amount</strong>
+          <strong class="total-amount">₹{{ doctor.discountFee }}</strong>
+        </div>
+      </section>
+
+      <!-- 7. Confirm & Book Action Section (Directly after Total Payable) -->
+      <section class="booking-action-section">
+        <button
+          type="button"
+          class="btn-confirm-booking-inline"
+          (click)="confirmBooking()"
+          [disabled]="isSubmitting">
+          @if (isSubmitting) {
+            <ion-spinner name="crescent"></ion-spinner>
+            <span>Confirming Appointment...</span>
+          } @else {
+            <ion-icon name="checkmark-circle"></ion-icon>
+            <span>Confirm & Book Appointment (₹{{ doctor.discountFee }})</span>
+          }
+        </button>
+
+        <div class="booking-trust-badge">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+          <span>100% Verified Doctor • Instant Confirmation</span>
+        </div>
+      </section>
+
+    </main>
+  }
+</ion-content>
+
+<!-- Bottom Sticky Action Footer -->
+@if (doctor) {
+  <ion-footer class="ion-no-border booking-footer">
+    <div class="footer-action-wrap">
+      <button
+        type="button"
+        class="btn-confirm-booking"
+        (click)="confirmBooking()"
+        [disabled]="isSubmitting">
+        @if (isSubmitting) {
+          <ion-spinner name="crescent"></ion-spinner>
+          <span>Confirming...</span>
+        } @else {
+          <span>Confirm & Book Appointment (₹{{ doctor.discountFee }})</span>
+        }
+      </button>
+    </div>
+  </ion-footer>
+}
+
+<!-- Success Confirmation Modal -->
+<ion-modal
+  [isOpen]="isSuccessModalOpen"
+  (didDismiss)="closeSuccessModal()"
+  class="success-modal">
+  <ng-template>
+    <div class="success-card-content">
+      <div class="success-icon-bubble">
+        <ion-icon name="checkmark-circle"></ion-icon>
+      </div>
+
+      <span class="success-badge">APPOINTMENT CONFIRMED</span>
+      <h3 class="success-title">Doctor Appointed!</h3>
+      <p class="success-desc">
+        Your appointment is scheduled with <strong>{{ confirmedBooking?.doctorName }}</strong>.
+      </p>
+
+      @if (confirmedBooking) {
+        <div class="ticket-box">
+          <div class="ticket-row">
+            <span class="ticket-label">BOOKING ID</span>
+            <strong class="ticket-val code">{{ confirmedBooking.id }}</strong>
+          </div>
+          <div class="ticket-divider"></div>
+          <div class="ticket-row">
+            <span class="ticket-label">DOCTOR</span>
+            <span class="ticket-val">{{ confirmedBooking.doctorName }}</span>
+          </div>
+          <div class="ticket-row">
+            <span class="ticket-label">SCHEDULE</span>
+            <span class="ticket-val font-semibold">{{ confirmedBooking.appointmentDate }} at {{ confirmedBooking.timeSlot }}</span>
+          </div>
+          <div class="ticket-row">
+            <span class="ticket-label">MODE</span>
+            <span class="ticket-val">{{ confirmedBooking.consultationType }}</span>
+          </div>
+          <div class="ticket-row">
+            <span class="ticket-label">PATIENT</span>
+            <span class="ticket-val">{{ confirmedBooking.patientName }} ({{ confirmedBooking.patientAge }}y, {{ confirmedBooking.patientGender }})</span>
+          </div>
+          <div class="ticket-divider"></div>
+          <div class="ticket-row">
+            <span class="ticket-label">TOTAL PAID</span>
+            <strong class="ticket-val text-success">₹{{ confirmedBooking.consultationFee }}</strong>
+          </div>
+        </div>
+      }
+
+      <button type="button" class="btn-success-done" (click)="closeSuccessModal()">
+        <span>Done</span>
+      </button>
+    </div>
+  </ng-template>
+</ion-modal>
+
+<ion-toast
+  [isOpen]="isToastOpen"
+  [message]="toastMessage"
+  [duration]="2500"
+  (didDismiss)="isToastOpen = false"
+  position="bottom">
+</ion-toast>
+

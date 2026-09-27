@@ -1,0 +1,682 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  --theme-purple: #7c3aed;
+  --theme-purple-dark: #4c1d95;
+}
+
+.pocket-content {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  --background: #f8fafc;
+}
+
+/* ─── Header ─────────────────────────────────────────────────────────────── */
+.pocket-header {
+  background: #ffffff;
+  border-bottom: 1px solid #f1f5f9;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  padding: 0 !important;
+  margin: 0 !important;
+  --ion-safe-area-top: 0px;
+  flex-shrink: 0;
+}
+
+.pocket-toolbar {
+  --background: #ffffff;
+  --padding-top: env(safe-area-inset-top, 0px);
+  --padding-bottom: 8px;
+  --padding-start: 14px;
+  --padding-end: 14px;
+}
+
+.header-content-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+
+  .btn-back {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0f172a;
+    font-size: 19px;
+    cursor: pointer;
+    flex-shrink: 0;
+
+    &:active {
+      transform: scale(0.94);
+    }
+  }
+
+  .header-title-col {
+    flex: 1;
+    min-width: 0;
+
+    .header-title {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 850;
+      color: #0f172a;
+      letter-spacing: -0.2px;
+    }
+
+    .header-subtitle {
+      font-size: 11px;
+      color: #64748b;
+      font-weight: 500;
+    }
+  }
+
+  .pocket-icon-badge {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #f3e8ff;
+    color: #7c3aed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+}
+
+/* ─── Container ──────────────────────────────────────────────────────────── */
+.pocket-container {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* ─── 1. Hero Rewards Balance Card ───────────────────────────────────────── */
+.pocket-hero-card {
+  position: relative;
+  background: linear-gradient(135deg, #3b0764 0%, #581c87 40%, #7c3aed 100%);
+  border-radius: 22px;
+  padding: 20px 22px;
+  color: #ffffff;
+  overflow: hidden;
+  box-shadow: 0 10px 28px rgba(88, 28, 135, 0.28);
+
+  .hero-bg-glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(35px);
+    pointer-events: none;
+
+    &.glow-1 {
+      width: 140px;
+      height: 140px;
+      background: rgba(216, 180, 254, 0.25);
+      top: -30px;
+      right: -30px;
+    }
+
+    &.glow-2 {
+      width: 120px;
+      height: 120px;
+      background: rgba(168, 85, 247, 0.2);
+      bottom: -40px;
+      left: 10px;
+    }
+  }
+
+  .card-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 2;
+
+    .wallet-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 850;
+      letter-spacing: 0.8px;
+      color: #e9d5ff;
+
+      ion-icon {
+        font-size: 13px;
+        color: #facc15;
+      }
+    }
+
+    .live-active-tag {
+      font-size: 9px;
+      font-weight: 850;
+      background: rgba(16, 185, 129, 0.25);
+      color: #6ee7b7;
+      border: 0.5px solid rgba(52, 211, 153, 0.4);
+      padding: 2px 8px;
+      border-radius: 99px;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  .card-balance-block {
+    margin: 16px 0 18px;
+    position: relative;
+    z-index: 2;
+
+    .balance-label {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 500;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .balance-number-row {
+      display: flex;
+      align-items: baseline;
+      gap: 3px;
+
+      .currency-symbol {
+        font-size: 24px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      .balance-amount {
+        font-size: 34px;
+        font-weight: 900;
+        letter-spacing: -0.5px;
+        color: #ffffff;
+      }
+    }
+  }
+
+  .card-perk-footer {
+    position: relative;
+    z-index: 2;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+
+    .perk-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #f3e8ff;
+
+      ion-icon {
+        font-size: 14px;
+        color: #34d399;
+      }
+    }
+  }
+}
+
+/* ─── 2. Wallet Notice ───────────────────────────────────────────────────── */
+.wallet-info-note {
+  display: flex;
+  gap: 12px;
+  background: #fdf4ff;
+  border: 1px solid #f5d0fe;
+  border-radius: 14px;
+  padding: 12px 14px;
+
+  .note-icon-wrap {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: #fae8ff;
+    color: #a855f7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .note-text-col {
+    flex: 1;
+
+    h6 {
+      margin: 0 0 2px;
+      font-size: 12.5px;
+      font-weight: 800;
+      color: #7e22ce;
+    }
+
+    p {
+      margin: 0;
+      font-size: 11.5px;
+      color: #9333ea;
+      line-height: 1.4;
+    }
+  }
+}
+
+/* ─── 3. Ways to Earn Rewards ────────────────────────────────────────────── */
+.how-to-earn-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .section-heading-row {
+    .section-title {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 850;
+      color: #0f172a;
+    }
+
+    .section-subtitle {
+      font-size: 11px;
+      color: #64748b;
+    }
+  }
+
+  .earn-cards-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .earn-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 14px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+
+      .earn-icon-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        flex-shrink: 0;
+
+        &.amber {
+          background: #fef3c7;
+          color: #d97706;
+        }
+
+        &.green {
+          background: #dcfce7;
+          color: #16a34a;
+        }
+
+        &.purple {
+          background: #f3e8ff;
+          color: #7c3aed;
+        }
+
+        &.rose {
+          background: #ffe4e6;
+          color: #e11d48;
+        }
+      }
+
+      .earn-info-col {
+        flex: 1;
+        min-width: 0;
+
+        .earn-title-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 8px;
+          margin-bottom: 3px;
+
+          h5 {
+            margin: 0;
+            font-size: 13.5px;
+            font-weight: 800;
+            color: #0f172a;
+          }
+
+          .reward-tag {
+            font-size: 10.5px;
+            font-weight: 850;
+            padding: 2px 8px;
+            border-radius: 99px;
+            white-space: nowrap;
+
+            &.amber {
+              background: #fffbeb;
+              color: #b45309;
+              border: 1px solid #fde68a;
+            }
+
+            &.green {
+              background: #f0fdf4;
+              color: #15803d;
+              border: 1px solid #bbf7d0;
+            }
+
+            &.purple {
+              background: #faf5ff;
+              color: #6b21a8;
+              border: 1px solid #e9d5ff;
+            }
+
+            &.rose {
+              background: #fff1f2;
+              color: #be123c;
+              border: 1px solid #fecdd3;
+            }
+          }
+        }
+
+        p {
+          margin: 0;
+          font-size: 11.5px;
+          color: #64748b;
+          line-height: 1.4;
+        }
+
+        .btn-earn-action {
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+          margin-top: 8px;
+          padding: 5px 12px;
+          border-radius: 99px;
+          font-size: 11px;
+          font-weight: 800;
+          border: none;
+          cursor: pointer;
+          transition: transform 0.15s ease;
+
+          ion-icon {
+            font-size: 13px;
+          }
+
+          &:active {
+            transform: scale(0.96);
+          }
+
+          &.green {
+            background: #dcfce7;
+            color: #166534;
+          }
+
+          &.purple {
+            background: #f3e8ff;
+            color: #6b21a8;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* ─── 4. Perks Grid ──────────────────────────────────────────────────────── */
+.perks-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  .perk-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 12px 14px;
+    border: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .perk-icon-circle {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      flex-shrink: 0;
+
+      &.purple {
+        background: #f3e8ff;
+        color: #7c3aed;
+      }
+      &.green {
+        background: #ecfdf5;
+        color: #059669;
+      }
+      &.amber {
+        background: #fffbeb;
+        color: #d97706;
+      }
+    }
+
+    .perk-text {
+      h5 {
+        margin: 0;
+        font-size: 12.5px;
+        font-weight: 800;
+        color: #0f172a;
+      }
+
+      p {
+        margin: 2px 0 0;
+        font-size: 11px;
+        color: #64748b;
+      }
+    }
+  }
+}
+
+/* ─── 5. Passbook / Transactions ─────────────────────────────────────────── */
+.passbook-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .passbook-header {
+    .passbook-title {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 850;
+      color: #0f172a;
+    }
+
+    .passbook-sub {
+      font-size: 11px;
+      color: #64748b;
+    }
+  }
+
+  .filter-tabs-strip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filter-pill {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 99px;
+      padding: 6px 14px;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #475569;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.15s ease;
+
+      &.active {
+        background: #7c3aed;
+        border-color: #7c3aed;
+        color: #ffffff;
+      }
+    }
+  }
+
+  .transactions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .txn-card {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 12px 14px;
+      border: 1px solid #f1f5f9;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .txn-icon-circle {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+
+        &.credit {
+          background: #ecfdf5;
+          color: #059669;
+        }
+
+        &.debit {
+          background: #f8fafc;
+          color: #64748b;
+          border: 1px solid #e2e8f0;
+        }
+      }
+
+      .txn-info-col {
+        flex: 1;
+        min-width: 0;
+
+        .txn-title {
+          font-size: 13px;
+          font-weight: 750;
+          color: #0f172a;
+          display: block;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .txn-subtitle {
+          font-size: 11px;
+          color: #64748b;
+          display: block;
+          margin-top: 1px;
+        }
+
+        .txn-meta-row {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 10px;
+          color: #94a3b8;
+          margin-top: 2px;
+
+          .txn-ref {
+            font-size: 9.5px;
+            color: #cbd5e1;
+          }
+        }
+      }
+
+      .txn-amount-col {
+        text-align: right;
+        flex-shrink: 0;
+
+        .txn-amount {
+          font-size: 14px;
+          font-weight: 850;
+          display: block;
+
+          &.credit {
+            color: #059669;
+          }
+
+          &.debit {
+            color: #0f172a;
+          }
+        }
+
+        .txn-category-badge {
+          font-size: 9px;
+          font-weight: 800;
+          color: #94a3b8;
+          letter-spacing: 0.4px;
+
+          &.credit {
+            color: #059669;
+          }
+        }
+      }
+    }
+
+    .empty-passbook {
+      text-align: center;
+      padding: 30px 20px;
+      background: #ffffff;
+      border-radius: 14px;
+      border: 1px dashed #cbd5e1;
+
+      .empty-icon-circle {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: #f1f5f9;
+        color: #94a3b8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        margin: 0 auto 10px;
+      }
+
+      h5 {
+        margin: 0;
+        font-size: 13.5px;
+        font-weight: 800;
+        color: #334155;
+      }
+
+      p {
+        margin: 4px 0 0;
+        font-size: 11.5px;
+        color: #94a3b8;
+      }
+    }
+  }
+}
+
+.pocket-bottom-spacer {
+  height: 40px;
+}

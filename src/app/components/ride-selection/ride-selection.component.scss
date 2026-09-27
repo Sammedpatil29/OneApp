@@ -1,302 +1,521 @@
 .ride-selection-wrapper {
   height: 100vh;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
+/* ─── Map View ────────────────────────────────────────── */
 .map-view {
-  height: 60vh;
+  height: 58vh;
   width: 100%;
+  flex-shrink: 0;
 }
 
 .back-btn {
-  height: 40px;
-  width: 40px;
-  background-color: rgb(255, 255, 255);
+  height: 42px;
+  width: 42px;
+  background-color: #ffffff;
   border-radius: 50%;
-  top: 25px;
-  left: 15px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  border: 1px solid #e2e8f0;
+  top: calc(env(safe-area-inset-top, 0px) + 16px);
+  left: 16px;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.18);
   cursor: pointer;
-  z-index: 10;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0f172a;
+  font-size: 22px;
+  transition: transform 0.15s ease;
+
+  &:active {
+    transform: scale(0.92);
+  }
 }
 
+/* ─── Details Bottom Block ───────────────────────────── */
 .detailsBlock {
-  border-radius: 20px 20px 0px 0px;
-  height: 50vh;
-  margin-top: -10vh;
-  z-index: 9999;
-  box-shadow: 0px -4px 20px rgba(0, 0, 0, 0.15);
+  border-radius: 24px 24px 0 0;
+  height: 48vh;
+  margin-top: -6vh;
+  z-index: 40;
+  box-shadow: 0 -6px 25px rgba(15, 23, 42, 0.12);
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
 }
 
 .top-bar {
-  border-radius: 20px 20px 0px 0px;
+  border-radius: 24px 24px 0 0;
   top: 0;
   z-index: 10;
 }
 
 .drag-indicator {
-  width: 45px;
-  height: 5px;
-  background-color: #e0e0e0;
-  border-radius: 5px;
+  width: 42px;
+  height: 4.5px;
+  background-color: #cbd5e1;
+  border-radius: 99px;
 }
 
+/* ─── Services Vehicle List ──────────────────────────── */
 .services-container {
-  max-height: calc(50vh - 100px);
-}
-
-.skeleton-card {
-  border-radius: 15px;
-}
-
-.skeleton-avatar {
-  height: 50px;
-  width: 50px;
-  border-radius: 5px;
-}
-
-.line-height-15 {
-  line-height: 15px;
-}
-
-.skeleton-text-1 {
-  width: 60%;
-  height: 15px;
-}
-
-.skeleton-text-2 {
-  width: 40%;
-  height: 10px;
-}
-
-.skeleton-text-3 {
-  width: 80%;
-  height: 10px;
-}
-
-.skeleton-price {
-  width: 100%;
-  height: 20px;
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 95px !important;
 }
 
 .service-card {
-  border-radius: 15px;
-  border: 1px solid #f0f0f0;
+  border-radius: 16px;
+  border: 1.5px solid #f1f5f9;
+  background: #ffffff;
   transition: all 0.2s ease;
-}
+  cursor: pointer;
 
-.service-image {
-  height: 50px;
-}
+  &:active {
+    transform: scale(0.985);
+  }
 
-.service-info-text {
-  font-size: 13px !important;
-}
+  &.selectedServiceclass {
+    border-color: #0f172a;
+    background: #f8fafc;
+    box-shadow: 0 3px 12px rgba(15, 23, 42, 0.08);
+  }
 
-.service-price-text {
-  font-size: 20px;
+  .service-icon-wrap {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+
+    &.bike {
+      background: #ecfdf5;
+      color: #059669;
+    }
+
+    &.auto {
+      background: #fefce8;
+      color: #ca8a04;
+    }
+
+    &.cab {
+      background: #eff6ff;
+      color: #2563eb;
+    }
+
+    &.parcel {
+      background: #fdf4ff;
+      color: #c026d3;
+    }
+  }
+
+  .service-type-title {
+    font-size: 14.5px;
+    color: #0f172a;
+
+    .service-tag {
+      font-size: 10px;
+      font-weight: 700;
+      color: #64748b;
+      background: #f1f5f9;
+      padding: 1px 6px;
+      border-radius: 99px;
+      margin-left: 6px;
+    }
+  }
+
+  .service-info-text {
+    font-size: 11.5px !important;
+    color: #64748b;
+  }
+
+  .service-price-text {
+    font-size: 17px;
+    font-weight: 850;
+    color: #0f172a;
+  }
 }
 
 .spacer-10 {
-  height: 10px;
+  height: 12px;
 }
 
+/* ─── Bottom Bar & CTA ───────────────────────────────── */
 .bottom-bar {
   bottom: 0;
-  box-shadow: 0px -4px 15px rgba(0, 0, 0, 0.08);
-  height: 100px;
-  z-index: 10;
+  left: 0;
+  right: 0;
+  box-shadow: 0 -4px 18px rgba(15, 23, 42, 0.08);
+  padding: 10px 16px max(env(safe-area-inset-bottom, 0px), 14px);
+  background: #ffffff;
+  z-index: 50;
+
+  .payment-method {
+    border-radius: 12px;
+    gap: 6px;
+    height: 44px;
+    border: 1px solid #e2e8f0;
+    font-size: 13px;
+    font-weight: 750;
+
+    .cash-icon {
+      font-size: 18px;
+      color: #059669;
+    }
+  }
+
+  .book-btn {
+    height: 44px;
+    font-weight: 800;
+    font-size: 14px;
+    --box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25);
+  }
 }
 
-.skeleton-bottom-bar-text {
-  width: 100%;
-  height: 20px;
+/* ─── State B: Searching Radar ────────────────────────── */
+.radar-pulse-box {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .pulse-center {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #0f172a;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    z-index: 2;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.3);
+  }
+
+  .pulse-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid #059669;
+    opacity: 0;
+    animation: radarPulse 2s infinite ease-out;
+
+    &.r2 {
+      animation-delay: 1s;
+    }
+  }
 }
 
-.skeleton-bottom-bar-btn {
-  width: 100%;
-  height: 45px;
-  border-radius: 25px;
+@keyframes radarPulse {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
 }
 
-.payment-method {
-  border-radius: 12px;
-  gap: 6px;
+.searching-title {
+  font-size: 17px;
+  font-weight: 850;
+  color: #0f172a;
 }
 
-.book-btn {
-  font-weight: bold;
-  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+.searching-sub {
+  font-size: 12.5px;
 }
 
-.active-ride-container {
-  max-height: calc(50vh - 50px);
-}
-
-.searching-container {
-  top: 0px;
-}
-
-.ride-status-wrapper {
-  top: 0;
-  z-index: 9999;
-}
-
-.status-badge {
-  border-radius: 20px;
-  font-size: 13px;
-}
-
-.driver-header {
-  border-radius: 15px 15px 0px 0px;
-  border-bottom: 0px !important;
-}
-
-.driver-avatar {
-  height: 45px;
-  width: 45px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
-}
-
-.line-height-12 {
-  line-height: 1.2;
-}
-
-.driver-join-date {
+.countdown-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #f1f5f9;
+  color: #334155;
+  padding: 4px 12px;
+  border-radius: 99px;
   font-size: 12px;
+  font-weight: 650;
+
+  ion-icon {
+    font-size: 14px;
+    color: #059669;
+  }
 }
 
-.vehicle-plate {
-  border-radius: 6px;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  font-weight: bold;
-  letter-spacing: 0.5px;
-}
-
-.plate-ind-container {
-  line-height: 8px;
-  margin-right: 4px;
-}
-
-.plate-dot {
-  width: 4px;
-  height: 4px;
-  background-color: gray;
-  border-radius: 50%;
-}
-
-.plate-ind-text {
-  font-size: 5px;
-}
-
-.vehicle-footer {
-  border-radius: 0px 0px 15px 15px;
-  border-top: 1px dashed #dcdcdc !important;
-}
-
-.call-btn {
+.trip-preview-card {
   border-radius: 12px;
-  font-weight: bold;
-  font-size: 13px;
+
+  .pin-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+
+    &.green { background: #22c55e; }
+    &.red { background: #ef4444; }
+  }
+
+  .preview-address {
+    font-size: 12px;
+    color: #475569;
+    font-weight: 600;
+  }
+}
+
+.btn-cancel-search {
+  width: 100%;
+  height: 42px;
+  border-radius: 12px;
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  color: #dc2626;
+  font-size: 13.5px;
+  font-weight: 750;
   cursor: pointer;
 }
 
+/* ─── State C: Active Ride Assigned / Arrived / Started ── */
+.active-ride-container {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 24px;
+}
+
+.status-badge {
+  border-radius: 99px;
+  font-size: 12.5px;
+  font-weight: 750;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  ion-icon {
+    font-size: 14px;
+  }
+}
+
+.driver-header {
+  border-radius: 16px 16px 0 0;
+  border-bottom: 0 !important;
+
+  .driver-avatar {
+    height: 46px;
+    width: 46px;
+    border-radius: 50%;
+    background: #ecfdf5;
+  }
+
+  .driver-join-date {
+    font-size: 11px;
+  }
+
+  .vehicle-plate {
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 850;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+
+    .plate-ind-container {
+      line-height: 8px;
+      margin-right: 4px;
+
+      .plate-dot {
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: #64748b;
+      }
+
+      .plate-ind-text {
+        font-size: 6px;
+        font-weight: 900;
+      }
+    }
+  }
+}
+
+.vehicle-footer {
+  border-radius: 0 0 16px 16px;
+  border-top: 1px dashed #e2e8f0 !important;
+
+  .btn-call-captain {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #0f172a;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 6px 14px;
+    font-size: 12.5px;
+    font-weight: 750;
+    cursor: pointer;
+  }
+}
+
+/* ─── 4-Digit OTP Container ──────────────────────────── */
 .otp-container {
-  border-radius: 15px;
-  background: linear-gradient(135deg, #2b3033 0%, #101212 100%);
+  border-radius: 16px;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  color: #ffffff;
+
+  .otp-label {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+  }
+
+  .otp-digit {
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+    min-width: 32px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 900;
+  }
 }
 
-.otp-label {
-  font-size: 11px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-.otp-digit {
-  border-radius: 10px;
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
-}
-
+/* ─── Safety Banner ──────────────────────────────────── */
 .safety-banner {
-  border-radius: 15px;
-  height: 70px;
-  background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
-  border: 1px solid #ececec;
+  border-radius: 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+
+  .shield-icon {
+    font-size: 22px;
+    color: #059669;
+  }
+
+  .safety-text {
+    font-size: 12px;
+  }
 }
 
-.safety-text {
-  letter-spacing: 0.5px;
-  font-size: 13px;
-}
-
+/* ─── Trip Details Summary ───────────────────────────── */
 .trip-details-container {
-  border-radius: 15px;
-  border: 1px solid #f5f5f5;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+
+  .timeline-line {
+    width: 2px;
+    height: calc(100% - 70px);
+    background-color: #cbd5e1;
+    left: 28px;
+    top: 28px;
+  }
+
+  .pickup-dot {
+    width: 14px;
+    height: 14px;
+    background-color: #22c55e;
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px #dcfce7;
+  }
+
+  .dropoff-dot {
+    width: 14px;
+    height: 14px;
+    background-color: #ef4444;
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px #fee2e2;
+  }
+
+  .inner-dot {
+    width: 5px;
+    height: 5px;
+    background: #ffffff;
+    border-radius: 50%;
+  }
+
+  .location-label {
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .location-address {
+    font-size: 11.5px;
+  }
 }
 
-.timeline-line {
-  width: 2px;
-  height: calc(100% - 100px);
-  background-color: #e0e0e0;
-  left: 31px;
-  top: 35px;
-}
-
-.pickup-dot {
-  width: 16px;
-  height: 16px;
-  background-color: #2cbd0f;
-  border-radius: 50%;
-  box-shadow: 0 0 0 4px #e5f9e5;
-}
-
-.inner-dot {
-  width: 6px;
-  height: 6px;
-  background-color: white;
-  border-radius: 50%;
-}
-
-.location-text-container {
-  line-height: 1.3;
-  min-width: 0;
-}
-
-.location-label {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.location-address {
-  font-size: 13px;
-}
-
-.dropoff-dot {
-  width: 16px;
-  height: 16px;
-  background-color: #f73838;
-  border-radius: 50%;
-  box-shadow: 0 0 0 4px #fbeaea;
-}
-
+/* ─── Estimated Fare ─────────────────────────────────── */
 .fare-container {
-  border-radius: 12px;
-  border: 1px dashed #dcdcdc;
-}
+  border-radius: 14px;
+  border: 1px dashed #cbd5e1;
 
-.fare-label {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
+  .fare-label {
+    font-size: 10px;
+    letter-spacing: 0.5px;
+  }
 
-.fare-badge {
-  border-radius: 8px;
-  font-size: 13px;
+  .fare-badge {
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 750;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
 }
 
 .cancel-btn {
-  --border-width: 1.5px;
   --border-radius: 12px;
+  font-size: 13.5px;
+}
+
+/* ─── Trip Completed Modal ───────────────────────────── */
+.trip-completed-modal {
+  --height: auto;
+  --border-radius: 24px 24px 0 0;
+
+  .completion-sheet-container {
+    background: #ffffff;
+
+    .success-icon-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #ecfdf5;
+      color: #059669;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 38px;
+    }
+
+    .completion-title {
+      font-size: 20px;
+      font-weight: 850;
+      color: #0f172a;
+    }
+
+    .completion-sub {
+      font-size: 13px;
+    }
+
+    .btn-finish-trip {
+      height: 48px;
+      border-radius: 14px;
+      background: #0f172a;
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 800;
+      border: none;
+      cursor: pointer;
+    }
+  }
 }

@@ -1,0 +1,35 @@
+<footer class="pharmacy-brand-footer">
+  <!-- Subtle Gradient Divider Line -->
+  <div class="footer-divider-line"></div>
+
+  <div class="footer-content-wrapper">
+    <!-- Top label: Managed By / Fulfilled By -->
+    <div class="powered-by-label">{{ label }}</div>
+
+    <!-- Partner Card: Centered Details Below -->
+    <div class="partner-card">
+      <div class="brand-logo-wrap">
+        <img
+          [src]="logoUrl"
+          [alt]="companyName"
+          class="brand-logo-img"
+          (error)="onImageError($event)"
+        />
+      </div>
+
+      <div class="brand-text-col">
+        <h4 class="brand-name text-center">{{ companyName }}</h4>
+        @if (subtitle) {
+          <span class="brand-sub text-center">{{ subtitle }}</span>
+        }
+        @if (address) {
+          <span class="brand-address text-center">{{ address }}</span>
+        }
+        @if (licenseInfo) {
+          <span class="brand-gst text-center">{{ licenseInfo }}</span>
+        }
+      </div>
+    </div>
+  </div>
+</footer>
+

@@ -35,13 +35,17 @@ import {
   refreshOutline,
   arrowUpCircle,
   warningOutline,
-  settingsOutline
+  settingsOutline,
+  walletOutline,
+  sparkles
 } from 'ionicons/icons';
 import { AuthService } from 'src/app/services/auth.service';
 import { ProfileService } from 'src/app/services/profile.service';
 import { AppDialogService } from 'src/app/services/app-dialog.service';
 import { OtaService } from 'src/app/services/ota.service';
+import { PintuPocketService } from 'src/app/services/pintu-pocket.service';
 import { FooterComponent } from 'src/app/components/footer/footer.component';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 
 @Component({
   selector: 'app-profile',
@@ -59,7 +63,8 @@ import { FooterComponent } from 'src/app/components/footer/footer.component';
     IonContent,
     IonSkeletonText,
     IonIcon,
-    FooterComponent
+    FooterComponent,
+    TranslatePipe
   ]
 })
 export class ProfilePage implements OnInit {
@@ -80,32 +85,13 @@ export class ProfilePage implements OnInit {
     private authService: AuthService,
     private profileService: ProfileService,
     private dialogService: AppDialogService,
+    public pocketService: PintuPocketService,
     private otaService: OtaService
   ) {
-    addIcons({
-      checkmark,
-      checkmarkCircle,
-      callOutline,
-      receiptOutline,
-      locationOutline,
-      headsetOutline,
-      personOutline,
-      mapOutline,
-      giftOutline,
-      languageOutline,
-      bulbOutline,
-      informationCircleOutline,
-      shieldOutline,
-      logOutOutline,
-      chevronForward,
-      arrowBackOutline,
-      cloudDownloadOutline,
-      refreshOutline,
-      arrowUpCircle,
-      warningOutline,
-      settingsOutline
-    });
+    addIcons({arrowBackOutline,checkmark,callOutline,receiptOutline,locationOutline,walletOutline,headsetOutline,personOutline,chevronForward,mapOutline,giftOutline,settingsOutline,bulbOutline,cloudDownloadOutline,checkmarkCircle,arrowUpCircle,refreshOutline,informationCircleOutline,shieldOutline,logOutOutline,languageOutline,warningOutline,sparkles});
   }
+
+  readonly pocketBalance$ = this.pocketService.balance$;
 
   goBack() {
     this.navCtrl.back();
@@ -148,14 +134,14 @@ export class ProfilePage implements OnInit {
         if (res.isUpToDate) {
           await this.dialogService.showAlert(
             'Everything is Up to Date',
-            `You are running the latest version (v${this.currentAppVersion}).\nNo new updates found on the server. 🎉`,
+            `You are running the latest version (v${this.currentAppVersion}). \n\nRequest URL: ${res.maskedUrl}`,
             'info',
             'OK'
           );
         } else if (res.updateAvailable) {
           const proceed = await this.dialogService.showConfirm({
             title: 'New OTA Update Available',
-            message: `Version v${res.latestVersion} is ready to download (current: v${this.currentAppVersion}).\n\nWould you like to apply the update now?`,
+            message: `Version v${res.latestVersion} is ready to download (current: v${this.currentAppVersion}).\n\nRequest URL: ${res.maskedUrl}`,
             confirmText: 'Update Now',
             cancelText: 'Later'
           });
@@ -166,7 +152,7 @@ export class ProfilePage implements OnInit {
             if (!applyRes.success) {
               await this.dialogService.showAlert(
                 'Update Failed',
-                applyRes.message || 'Could not apply update bundle.',
+                `${applyRes.message || 'Could not apply update bundle.'}\n\nRequest URL: ${res.maskedUrl}`,
                 'warning',
                 'Close'
               );
@@ -182,7 +168,7 @@ export class ProfilePage implements OnInit {
           `Error: ${res.error || 'Server error'}`,
           res.httpStatus ? `HTTP Status: ${res.httpStatus}` : '',
           res.errorDetails ? `Server Response: ${res.errorDetails}` : '',
-          `Manifest URL:\n${res.manifestUrl}`
+          `Request URL: ${res.maskedUrl || res.manifestUrl}`
         ].filter(Boolean).join('\n\n');
 
         await this.dialogService.showAlert(
@@ -248,8 +234,14 @@ export class ProfilePage implements OnInit {
     this.router.navigate(['/layout/referral']);
   }
 
+  openPintuPocket() {
+    this.router.navigate(['/layout/pintu-pocket']);
+  }
+
   openDetails(option: string) {
-    if (option === 'Personal Details') {
+    if (option === 'Pintu Pocket' || option === 'Wallet') {
+      this.router.navigate(['/layout/pintu-pocket']);
+    } else if (option === 'Personal Details') {
       this.router.navigate(['/layout/profile-details']);
     } else if (option === 'Saved Addresses') {
       this.router.navigate(['/layout/address-list'], {

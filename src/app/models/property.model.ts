@@ -59,6 +59,8 @@ export interface PropertyItem {
   amenities: string[];
   nearbyLandmarks: NearbyLandmark[];
   seller: PropertySeller;
+  videoUrl?: string;
+  youtubeUrl?: string;
   isFavorite?: boolean;
   is_verified?: boolean;
   isVerified?: boolean;

@@ -11,6 +11,11 @@
           </button>
 
           <div class="header-right-actions">
+            @if (property.videoUrl || property.youtubeUrl) {
+              <button type="button" class="btn-circle-nav btn-video" (click)="openVideoModal()" aria-label="Watch Video Tour" title="Watch Video Tour">
+                <ion-icon name="videocam-outline"></ion-icon>
+              </button>
+            }
             <button type="button" class="btn-circle-nav" (click)="shareProperty()" aria-label="Share">
               <ion-icon name="share-social-outline"></ion-icon>
             </button>
@@ -38,10 +43,18 @@
             </button>
           }
 
-          <!-- Bottom Photo Counter -->
-          <div class="photo-counter-badge">
-            <ion-icon name="camera-outline"></ion-icon>
-            <span>{{ activeImageIndex + 1 }} / {{ property.images.length }} Photos</span>
+          <!-- Bottom Badges (Video Tour & Photo Counter) -->
+          <div class="hero-bottom-badges">
+            @if (property.videoUrl || property.youtubeUrl) {
+              <button type="button" class="video-tour-badge" (click)="openVideoModal()" aria-label="Watch Video Tour">
+                <ion-icon name="play-circle"></ion-icon>
+                <span>Video Tour</span>
+              </button>
+            }
+            <div class="photo-counter-badge">
+              <ion-icon name="camera-outline"></ion-icon>
+              <span>{{ activeImageIndex + 1 }} / {{ property.images.length }} Photos</span>
+            </div>
           </div>
         </div>
       </section>
@@ -361,6 +374,9 @@
         </div>
 
       </section>
+ 
+      <!-- Common Property Dedicated Footer -->
+      <app-property-footer></app-property-footer>
 
       <!-- Bottom Spacer for Sticky Action Bar with Safe Area -->
       <div class="bottom-action-spacer"></div>
@@ -395,5 +411,56 @@
         </div>
       }
     </footer>
+
+    <!-- Property Video Tour Popup Modal -->
+    <ion-modal
+      [isOpen]="isVideoModalOpen"
+      (didDismiss)="closeVideoModal()"
+      class="property-video-modal"
+      [class.is-reel]="isVideoReel">
+      <ng-template>
+        <div class="video-card-wrapper" [class.is-reel]="isVideoReel">
+          <!-- Floating Close Button Directly On Video -->
+          <button type="button" class="video-overlay-close-btn" (click)="closeVideoModal()" aria-label="Close video" title="Close">
+            <ion-icon name="close-outline"></ion-icon>
+          </button>
+
+          <!-- Resolution & Ratio Selection Button On Video -->
+          <button type="button" class="video-aspect-pill" (click)="toggleVideoAspect()" aria-label="Resolution selection" title="Toggle 9:16 / 16:9 ratio">
+            <span class="res-tag">RES</span>
+            <span class="res-value">{{ isVideoReel ? '9:16' : '16:9' }}</span>
+          </button>
+
+          <div class="video-frame-box" [class.is-reel]="isVideoReel">
+            <!-- Top branding blocker to ensure no YouTube title or channel name appears -->
+            <div class="top-branding-blocker"></div>
+
+            <!-- Touch shield to control play/pause and prevent YouTube controls/branding popups -->
+            <div class="iframe-touch-shield" (click)="togglePlayPause()" aria-label="Play or Pause">
+              @if (showPlayPauseIndicator) {
+                <div class="play-pause-feedback">
+                  <ion-icon [name]="isPlaying ? 'play' : 'pause'"></ion-icon>
+                </div>
+              }
+            </div>
+
+            @if (embedVideoUrl) {
+              <iframe
+                [src]="embedVideoUrl"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen
+                class="video-iframe"
+              ></iframe>
+            } @else {
+              <div class="no-video-box">
+                <p>Video link is unavailable or could not be loaded.</p>
+              </div>
+            }
+          </div>
+        </div>
+      </ng-template>
+    </ion-modal>
   }
 </ion-content>

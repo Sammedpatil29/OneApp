@@ -15,6 +15,7 @@ import {
   IonRefresherContent,
   IonSkeletonText,
   IonIcon,
+  IonModal,
   ToastController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -42,8 +43,13 @@ import {
   locateOutline,
   playCircle,
   volumeMuteOutline,
-  volumeHighOutline
-} from 'ionicons/icons';
+  volumeHighOutline,
+  closeOutline,
+  bagHandleOutline,
+  carOutline,
+  restaurantOutline,
+  timeOutline,
+  receiptOutline, cloudOfflineOutline } from 'ionicons/icons';
 import { AuthService } from 'src/app/services/auth.service';
 import { LocationService } from 'src/app/services/location.service';
 import { ProfileService } from 'src/app/services/profile.service';
@@ -96,6 +102,7 @@ export interface ServiceItem {
     IonRefresherContent,
     IonSkeletonText,
     IonIcon,
+    IonModal,
     FooterComponent
   ]
 })
@@ -112,6 +119,7 @@ export class HomePage implements OnInit, OnDestroy {
   profileAvatar: string = '';
   userInitials: string = 'P';
   orders: any[] = [];
+  isMultiOrderModalOpen: boolean = false;
   token: string = '';
   isLoadingServices: boolean = true;
 
@@ -135,61 +143,13 @@ export class HomePage implements OnInit, OnDestroy {
     return Boolean(this.isAreaClosed || this.isOutOfServiceArea);
   }
 
-  banners: BannerItem[] = [
-    {
-      id: 1,
-      badge: '⚡ 10-15 MINS',
-      badgeBg: 'rgba(250, 204, 21, 0.25)',
-      badgeColor: '#fef08a',
-      title: 'Instant Grocery Delivery',
-      subtitle: 'Daily essentials delivered in 10-15 mins with flat ₹100 off.',
-      bgGradient: 'linear-gradient(135deg, #2e0854 0%, #1e1b4b 50%, #4a044e 100%)',
-      route: '/layout/grocery-layout'
-    },
-    {
-      id: 2,
-      badge: '🛵 ZERO SURGE',
-      badgeBg: 'rgba(56, 189, 248, 0.25)',
-      badgeColor: '#7dd3fc',
-      title: 'Daily Commute & Cabs',
-      subtitle: 'Fast bike taxis, autos & cabs at transparent daily flat rates.',
-      bgGradient: 'linear-gradient(135deg, #091e3a 0%, #082f49 50%, #1e1b4b 100%)',
-      route: '/layout/rides'
-    },
-    {
-      id: 3,
-      badge: '🥦 100% FARM FRESH',
-      badgeBg: 'rgba(52, 211, 153, 0.25)',
-      badgeColor: '#a7f3d0',
-      title: 'Fresh Farm Harvest',
-      subtitle: 'Handpicked daily fruits & vegetables with zero compromise.',
-      bgGradient: 'linear-gradient(135deg, #064e3b 0%, #065f46 50%, #134e4a 100%)',
-      route: '/layout/grocery-layout'
-    }
-  ];
-
-  bottomBanners: BannerItem[] = [
-    {
-      id: 'bottom-1',
-      badge: '🎁 REFER & EARN',
-      badgeBg: 'rgba(250, 204, 21, 0.25)',
-      badgeColor: '#fef08a',
-      title: 'Earn ₹50 Instant Cash',
-      subtitle: 'Invite friends to Pintu. Both get ₹50 on their 1st delivery!',
-      bgGradient: 'linear-gradient(135deg, #2e0854 0%, #1e1b4b 60%, #4a044e 100%)',
-      route: '/layout/referral'
-    },
-    {
-      id: 'bottom-2',
-      badge: '🥦 FRESH HARVEST',
-      badgeBg: 'rgba(52, 211, 153, 0.25)',
-      badgeColor: '#a7f3d0',
-      title: 'Farm Fresh Produce Daily',
-      subtitle: 'Handpicked daily fruits & vegetables with 10-15 min delivery',
-      bgGradient: 'linear-gradient(135deg, #064e3b 0%, #065f46 60%, #0f766e 100%)',
-      route: '/layout/grocery-layout'
-    }
-  ];
+  // Dynamic Customer Banners (Fetched from API)
+  banners: any[] = [];
+  bottomBanners: any[] = [];
+  isLoadingHeroBanners: boolean = true;
+  isLoadingBottomBanners: boolean = true;
+  hasHomeDataError: boolean = false;
+  currentCity: string = '';
 
   allServices: ServiceItem[] = [];
 
@@ -204,32 +164,7 @@ export class HomePage implements OnInit, OnDestroy {
     private commonService: CommonService,
     private toastCtrl: ToastController
   ) {
-    addIcons({
-      location,
-      locate,
-      locateOutline,
-      alertCircle,
-      alertCircleOutline,
-      refresh,
-      refreshOutline,
-      chevronDown,
-      chevronForward,
-      arrowForward,
-      arrowForwardOutline,
-      flashOutline,
-      shieldCheckmarkOutline,
-      sparklesOutline,
-      chatbubbleEllipsesOutline,
-      arrowDownOutline,
-      headsetOutline,
-      moonOutline,
-      navigateCircleOutline,
-      mapOutline,
-      locationOutline,
-      playCircle,
-      volumeMuteOutline,
-      volumeHighOutline
-    });
+    addIcons({location,shieldCheckmarkOutline,alertCircle,locate,refresh,chevronDown,alertCircleOutline,chevronForward,moonOutline,mapOutline,refreshOutline,locationOutline,navigateCircleOutline,cloudOfflineOutline,arrowForward,closeOutline,locateOutline,arrowForwardOutline,flashOutline,sparklesOutline,chatbubbleEllipsesOutline,arrowDownOutline,headsetOutline,playCircle,volumeMuteOutline,volumeHighOutline,bagHandleOutline,carOutline,restaurantOutline,timeOutline,receiptOutline});
   }
 
   goToSupport() {
@@ -264,8 +199,16 @@ export class HomePage implements OnInit, OnDestroy {
     });
 
     this.locationService.city$.subscribe((city: string) => {
-      if (city && city.trim() && (this.displayLocationName === 'Select Location' || !this.displayLocationName)) {
-        this.displayLocationName = city;
+      if (city && city.trim()) {
+        const trimmedCity = city.trim();
+        const cityChanged = this.currentCity !== trimmedCity;
+        this.currentCity = trimmedCity;
+        if (this.displayLocationName === 'Select Location' || !this.displayLocationName) {
+          this.displayLocationName = trimmedCity;
+        }
+        if (cityChanged) {
+          this.loadBanners();
+        }
       }
     });
 
@@ -422,6 +365,14 @@ export class HomePage implements OnInit, OnDestroy {
       this.displayFullAddress = addr.address.trim();
     } else {
       this.displayFullAddress = this.displayLocationName;
+    }
+
+    if (addr.city && addr.city.trim()) {
+      const cityChanged = this.currentCity !== addr.city.trim();
+      this.currentCity = addr.city.trim();
+      if (cityChanged) {
+        this.loadBanners();
+      }
     }
 
     // 4. Coordinates
@@ -693,26 +644,58 @@ export class HomePage implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Loads customer promotional banners based on placement tag and user city.
+   * 'hometop' -> top sliding banners
+   * 'homedown' -> below the services banners
+   */
+  loadBanners() {
+    const city = this.currentCity || this.nearestServiceArea?.cityName || '';
+    this.isLoadingHeroBanners = true;
+    this.isLoadingBottomBanners = true;
+
+    // Fetch top hero slider banners (hometop)
+    this.commonService.getActiveBanners('hometop', city).subscribe({
+      next: (res: any) => {
+        const items = res?.data || res || [];
+        this.banners = Array.isArray(items) ? items : [];
+        this.isLoadingHeroBanners = false;
+      },
+      error: (err: any) => {
+        console.warn('Could not load hometop banners:', err?.message || err);
+        this.banners = [];
+        this.isLoadingHeroBanners = false;
+      }
+    });
+
+    // Fetch below-service banners (homedown)
+    this.commonService.getActiveBanners('homedown', city).subscribe({
+      next: (res: any) => {
+        const items = res?.data || res || [];
+        this.bottomBanners = Array.isArray(items) ? items : [];
+        this.isLoadingBottomBanners = false;
+      },
+      error: (err: any) => {
+        console.warn('Could not load homedown banners:', err?.message || err);
+        this.bottomBanners = [];
+        this.isLoadingBottomBanners = false;
+      }
+    });
+  }
+
   loadHomeData() {
     this.isLoadingServices = true;
+    this.hasHomeDataError = false;
+    this.loadBanners();
     this.commonService.getHomeData(this.token).subscribe({
       next: (res: any) => {
         const data = res?.data || res || {};
-        const backendBanners = data?.banners || [];
-        if (Array.isArray(backendBanners) && backendBanners.length > 0) {
-          const activeBanners = backendBanners.filter((b: any) => b.is_active !== false);
-          if (activeBanners.length > 0) {
-            this.banners = activeBanners;
-            if (activeBanners.length > 2) {
-              this.bottomBanners = activeBanners.slice(1, 3);
-            }
-          }
-        }
         const services = data?.services || (Array.isArray(data) ? data : []);
         if (Array.isArray(services) && services.length > 0) {
           const active = services.filter((s: any) => s.status === 'active' || !s.status);
           if (active.length > 0) {
             this.allServices = active;
+            this.hasHomeDataError = false;
           }
         }
         this.isLoadingServices = false;
@@ -726,9 +709,13 @@ export class HomePage implements OnInit, OnDestroy {
               const active = fallbackData.filter((s: any) => s.status === 'active' || !s.status);
               if (active.length > 0) {
                 this.allServices = active;
+                this.hasHomeDataError = false;
               }
             }
             this.isLoadingServices = false;
+            if (this.allServices.length === 0) {
+              this.hasHomeDataError = true;
+            }
           },
           error: () => {
             this.isLoadingServices = false;
@@ -751,13 +738,28 @@ export class HomePage implements OnInit, OnDestroy {
                   img: '',
                   category: 'rides',
                   route: '/layout/rides'
+                },
+                {
+                  id: 3,
+                  title: 'Medicines & Lab Tests',
+                  subtitle: 'Genuine Meds & Blood Tests',
+                  offers: 'FLAT 15% OFF',
+                  img: '',
+                  category: 'pharmacy',
+                  route: '/layout/pharmacy'
                 }
               ];
+              this.hasHomeDataError = true;
             }
           }
         });
       }
     });
+  }
+
+  retryHomeData(): void {
+    this.hasHomeDataError = false;
+    this.loadHomeData();
   }
 
   loadActiveOrders() {
@@ -957,13 +959,25 @@ export class HomePage implements OnInit, OnDestroy {
       return;
     }
 
+    if (route === 'doctor' || route === 'consult-doctor' || route === '/layout/consult-doctor' || route === '/layout/doctor') {
+      this.router.navigate(['/layout/consult-doctor']);
+      return;
+    }
+
+    if (route === 'pharmacy' || route === 'medicine' || route === 'medicines' || route === 'lab' || route === '/layout/pharmacy' || route === '/pharmacy') {
+      this.router.navigate(['/layout/pharmacy']);
+      return;
+    }
+
     if (route.startsWith('/')) {
       this.router.navigate([route]);
     } else if (route) {
       this.router.navigate([`/layout/${route}`]);
     } else {
       const title = (service.title || '').toLowerCase();
-      if (title.includes('grocery') || title.includes('vegitables') || title.includes('milk')) {
+      if (title.includes('doctor') || title.includes('consult')) {
+        this.router.navigate(['/layout/consult-doctor']);
+      } else if (title.includes('grocery') || title.includes('vegitables') || title.includes('milk')) {
         this.router.navigate(['/layout/grocery-layout']);
       } else if (title.includes('ride') || title.includes('cab') || title.includes('auto') || title.includes('commute')) {
         this.router.navigate(['/layout/rides']);
@@ -973,6 +987,8 @@ export class HomePage implements OnInit, OnDestroy {
         this.router.navigate(['/layout/history']);
       } else if (title.includes('property') || title.includes('properties') || title.includes('vehicle')) {
         this.router.navigate(['/layout/property']);
+      } else if (title.includes('medicine') || title.includes('pharmacy') || title.includes('lab') || title.includes('test') || title.includes('health')) {
+        this.router.navigate(['/layout/pharmacy']);
       }
     }
   }
@@ -984,6 +1000,16 @@ export class HomePage implements OnInit, OnDestroy {
 
     if (route.startsWith('http://') || route.startsWith('https://')) {
       window.open(route, '_system');
+      return;
+    }
+
+    if (route === 'doctor' || route === 'consult-doctor' || route === '/layout/consult-doctor' || route === '/layout/doctor') {
+      this.router.navigate(['/layout/consult-doctor']);
+      return;
+    }
+
+    if (route === 'pharmacy' || route === 'medicine' || route === 'medicines' || route === 'lab' || route === '/layout/pharmacy' || route === '/pharmacy') {
+      this.router.navigate(['/layout/pharmacy']);
       return;
     }
 
@@ -1009,7 +1035,7 @@ export class HomePage implements OnInit, OnDestroy {
     }
   }
 
-  getBannerImgUrl(banner: BannerItem): string {
+  getBannerImgUrl(banner: any): string {
     if (!banner?.img) return '';
     const img = String(banner.img).trim();
     if (img.startsWith('http://') || img.startsWith('https://') || img.startsWith('assets/')) {
@@ -1021,13 +1047,19 @@ export class HomePage implements OnInit, OnDestroy {
     return `${environment.apiUrl}/${img}`;
   }
 
-  isBannerImageValid(banner: BannerItem): boolean {
-    if (!banner?.img) return false;
+  isBannerImageValid(banner: any): boolean {
+    if (!banner?.img || banner.hasImgError) return false;
     const img = String(banner.img).trim();
     if (!img || img.includes('example.com') || img === 'null' || img === 'undefined') {
       return false;
     }
     return true;
+  }
+
+  onBannerImgError(banner: any) {
+    if (banner) {
+      banner.hasImgError = true;
+    }
   }
 
   openLocation() {
@@ -1040,9 +1072,76 @@ export class HomePage implements OnInit, OnDestroy {
     this.router.navigate(['/layout/profile']);
   }
 
-  goToOrderDetails(orderId: any) {
-    if (orderId) {
-      this.router.navigate([`/layout/grocery-layout/grocery-order-details/${orderId}`]);
+  handleActiveOrderBannerClick() {
+    if (!this.orders || this.orders.length === 0) return;
+    if (this.orders.length === 1) {
+      this.goToOrderDetails(this.orders[0]);
+    } else {
+      this.isMultiOrderModalOpen = true;
+    }
+  }
+
+  closeMultiOrderModal() {
+    this.isMultiOrderModalOpen = false;
+  }
+
+  selectActiveOrder(order: any) {
+    this.closeMultiOrderModal();
+    this.goToOrderDetails(order);
+  }
+
+  getActiveOrderHeadline(order: any): string {
+    if (!order) return 'Your order is active';
+    const status = String(order.status || order.orderStatus || '').toLowerCase();
+    if (status.includes('deliver') && (status.includes('out') || status.includes('way'))) {
+      return 'Out for delivery • Arriving soon';
+    }
+    if (status.includes('prep') || status.includes('pack')) {
+      return 'Order is being packed';
+    }
+    if (status.includes('accept') || status.includes('confirm')) {
+      return 'Order confirmed • In progress';
+    }
+    if (status.includes('pickup') || status.includes('picked')) {
+      return 'Picked up • On the way';
+    }
+    return 'Your delivery is arriving soon';
+  }
+
+  getOrderIcon(order: any): string {
+    const serviceType = String(order?.serviceType || order?.service || order?.category || '').toLowerCase();
+    if (serviceType.includes('ride') || serviceType.includes('cab')) return 'car-outline';
+    if (serviceType.includes('food') || serviceType.includes('dine')) return 'restaurant-outline';
+    return 'bag-handle-outline';
+  }
+
+  formatOrderTime(order: any): string {
+    const dt = order?.createdAt || order?.orderDate || order?.date;
+    if (!dt) return 'Just now';
+    try {
+      const date = new Date(dt);
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } catch {
+      return 'Today';
+    }
+  }
+
+  goToOrderDetails(orderOrId: any) {
+    if (!orderOrId) {
+      this.router.navigate(['/layout/history']);
+      return;
+    }
+
+    const order = typeof orderOrId === 'object' ? orderOrId : { id: orderOrId, orderId: orderOrId };
+    const id = order.id || order.orderId;
+
+    const serviceType = String(order.serviceType || order.service || order.category || '').toLowerCase();
+    if (serviceType.includes('ride') || serviceType.includes('cab')) {
+      this.router.navigate(['/layout/rides/tracking'], { queryParams: { orderId: id } });
+    } else if (serviceType.includes('food') || serviceType.includes('dine')) {
+      this.router.navigate([`/layout/dineout-layout/dineout-track/${id}`]);
+    } else if (id) {
+      this.router.navigate([`/layout/grocery-layout/grocery-order-details/${id}`]);
     } else {
       this.router.navigate(['/layout/history']);
     }

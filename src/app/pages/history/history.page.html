@@ -15,34 +15,60 @@
     <ion-refresher-content pullingIcon="arrow-down-outline" refreshingSpinner="crescent"></ion-refresher-content>
   </ion-refresher>
 
-  <!-- Category Filter Segment Pills -->
-  <div class="filter-pills-row">
+  <!-- Top Filters: Active & Completed Tabs + Filter Button (Same Row) -->
+  <div class="orders-top-row">
+    <div class="orders-tabs-wrapper">
       <button
         type="button"
-        class="filter-pill"
-        [class.active]="selectedCategory === 'all'"
-        (click)="setCategory('all')">
-        <span>All Activity</span>
+        class="order-tab-btn"
+        [class.active]="activeTab === 'active'"
+        (click)="setActiveTab('active')">
+        <span>Active</span>
+        @if (activeOrdersCount > 0) {
+          <span class="active-tab-badge">{{ activeOrdersCount }}</span>
+        }
       </button>
 
       <button
         type="button"
-        class="filter-pill"
-        [class.active]="selectedCategory === 'grocery'"
-        (click)="setCategory('grocery')">
-        <span class="pill-emoji">🥦</span>
-        <span>Groceries</span>
-      </button>
-
-      <button
-        type="button"
-        class="filter-pill"
-        [class.active]="selectedCategory === 'ride'"
-        (click)="setCategory('ride')">
-        <span class="pill-emoji">🛵</span>
-        <span>Rides</span>
+        class="order-tab-btn"
+        [class.active]="activeTab === 'completed'"
+        (click)="setActiveTab('completed')">
+        <span>Completed</span>
+        @if (completedOrdersCount > 0) {
+          <span class="completed-tab-count">({{ completedOrdersCount }})</span>
+        }
       </button>
     </div>
+
+    <!-- Filter Action Button (Opens Bottom-Sheet Popup) -->
+    <button
+      type="button"
+      class="btn-order-filter"
+      [class.active]="activeFiltersCount > 0"
+      (click)="openFilterModal()"
+      title="Filter Orders"
+      aria-label="Filter">
+      <ion-icon name="options-outline"></ion-icon>
+      <span class="filter-label">Filter</span>
+      @if (activeFiltersCount > 0) {
+        <span class="filter-count-badge">{{ activeFiltersCount }}</span>
+      }
+    </button>
+  </div>
+
+  <!-- Active Filter Summary Strip (Only shown when filter is applied) -->
+  @if (!isLoading && activeFiltersCount > 0) {
+    <div class="active-filter-chips-bar">
+      <span class="filter-results-text">
+        Showing <strong>{{ filteredHistory.length }}</strong> filtered orders
+      </span>
+      <button type="button" class="btn-clear-filters-chip" (click)="clearAllFilters()">
+        <span>Clear Filters</span>
+        <ion-icon name="close-circle"></ion-icon>
+      </button>
+    </div>
+  }
 
   <main class="history-body-container">
     <!-- Loading Skeletons -->
@@ -134,22 +160,137 @@
         <div class="empty-icon-halo">
           <ion-icon name="receipt-outline"></ion-icon>
         </div>
-        <h3 class="empty-title">No Orders Found</h3>
+        <h3 class="empty-title">
+          {{ activeFiltersCount > 0 ? 'No Matching Orders' : (activeTab === 'active' ? 'No Active Orders' : 'No Completed Orders') }}
+        </h3>
         <p class="empty-subtitle">
-          @if (selectedCategory !== 'all') {
-            No {{ selectedCategory }} orders yet. Start exploring our fast local services!
+          @if (activeFiltersCount > 0) {
+            No orders match your current filter settings. Try adjusting or clearing your filters.
+          } @else if (activeTab === 'active') {
+            You don't have any active orders in progress right now. Any ongoing groceries or rides will show up here!
           } @else {
-            You haven't placed any orders yet. Groceries delivered in 10-15 mins & rides in 2 mins!
+            You haven't completed any orders yet. Groceries delivered in 10-15 mins & rides in 2 mins!
           }
         </p>
-        <button type="button" class="btn-start-shopping" (click)="goToHome()">
-          <ion-icon name="flash-outline" class="me-1"></ion-icon>
-          <span>Explore Services</span>
-        </button>
+
+        @if (activeFiltersCount > 0) {
+          <button type="button" class="btn-start-shopping" (click)="clearAllFilters()">
+            <ion-icon name="refresh-outline" class="me-1"></ion-icon>
+            <span>Reset Filters</span>
+          </button>
+        } @else {
+          <button type="button" class="btn-start-shopping" (click)="goToHome()">
+            <ion-icon name="flash-outline" class="me-1"></ion-icon>
+            <span>Explore Services</span>
+          </button>
+        }
       </div>
     }
 
     <!-- Bottom Nav Spacer -->
     <div class="bottom-nav-spacer"></div>
   </main>
+
+  <!-- ================= ORDERS FILTER BOTTOM SHEET ================= -->
+  <ion-modal
+    [isOpen]="isFilterModalOpen"
+    [initialBreakpoint]="0.80"
+    [breakpoints]="[0, 0.80, 0.95]"
+    [handle]="true"
+    (didDismiss)="closeFilterModal()">
+    <ng-template>
+      <div class="sheet-container filter-sheet-container">
+        <header class="sheet-header">
+          <div class="sheet-header-left">
+            <h3 class="sheet-title">Filter Orders</h3>
+            @if (activeFiltersCount > 0) {
+              <span class="sheet-count-tag">{{ activeFiltersCount }} active</span>
+            }
+          </div>
+
+          <div class="sheet-header-right">
+            <button type="button" class="btn-sheet-reset" (click)="clearAllFilters()">
+              Reset
+            </button>
+            <button type="button" class="btn-sheet-close" (click)="closeFilterModal()" aria-label="Close">
+              <ion-icon name="close-outline"></ion-icon>
+            </button>
+          </div>
+        </header>
+
+        <div class="sheet-scroll-body">
+          <!-- 1. Service Type Choice -->
+          <div class="filter-section-block">
+            <h4 class="filter-block-title">Service Type</h4>
+            <div class="chips-selector-row">
+              <button type="button" class="choice-chip" [class.active]="filterCategory === 'all'" (click)="filterCategory = 'all'">All Services</button>
+              <button type="button" class="choice-chip" [class.active]="filterCategory === 'grocery'" (click)="filterCategory = 'grocery'">🥦 Groceries</button>
+              <button type="button" class="choice-chip" [class.active]="filterCategory === 'ride'" (click)="filterCategory = 'ride'">🛵 Rides</button>
+              <button type="button" class="choice-chip" [class.active]="filterCategory === 'dineout'" (click)="filterCategory = 'dineout'">🍽️ Dineout</button>
+              <button type="button" class="choice-chip" [class.active]="filterCategory === 'event'" (click)="filterCategory = 'event'">🎟️ Events</button>
+            </div>
+          </div>
+
+          <!-- 2. Order Status Choice -->
+          <div class="filter-section-block">
+            <h4 class="filter-block-title">Order Status</h4>
+            <div class="chips-selector-row">
+              <button type="button" class="choice-chip" [class.active]="filterStatus === 'all'" (click)="filterStatus = 'all'">All Statuses</button>
+              @if (activeTab === 'active') {
+                <button type="button" class="choice-chip" [class.active]="filterStatus === 'in_progress'" (click)="filterStatus = 'in_progress'">Preparing / Placed</button>
+                <button type="button" class="choice-chip" [class.active]="filterStatus === 'on_the_way'" (click)="filterStatus = 'on_the_way'">On The Way</button>
+              } @else {
+                <button type="button" class="choice-chip" [class.active]="filterStatus === 'delivered'" (click)="filterStatus = 'delivered'">Delivered / Done</button>
+                <button type="button" class="choice-chip" [class.active]="filterStatus === 'cancelled'" (click)="filterStatus = 'cancelled'">Cancelled / Failed</button>
+              }
+            </div>
+          </div>
+
+          <!-- 3. Timeframe -->
+          <div class="filter-section-block">
+            <h4 class="filter-block-title">Time Period</h4>
+            <div class="chips-selector-row">
+              <button type="button" class="choice-chip" [class.active]="filterTimeframe === 'all'" (click)="filterTimeframe = 'all'">All Time</button>
+              <button type="button" class="choice-chip" [class.active]="filterTimeframe === 'today'" (click)="filterTimeframe = 'today'">Today (24h)</button>
+              <button type="button" class="choice-chip" [class.active]="filterTimeframe === '7days'" (click)="filterTimeframe = '7days'">Last 7 Days</button>
+              <button type="button" class="choice-chip" [class.active]="filterTimeframe === '30days'" (click)="filterTimeframe = '30days'">Last 30 Days</button>
+            </div>
+          </div>
+
+          <!-- 4. Order Price / Amount Range -->
+          <div class="filter-section-block">
+            <h4 class="filter-block-title">Order Amount</h4>
+            <div class="chips-selector-row">
+              <button type="button" class="choice-chip" [class.active]="filterPriceRange === 'all'" (click)="filterPriceRange = 'all'">Any Amount</button>
+              <button type="button" class="choice-chip" [class.active]="filterPriceRange === 'under_200'" (click)="filterPriceRange = 'under_200'">Under ₹200</button>
+              <button type="button" class="choice-chip" [class.active]="filterPriceRange === '200_500'" (click)="filterPriceRange = '200_500'">₹200 - ₹500</button>
+              <button type="button" class="choice-chip" [class.active]="filterPriceRange === '500_1000'" (click)="filterPriceRange = '500_1000'">₹500 - ₹1,000</button>
+              <button type="button" class="choice-chip" [class.active]="filterPriceRange === 'above_1000'" (click)="filterPriceRange = 'above_1000'">₹1,000+</button>
+            </div>
+          </div>
+
+          <!-- 5. Sort By -->
+          <div class="filter-section-block">
+            <h4 class="filter-block-title">Sort By</h4>
+            <div class="chips-selector-row">
+              <button type="button" class="choice-chip" [class.active]="filterSort === 'newest'" (click)="filterSort = 'newest'">Newest First</button>
+              <button type="button" class="choice-chip" [class.active]="filterSort === 'oldest'" (click)="filterSort = 'oldest'">Oldest First</button>
+              <button type="button" class="choice-chip" [class.active]="filterSort === 'price_high'" (click)="filterSort = 'price_high'">Amount: High to Low</button>
+              <button type="button" class="choice-chip" [class.active]="filterSort === 'price_low'" (click)="filterSort = 'price_low'">Amount: Low to High</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sticky Sheet Footer -->
+        <footer class="sheet-footer">
+          <button type="button" class="btn-sheet-clear" (click)="clearAllFilters()">
+            Clear All
+          </button>
+          <button type="button" class="btn-sheet-apply" (click)="applyFilters()">
+            Show {{ filteredHistory.length }} Orders
+          </button>
+        </footer>
+      </div>
+    </ng-template>
+  </ion-modal>
 </ion-content>

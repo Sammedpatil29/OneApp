@@ -3,9 +3,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NavController, ToastController } from '@ionic/angular';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import {
   IonContent,
-  IonIcon
+  IonIcon,
+  IonModal
 } from '@ionic/angular/standalone';
 import { Share } from '@capacitor/share';
 import { addIcons } from 'ionicons';
@@ -40,10 +42,16 @@ import {
   chevronDownOutline,
   chevronUpOutline,
   leafOutline,
-  lockClosedOutline
+  lockClosedOutline,
+  videocamOutline,
+  playCircle,
+  closeOutline,
+  play,
+  pause
 } from 'ionicons/icons';
 import { PropertyItem, PropertyDocumentCheck, DUMMY_PROPERTIES } from 'src/app/models/property.model';
 import { PropertyService } from 'src/app/services/property.service';
+import { PropertyFooterComponent } from 'src/app/components/property-footer/property-footer.component';
 
 @Component({
   selector: 'app-property-details',
@@ -53,8 +61,10 @@ import { PropertyService } from 'src/app/services/property.service';
   imports: [
     IonContent,
     IonIcon,
+    IonModal,
     CommonModule,
-    FormsModule
+    FormsModule,
+    PropertyFooterComponent
   ]
 })
 export class PropertyDetailsPage implements OnInit {
@@ -62,6 +72,12 @@ export class PropertyDetailsPage implements OnInit {
   activeImageIndex: number = 0;
   isFavorite: boolean = false;
   isDocsExpanded: boolean = false;
+  isVideoModalOpen: boolean = false;
+  isVideoReel: boolean = false;
+  isPlaying: boolean = true;
+  showPlayPauseIndicator: boolean = false;
+  private playPauseIndicatorTimeout: any = null;
+  embedVideoUrl: SafeResourceUrl | null = null;
 
   // Swipe gesture tracking
   private touchStartX: number = 0;
@@ -74,9 +90,10 @@ export class PropertyDetailsPage implements OnInit {
     private router: Router,
     private navCtrl: NavController,
     private propertyService: PropertyService,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private sanitizer: DomSanitizer
   ) {
-    addIcons({arrowBackOutline,shareSocialOutline,chevronBackOutline,chevronForwardOutline,cameraOutline,checkmarkCircle,location,openOutline,leafOutline,bedOutline,waterOutline,expandOutline,compassOutline,businessOutline,carOutline,calendarOutline,shieldCheckmarkOutline,alertCircleOutline,callOutline,logoWhatsapp,heartOutline,heart,sparkles,navigateOutline,shieldOutline,chatbubbleEllipsesOutline,documentTextOutline,timeOutline,chevronDownOutline,chevronUpOutline,lockClosedOutline});
+    addIcons({arrowBackOutline,shareSocialOutline,chevronBackOutline,chevronForwardOutline,cameraOutline,checkmarkCircle,location,openOutline,leafOutline,bedOutline,waterOutline,expandOutline,compassOutline,businessOutline,carOutline,calendarOutline,shieldCheckmarkOutline,alertCircleOutline,callOutline,logoWhatsapp,heartOutline,heart,sparkles,navigateOutline,shieldOutline,chatbubbleEllipsesOutline,documentTextOutline,timeOutline,chevronDownOutline,chevronUpOutline,lockClosedOutline,videocamOutline,playCircle,closeOutline,play,pause});
   }
 
   ngOnInit() {
@@ -108,7 +125,7 @@ export class PropertyDetailsPage implements OnInit {
   }
 
   goBack() {
-    this.navCtrl.back();
+    this.navCtrl.navigateBack('/layout/property');
   }
 
   setImageIndex(idx: number) {
@@ -200,6 +217,85 @@ export class PropertyDetailsPage implements OnInit {
       : encodeURIComponent(`${this.property.title}, ${this.property.locality}, ${this.property.city}`);
     const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${query}`;
     window.open(mapsUrl, '_system');
+  }
+
+  openVideoModal() {
+    const targetUrl = this.property?.videoUrl || this.property?.youtubeUrl;
+    if (!targetUrl) return;
+
+    this.isPlaying = true;
+    this.showPlayPauseIndicator = false;
+
+    const rawUrl = targetUrl.toLowerCase();
+    // Detect vertical format if link contains shorts, reel, vertical, or 9:16
+    this.isVideoReel =
+      rawUrl.includes('/shorts/') ||
+      rawUrl.includes('shorts') ||
+      rawUrl.includes('/reel/') ||
+      rawUrl.includes('/reels/') ||
+      rawUrl.includes('tiktok.com') ||
+      rawUrl.includes('vertical') ||
+      rawUrl.includes('9:16') ||
+      rawUrl.includes('9-16');
+
+    const videoId = this.extractYouTubeId(targetUrl);
+    if (videoId) {
+      // controls=0: removes YouTube bottom controls bar
+      // modestbranding=1, iv_load_policy=3, fs=0, disablekb=1: cleans up overlays
+      // enablejsapi=1: enables screen tap to play/pause
+      const embed = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&controls=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&disablekb=1&fs=0&enablejsapi=1`;
+      this.embedVideoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(embed);
+    } else {
+      this.embedVideoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(targetUrl);
+    }
+    this.isVideoModalOpen = true;
+  }
+
+  togglePlayPause() {
+    this.isPlaying = !this.isPlaying;
+    this.showPlayPauseIndicator = true;
+    if (this.playPauseIndicatorTimeout) {
+      clearTimeout(this.playPauseIndicatorTimeout);
+    }
+    this.playPauseIndicatorTimeout = setTimeout(() => {
+      this.showPlayPauseIndicator = false;
+    }, 600);
+
+    const iframe = document.querySelector('.property-video-modal iframe') as HTMLIFrameElement;
+    if (iframe && iframe.contentWindow) {
+      const action = this.isPlaying ? 'playVideo' : 'pauseVideo';
+      iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: action, args: [] }), '*');
+    }
+  }
+
+  toggleVideoAspect() {
+    this.isVideoReel = !this.isVideoReel;
+  }
+
+  closeVideoModal() {
+    this.isVideoModalOpen = false;
+    this.embedVideoUrl = null;
+    this.showPlayPauseIndicator = false;
+    if (this.playPauseIndicatorTimeout) {
+      clearTimeout(this.playPauseIndicatorTimeout);
+      this.playPauseIndicatorTimeout = null;
+    }
+  }
+
+  private extractYouTubeId(url: string): string | null {
+    if (!url) return null;
+    const cleanUrl = url.trim();
+    // Regular expression matching standard, embed, short, and shorts YouTube links
+    const regExp = /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([\w-]{11})/;
+    const match = cleanUrl.match(regExp);
+    if (match && match[1]) {
+      return match[1];
+    }
+    // If user entered only 11 characters ID directly
+    if (/^[a-zA-Z0-9_-]{11}$/.test(cleanUrl)) {
+      return cleanUrl;
+    }
+    return null;
   }
 
   get propertyLegalChecks(): PropertyDocumentCheck[] {
